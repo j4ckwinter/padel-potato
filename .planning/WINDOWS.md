@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 2
+open_count: 5
 waived_count: 0
 fixed_count: 0
-total_count: 2
-last_updated: 2026-09-17T21:46:37.149Z
+total_count: 5
+last_updated: 2026-09-17T22:07:48.098Z
 ---
 
 # Broken Windows Ledger
@@ -17,6 +17,9 @@ last_updated: 2026-09-17T21:46:37.149Z
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
 | 1 | 01 | deviation | design-spec/toolchain-compatibility.json |  | Updated non-approved template tooling versions to current Expo 57 expectations for a 21/21 Doctor result. | open |  | 2026-09-17T21:46:36.692Z |  |
 | 2 | 01 | deviation | design-spec/toolchain-compatibility.json |  | Pinned test-renderer 1.2.0 to preserve React 19.2.3 compatibility with RNTL 14.0.1. | open |  | 2026-09-17T21:46:37.149Z |  |
+| 3 | 01 | deviation | package.json |  | Storybook initializer proposed unapproved 10.6-era dependencies; exact approved 10.5.0 inventory was restored | open |  | 2026-09-17T22:07:47.176Z |  |
+| 4 | 01 | deviation | package.json |  | Generic launcher is storybook:native because Expo Doctor rejects a storybook script that shadows the installed binary | open |  | 2026-09-17T22:07:47.642Z |  |
+| 5 | 01 | deviation | tsconfig.json |  | Expo web normalized the TypeScript include list during startup | open |  | 2026-09-17T22:07:48.098Z |  |
 
 ````json
 [
@@ -42,6 +45,42 @@ last_updated: 2026-09-17T21:46:37.149Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-09-17T21:46:37.149Z",
+    "resolved_at": null
+  },
+  {
+    "id": 3,
+    "kind": "deviation",
+    "phase": "01",
+    "file": "package.json",
+    "line": null,
+    "description": "Storybook initializer proposed unapproved 10.6-era dependencies; exact approved 10.5.0 inventory was restored",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-17T22:07:47.176Z",
+    "resolved_at": null
+  },
+  {
+    "id": 4,
+    "kind": "deviation",
+    "phase": "01",
+    "file": "package.json",
+    "line": null,
+    "description": "Generic launcher is storybook:native because Expo Doctor rejects a storybook script that shadows the installed binary",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-17T22:07:47.642Z",
+    "resolved_at": null
+  },
+  {
+    "id": 5,
+    "kind": "deviation",
+    "phase": "01",
+    "file": "tsconfig.json",
+    "line": null,
+    "description": "Expo web normalized the TypeScript include list during startup",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-17T22:07:48.098Z",
     "resolved_at": null
   }
 ]

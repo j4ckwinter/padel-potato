@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 01
 current_phase_name: Foundations Storybook
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-09-17T21:46:27.334Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-09-17T22:08:07.003Z"
 last_activity: 2026-09-17
 last_activity_desc: Phase 01 execution started
-state_head: df71c93411e7b21744165aef9a08d3e6ceb78803
+state_head: 86760e4aacca9b16bc93a33c48d02911c212bd1a
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 7
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 01 (Foundations Storybook) — EXECUTING
-Plan: 2 of 7
+Plan: 3 of 7
 Status: Ready to execute
 Last activity: 2026-09-17 — Phase 01 execution started
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 01 P01 | 12min | 2 tasks | 4 files |
+| Phase 01 P02 | 18min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,9 @@ Recent decisions affecting current work:
 - Phase 4: Build component families in dependency order as vertically verified batches; product screens remain deferred.
 - [Phase 01]: The complete exact Storybook 10.5.0 family supersedes inherited Storybook 10.6.0 guidance for Expo 57 implementation.
 - [Phase 01]: Package legitimacy approval is limited to the exact 23 package/version matrix and excludes substitutions, caret drift, Vite Storybook, expo-template-storybook, and Storybook 10.6.x.
+- [Phase 01]: Use storybook:native instead of storybook because Expo Doctor rejects scripts that shadow an installed binary; platform and web launchers retain STORYBOOK_ENABLED entry swapping.
+- [Phase 01]: Keep the human-approved Storybook 10.5.0 inventory when the official initializer proposes unapproved 10.6.0-era packages.
+- [Phase 01]: Use RNTL 14 asynchronous render and explicit Jest globals so strict TypeScript passes without adding @types/jest.
 
 ### Pending Todos
 
@@ -93,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-17T21:46:27.313Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-09-17T22:08:06.978Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None

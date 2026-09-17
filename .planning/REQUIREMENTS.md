@@ -7,10 +7,10 @@
 
 ### Workbench
 
-- [ ] **WORK-01**: Developer can install and run the version-locked Expo/React Native TypeScript project.
+- [x] **WORK-01**: Developer can install and run the version-locked Expo/React Native TypeScript project.
 - [ ] **WORK-02**: Developer can launch the component catalogue in native Storybook on iOS.
 - [ ] **WORK-03**: Developer can launch the component catalogue in native Storybook on Android.
-- [ ] **WORK-04**: Developer can browse the shared Storybook stories locally through Expo web.
+- [x] **WORK-04**: Developer can browse the shared Storybook stories locally through Expo web.
 - [ ] **WORK-05**: Production-mode app builds exclude Storybook code.
 - [x] **WORK-06**: Developer can validate dependency compatibility through automated Expo health checks.
 
@@ -130,10 +130,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WORK-01 | Phase 1 | Pending |
+| WORK-01 | Phase 1 | Complete |
 | WORK-02 | Phase 5 | Pending |
 | WORK-03 | Phase 5 | Pending |
-| WORK-04 | Phase 1 | Pending |
+| WORK-04 | Phase 1 | Complete |
 | WORK-05 | Phase 5 | Pending |
 | WORK-06 | Phase 1 | Complete |
 | PNPT-01 | Phase 1 | Pending |
