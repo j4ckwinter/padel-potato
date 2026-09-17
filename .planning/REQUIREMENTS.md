@@ -128,15 +128,73 @@
 
 ## Traceability
 
-Roadmap phase mappings will be populated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| WORK-01 | Phase 1 | Pending |
+| WORK-02 | Phase 1 | Pending |
+| WORK-03 | Phase 1 | Pending |
+| WORK-04 | Phase 1 | Pending |
+| WORK-05 | Phase 1 | Pending |
+| WORK-06 | Phase 1 | Pending |
+| PNPT-01 | Phase 2 | Pending |
+| PNPT-02 | Phase 2 | Pending |
+| PNPT-03 | Phase 2 | Pending |
+| PNPT-04 | Phase 2 | Pending |
+| FNDT-01 | Phase 2 | Pending |
+| FNDT-02 | Phase 2 | Pending |
+| FNDT-03 | Phase 2 | Pending |
+| FNDT-04 | Phase 2 | Pending |
+| FNDT-05 | Phase 2 | Pending |
+| FNDT-06 | Phase 2 | Pending |
+| PRIM-01 | Phase 2 | Pending |
+| PRIM-03 | Phase 2 | Pending |
+| PRIM-04 | Phase 2 | Pending |
+| PRIM-02 | Phase 3 | Pending |
+| QUAL-01 | Phase 3 | Pending |
+| QUAL-02 | Phase 3 | Pending |
+| QUAL-03 | Phase 3 | Pending |
+| QUAL-04 | Phase 3 | Pending |
+| QUAL-05 | Phase 3 | Pending |
+| QUAL-06 | Phase 3 | Pending |
+| QUAL-07 | Phase 3 | Pending |
+| ACTN-01 | Phase 4 | Pending |
+| ACTN-02 | Phase 4 | Pending |
+| ACTN-03 | Phase 4 | Pending |
+| FORM-01 | Phase 4 | Pending |
+| FORM-02 | Phase 4 | Pending |
+| FORM-03 | Phase 4 | Pending |
+| FORM-04 | Phase 4 | Pending |
+| AUTH-01 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| NAVG-01 | Phase 4 | Pending |
+| NAVG-02 | Phase 4 | Pending |
+| NAVG-03 | Phase 4 | Pending |
+| NAVG-04 | Phase 4 | Pending |
+| IDEN-01 | Phase 4 | Pending |
+| IDEN-02 | Phase 4 | Pending |
+| IDEN-03 | Phase 4 | Pending |
+| STAT-01 | Phase 4 | Pending |
+| PROG-01 | Phase 4 | Pending |
+| CONT-01 | Phase 4 | Pending |
+| CONT-02 | Phase 4 | Pending |
+| CONT-03 | Phase 4 | Pending |
+| CONT-04 | Phase 4 | Pending |
+| CONT-05 | Phase 4 | Pending |
+| CONT-06 | Phase 4 | Pending |
+| CONT-07 | Phase 4 | Pending |
+| FDBK-01 | Phase 4 | Pending |
+| FDBK-02 | Phase 4 | Pending |
+| CARD-01 | Phase 4 | Pending |
+| VRFY-01 | Phase 5 | Pending |
+| VRFY-02 | Phase 5 | Pending |
+| VRFY-03 | Phase 5 | Pending |
+| VRFY-04 | Phase 5 | Pending |
+| VRFY-05 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 60 total
-- Mapped to phases: 0
-- Unmapped: 60
+- Mapped to phases: 60
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-09-17*
