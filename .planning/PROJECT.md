@@ -22,6 +22,7 @@ Create a faithful, reusable mobile component system from the Penpot source of tr
 - [ ] Implement every reusable component and its designed variants and states from the Penpot component library.
 - [ ] Provide representative, navigable Storybook stories for all foundations, components, variants, and states.
 - [ ] Run the component catalogue through Expo on both iOS and Android.
+- [ ] Make the Storybook catalogue available for convenient local review in a desktop browser through Expo's web target.
 - [ ] Use the Penpot MCP to extract authoritative design specifications and reference renders.
 - [ ] Verify native Storybook renders against Penpot references and record any intentional deviations.
 - [ ] Preserve sensible React Native Web compatibility where practical without making web parity a milestone requirement.
@@ -33,7 +34,7 @@ Create a faithful, reusable mobile component system from the Penpot source of tr
 - Backend services, authentication behavior, persistence, and live invitations — not needed for the Storybook design-system milestone.
 - Game creation, response tracking, score entry, result confirmation, and notifications as working features — later application milestones.
 - Public game discovery and the broader player directory as working features — later scope despite their presence in the product-screen designs.
-- Browser Storybook parity and web deployment — useful secondary compatibility, but native iOS and Android rendering is authoritative.
+- Pixel-perfect browser parity and hosted web deployment — local browser review is required, but native iOS and Android rendering remains authoritative.
 
 ## Context
 
@@ -54,7 +55,7 @@ Create a faithful, reusable mobile component system from the Penpot source of tr
 - **Component workbench**: React Native Storybook — the first milestone must be independently reviewable without product screens.
 - **Design authority**: Penpot foundations and component libraries — implementation must not invent or silently substitute design values.
 - **Verification**: Penpot MCP specifications and exported reference renders must be compared with native Storybook output — source inspection alone cannot prove runtime rendering fidelity.
-- **Web support**: Preserve compatibility where practical, but do not add cost or compromise native behavior to achieve browser parity in this milestone.
+- **Web support**: Provide a locally browser-accessible Storybook catalogue through Expo's web target, but do not add cost or compromise native behavior to achieve pixel-perfect browser parity.
 
 ## Key Decisions
 
