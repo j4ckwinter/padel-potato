@@ -13,7 +13,7 @@ No phase `CONTEXT.md` exists. The following project constraints are therefore co
 - Mobile-only, native-first iOS and Android; React Native with Expo; React Native Storybook as the independently reviewable workbench. [VERIFIED: `AGENTS.md:15-20`]
 - Penpot foundations and component libraries are the design authority; implementation may not invent or silently substitute values. [VERIFIED: `AGENTS.md:18-19`]
 - Provide a locally browser-accessible catalogue through Expo web, but native behavior remains authoritative and pixel-perfect browser parity is out of scope. [VERIFIED: `AGENTS.md:19-20`]
-- Use Expo SDK `~57.0.23`, React Native `0.86.3`, React `19.2.3`, TypeScript `~5.9`, and Storybook packages `10.6.0`; do not add `@storybook/react-native-web-vite` in this milestone. [VERIFIED: `AGENTS.md:34-51`]
+- The inherited stack named Storybook `10.6.0`, but this correction pass positively falsified that combination against Expo 57 and selected the nearest clean same-patch family, Storybook `10.5.0`; do not add `@storybook/react-native-web-vite` in this milestone. [VERIFIED: `AGENTS.md:34-51`; npm metadata + clean-room Expo probes, 2026-09-17]
 - No database, product screens, navigation, backend behavior, persistence, or runtime app integration belongs in this phase. [VERIFIED: `AGENTS.md:57`; `.planning/ROADMAP.md:24-32`]
 
 ### the agent's Discretion
@@ -35,7 +35,7 @@ DATA_P4D3L901_START
 |----|-------------|------------------|
 | WORK-01 | Developer can install and run the version-locked Expo/React Native TypeScript project. | Use the Expo-owned version matrix, a committed lockfile, pinned Node, and a root bootstrap that preserves `.planning/`. |
 | WORK-04 | Developer can browse the shared Storybook stories locally through Expo web. | Run the native Storybook entry through Expo web first; do not create a second Vite catalogue. |
-| WORK-06 | Developer can validate dependency compatibility through automated Expo health checks. | Gate all implementation behind `expo install --check` and `expo-doctor`; see the blocking Storybook peer conflict below. |
+| WORK-06 | Developer can validate dependency compatibility through automated Expo health checks. | Use the verified Storybook `10.5.0` family and require `expo install --check` plus `expo-doctor` to stay green. |
 | PNPT-01 | Developer can generate a versioned manifest of Penpot foundations, components, variant axes, states, and source IDs through the Penpot MCP. | Add a read-only extraction task and checked-in normalized manifest. |
 | PNPT-02 | Every implemented token and component is traceable to its authoritative Penpot source. | Preserve file/page/source IDs alongside each normalized token. |
 | PNPT-03 | Developer can export and retain Penpot reference renders used for visual verification. | Export the page and/or section boards and store named references beside a capture ledger. |
@@ -54,7 +54,9 @@ DATA_P4D3L901_END
 
 Plan this as three sequential gates: (1) establish an Expo 57/Storybook lockfile that passes health checks, (2) wake and read the authoritative Penpot page into versioned evidence, then (3) implement typed tokens and a Storybook-only gallery with automated completeness tests. The one-way dependency direction should be `Penpot evidence -> normalized manifest -> typed tokens -> foundation specimens -> stories/tests`; runtime code must never query Penpot. [VERIFIED: `.planning/ROADMAP.md:23-32`; CITED: https://help.penpot.app/mcp/]
 
-The current locked dependency set is not installable while also satisfying Expo's compatibility check. `@storybook/react-native@10.6.0` declares `react-native-safe-area-context@5.8.0`, while Expo `57.0.23` expects `~5.7.0`. A clean lockfile probe with `~5.7.0` failed `ERESOLVE`; a full install with `5.8.0` completed, but `expo-doctor` reported `19/21` checks and the minor-version mismatch. [VERIFIED: npm registry metadata + local `npm install`/`expo-doctor` probes, 2026-09-17] Do not hide this using `--force`, `--legacy-peer-deps`, or `expo.install.exclude`; the planner needs a Wave 0 human decision to change one locked version or accept a documented exception. [ASSUMED]
+The inherited Storybook `10.6.0` pin is incompatible with Expo 57's health contract: `@storybook/react-native@10.6.0` declares `react-native-safe-area-context@5.8.0`, while Expo `57.0.23` expects `~5.7.0`. A clean lockfile probe with `~5.7.0` failed `ERESOLVE`; installing `5.8.0` produced only `19/21` Expo Doctor checks. [VERIFIED: npm registry metadata + local `npm install`/`expo-doctor` probes, 2026-09-17]
+
+The deterministic replacement is the complete Storybook `10.5.0` family. In a fresh directory, exact top-level pins for `storybook`, `@storybook/react-native`, `@storybook/react`, the three React Native UI/theming packages, and the three on-device addons all deduped to `10.5.0`. Expo-aligned native peers then produced `Dependencies are up to date` from `npx expo install --check` and `21/21 checks passed. No issues detected!` from `npx expo-doctor@latest`. No force, legacy peer resolution, overrides, or exclusions were used. [VERIFIED: clean-room npm/Expo probe, 2026-09-17]
 
 Penpot MCP was callable but the connected browser tab was suspended (`no heartbeat for 58s`), so live token values and reference renders could not be retrieved. The authoritative scope that can be stated now is: file `c514c1fb-1cda-8125-8008-a606253a77a3`, page `482a7222-5a3b-8086-8008-a6072bd7e924` (`01 Foundations`), exactly 15 colors, exactly 9 typography styles, and all authored spacing, radius, dimension, border-width, and opacity values. [VERIFIED: `.planning/PROJECT.md:44-48`; `.planning/REQUIREMENTS.md:26-31`] Live read-only extraction is therefore the first design task, not a later polish task.
 
@@ -80,15 +82,15 @@ Penpot MCP was callable but the connected browser tab was suspended (`no heartbe
 | `expo` | `~57.0.23` | Runtime, CLI, Metro, web | Project lock; npm confirmed `57.0.23`. [VERIFIED: npm registry; `AGENTS.md:34-39`] [WARNING: legitimacy seam flags latest release as too new — checkpoint required.] |
 | `react-native` / `react` | `0.86.3` / `19.2.3` | Native renderer/component model | Expo 57 owns this compatibility pair. [CITED: https://docs.expo.dev/versions/latest/] [WARNING: legitimacy seam flags latest releases as too new — checkpoint required.] |
 | TypeScript | Expo-resolved `~5.9` | Typed token/style contracts | Extend `expo/tsconfig.base` with `strict: true`. [VERIFIED: `AGENTS.md:38`] |
-| `@storybook/react-native` / `storybook` | Locked `10.6.0`, **blocked pending Wave 0 resolution** | Story discovery and native catalogue | Official v10 setup supports Expo, entry-point swapping, and basic web. [CITED: https://storybookjs.github.io/react-native/docs/intro/getting-started/] [WARNING: SUS/peer conflict — human verification required.] |
+| Storybook family | Exact `10.5.0` for `storybook`, `@storybook/react-native`, `@storybook/react`, `@storybook/react-native-ui`, `@storybook/react-native-theming`, `@storybook/react-native-ui-common`, and all three on-device addons | Story discovery and native catalogue | This is the nearest same-patch v10 family proven clean with Expo 57; exact top-level pins prevent caret dependencies from mixing in 10.6 packages. [VERIFIED: clean-room npm tree + Expo health probes, 2026-09-17] [WARNING: SUS (`too-new`) — retain the package-install checkpoint.] |
 
 ### Supporting
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| `react-dom`, `react-native-web`, `@expo/metro-runtime` | `19.2.3`, `~0.21.0`, `~57.0.15` | Expo web | Install through `expo install`; launch with `expo start --web`. [CITED: https://docs.expo.dev/workflow/web/] |
+| `react-dom`, `react-native-web`, `@expo/metro-runtime`, `react-native-svg` | `19.2.3`, `^0.21.2`, `57.0.15`, `15.15.4` | Expo web and Storybook UI | Install through `expo install`; these exact resolved versions passed Expo health, and web launches with `expo start --web`. [VERIFIED: clean-room Expo probe; CITED: https://docs.expo.dev/workflow/web/] |
 | `cross-env` | `10.1.0` | Cross-platform `STORYBOOK_ENABLED` script | Required because development occurs on Windows and scripts must also work on POSIX. [VERIFIED: npm registry; `AGENTS.md:51`] |
-| on-device controls/actions/backgrounds | `10.6.0` locked | Catalogue UI | List under `deviceAddons`, not generic `addons`. [CITED: https://storybookjs.github.io/react-native/docs/intro/configuration/] [WARNING: SUS — checkpoint required.] |
+| Storybook native peers | `@gorhom/bottom-sheet@5.2.14`, `react-native-reanimated@4.5.1`, `react-native-gesture-handler@2.32.0`, `react-native-safe-area-context@5.7.0`, `react-native-worklets@0.10.1`, datetimepicker `9.1.0`, slider `5.2.0` | On-device Storybook UI/controls | Exact clean-room set selected by Storybook peer requirements plus Expo alignment; it passed all Expo checks. [VERIFIED: npm tree + Expo health probes, 2026-09-17] |
 | `expo-font` | Expo-resolved `~57.0.4` | Cross-platform local font loading | Prefer `useFonts` for this phase because it supports Expo Go and web; do not render specimens until loaded/error is settled. [CITED: https://docs.expo.dev/develop/user-interface/fonts/] [WARNING: SUS — checkpoint required.] |
 | `jest-expo`, `@testing-library/react-native` | `~57.0.5`, `14.0.1` | Unit/component tests | Use for manifest completeness, token exports, and rendered specimen semantics. [CITED: https://docs.expo.dev/develop/unit-testing/] |
 | ESLint / `eslint-config-expo` | template-aligned | Static checks | Keep the Expo template configuration. [VERIFIED: `AGENTS.md:75`] |
@@ -101,7 +103,7 @@ Penpot MCP was callable but the connected browser tab was suspended (`no heartbe
 | Runtime `useFonts` | `expo-font` config plugin | Fonts are immediately native-available, but the plugin needs a development build and does not embed web fonts; premature for Phase 1's Expo Go/web lane. [CITED: https://docs.expo.dev/develop/user-interface/fonts/] |
 | Source-backed tokens | NativeWind/UI kit/CSS-in-JS | Adds an abstraction and design language not authorized by Penpot. [VERIFIED: `AGENTS.md:87`] |
 
-**Installation sequence (after the Wave 0 version decision):**
+**Installation sequence:**
 
 ```bash
 # Bootstrap a blank TypeScript Expo app in a temporary child directory because the repo root is non-empty.
@@ -109,13 +111,13 @@ npx create-expo-app@latest .expo-bootstrap --template blank-typescript --no-inst
 
 # Promote generated app files deliberately, preserving .git, .planning, and AGENTS.md; then install.
 npm install
-npx expo install react-dom react-native-web @expo/metro-runtime expo-font
-npm create storybook@latest
+npx expo install react-dom react-native-web @expo/metro-runtime expo-font react-native-svg react-native-reanimated react-native-gesture-handler react-native-safe-area-context react-native-worklets @react-native-community/datetimepicker @react-native-community/slider
+npm install --save-exact storybook@10.5.0 @storybook/react-native@10.5.0 @storybook/react@10.5.0 @storybook/react-native-ui@10.5.0 @storybook/react-native-theming@10.5.0 @storybook/react-native-ui-common@10.5.0 @storybook/addon-ondevice-controls@10.5.0 @storybook/addon-ondevice-actions@10.5.0 @storybook/addon-ondevice-backgrounds@10.5.0 @gorhom/bottom-sheet@5.2.14
 npx expo install --check
 npx expo-doctor@latest
 ```
 
-The generated app-file promotion procedure is repository-specific and must be spelled out in the plan; do not recursively overwrite the root. [ASSUMED]
+Use the official Storybook v10 configuration pattern after package installation, and assert with `npm ls` that the listed Storybook family is deduped entirely to `10.5.0`. The generated app-file promotion procedure is repository-specific and must be spelled out in the plan; do not recursively overwrite the root. [VERIFIED: clean-room probe for dependency set; ASSUMED for promotion mechanics]
 
 ## Package Legitimacy Audit
 
@@ -125,14 +127,14 @@ The seam checked registry existence, age, downloads, source repository, deprecat
 |---------------|----------|----------------|-------------|---------|-------------|
 | `create-expo-app` | npm | 59,577 | `github.com/expo/expo` | OK | Approved [VERIFIED: npm registry] |
 | `expo`, `react`, `react-native`, `react-dom`, `@expo/metro-runtime`, `expo-font`, `jest-expo` | npm | 2.2M–128M | Official Expo/React repos | SUS (`too-new`) | Flagged — planner adds human verification before install |
-| `storybook`, `@storybook/react-native`, on-device addons | npm | 126K–15.9M | Official Storybook repos | SUS (`too-new`) | Flagged — planner adds human verification; peer conflict must be resolved |
+| Storybook `10.5.0` family | npm | 126K–15.9M (package-family current signals) | Official Storybook repos | SUS (`too-new`) | Approved only as the exact clean-room-verified same-patch set; retain human install checkpoint |
 | `cross-env`, `react-native-web`, TypeScript, RNTL | npm | 2.9M–203M | Established source repos | OK | Approved [VERIFIED: npm registry] |
 | Storybook native peers | npm | 1M–7.1M | Established RN community repos | Mixed: one OK, six SUS (`too-new`) | Install only Expo-aligned versions through `expo install`; checkpoint required |
 | `expo-template-storybook` | npm | 39 | none | SUS (`low-downloads`, `no-repository`) | Do not use; registry contents target Expo 54 and include Vite, contrary to this phase |
 
 **Packages removed due to SLOP verdict:** none.
 
-**Packages flagged as suspicious (SUS):** Expo/React current releases, Storybook 10.6 packages, Expo-managed native peers, Prettier 3.9.7, and `expo-template-storybook`; the planner must insert `checkpoint:human-verify` before installation.
+**Packages flagged as suspicious (SUS):** Expo/React current releases, the Storybook `10.5.0` package family, Expo-managed native peers, Prettier 3.9.7, and `expo-template-storybook`; the planner must insert `checkpoint:human-verify` before installation. The clean health probe establishes compatibility, not a waiver of the legitimacy gate.
 
 ## Architecture Patterns
 
@@ -214,7 +216,7 @@ module.exports = withStorybook(config);
 
 ### Anti-Patterns to Avoid
 
-- **Bypassing the peer conflict:** `--force`, `--legacy-peer-deps`, or doctor exclusions make WORK-06 untrustworthy. [VERIFIED: failing compatibility probe]
+- **Drifting back to 10.6 or mixing Storybook patches:** `--force`, `--legacy-peer-deps`, caret-resolved 10.6 transitive packages, or doctor exclusions make WORK-06 untrustworthy; pin and verify the complete 10.5.0 family. [VERIFIED: failing 10.6 probe and passing 10.5.0 probe]
 - **Using the Storybook Expo template:** current registry template is Expo 54 and includes a Vite Storybook; it conflicts with Expo 57 and the deferred-Vite decision. [VERIFIED: npm registry metadata]
 - **Runtime Penpot access:** evidence is build/review input, never an application dependency. [VERIFIED: project research architecture]
 - **Literal values in gallery code:** all visual literals belong in the source-backed token layer; gallery components consume semantic exports. [VERIFIED: `.planning/REQUIREMENTS.md:28-30`]
@@ -236,9 +238,9 @@ module.exports = withStorybook(config);
 
 ### Pitfall 1: Treating a successful npm install as compatibility
 
-**What goes wrong:** npm can install Storybook 10.6 with safe-area 5.8, but Expo Doctor rejects that package against SDK 57. [VERIFIED: local probe]
+**What goes wrong:** npm can install Storybook 10.6 with safe-area 5.8, but Expo Doctor rejects that package against SDK 57; a partial 10.5 pin can also pull 10.6 transitive UI packages through caret ranges. [VERIFIED: local probes]
 
-**How to avoid:** require a clean install, `npm ls`, `npx expo install --check`, `npx expo-doctor@latest`, typecheck, and web launch before token work.
+**How to avoid:** use the exact complete 10.5.0 family above, require a clean install, inspect `npm ls` for one Storybook patch, then run `npx expo install --check`, `npx expo-doctor@latest`, typecheck, and web launch before token work.
 
 **Warning signs:** peer overrides, doctor exclusions, mixed Storybook patches, or a lockfile containing multiple Storybook UI package patches.
 
@@ -339,22 +341,19 @@ export function FoundationsRoot() {
 | A3 | Separate category stories plus an aggregate gallery best represent the supplied foundation screen. | Architecture Patterns | Low; live Penpot structure may suggest a different story split. |
 | A4 | `--force`, legacy peer resolution, and doctor exclusions are unacceptable ways to claim WORK-06. | Summary | High; a project owner could explicitly approve a documented exception. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Which locked version changes to resolve Expo 57 / Storybook 10.6?**
-   - What we know: exact pins produce `ERESOLVE` with safe-area 5.7; safe-area 5.8 installs but fails Expo Doctor. [VERIFIED: local probes]
-   - What's unclear: whether the owner prefers a vetted earlier Storybook patch, a later compatible Expo SDK, or an explicit Expo validation exclusion.
-   - Recommendation: Wave 0 human checkpoint; select a combination that installs without peer overrides and yields all Expo Doctor checks passing before implementation.
+1. **Expo 57 / Storybook version compatibility — RESOLVED**
+   - Evidence: Storybook `10.6.0` failed against Expo 57's safe-area requirement. A fresh install of the complete exact `10.5.0` family with Expo-aligned peers deduped every inspected Storybook package to `10.5.0`; `npx expo install --check` returned `Dependencies are up to date`, and `npx expo-doctor@latest` returned `21/21 checks passed. No issues detected!`. No force, legacy-peer, override, or exclusion mechanism was used. [VERIFIED: clean-room npm/Expo probe, 2026-09-17]
+   - Planning disposition: replace the inherited 10.6 phase pin with the exact 10.5.0 package family enumerated in Standard Stack. Wave 0 installs those versions, checks `npm ls` for mixed patches, and must stop if either Expo command is non-green.
 
-2. **What are the exact Penpot token names/values and font assets?**
-   - What we know: authoritative file/page IDs and counts of 15 colors and 9 typography styles. [VERIFIED: `.planning/PROJECT.md:44-48`; `.planning/REQUIREMENTS.md:26-31`]
-   - What's unclear: actual names, values, aliases, remaining category counts, source-node IDs, font files, and metrics because the MCP tab was suspended.
-   - Recommendation: execution begins by waking/focusing Penpot and saving the read-only extraction plus reference exports; do not estimate.
+2. **Exact Penpot values and fonts — RESOLVED AS AUTHORITATIVE EXECUTION INPUT**
+   - Evidence: fixed authority is file `c514c1fb-1cda-8125-8008-a606253a77a3`, page `482a7222-5a3b-8086-8008-a6072bd7e924` (`01 Foundations`), exactly 15 colors, exactly 9 typography styles, and every authored spacing, radius, dimension, border-width, and opacity value. [VERIFIED: `.planning/PROJECT.md:44-48`; `.planning/REQUIREMENTS.md:26-31`] This repository's planning artifacts do not contain a complete literal token-name/value or font-file inventory. A second read-only MCP attempt this session again failed with `The Penpot plugin tab appears to be suspended by the browser (no heartbeat for 30s)`. [VERIFIED: Penpot MCP retry, 2026-09-17]
+   - Planning disposition: the first design task must wake/focus the specified Penpot file/page, extract the complete live manifest, export references, and validate the fixed counts before any token/style code is written. Fail closed if MCP remains unavailable or if counts/source IDs do not reconcile. Preserve any exact values already present in project context or the supplied reference unchanged; never infer missing values or fonts.
 
-3. **Does the native Storybook entry provide sufficient Expo-web navigation in the final resolved versions?**
-   - What we know: official Storybook docs support running native Storybook directly on web. [CITED: https://storybookjs.github.io/react-native/docs/intro/]
-   - What's unclear: this exact unresolved Expo/Storybook lockfile has not been launched.
-   - Recommendation: make a representative `Foundations/Smoke` story the first web acceptance probe; do not add Vite unless the locked project decision is revisited.
+3. **Expo-web Storybook approach — RESOLVED**
+   - Evidence: official React Native Storybook documentation states the native Storybook can run directly on React Native Web, and official Expo documentation runs web through `expo start --web`. [CITED: https://storybookjs.github.io/react-native/docs/intro/; CITED: https://docs.expo.dev/workflow/web/]
+   - Planning disposition: use the same native `withStorybook` entry through `cross-env STORYBOOK_ENABLED=true expo start --web`. Add an execution tracer smoke that starts the server, discovers a `Foundations/Smoke` story, renders it, records console/network failures, and exits non-zero on failure. `@storybook/react-native-web-vite` remains prohibited for Phase 1.
 
 ## Environment Availability
 
@@ -387,7 +386,7 @@ export function FoundationsRoot() {
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
 | WORK-01 | Locked Expo/RN project installs and typechecks | smoke | `npm ci && npm run typecheck` | ❌ Wave 0 |
-| WORK-04 | Expo web serves and discovers foundation stories | smoke/manual browser | `npm run storybook:web` plus browser check | ❌ Wave 0 |
+| WORK-04 | Expo web serves and discovers foundation stories | automated tracer smoke | `npm run test:storybook:web` | ❌ Wave 0 |
 | WORK-06 | Dependency set passes Expo validation | tooling | `npx expo install --check && npx expo-doctor@latest` | ❌ Wave 0 |
 | PNPT-01 | Versioned manifest contains foundation categories/source IDs | schema/unit | `npm test -- penpot-manifest.test.ts` | ❌ Wave 0 |
 | PNPT-02 | Every code token maps to a source record | unit | `npm test -- tokens.test.ts` | ❌ Wave 0 |
@@ -398,7 +397,7 @@ export function FoundationsRoot() {
 | FNDT-03 | Every manifest category value is exported | unit | `npm test -- tokens.test.ts` | ❌ Wave 0 |
 | FNDT-04 | Gallery imports semantic tokens and has no unexplained literals | lint/unit | `npm run lint && npm test -- tokens.test.ts` | ❌ Wave 0 |
 | FNDT-05 | Font gate and all authored family/weight mappings render | component/manual native follow-up | `npm test -- typography.test.tsx` | ❌ Wave 0 |
-| FNDT-06 | Every foundation category is discoverable/renderable | component/web smoke | `npm test -- foundations-story.test.tsx` plus browser check | ❌ Wave 0 |
+| FNDT-06 | Every foundation category is discoverable/renderable | component/web tracer smoke | `npm test -- foundations-story.test.tsx && npm run test:storybook:web` | ❌ Wave 0 |
 
 ### Sampling Rate
 
@@ -408,10 +407,10 @@ export function FoundationsRoot() {
 
 ### Wave 0 Gaps
 
-- [ ] Resolve the Expo 57 / Storybook 10.6 peer conflict and commit a clean lockfile.
+- [ ] Install the exact verified Storybook `10.5.0` family, commit the clean lockfile, assert no mixed Storybook patches with `npm ls`, and rerun both green Expo health commands.
 - [ ] Add Jest Expo/RNTL config and the manifest/token/story test files listed above.
 - [ ] Add `typecheck`, `lint`, `test`, `storybook`, and `storybook:web` scripts.
-- [ ] Add a deterministic browser smoke procedure (start server, open catalogue, verify story index and representative story render).
+- [ ] Add a deterministic browser tracer smoke (start Expo web with the native Storybook entry, discover/render `Foundations/Smoke`, collect console/network failures, stop the server, and fail non-zero on any error).
 - [ ] Wake Penpot MCP and generate the authoritative manifest/references before token implementation.
 
 ## Security Domain
@@ -459,7 +458,7 @@ export function FoundationsRoot() {
 - [React Native Storybook Metro configuration](https://storybookjs.github.io/react-native/docs/intro/configuration/metro-configuration/) — wrapper and production behavior.
 - [Penpot MCP](https://help.penpot.app/mcp/) — connection model, read/write capabilities, exports, and read-only safety.
 - [Penpot design tokens](https://help.penpot.app/user-guide/design-systems/design-tokens/) — token types and DTCG export.
-- npm registry metadata and local clean-room npm/Expo Doctor probes — exact versions, peer dependencies, legitimacy signals, and the Expo/Storybook conflict.
+- npm registry metadata and local clean-room npm/Expo Doctor probes — exact versions, peer dependencies, legitimacy signals, failing 10.6 evidence, and the passing complete 10.5.0 family.
 
 ### Secondary (MEDIUM confidence)
 
@@ -474,10 +473,10 @@ export function FoundationsRoot() {
 
 **Confidence breakdown:**
 
-- Standard stack: MEDIUM — official docs and registry verified, but the locked Expo/Storybook versions conflict.
+- Standard stack: HIGH — the exact 10.5.0 Storybook family and Expo-managed peer set were clean-installed, deduped, and passed both Expo health commands.
 - Architecture: MEDIUM — official framework patterns are clear; repository structure is a greenfield recommendation.
 - Penpot values: LOW — connector exists, but the active tab was suspended; only project-recorded IDs/counts are verified.
-- Pitfalls: HIGH for dependency conflict, MEDIUM for design/font workflow.
+- Pitfalls: HIGH for dependency-version findings, MEDIUM for design/font workflow.
 
 **Research date:** 2026-09-17
 **Valid until:** 2026-09-24 for dependency versions; 2026-10-17 for stable architecture patterns.
