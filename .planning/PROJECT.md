@@ -68,6 +68,7 @@ Create a faithful, reusable mobile component system from the Penpot source of tr
 | Treat web Storybook as secondary compatibility | A browser catalogue is useful but not worth expanding the first milestone's acceptance surface | — Pending |
 | Treat Penpot and its MCP as the design source of truth | Exact tokens, properties, variants, states, and references already exist there | — Pending |
 | Defer working product screens and backend flows | The first milestone is complete when the reusable system is proven in Storybook | — Pending |
+| Use the complete exact Storybook 10.5.0 family for Expo 57 implementation | Clean-room probing proved 10.5.0 with Expo-aligned native peers passes dependency-tree validation, `expo install --check`, and Expo Doctor 21/21; the inherited 10.6.0 stack entry fails Expo 57 safe-area compatibility | ✓ Supersedes the inherited Storybook 10.6.0 implementation baseline for Phase 1 |
 
 ## Evolution
 

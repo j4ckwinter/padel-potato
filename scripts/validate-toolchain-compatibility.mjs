@@ -146,6 +146,7 @@ function validateProbe(evidence) {
   assert(safeguards?.legacyPeerDeps === false, 'legacy peer resolution is forbidden');
   assert(safeguards?.overrides === false, 'dependency overrides are forbidden');
   assert(safeguards?.expoDoctorExclusions === false, 'Expo Doctor exclusions are forbidden');
+  assert(safeguards?.unresolvedDependencyWarnings === false, 'unresolved dependency warnings are forbidden');
 }
 
 async function main() {
