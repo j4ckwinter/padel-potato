@@ -12,7 +12,7 @@
 - [ ] **WORK-03**: Developer can launch the component catalogue in native Storybook on Android.
 - [ ] **WORK-04**: Developer can browse the shared Storybook stories locally through Expo web.
 - [ ] **WORK-05**: Production-mode app builds exclude Storybook code.
-- [ ] **WORK-06**: Developer can validate dependency compatibility through automated Expo health checks.
+- [x] **WORK-06**: Developer can validate dependency compatibility through automated Expo health checks.
 
 ### Penpot Provenance
 
@@ -135,7 +135,7 @@
 | WORK-03 | Phase 5 | Pending |
 | WORK-04 | Phase 1 | Pending |
 | WORK-05 | Phase 5 | Pending |
-| WORK-06 | Phase 1 | Pending |
+| WORK-06 | Phase 1 | Complete |
 | PNPT-01 | Phase 1 | Pending |
 | PNPT-02 | Phase 1 | Pending |
 | PNPT-03 | Phase 1 | Pending |
@@ -192,6 +192,7 @@
 | VRFY-05 | Phase 5 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 60 total
 - Mapped to phases: 60
 - Unmapped: 0
