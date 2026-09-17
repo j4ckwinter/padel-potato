@@ -18,7 +18,7 @@ created: "2026-09-17"
 | **Framework** | `jest-expo ~57.0.5` + `@testing-library/react-native 14.0.1` |
 | **Config file** | None — Wave 0 creates the Expo/Jest configuration |
 | **Quick run command** | `node scripts/validate-penpot-evidence.mjs && npm test -- --runInBand tests/color-typography-tokens.test.ts tests/scale-tokens.test.ts` |
-| **Full suite command** | `npm run typecheck && npm run lint && npm test -- --runInBand && node scripts/validate-penpot-evidence.mjs && node scripts/validate-toolchain-compatibility.mjs && npx expo install --check && npx expo-doctor@latest && npm run storybook:web:smoke` |
+| **Full suite command** | `npm run typecheck && npm run lint && npm test -- --runInBand && node scripts/validate-penpot-evidence.mjs && node scripts/validate-web-storybook-verification.mjs && node scripts/validate-toolchain-compatibility.mjs && npx expo install --check && npx expo-doctor@latest && npm run storybook:web:smoke` |
 | **Estimated runtime** | ~180 seconds after dependencies are installed |
 
 ## Sampling Rate
@@ -33,25 +33,25 @@ created: "2026-09-17"
 | Requirement | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |-------------|-----------------|-----------|-------------------|-------------|--------|
 | WORK-01 | Lockfile-backed install does not execute unapproved dependency overrides | install/typecheck | `npm ci && npm run typecheck` | ❌ W0 | ⬜ pending |
-| WORK-04 | Storybook is served only from the local Expo development entry | web smoke | `npm run storybook:web:smoke` | ❌ W0 | ⬜ pending |
+| WORK-04 | Storybook is served only from the local Expo development entry and all eight browser-review rows are complete | web smoke/ledger | `npm run storybook:web:smoke && node scripts/validate-web-storybook-verification.mjs` | ❌ W0 | ⬜ pending |
 | WORK-06 | Exact compatibility evidence and Expo checks report no mismatch | tooling | `node scripts/validate-toolchain-compatibility.mjs && npx expo install --check && npx expo-doctor@latest` | ❌ W0 | ⬜ pending |
 | PNPT-01 | MCP-derived data is normalized into the fixed `design-spec/` evidence scope | schema/file | `node scripts/validate-penpot-evidence.mjs` | ❌ W0 | ⬜ pending |
 | PNPT-02 | Every exported token has a Penpot source record | unit | `npm test -- --runInBand tests/color-typography-tokens.test.ts tests/scale-tokens.test.ts` | ❌ W0 | ⬜ pending |
 | PNPT-03 | Each retained reference render is present in the capture ledger | schema/file | `node scripts/validate-penpot-evidence.mjs` | ❌ W0 | ⬜ pending |
-| PNPT-04 | Deviations require source, platform, reason, and disposition | schema/file | `node scripts/validate-penpot-evidence.mjs` | ❌ W0 | ⬜ pending |
+| PNPT-04 | Deviations require source, platform, reason, and disposition and browser findings resolve to complete web entries | schema/file | `node scripts/validate-penpot-evidence.mjs && node scripts/validate-web-storybook-verification.mjs` | ❌ W0 | ⬜ pending |
 | FNDT-01 | Exactly 15 source-backed color tokens are exported | unit | `npm test -- --runInBand tests/color-typography-tokens.test.ts` | ❌ W0 | ⬜ pending |
 | FNDT-02 | Exactly 9 source-backed typography styles are exported | unit | `npm test -- --runInBand tests/color-typography-tokens.test.ts` | ❌ W0 | ⬜ pending |
 | FNDT-03 | Spacing, radius, dimension, border, and opacity manifest values are exported | unit | `npm test -- --runInBand tests/scale-tokens.test.ts` | ❌ W0 | ⬜ pending |
 | FNDT-04 | Foundation specimens consume token exports rather than unexplained literals | lint/unit | `npm run lint && npm test -- --runInBand tests/foundations-story.test.tsx` | ❌ W0 | ⬜ pending |
 | FNDT-05 | Typography waits for fonts and maps every authored family/weight | component | `npm test -- --runInBand tests/typography.test.tsx` | ❌ W0 | ⬜ pending |
-| FNDT-06 | Every foundation category has a discoverable, renderable story | component | `npm test -- --runInBand tests/foundations-story.test.tsx` | ❌ W0 | ⬜ pending |
+| FNDT-06 | Every foundation category has a discoverable, renderable, completed browser-review row | component/ledger | `npm test -- --runInBand tests/foundations-story.test.tsx && node scripts/validate-web-storybook-verification.mjs` | ❌ W0 | ⬜ pending |
 
 ## Wave 0 Requirements
 
 - [ ] Persist and validate the resolved Expo 57.0.23 / React Native 0.86.3 / React 19.2.3 / complete Storybook 10.5.0 family without `--force`, `--legacy-peer-deps`, mixed patches, or Expo Doctor exclusions.
 - [ ] Add Jest Expo and React Native Testing Library configuration.
 - [ ] Add `typecheck`, `lint`, `test`, `storybook`, and `storybook:web` scripts.
-- [ ] Create `scripts/validate-toolchain-compatibility.mjs`, `scripts/validate-penpot-evidence.mjs`, `tests/foundations-smoke.test.tsx`, `tests/color-typography-tokens.test.ts`, `tests/scale-tokens.test.ts`, `tests/typography.test.tsx`, and `tests/foundations-story.test.tsx`.
+- [ ] Create `scripts/validate-toolchain-compatibility.mjs`, `scripts/validate-penpot-evidence.mjs`, `scripts/validate-web-storybook-verification.mjs`, `tests/foundations-smoke.test.tsx`, `tests/color-typography-tokens.test.ts`, `tests/scale-tokens.test.ts`, `tests/typography.test.tsx`, and `tests/foundations-story.test.tsx`.
 - [ ] Add `scripts/smoke-storybook-web.mjs` and the non-watch `storybook:web:smoke` command for the native Storybook entry through Expo web.
 - [ ] Wake the Penpot MCP connection and capture the authoritative manifest and reference renders before token implementation.
 
