@@ -30,7 +30,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The screen presents the complete semantic colour palette, typography specimens, spacing scale, and radius values shown in Penpot.
   4. Foundation values and intentional deviations remain traceable to Penpot MCP data and reference renders.
   5. No product screens, app navigation, backend behavior, or runtime app integration are introduced.
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+- [ ] 01-01-PLAN.md — Approve package legitimacy and select a clean Expo/Storybook compatibility matrix.
+- [ ] 01-02-PLAN.md — Prove the Expo/Storybook/browser tracer and automated health gates.
+- [ ] 01-03-PLAN.md — Capture and validate authoritative Penpot evidence and reference renders.
+- [ ] 01-04-PLAN.md — Implement exact color, typography, and font-readiness contracts.
+- [ ] 01-05-PLAN.md — Implement all remaining foundation scales and the public token barrel.
+- [ ] 01-06-PLAN.md — Build complete token-driven Foundation specimens and stories.
+- [ ] 01-07-PLAN.md — Prove local Expo-web navigation and close comparison evidence.
 **UI hint**: yes
 
 ### Phase 2: Primitives, Assets, and Component Contracts
