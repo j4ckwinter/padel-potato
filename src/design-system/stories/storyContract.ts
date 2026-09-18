@@ -1,3 +1,5 @@
+import { phase3SourceEvidence } from '../components/sourceRegistry';
+
 export const storyTaxonomy = Object.freeze([
   'Canonical',
   'Variants',
@@ -200,8 +202,6 @@ export const phase2Backstops = Object.freeze({
     status: 'host-contract',
   }),
 } as const);
-
-import { phase3SourceEvidence } from '../components/sourceRegistry';
 
 export type Phase3PublicExport =
   | 'Button'

@@ -16,6 +16,8 @@
     "validate:design-source": "node scripts/inspect-penpot-source.mjs --check --self-test",
     "validate:phase2-verification": "node scripts/validate-phase-2-verification.mjs",
     "verify:phase2": "npm run typecheck && npm run lint && npm test -- --runInBand && node scripts/validate-penpot-evidence.mjs && node scripts/validate-penpot-assets.mjs && node scripts/validate-toolchain-compatibility.mjs && npm run validate:phase2-verification && npm run storybook:web:smoke",
+    "validate:phase3-verification": "node scripts/validate-phase-3-verification.mjs",
+    "verify:phase3": "npm run typecheck && npm run lint && npm test -- --runInBand && npm run validate:design-source && node scripts/validate-phase-3-components.mjs && node scripts/validate-phase-3-artwork.mjs && npm run validate:phase3-verification && npm run storybook:web:smoke",
     "storybook:native": "cross-env STORYBOOK_ENABLED=true expo start",
     "storybook:web": "cross-env STORYBOOK_ENABLED=true expo start --web",
     "storybook:web:smoke": "node scripts/smoke-storybook-web.mjs",
