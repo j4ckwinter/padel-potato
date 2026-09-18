@@ -6,11 +6,19 @@ import { describe, expect, test } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { SvgXml } from 'react-native-svg';
 
-import { BrandLockup } from '../src/design-system/assets/BrandLockup';
-import { BrandLockupStacked } from '../src/design-system/assets/BrandLockupStacked';
+import {
+  BrandLockup,
+  type BrandLockupProps,
+} from '../src/design-system/assets/BrandLockup';
+import {
+  BrandLockupStacked,
+  type BrandLockupStackedProps,
+} from '../src/design-system/assets/BrandLockupStacked';
 import { Icon, type IconProps } from '../src/design-system/assets/Icon';
 import { iconNames, iconRegistry } from '../src/design-system/assets/generated/iconRegistry';
 import { colors, dimensions } from '../src/design-system/tokens';
+import * as assetExports from '../src/design-system/assets';
+import * as designSystemExports from '../src/design-system';
 
 const expectedIconNames = [
   'add', 'back', 'calendar', 'check', 'chevron', 'clock', 'close', 'court', 'eye',
@@ -187,8 +195,18 @@ describe('brand lockup asset contracts', () => {
   test.each(['height', 'style', 'color', 'source', 'image', 'copy', 'ratio']) (
     'rejects the unsupported %s override',
     async (key) => {
+      const props = { width: 300, [key]: 'override' } as unknown as BrandLockupProps;
+      const stackedProps = {
+        width: 300,
+        [key]: 'override',
+      } as unknown as BrandLockupStackedProps;
       await expect(
-        render(<BrandLockup {...({ width: 300, [key]: 'override' } as never)} />),
+        render(<BrandLockup {...props} />),
+      ).rejects.toThrow(
+        new RegExp(`Unsupported design-system value: ${key}\\. Supported values:`),
+      );
+      await expect(
+        render(<BrandLockupStacked {...stackedProps} />),
       ).rejects.toThrow(
         new RegExp(`Unsupported design-system value: ${key}\\. Supported values:`),
       );
@@ -204,5 +222,19 @@ describe('brand lockup asset contracts', () => {
       expect(source).toMatch(/design-spec\/assets\/normalized\/brand-lockup/u);
       expect(source).not.toMatch(/https?:|fetch\(|XMLHttpRequest|loading|placeholder|penpot-assets\.json/u);
     }
+  });
+
+  test('publishes narrow asset and root barrel identities', () => {
+    const horizontalProps: BrandLockupProps = { width: 300 };
+    const stackedProps: BrandLockupStackedProps = { width: 300 };
+
+    expect(horizontalProps.width).toBe(300);
+    expect(stackedProps.width).toBe(300);
+    expect(assetExports.BrandLockup).toBe(BrandLockup);
+    expect(assetExports.BrandLockupStacked).toBe(BrandLockupStacked);
+    expect(assetExports.Icon).toBe(Icon);
+    expect(designSystemExports.BrandLockup).toBe(BrandLockup);
+    expect(designSystemExports.BrandLockupStacked).toBe(BrandLockupStacked);
+    expect(designSystemExports.Icon).toBe(Icon);
   });
 });
