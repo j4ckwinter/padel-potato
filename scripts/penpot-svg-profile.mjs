@@ -1,10 +1,21 @@
-const ALLOWED_TAGS = new Set(['svg', 'path', 'rect', 'ellipse']);
-const ALLOWED_ATTRIBUTES = new Set([
-  'xmlns', 'width', 'height', 'viewBox', 'fill', 'fill-opacity', 'stroke',
-  'stroke-width', 'stroke-opacity', 'stroke-linecap', 'stroke-linejoin',
-  'data-penpot-source-id', 'data-penpot-shape-id', 'd', 'x', 'y', 'cx',
-  'cy', 'rx', 'ry',
-]);
+const ALLOWED_ATTRIBUTES_BY_TAG = {
+  ellipse: new Set([
+    'cx', 'cy', 'data-penpot-shape-id', 'fill', 'rx', 'ry', 'stroke',
+    'stroke-linejoin', 'stroke-opacity', 'stroke-width',
+  ]),
+  path: new Set([
+    'd', 'data-penpot-shape-id', 'fill', 'stroke', 'stroke-linecap',
+    'stroke-linejoin', 'stroke-opacity', 'stroke-width',
+  ]),
+  rect: new Set([
+    'data-penpot-shape-id', 'fill', 'height', 'rx', 'ry', 'stroke',
+    'stroke-linejoin', 'stroke-opacity', 'stroke-width', 'width', 'x', 'y',
+  ]),
+  svg: new Set([
+    'data-penpot-source-id', 'fill', 'height', 'viewBox', 'width', 'xmlns',
+  ]),
+};
+const ALLOWED_TAGS = new Set(Object.keys(ALLOWED_ATTRIBUTES_BY_TAG));
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 const RAW_PAINT = '#0e1716';
 const NORMALIZED_PAINT = 'currentColor';
@@ -42,7 +53,10 @@ function parseStartTag(xml, start, nameForErrors) {
     const attribute = rest.match(/^([A-Za-z][A-Za-z0-9-]*)\s*=\s*"([^"<>]*)"/u);
     assert(attribute, `${nameForErrors} has malformed attributes on ${tag}`);
     const [, attributeName, value] = attribute;
-    assert(ALLOWED_ATTRIBUTES.has(attributeName), `${nameForErrors} has unsupported attribute ${attributeName}`);
+    assert(
+      ALLOWED_ATTRIBUTES_BY_TAG[tag].has(attributeName),
+      `${nameForErrors} has unsupported attribute ${attributeName} on ${tag}`,
+    );
     assert(!attributes.has(attributeName), `${nameForErrors} has duplicate attribute ${attributeName}`);
     assert(!value.includes('&'), `${nameForErrors} contains an entity or character reference`);
     attributes.set(attributeName, value);

@@ -158,6 +158,8 @@ function main() {
   expectSvgFailure('trailing content', safeSvg, safeRecord, (xml) => `${xml}<svg/>`);
   expectSvgFailure('wrong source-node attribute', safeSvg, safeRecord, (xml) => xml.replace(safeRecord.sourceNodeId, manifest.icons[1].sourceNodeId));
   expectSvgFailure('additional paint', safeSvg, safeRecord, (xml) => xml.replace('fill="none"', 'fill="#ffffff"'));
+  expectSvgFailure('alternate child namespace', safeSvg, safeRecord, (xml) => xml.replace('<path ', '<path xmlns="https://evil.example" '));
+  expectSvgFailure('redundant child namespace', safeSvg, safeRecord, (xml) => xml.replace('<path ', '<path xmlns="http://www.w3.org/2000/svg" '));
   const disposableRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'padel-assets-'));
   try {
     fs.cpSync(path.join(repoRoot, 'design-spec'), path.join(disposableRoot, 'design-spec'), { recursive: true });

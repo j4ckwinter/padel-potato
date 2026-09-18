@@ -95,6 +95,8 @@ describe('Penpot asset evidence', () => {
     expect(exporter).toContain('normalized bytes are not the deterministic paint-only transform');
     expect(profile).toContain('source-node attribute changed');
     expect(profile).toContain('unsupported authored paint');
+    expect(profile).toContain('ALLOWED_ATTRIBUTES_BY_TAG');
+    expect(profile).not.toContain("'data-penpot-shape-id', 'd', 'x', 'y', 'cx'");
   });
 });
 
