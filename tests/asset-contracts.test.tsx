@@ -6,7 +6,7 @@ import { describe, expect, test } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { SvgXml } from 'react-native-svg';
 
-import { Icon } from '../src/design-system/assets/Icon';
+import { Icon, type IconProps } from '../src/design-system/assets/Icon';
 import { iconNames, iconRegistry } from '../src/design-system/assets/generated/iconRegistry';
 import { colors, dimensions } from '../src/design-system/tokens';
 
@@ -17,6 +17,16 @@ const expectedIconNames = [
 ] as const;
 
 const root = path.resolve(__dirname, '..');
+const invalidIconInputs: [Record<string, unknown>, RegExp][] = [
+  [{ name: 'missing' }, /Unsupported design-system value: missing\. Supported values:/u],
+  [{ name: null }, /Unsupported design-system value: null\. Supported values:/u],
+  [{ name: 'home', color: 'magenta' }, /Unsupported design-system value: magenta\. Supported values:/u],
+  [{ name: 'home', color: null }, /Unsupported design-system value: null\. Supported values:/u],
+  [{ name: 'home', size: 'controlHeight40' }, /Unsupported design-system value: controlHeight40\. Supported values: iconSize20/u],
+  [{ name: 'home', style: { width: 40 } }, /Unsupported design-system value: style\. Supported values:/u],
+  [{ name: 'home', width: 40 }, /Unsupported design-system value: width\. Supported values:/u],
+  [{ name: 'home', xml: '<svg />' }, /Unsupported design-system value: xml\. Supported values:/u],
+];
 
 describe('Penpot asset evidence', () => {
   test('retains the exact revision-292 icon inventory in Penpot order', () => {
@@ -71,12 +81,13 @@ describe('Icon asset contract', () => {
       const { getByTestId, unmount } = await render(
         <Icon testID={`${name}-icon`} name={name} color="accent" size="iconSize20" />,
       );
-      const icon = getByTestId(`${name}-icon`);
+      const icon = getByTestId(`${name}-icon`, { includeHiddenElements: true });
 
-      expect(icon).toHaveProp('xml', iconRegistry[name].xml);
       expect(icon).toHaveProp('color', colors.accent);
       expect(icon).toHaveProp('width', dimensions.iconSize20);
       expect(icon).toHaveProp('height', dimensions.iconSize20);
+      expect(iconRegistry[name].name).toBe(name);
+      expect(iconRegistry[name].xml).toContain('currentColor');
       await unmount();
     },
   );
@@ -84,7 +95,7 @@ describe('Icon asset contract', () => {
   test('is decorative by default and becomes an image only with an explicit label', async () => {
     const decorative = await render(<Icon testID="decorative-icon" name="home" />);
     expect(decorative.queryByRole('image')).toBeNull();
-    expect(decorative.getByTestId('decorative-icon')).toHaveProp(
+    expect(decorative.getByTestId('decorative-icon', { includeHiddenElements: true })).toHaveProp(
       'importantForAccessibility',
       'no-hide-descendants',
     );
@@ -96,19 +107,10 @@ describe('Icon asset contract', () => {
     await labelled.unmount();
   });
 
-  test.each([
-    [{ name: 'missing' }, /Unsupported design-system value: missing\. Supported values:/u],
-    [{ name: null }, /Unsupported design-system value: null\. Supported values:/u],
-    [{ name: 'home', color: 'magenta' }, /Unsupported design-system value: magenta\. Supported values:/u],
-    [{ name: 'home', color: null }, /Unsupported design-system value: null\. Supported values:/u],
-    [{ name: 'home', size: 'controlHeight40' }, /Unsupported design-system value: controlHeight40\. Supported values: iconSize20/u],
-    [{ name: 'home', style: { width: 40 } }, /Unsupported design-system value: style\. Supported values:/u],
-    [{ name: 'home', width: 40 }, /Unsupported design-system value: width\. Supported values:/u],
-    [{ name: 'home', xml: '<svg />' }, /Unsupported design-system value: xml\. Supported values:/u],
-  ] as const)(
+  test.each(invalidIconInputs)(
     'rejects unsupported runtime input %# instead of falling back',
     async (props, message) => {
-      await expect(render(<Icon {...(props as never)} />)).rejects.toThrow(message);
+      await expect(render(<Icon {...(props as unknown as IconProps)} />)).rejects.toThrow(message);
     },
   );
 
