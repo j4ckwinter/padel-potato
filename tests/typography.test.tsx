@@ -9,6 +9,7 @@ jest.mock('expo-font', () => ({
 }));
 
 import { FoundationFontGate } from '../src/design-system/fonts/FoundationFontGate';
+import { colors, spacing } from '../src/design-system/tokens';
 import preview from '../.rnstorybook/preview';
 
 const content = <Text>Authoritative typography specimen</Text>;
@@ -29,17 +30,38 @@ describe('FoundationFontGate', () => {
 
   it('is applied once at the shared Storybook preview boundary', async () => {
     mockUseFonts.mockReturnValue([false, null]);
-    const decorators = preview.decorators as unknown as Array<(
-      Story: () => React.JSX.Element,
-    ) => React.JSX.Element>;
+    const decorators = preview.decorators as unknown as Array<
+      (Story: () => React.JSX.Element) => React.JSX.Element
+    >;
     const decorator = decorators[0];
 
     expect(decorators).toHaveLength(1);
-    const { getByLabelText, queryByText } = await render(
+    const { getByLabelText, queryByTestId, queryByText } = await render(
       decorator(() => <Text>Storybook typography specimen</Text>),
     );
     expect(getByLabelText('Loading foundation fonts')).toBeVisible();
+    expect(queryByTestId('storybook-catalogue-frame')).toBeNull();
     expect(queryByText('Storybook typography specimen')).toBeNull();
+  });
+
+  it('composes the token-backed mobile catalogue frame inside the font gate', async () => {
+    mockUseFonts.mockReturnValue([true, null]);
+    const decorators = preview.decorators as unknown as Array<
+      (Story: () => React.JSX.Element) => React.JSX.Element
+    >;
+
+    const { getByTestId, getByText } = await render(
+      decorators[0](() => <Text>Framed Storybook specimen</Text>),
+    );
+
+    expect(getByTestId('storybook-catalogue-frame')).toHaveStyle({
+      backgroundColor: colors.canvas,
+      flex: 1,
+      gap: spacing.space24,
+      paddingHorizontal: spacing.space16,
+      paddingVertical: spacing.space24,
+    });
+    expect(getByText('Framed Storybook specimen')).toBeVisible();
   });
 
   it('renders children only after all authoritative font assets load', async () => {
@@ -54,7 +76,10 @@ describe('FoundationFontGate', () => {
   });
 
   it('shows an accessible diagnostic and withholds children after a load error', async () => {
-    mockUseFonts.mockReturnValue([false, new Error('Inter 600 could not be decoded')]);
+    mockUseFonts.mockReturnValue([
+      false,
+      new Error('Inter 600 could not be decoded'),
+    ]);
 
     const { getByLabelText, getByText, queryByText } = await render(
       <FoundationFontGate>{content}</FoundationFontGate>,

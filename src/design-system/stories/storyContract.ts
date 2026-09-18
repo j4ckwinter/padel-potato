@@ -57,7 +57,9 @@ const categories = (
   }) satisfies Readonly<Record<StoryCategory, StoryApplicability>>;
 
 const noState = (name: string) =>
-  inapplicable(`${name} is presentational and has no authored transient state.`);
+  inapplicable(
+    `${name} is presentational and has no authored transient state.`,
+  );
 const noInteraction = (name: string) =>
   inapplicable(`${name} exposes no callback or product interaction.`);
 
@@ -127,7 +129,9 @@ export const phase2StoryContracts = Object.freeze({
     categories: categories(
       story('Canonical'),
       story('Variants'),
-      inapplicable('BrandLockup is synchronous fixed local artwork with no loading, empty, or transient state.'),
+      inapplicable(
+        'BrandLockup is synchronous fixed local artwork with no loading, empty, or transient state.',
+      ),
       story('Boundaries'),
       noInteraction('BrandLockup'),
     ),
@@ -137,7 +141,9 @@ export const phase2StoryContracts = Object.freeze({
     categories: categories(
       story('Canonical'),
       story('Variants'),
-      inapplicable('BrandLockupStacked is synchronous fixed local artwork with no loading, empty, or transient state.'),
+      inapplicable(
+        'BrandLockupStacked is synchronous fixed local artwork with no loading, empty, or transient state.',
+      ),
       story('Boundaries'),
       noInteraction('BrandLockupStacked'),
     ),
@@ -166,7 +172,10 @@ export const phase2StorySources = Object.freeze({
   Pressable: source(foundationsPageId, '482a7222-5a3b-8086-8008-a60e5e62fb1e'),
   Icon: source(componentsPageId, '482a7222-5a3b-8086-8008-a60e7bbc99e5'),
   BrandLockup: source(componentsPageId, '482a7222-5a3b-8086-8008-a61e9426c83d'),
-  BrandLockupStacked: source(componentsPageId, '482a7222-5a3b-8086-8008-a62b8a2c0f47'),
+  BrandLockupStacked: source(
+    componentsPageId,
+    '482a7222-5a3b-8086-8008-a62b8a2c0f47',
+  ),
 } as const satisfies Readonly<Record<Phase2PublicExport, StorySourceIdentity>>);
 
 export function formatStorySourceIdentity(sourceIdentity: StorySourceIdentity) {
@@ -184,11 +193,10 @@ export const phase2Backstops = Object.freeze({
   longText: Object.freeze({
     exports: Object.freeze(['Text', 'Pressable'] as const),
     constrainedWidthRendered: true,
-    preservedAccessibleName: 'Activate example',
+    preservedAccessibleName: 'Long-content action',
     reachableActionWitness: 'boundary-long-text-action',
     requiresNative200PercentReview: true,
     nativeStatus: 'deferred-to-phase-5',
     status: 'host-contract',
   }),
 } as const);
-
