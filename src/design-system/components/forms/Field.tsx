@@ -10,6 +10,11 @@ import { IconButton } from '../actions';
 
 export const editableFieldTypes = Object.freeze(['text', 'password', 'search'] as const);
 export const triggerFieldTypes = Object.freeze(['select', 'date', 'time'] as const);
+export const fieldTypes = Object.freeze([
+  ...editableFieldTypes,
+  ...triggerFieldTypes,
+  'stepper',
+] as const);
 export const fieldStatuses = Object.freeze(['default', 'success', 'error'] as const);
 
 export type EditableFieldType = (typeof editableFieldTypes)[number];
@@ -33,32 +38,43 @@ type FieldMessageProps = DefaultMessageProps | ValidationMessageProps;
 type FieldBaseProps = Readonly<{
   disabled?: boolean;
   label: string;
-  placeholder?: string;
   required?: boolean;
   value: string;
 }> & FieldMessageProps;
 
-export type EditableFieldProps = FieldBaseProps &
+type FieldPlaceholderProps = Readonly<{
+  placeholder?: string;
+}>;
+
+export type EditableFieldProps = FieldBaseProps & FieldPlaceholderProps &
   Readonly<{
     onChangeText: (value: string) => void;
     readOnly?: boolean;
     type: EditableFieldType;
   }>;
 
-export type TriggerFieldProps = FieldBaseProps &
+export type TriggerFieldProps = FieldBaseProps & FieldPlaceholderProps &
   Readonly<{
     onPress: (event: GestureResponderEvent) => void;
     type: TriggerFieldType;
   }>;
 
-export type FieldProps = EditableFieldProps | TriggerFieldProps;
+export type StepperFieldProps = FieldBaseProps &
+  Readonly<{
+    decrementDisabled?: boolean;
+    incrementDisabled?: boolean;
+    onDecrement: () => void;
+    onIncrement: () => void;
+    type: 'stepper';
+  }>;
+
+export type FieldProps = EditableFieldProps | TriggerFieldProps | StepperFieldProps;
 
 const commonRuntimeProps = Object.freeze([
   'disabled',
   'helperText',
   'label',
   'message',
-  'placeholder',
   'required',
   'status',
   'type',
@@ -68,12 +84,22 @@ const commonRuntimeProps = Object.freeze([
 const editableRuntimeProps = Object.freeze([
   ...commonRuntimeProps,
   'onChangeText',
+  'placeholder',
   'readOnly',
 ] as const);
 
 const triggerRuntimeProps = Object.freeze([
   ...commonRuntimeProps,
   'onPress',
+  'placeholder',
+] as const);
+
+const stepperRuntimeProps = Object.freeze([
+  ...commonRuntimeProps,
+  'decrementDisabled',
+  'incrementDisabled',
+  'onDecrement',
+  'onIncrement',
 ] as const);
 
 const unsupported = (value: unknown, supported: readonly unknown[]): never => {
@@ -88,12 +114,6 @@ const isNonEmptyString = (value: unknown): value is string =>
 function validateCommonProps(props: FieldProps) {
   if (!isNonEmptyString(props.label)) unsupported(props.label, ['non-empty label']);
   if (typeof props.value !== 'string') unsupported(props.value, ['string value']);
-  if (
-    typeof props.placeholder !== 'undefined' &&
-    !isNonEmptyString(props.placeholder)
-  ) {
-    unsupported(props.placeholder, ['non-empty placeholder']);
-  }
   if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
     unsupported(props.disabled, [true, false]);
   }
@@ -122,17 +142,28 @@ function validateCommonProps(props: FieldProps) {
 
 function validateFieldProps(props: FieldProps) {
   const type = props.type;
-  const allTypes = [...editableFieldTypes, ...triggerFieldTypes] as const;
-  if (!allTypes.includes(type as (typeof allTypes)[number])) {
-    unsupported(type, allTypes);
+  if (!fieldTypes.includes(type as (typeof fieldTypes)[number])) {
+    unsupported(type, fieldTypes);
   }
 
   const editable = editableFieldTypes.includes(type as EditableFieldType);
-  const supportedKeys = editable ? editableRuntimeProps : triggerRuntimeProps;
+  const trigger = triggerFieldTypes.includes(type as TriggerFieldType);
+  const supportedKeys = editable
+    ? editableRuntimeProps
+    : trigger
+      ? triggerRuntimeProps
+      : stepperRuntimeProps;
   for (const key of Object.keys(props)) {
     if (!supportedKeys.includes(key as never)) unsupported(key, supportedKeys);
   }
   validateCommonProps(props);
+
+  if (editable || trigger) {
+    const placeholder = (props as EditableFieldProps | TriggerFieldProps).placeholder;
+    if (typeof placeholder !== 'undefined' && !isNonEmptyString(placeholder)) {
+      unsupported(placeholder, ['non-empty placeholder']);
+    }
+  }
 
   if (editable) {
     const editableProps = props as EditableFieldProps;
@@ -145,10 +176,26 @@ function validateFieldProps(props: FieldProps) {
     ) {
       unsupported(editableProps.readOnly, [true, false]);
     }
-  } else {
+  } else if (trigger) {
     const triggerProps = props as TriggerFieldProps;
     if (typeof triggerProps.onPress !== 'function') {
       unsupported(triggerProps.onPress, ['onPress callback']);
+    }
+  } else {
+    const stepperProps = props as StepperFieldProps;
+    if (!isNonEmptyString(stepperProps.value)) {
+      unsupported(stepperProps.value, ['non-empty stepper value']);
+    }
+    if (typeof stepperProps.onDecrement !== 'function') {
+      unsupported(stepperProps.onDecrement, ['onDecrement callback']);
+    }
+    if (typeof stepperProps.onIncrement !== 'function') {
+      unsupported(stepperProps.onIncrement, ['onIncrement callback']);
+    }
+    for (const bound of [stepperProps.decrementDisabled, stepperProps.incrementDisabled]) {
+      if (typeof bound !== 'undefined' && typeof bound !== 'boolean') {
+        unsupported(bound, [true, false]);
+      }
     }
   }
 }
@@ -196,7 +243,6 @@ function FieldShell({ children, props }: FieldShellProps) {
       style={[
         styles.field,
         supportingText ? styles.fieldWithSupportingText : styles.fieldWithoutSupportingText,
-        props.disabled ? styles.disabled : undefined,
       ]}
       testID="field"
     >
@@ -239,6 +285,7 @@ function EditableField(props: EditableFieldProps) {
             borderColor: focused ? colors.focusRing : statusBorderColor(status),
             borderWidth: focused ? borders.focusRingWidth : borders.borderDefault,
           },
+          props.disabled ? styles.disabled : undefined,
         ]}
         testID="field-control"
       >
@@ -321,12 +368,86 @@ function TriggerField(props: TriggerFieldProps) {
   );
 }
 
+type StepperActionProps = Readonly<{
+  disabled: boolean;
+  label: string;
+  onPress: () => void;
+  symbol: '\u2212' | '+';
+}>;
+
+function StepperAction({ disabled, label, onPress, symbol }: StepperActionProps) {
+  return (
+    <Pressable
+      accessibilityLabel={label}
+      accessibilityRole="button"
+      disabled={disabled}
+      onPress={onPress}
+      size="controlHeight44"
+      style={styles.stepperAction}
+    >
+      <View
+        accessible={false}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+        style={styles.stepperActionContent}
+      >
+        <Text variant="heading">{symbol}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+function StepperField(props: StepperFieldProps) {
+  const status = props.status ?? 'default';
+  const globallyDisabled = props.disabled ?? false;
+  return (
+    <FieldShell props={props}>
+      <View
+        style={[
+          styles.control,
+          styles.stepperControl,
+          { borderColor: statusBorderColor(status) },
+        ]}
+        testID="field-control"
+      >
+        <View
+          accessibilityHint={accessibilityHintFor(props)}
+          accessibilityLabel={`${accessibleName(props.label, props.required ?? false)} value`}
+          accessibilityValue={{ text: props.value }}
+          accessible
+          style={[styles.stepperValue, globallyDisabled ? styles.disabled : undefined]}
+          testID="field-stepper-value"
+        >
+          <Text variant="body">{props.value}</Text>
+        </View>
+        <View style={styles.stepperActions}>
+          <StepperAction
+            disabled={globallyDisabled || (props.decrementDisabled ?? false)}
+            label={`Decrease ${props.label}`}
+            onPress={props.onDecrement}
+            symbol={'\u2212'}
+          />
+          <StepperAction
+            disabled={globallyDisabled || (props.incrementDisabled ?? false)}
+            label={`Increase ${props.label}`}
+            onPress={props.onIncrement}
+            symbol="+"
+          />
+        </View>
+      </View>
+    </FieldShell>
+  );
+}
+
 export function Field(props: FieldProps) {
   validateFieldProps(props);
   if (editableFieldTypes.includes(props.type as EditableFieldType)) {
     return <EditableField {...(props as EditableFieldProps)} />;
   }
-  return <TriggerField {...(props as TriggerFieldProps)} />;
+  if (triggerFieldTypes.includes(props.type as TriggerFieldType)) {
+    return <TriggerField {...(props as TriggerFieldProps)} />;
+  }
+  return <StepperField {...(props as StepperFieldProps)} />;
 }
 
 const styles = StyleSheet.create({
@@ -371,6 +492,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 4,
     minHeight: 16,
+  },
+  stepperAction: {
+    height: 44,
+    width: 44,
+  },
+  stepperActionContent: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  stepperActions: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 4,
+  },
+  stepperControl: {
+    backgroundColor: colors.surface,
+    borderWidth: borders.borderDefault,
+    paddingLeft: 16,
+    paddingRight: 4,
+  },
+  stepperValue: {
+    flex: 1,
+    justifyContent: 'center',
   },
   trigger: {
     height: 52,

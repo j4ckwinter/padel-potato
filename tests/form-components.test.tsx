@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, render, userEvent } from '@testing-library/react-native';
+import { act, fireEvent, render, userEvent } from '@testing-library/react-native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -367,7 +367,9 @@ describe('Field focus, geometry, and content boundaries', () => {
       />,
     );
     const input = screen.getByLabelText('Game name');
-    fireEvent(input, 'focus', { nativeEvent: {} });
+    await act(async () => {
+      fireEvent(input, 'focus', { nativeEvent: {} });
+    });
     expect(flattenedStyle(screen.getByTestId('field-control').props.style)).toEqual(
       expect.objectContaining({ borderColor: colors.focusRing, borderWidth: 2, height: 52 }),
     );
@@ -375,7 +377,9 @@ describe('Field focus, geometry, and content boundaries', () => {
       expect.objectContaining({ minHeight: 84, width: 350 }),
     );
 
-    fireEvent(input, 'blur', { nativeEvent: {} });
+    await act(async () => {
+      fireEvent(input, 'blur', { nativeEvent: {} });
+    });
     expect(flattenedStyle(screen.getByTestId('field-control').props.style)).toEqual(
       expect.objectContaining({ borderColor: colors.border, borderWidth: 1 }),
     );
@@ -484,6 +488,6 @@ describe('Field Storybook contract', () => {
     expect(boundaryJson).toContain('Phase 5');
 
     const interactive = FieldInteractive.render?.({} as never, {} as never) as React.ReactElement;
-    expect(JSON.stringify(interactive)).toContain('InteractiveFieldHarness');
+    expect((interactive.type as { name?: string }).name).toBe('InteractiveFieldHarness');
   });
 });
