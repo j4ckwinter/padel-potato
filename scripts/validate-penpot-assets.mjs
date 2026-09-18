@@ -4,15 +4,9 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BRAND_SOURCES, FILE_ID, ICON_SOURCES, PAGE_ID, REVISION, generateAssetOutputs } from './export-penpot-assets.mjs';
+import { normalizeRawSvg, parseSvgProfile } from './penpot-svg-profile.mjs';
 
 const SHA = /^[a-f0-9]{64}$/;
-const FORBIDDEN = /<script|<style|foreignObject|\son[a-z]+\s*=|(?:href|src)="https?:|xlink:href|<image|javascript:/i;
-const ALLOWED_TAGS = new Set(['svg', 'path', 'rect', 'ellipse']);
-const ALLOWED_ATTRIBUTES = new Set([
-  'xmlns', 'width', 'height', 'viewBox', 'fill', 'fill-opacity', 'stroke', 'stroke-width',
-  'stroke-opacity', 'stroke-linecap', 'stroke-linejoin', 'data-penpot-source-id',
-  'data-penpot-shape-id', 'd', 'x', 'y', 'cx', 'cy', 'rx', 'ry',
-]);
 const sha256 = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 const assert = (ok, message) => { if (!ok) throw new Error(message); };
 
@@ -28,20 +22,7 @@ function resolveInside(repoRoot, relative, expectedRoot, extension) {
 }
 
 export function validateSvg(xml, record, semantic = true) {
-  assert(!FORBIDDEN.test(xml), `${record.name} contains unsafe or external SVG content`);
-  assert(!/NaN|Infinity/.test(xml), `${record.name} contains non-finite numeric content`);
-  assert(!/\bid="([^"]+)"[\s\S]*\bid="\1"/.test(xml), `${record.name} contains duplicate ids`);
-  for (const match of xml.matchAll(/<([A-Za-z][\w:-]*)\b([^>]*)>/g)) {
-    assert(ALLOWED_TAGS.has(match[1]), `${record.name} has unsupported tag ${match[1]}`);
-    for (const attribute of match[2].matchAll(/\s([A-Za-z_:][\w:.-]*)\s*=/g)) {
-      assert(ALLOWED_ATTRIBUTES.has(attribute[1]), `${record.name} has unsupported attribute ${attribute[1]}`);
-    }
-  }
-  const viewBox = xml.match(/viewBox="([^"]+)"/)?.[1].split(/\s+/).map(Number);
-  assert(viewBox?.length === 4 && viewBox.every(Number.isFinite), `${record.name} has invalid viewBox`);
-  assert(viewBox[2] === 20 && viewBox[3] === 20, `${record.name} canvas must be 20x20`);
-  assert(/stroke-width="1\.75"/.test(xml), `${record.name} has no authored 1.75 stroke`);
-  assert(semantic ? xml.includes('currentColor') : xml.includes('#0e1716'), `${record.name} paint evidence is invalid`);
+  return parseSvgProfile(xml, record, semantic);
 }
 
 export function validateAssetEvidence({ manifest, repoRoot }) {
@@ -64,6 +45,7 @@ export function validateAssetEvidence({ manifest, repoRoot }) {
     assert(SHA.test(record.normalizedSha256) && sha256(normalized) === record.normalizedSha256, `${record.name} normalized hash mismatch`);
     validateSvg(raw.toString('utf8'), record, false);
     validateSvg(normalized.toString('utf8'), record);
+    assert(normalizeRawSvg(raw.toString('utf8'), record) === normalized.toString('utf8'), `${record.name} normalized geometry differs from raw Penpot export`);
   }
   for (const [index, record] of manifest.brands.entries()) {
     const expected = BRAND_SOURCES[index];
@@ -85,9 +67,9 @@ function expectFailure(label, manifest, repoRoot, mutate) {
   assert(error, `controlled rejection did not fail: ${label}`);
 }
 
-function expectSvgFailure(label, xml, mutate) {
+function expectSvgFailure(label, xml, record, mutate) {
   let error;
-  try { validateSvg(mutate(xml), { name: label }); } catch (caught) { error = caught; }
+  try { validateSvg(mutate(xml), record); } catch (caught) { error = caught; }
   assert(error, `controlled SVG rejection did not fail: ${label}`);
 }
 
@@ -107,14 +89,23 @@ function main() {
   expectFailure('source', manifest, repoRoot, (copy) => { copy.icons[0].sourceId = 'spoofed'; });
   expectFailure('ratio', manifest, repoRoot, (copy) => { copy.brands[0].height = 71; });
   const safeSvg = fs.readFileSync(path.join(repoRoot, manifest.icons[0].normalizedPath), 'utf8');
-  expectSvgFailure('script', safeSvg, (xml) => xml.replace('</svg>', '<script/></svg>'));
-  expectSvgFailure('event', safeSvg, (xml) => xml.replace('<path ', '<path onclick="x" '));
-  expectSvgFailure('external', safeSvg, (xml) => xml.replace('<path ', '<path href="https://example.test/x" '));
-  expectSvgFailure('unsupported tag', safeSvg, (xml) => xml.replace('</svg>', '<foreignObject/></svg>'));
-  expectSvgFailure('unsupported attribute', safeSvg, (xml) => xml.replace('<path ', '<path vector-effect="x" '));
-  expectSvgFailure('canvas', safeSvg, (xml) => xml.replace(/viewBox="[^"]+"/, 'viewBox="0 0 24 24"'));
-  expectSvgFailure('stroke', safeSvg, (xml) => xml.replaceAll('stroke-width="1.75"', 'stroke-width="2"'));
-  expectSvgFailure('finite number', safeSvg, (xml) => xml.replace('width="20"', 'width="Infinity"'));
+  const safeRecord = manifest.icons[0];
+  expectSvgFailure('script', safeSvg, safeRecord, (xml) => xml.replace('</svg>', '<script/></svg>'));
+  expectSvgFailure('event', safeSvg, safeRecord, (xml) => xml.replace('<path ', '<path onclick="x" '));
+  expectSvgFailure('external', safeSvg, safeRecord, (xml) => xml.replace('<path ', '<path href="https://example.test/x" '));
+  expectSvgFailure('unsupported tag', safeSvg, safeRecord, (xml) => xml.replace('</svg>', '<foreignObject/></svg>'));
+  expectSvgFailure('unsupported attribute', safeSvg, safeRecord, (xml) => xml.replace('<path ', '<path vector-effect="x" '));
+  expectSvgFailure('canvas', safeSvg, safeRecord, (xml) => xml.replace(/viewBox="[^"]+"/, 'viewBox="0 0 24 24"'));
+  expectSvgFailure('stroke', safeSvg, safeRecord, (xml) => xml.replaceAll('stroke-width="1.75"', 'stroke-width="2"'));
+  expectSvgFailure('finite number', safeSvg, safeRecord, (xml) => xml.replace('width="20"', 'width="Infinity"'));
+  expectSvgFailure('doctype entity', safeSvg, safeRecord, (xml) => `<!DOCTYPE svg [<!ENTITY x SYSTEM "https://example.test/x">]>${xml.replace('</svg>', '&x;</svg>')}`);
+  expectSvgFailure('processing instruction', safeSvg, safeRecord, (xml) => `<?xml version="1.0"?>${xml}`);
+  expectSvgFailure('CDATA', safeSvg, safeRecord, (xml) => xml.replace('</svg>', '<![CDATA[unsafe]]></svg>'));
+  expectSvgFailure('malformed nesting', safeSvg, safeRecord, (xml) => xml.replace('</svg>', '</path></svg>'));
+  expectSvgFailure('text node', safeSvg, safeRecord, (xml) => xml.replace('</svg>', 'unsafe</svg>'));
+  expectSvgFailure('trailing content', safeSvg, safeRecord, (xml) => `${xml}<svg/>`);
+  expectSvgFailure('wrong source-node attribute', safeSvg, safeRecord, (xml) => xml.replace(safeRecord.sourceNodeId, manifest.icons[1].sourceNodeId));
+  expectSvgFailure('additional paint', safeSvg, safeRecord, (xml) => xml.replace('fill="none"', 'fill="#ffffff"'));
   const disposableRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'padel-assets-'));
   try {
     fs.cpSync(path.join(repoRoot, 'design-spec'), path.join(disposableRoot, 'design-spec'), { recursive: true });

@@ -82,6 +82,16 @@ describe('Penpot asset evidence', () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('controlled rejections and deterministic regeneration passed');
   });
+
+  test('generator derives normalized geometry only from raw Penpot bytes', () => {
+    const exporter = fs.readFileSync(path.join(root, 'scripts/export-penpot-assets.mjs'), 'utf8');
+    const profile = fs.readFileSync(path.join(root, 'scripts/penpot-svg-profile.mjs'), 'utf8');
+
+    expect(exporter).toContain('normalizeRawSvg(raw.toString');
+    expect(exporter).toContain('normalized bytes are not the deterministic paint-only transform');
+    expect(profile).toContain('source-node attribute changed');
+    expect(profile).toContain('unsupported authored paint');
+  });
 });
 
 describe('Icon asset contract', () => {

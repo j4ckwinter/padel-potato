@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { normalizeRawSvg } from './penpot-svg-profile.mjs';
 
 export const FILE_ID = 'c514c1fb-1cda-8125-8008-a606253a77a3';
 export const PAGE_ID = '482a7222-5a3b-8086-8008-a6073072bbb1';
@@ -41,8 +42,13 @@ function iconRecord(root, [name, designName, sourceId, sourceNodeId]) {
   const rawPath = `design-spec/assets/raw/${name}.svg`;
   const normalizedPath = `design-spec/assets/normalized/${name}.svg`;
   const raw = read(root, rawPath);
-  const normalized = read(root, normalizedPath);
-  const xml = normalized.toString('utf8');
+  const sourceRecord = { name, sourceNodeId };
+  const xml = normalizeRawSvg(raw.toString('utf8'), sourceRecord);
+  const normalized = Buffer.from(xml, 'utf8');
+  const checkedInNormalized = read(root, normalizedPath);
+  if (!normalized.equals(checkedInNormalized)) {
+    throw new Error(`${name} normalized bytes are not the deterministic paint-only transform of raw Penpot bytes`);
+  }
   const viewBox = xml.match(/viewBox="([^"]+)"/)?.[1].split(/\s+/).map(Number);
   if (!viewBox || viewBox.length !== 4) throw new Error(`${name} has no finite viewBox`);
   return { name, designName, sourceId, sourceNodeId, fileId: FILE_ID, pageId: PAGE_ID, revision: REVISION,
