@@ -3,10 +3,22 @@ import { fireEvent, render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
 import {
+  phase2Backstops,
   phase2StoryContracts,
   phase2StorySources,
   storyTaxonomy,
 } from '../src/design-system/stories/storyContract';
+import brandMeta, {
+  Boundaries as BrandBoundaries,
+  Canonical as BrandCanonical,
+  Variants as BrandVariants,
+} from '../src/design-system/assets/Brand.stories';
+import iconsMeta, {
+  Boundaries as IconBoundaries,
+  Canonical as IconCanonical,
+  Variants as IconVariants,
+} from '../src/design-system/assets/Icon.stories';
+import { iconNames } from '../src/design-system/assets/generated/iconRegistry';
 import layoutMeta, {
   Boundaries as LayoutBoundaries,
   Canonical as LayoutCanonical,
@@ -52,7 +64,16 @@ describe('Phase 2 Storybook contract', () => {
       'Interactive',
     ]);
 
-    for (const exportName of ['Text', 'Stack', 'Inline', 'Surface', 'Pressable'] as const) {
+    for (const exportName of [
+      'Text',
+      'Stack',
+      'Inline',
+      'Surface',
+      'Pressable',
+      'Icon',
+      'BrandLockup',
+      'BrandLockupStacked',
+    ] as const) {
       const contract = phase2StoryContracts[exportName];
       expect(Object.keys(contract.categories)).toEqual(storyTaxonomy);
 
@@ -167,5 +188,94 @@ describe('Phase 2 Storybook contract', () => {
     fireEvent.press(action);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(interactive.getByText('Activate example')).toBeVisible();
+  });
+
+  it('publishes the complete ordered icon gallery with closed controls', async () => {
+    expect(iconsMeta.title).toBe('Assets/Icons');
+    expect(iconsMeta.argTypes?.name?.options).toEqual(iconNames);
+    expect(iconsMeta.argTypes?.color?.options).toEqual(Object.keys(colors));
+    expect(iconsMeta.argTypes?.size?.options).toEqual(['iconSize20']);
+
+    const screen = await renderStory(IconVariants);
+    expect(
+      screen
+        .getAllByTestId(/^icon-gallery-/)
+        .map((node) => node.props.testID.replace('icon-gallery-', '')),
+    ).toEqual(iconNames);
+  });
+
+  it('renders both authored lockups with fixed ratios and no content or colour controls', async () => {
+    expect(brandMeta.title).toBe('Assets/Brand');
+    expect(brandMeta.argTypes).toEqual({});
+
+    const screen = await renderStory(BrandVariants);
+    expect(screen.getByTestId('brand-lockup-horizontal')).toHaveStyle({
+      height: 72,
+      width: 300,
+    });
+    expect(screen.getByTestId('brand-lockup-stacked')).toHaveStyle({
+      height: 56,
+      width: 300,
+    });
+    expect(screen.getAllByRole('image', { name: 'Padel Potato' })).toHaveLength(2);
+  });
+
+  it('renders exact retained Penpot identity in both asset Canonical stories', async () => {
+    const iconScreen = await renderStory(IconCanonical);
+    const iconSource = phase2StorySources.Icon;
+    expect(
+      iconScreen.getByText(
+        `Penpot ${iconSource.fileId} / ${iconSource.pageId} / revision ${iconSource.revision} / source ${iconSource.sourceId}`,
+      ),
+    ).toBeVisible();
+    await iconScreen.unmount();
+
+    const brandScreen = await renderStory(BrandCanonical);
+    for (const exportName of ['BrandLockup', 'BrandLockupStacked'] as const) {
+      const source = phase2StorySources[exportName];
+      expect(
+        brandScreen.getByText(
+          `Penpot ${source.fileId} / ${source.pageId} / revision ${source.revision} / source ${source.sourceId}`,
+        ),
+      ).toBeVisible();
+    }
+  });
+
+  it('distinguishes decorative and labelled icons and scales local assets by authored ratios', async () => {
+    const icons = await renderStory(IconBoundaries);
+    expect(icons.getByRole('image', { name: 'Labelled icon' })).toBeVisible();
+    expect(
+      icons.getByTestId('decorative-icon', { includeHiddenElements: true }),
+    ).toBeVisible();
+    await icons.unmount();
+
+    const brands = await renderStory(BrandBoundaries);
+    expect(brands.getByTestId('brand-boundary-horizontal')).toHaveStyle({
+      height: 28.8,
+      width: 120,
+    });
+    expect(brands.getByTestId('brand-boundary-stacked')).toHaveStyle({
+      height: 22.4,
+      width: 120,
+    });
+  });
+
+  it('keeps both UI backstops machine-detectable without claiming native proof', () => {
+    expect(phase2Backstops.overflow).toEqual({
+      exports: ['Text', 'Stack', 'Inline', 'Surface'],
+      constrainedWidthRendered: true,
+      renderedWitness: 'boundary-constrained-width',
+      requiredContentWitness: 'boundary-required-content',
+      status: 'host-contract',
+    });
+    expect(phase2Backstops.longText).toEqual({
+      exports: ['Text', 'Pressable'],
+      constrainedWidthRendered: true,
+      preservedAccessibleName: 'Activate example',
+      reachableActionWitness: 'boundary-long-text-action',
+      requiresNative200PercentReview: true,
+      nativeStatus: 'deferred-to-phase-5',
+      status: 'host-contract',
+    });
   });
 });
