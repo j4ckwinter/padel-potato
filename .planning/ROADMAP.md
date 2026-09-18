@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Foundation values and intentional deviations remain traceable to Penpot MCP data and reference renders.
   5. No product screens, app navigation, backend behavior, or runtime app integration are introduced.
 
-**Plans**: 6/7 plans executed
+**Plans**: 7/7 plans executed
 Plans:
 **Wave 1**
 
@@ -59,7 +59,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 01-07-PLAN.md — Prove local Expo-web navigation and close comparison evidence.
+- [x] 01-07-PLAN.md — Prove local Expo-web navigation and close comparison evidence.
 
 **UI hint**: yes
 
@@ -133,7 +133,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Native Workbench and Validation Seams | 6/7 | In Progress|  |
+| 1. Native Workbench and Validation Seams | 7/7 | In Progress|  |
 | 2. Penpot Provenance, Foundations, and Assets | 0/TBD | Not started | - |
 | 3. Interaction and Accessibility Contracts | 0/TBD | Not started | - |
 | 4. Verified Component Families | 0/TBD | Not started | - |
