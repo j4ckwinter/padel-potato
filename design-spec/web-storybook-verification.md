@@ -101,4 +101,12 @@ This is a convenience browser review only. Native iOS and Android visual accepta
 
 ## Phase-final closure
 
-The intentionally complete closure command and result are recorded here after the focused verification succeeds.
+**Run at:** `2026-09-18T11:14:26.606Z`
+
+**Command:**
+
+```text
+npm run typecheck && npm run lint && npm test -- --runInBand && node scripts/validate-penpot-evidence.mjs && node scripts/validate-web-storybook-verification.mjs && node scripts/validate-toolchain-compatibility.mjs && npm ls --all --json && npx expo install --check && npx expo-doctor@latest && npm run storybook:web:smoke
+```
+
+**Outcome:** Pass. Strict TypeScript and lint completed cleanly; all 5 Jest suites and 41 tests passed; Penpot evidence, browser verification, exact toolchain evidence, and the complete dependency tree validated; Expo reported dependencies up to date; Expo Doctor passed 21/21 checks; and the Storybook smoke compiled `.rnstorybook/index.tsx`, confirmed the Storybook entry over loopback HTTP, and left no server listener running.
