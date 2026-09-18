@@ -8,6 +8,15 @@ import FieldStories, {
   Interactive as FieldInteractive,
   Variants as FieldVariants,
 } from '../src/design-system/components/forms/Field.stories';
+import ChoiceChipStories, {
+  Boundaries as ChoiceChipBoundaries,
+  Interactive as ChoiceChipInteractive,
+  Variants as ChoiceChipVariants,
+} from '../src/design-system/components/forms/ChoiceChip.stories';
+import {
+  ChoiceChip,
+  type ChoiceChipProps,
+} from '../src/design-system/components/forms/ChoiceChip';
 import {
   Field,
   type EditableFieldProps,
@@ -24,6 +33,7 @@ const flattenedStyle = (style: unknown) =>
   ) as Record<string, unknown>;
 
 const fieldRecords = phase3Families[3].records;
+const choiceChipRecords = phase3Families[4].records;
 
 describe('Field source and public contract', () => {
   it('retains the exact twelve-record sparse ledger in source order', () => {
@@ -489,5 +499,173 @@ describe('Field Storybook contract', () => {
 
     const interactive = FieldInteractive.render?.({} as never, {} as never) as React.ReactElement;
     expect((interactive.type as { name?: string }).name).toBe('InteractiveFieldHarness');
+  });
+});
+
+describe('ChoiceChip source and controlled contract', () => {
+  it('retains the exact eight-record sparse ledger in deterministic source order', () => {
+    expect(phase3Families[4]).toEqual(expect.objectContaining({
+      key: 'choiceChip',
+      recordCount: 8,
+      sourceId: '482a7222-5a3b-8086-8008-a61b1055dd19',
+    }));
+    expect(choiceChipRecords.map((record) => record.normalizedTuple)).toEqual([
+      { type: 'filter', state: 'disabled', icon: 'trailing' },
+      { type: 'filter', state: 'focused', icon: 'trailing' },
+      { type: 'filter', state: 'selected', icon: 'leading' },
+      { type: 'filter', state: 'default', icon: 'trailing' },
+      { type: 'option', state: 'disabled', icon: 'none' },
+      { type: 'option', state: 'focused', icon: 'none' },
+      { type: 'option', state: 'selected', icon: 'leading' },
+      { type: 'option', state: 'default', icon: 'none' },
+    ]);
+
+    type ImpossibleOptionTrailing = Extract<
+      ChoiceChipProps,
+      { type: 'option'; icon: 'trailing' }
+    >;
+    type ImpossibleFilterNone = Extract<
+      ChoiceChipProps,
+      { type: 'filter'; icon: 'none' }
+    >;
+    const sparseContract: [ImpossibleOptionTrailing, ImpossibleFilterNone] extends [never, never]
+      ? true
+      : false = true;
+    expect(sparseContract).toBe(true);
+  });
+
+  it.each([
+    ['option', 'none', 'radio'],
+    ['option', 'leading', 'radio'],
+    ['filter', 'leading', 'checkbox'],
+    ['filter', 'trailing', 'checkbox'],
+  ] as const)('%s/%s emits the next controlled value once with %s semantics', async (
+    type,
+    icon,
+    role,
+  ) => {
+    const onSelectedChange = jest.fn();
+    const screen = await render(
+      <ChoiceChip
+        icon={icon}
+        label="Intermediate"
+        onSelectedChange={onSelectedChange}
+        selected={false}
+        type={type}
+      />,
+    );
+    const chip = screen.getByRole(role, { checked: false, name: 'Intermediate' });
+
+    await userEvent.setup().press(chip);
+    expect(onSelectedChange).toHaveBeenCalledTimes(1);
+    expect(onSelectedChange).toHaveBeenCalledWith(true);
+    expect(chip.props.accessibilityState).toEqual(expect.objectContaining({ checked: false }));
+
+    await screen.rerender(
+      <ChoiceChip
+        icon={icon}
+        label="Intermediate"
+        onSelectedChange={onSelectedChange}
+        selected
+        type={type}
+      />,
+    );
+    expect(screen.getByRole(role, { checked: true, name: 'Intermediate' })).toBeTruthy();
+  });
+
+  it('blocks disabled activation, hides icon semantics, and owns 148x40 plus 44 target geometry', async () => {
+    const onSelectedChange = jest.fn();
+    const screen = await render(
+      <ChoiceChip
+        disabled
+        icon="trailing"
+        label="Intermediate"
+        onSelectedChange={onSelectedChange}
+        selected={false}
+        type="filter"
+      />,
+    );
+    const chip = screen.getByRole('checkbox', {
+      checked: false,
+      disabled: true,
+      name: 'Intermediate',
+    });
+    await userEvent.setup().press(chip);
+
+    expect(onSelectedChange).not.toHaveBeenCalled();
+    expect(chip.props.hitSlop).toEqual({ bottom: 2, left: 2, right: 2, top: 2 });
+    expect(flattenedStyle(chip.props.style)).toEqual(expect.objectContaining({
+      height: 40,
+      minHeight: 40,
+      minWidth: 40,
+      width: 148,
+    }));
+    expect(flattenedStyle(screen.getByTestId('choice-chip-content').props.style)).toEqual(
+      expect.objectContaining({ borderRadius: 20, height: 40, paddingHorizontal: 12 }),
+    );
+    expect(screen.queryAllByRole('image')).toHaveLength(0);
+  });
+
+  it('derives focus from native events and rejects unsupported runtime tuples', async () => {
+    const screen = await render(
+      <ChoiceChip
+        icon="none"
+        label="Social"
+        onSelectedChange={() => undefined}
+        selected={false}
+        type="option"
+      />,
+    );
+    const chip = screen.getByRole('radio', { name: 'Social' });
+    await act(async () => fireEvent(chip, 'focus', { nativeEvent: {} }));
+    expect(flattenedStyle(screen.getByTestId('choice-chip-content').props.style)).toEqual(
+      expect.objectContaining({ borderColor: colors.focusRing, borderWidth: 2 }),
+    );
+    await act(async () => fireEvent(chip, 'blur', { nativeEvent: {} }));
+    expect(flattenedStyle(screen.getByTestId('choice-chip-content').props.style)).toEqual(
+      expect.objectContaining({ borderColor: colors.border, borderWidth: 1 }),
+    );
+
+    expect(() => ChoiceChip({
+      icon: 'trailing',
+      label: 'Social',
+      onSelectedChange: () => undefined,
+      selected: false,
+      type: 'option',
+    } as unknown as ChoiceChipProps)).toThrow(/Unsupported design-system value: option\/trailing/u);
+    expect(() => ChoiceChip({
+      icon: 'none',
+      label: 'Intermediate',
+      onSelectedChange: () => undefined,
+      selected: false,
+      type: 'filter',
+    } as unknown as ChoiceChipProps)).toThrow(/Unsupported design-system value: filter\/none/u);
+  });
+});
+
+describe('ChoiceChip Storybook contract', () => {
+  it('publishes Forms/Choice Chip with bounded controls and all source rows', () => {
+    expect(ChoiceChipStories.title).toBe('Forms/Choice Chip');
+    expect(ChoiceChipStories.argTypes).toEqual(expect.objectContaining({
+      disabled: { control: 'boolean' },
+      icon: { control: 'select', options: ['none', 'leading', 'trailing'] },
+      selected: { control: 'boolean' },
+      type: { control: 'select', options: ['option', 'filter'] },
+    }));
+    const variants = ChoiceChipVariants.render?.({} as never, {} as never) as React.ReactElement<{
+      children: React.ReactNode;
+    }>;
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(choiceChipRecords.length);
+  });
+
+  it('records long-copy, 200%-scale, clearance, and interactive witnesses', () => {
+    const boundaries = ChoiceChipBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const boundaryJson = JSON.stringify(boundaries);
+    expect(boundaryJson).toContain('200%');
+    expect(boundaryJson).toContain('long label');
+    expect(boundaryJson).toContain('target clearance');
+    expect(boundaryJson).toContain('Phase 5');
+    const interactive = ChoiceChipInteractive.render?.({} as never, {} as never) as React.ReactElement;
+    expect((interactive.type as { name?: string }).name).toBe('InteractiveChoiceChipHarness');
   });
 });
