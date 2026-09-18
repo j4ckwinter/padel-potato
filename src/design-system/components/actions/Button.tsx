@@ -91,6 +91,9 @@ function validateButtonProps(props: ButtonProps) {
   if (typeof props.loading !== 'undefined' && typeof props.loading !== 'boolean') {
     unsupported(props.loading, [true, false]);
   }
+  if (typeof props.onPress !== 'undefined' && typeof props.onPress !== 'function') {
+    unsupported(props.onPress, ['function']);
+  }
   if (props.disabled && props.loading) {
     throw new Error('Unsupported Button state: disabled and loading cannot both be true.');
   }

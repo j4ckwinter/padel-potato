@@ -51,6 +51,9 @@ function validateIconButtonProps(props: IconButtonProps) {
   if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
     unsupported(props.disabled, [true, false]);
   }
+  if (typeof props.onPress !== 'undefined' && typeof props.onPress !== 'function') {
+    unsupported(props.onPress, ['function']);
+  }
 }
 
 export function IconButton(props: IconButtonProps) {

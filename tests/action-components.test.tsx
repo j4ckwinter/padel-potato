@@ -245,6 +245,13 @@ describe('Button interaction and visual contract', () => {
         style: 'primary',
       } as unknown as ButtonProps),
     ).toThrow(/Unsupported design-system value: pressed/u);
+    for (const onPress of ['press', false, null, 0]) {
+      expect(() => Button({
+        label: 'Example',
+        onPress,
+        style: 'primary',
+      } as unknown as ButtonProps)).toThrow(/Supported values: function/u);
+    }
   });
 });
 
@@ -380,6 +387,13 @@ describe('IconButton source and public contract', () => {
       disabled: 'yes',
       icon: 'notification',
     } as unknown as IconButtonProps)).toThrow(/Unsupported design-system value: yes/u);
+    for (const onPress of ['press', false, null, 0]) {
+      expect(() => IconButton({
+        accessibilityLabel: 'Example',
+        icon: 'notification',
+        onPress,
+      } as unknown as IconButtonProps)).toThrow(/Supported values: function/u);
+    }
   });
 });
 
