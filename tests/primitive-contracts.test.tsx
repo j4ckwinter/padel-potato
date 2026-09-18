@@ -14,7 +14,16 @@ import {
 } from '../src/design-system/tokens';
 
 const flattenedStyle = (style: unknown) =>
-  StyleSheet.flatten(style as Parameters<typeof StyleSheet.flatten>[0]);
+  StyleSheet.flatten(
+    style as Parameters<typeof StyleSheet.flatten>[0],
+  ) as Record<string, unknown>;
+
+const invalidTextTokenCases: Array<[string, Record<string, unknown>]> = [
+  ['missing typography token', { variant: 'missing' }],
+  ['null typography token', { variant: null }],
+  ['missing color token', { color: 'missing', variant: 'body' }],
+  ['null color token', { color: null, variant: 'body' }],
+];
 
 describe('Text primitive', () => {
   it.each(Object.keys(typography) as TypographyToken[])(
@@ -50,19 +59,17 @@ describe('Text primitive', () => {
     },
   );
 
-  it.each([
-    ['missing typography token', { variant: 'missing' }],
-    ['null typography token', { variant: null }],
-    ['missing color token', { color: 'missing', variant: 'body' }],
-    ['null color token', { color: null, variant: 'body' }],
-  ] as const)('rejects a %s with the supported values', (_label, props) => {
+  it.each(invalidTextTokenCases)(
+    'rejects a %s with the supported values',
+    (_label, props) => {
     expect(() =>
       DesignText({
         ...(props as unknown as DesignTextProps),
         children: 'Rejected token',
       }),
     ).toThrow(/Unsupported design-system value: .*Supported values:/u);
-  });
+    },
+  );
 
   it.each([
     'fontFamily',
