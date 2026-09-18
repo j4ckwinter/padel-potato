@@ -714,7 +714,7 @@ describe('Checkbox source and controlled contract', () => {
       { state: 'unchecked' },
     ]);
     expect(checkboxRecords.some((record) =>
-      Object.values(record.normalizedTuple).includes('indeterminate'))).toBe(false);
+      (Object.values(record.normalizedTuple) as string[]).includes('indeterminate'))).toBe(false);
   });
 
   it('emits the opposite boolean once while checked state remains consumer-owned', async () => {
