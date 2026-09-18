@@ -9,6 +9,7 @@ jest.mock('expo-font', () => ({
 }));
 
 import { FoundationFontGate } from '../src/design-system/fonts/FoundationFontGate';
+import preview from '../.rnstorybook/preview';
 
 const content = <Text>Authoritative typography specimen</Text>;
 
@@ -20,10 +21,25 @@ describe('FoundationFontGate', () => {
       <FoundationFontGate>{content}</FoundationFontGate>,
     );
 
-    expect(getByLabelText('Loading foundation fonts')).toHaveAccessibilityState({
-      busy: true,
-    });
+    expect(
+      getByLabelText('Loading foundation fonts').props.accessibilityState,
+    ).toEqual({ busy: true });
     expect(queryByText('Authoritative typography specimen')).toBeNull();
+  });
+
+  it('is applied once at the shared Storybook preview boundary', async () => {
+    mockUseFonts.mockReturnValue([false, null]);
+    const decorators = preview.decorators as unknown as Array<(
+      Story: () => React.JSX.Element,
+    ) => React.JSX.Element>;
+    const decorator = decorators[0];
+
+    expect(decorators).toHaveLength(1);
+    const { getByLabelText, queryByText } = await render(
+      decorator(() => <Text>Storybook typography specimen</Text>),
+    );
+    expect(getByLabelText('Loading foundation fonts')).toBeVisible();
+    expect(queryByText('Storybook typography specimen')).toBeNull();
   });
 
   it('renders children only after all authoritative font assets load', async () => {
