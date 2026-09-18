@@ -10,6 +10,10 @@ import ButtonStories, {
 import IconButtonStories, {
   Variants as IconButtonVariants,
 } from '../src/design-system/components/actions/IconButton.stories';
+import FavouriteStories, {
+  Boundaries as FavouriteBoundaries,
+  Variants as FavouriteVariants,
+} from '../src/design-system/components/actions/Favourite.stories';
 import {
   Button,
   type ButtonProps,
@@ -21,6 +25,11 @@ import {
   type IconButtonProps,
   type IconButtonSize,
 } from '../src/design-system/components/actions/IconButton';
+import {
+  Favourite,
+  type FavouriteProps,
+} from '../src/design-system/components/actions/Favourite';
+import * as actions from '../src/design-system/components/actions';
 import {
   buttonRecords,
   buttonSizes,
@@ -387,5 +396,150 @@ describe('IconButton Storybook contract', () => {
       children: React.ReactNode;
     }>;
     expect(Children.toArray(variants.props.children)).toHaveLength(iconButtonRecords.length);
+  });
+});
+
+const favouriteRecords = phase3Families[2].records;
+
+describe('Favourite source and controlled contract', () => {
+  it('retains Selected then Default and completes all 17 action records in source order', () => {
+    expect(phase3Families[2]).toEqual(expect.objectContaining({
+      key: 'favourite',
+      recordCount: 2,
+      sourceId: 'ab02a31f-1852-80be-8008-a6fb4b80c769',
+    }));
+    expect(favouriteRecords.map((record) => ({
+      id: record.id,
+      normalizedTuple: record.normalizedTuple,
+      originalTuple: record.originalTuple,
+    }))).toEqual([
+      {
+        id: 'ab02a31f-1852-80be-8008-a6fb4b70487f',
+        normalizedTuple: { checked: true },
+        originalTuple: { 'Property 1': 'Selected' },
+      },
+      {
+        id: 'ab02a31f-1852-80be-8008-a6fb4b6d6c28',
+        normalizedTuple: { checked: false },
+        originalTuple: { 'Property 1': 'Default' },
+      },
+    ]);
+    expect([
+      ...buttonRecords,
+      ...iconButtonRecords,
+      ...favouriteRecords,
+    ]).toHaveLength(17);
+  });
+
+  it('emits the opposite checked value once and remains controlled until rerender', async () => {
+    const onCheckedChange = jest.fn();
+    const user = userEvent.setup();
+    const screen = await render(
+      <Favourite
+        accessibilityLabel="Add Alex to favourites"
+        checked={false}
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+    const subject = screen.getByRole('checkbox', {
+      checked: false,
+      name: 'Add Alex to favourites',
+    });
+    await user.press(subject);
+
+    expect(onCheckedChange).toHaveBeenCalledTimes(1);
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
+    expect(subject.props.accessibilityState).toEqual(expect.objectContaining({ checked: false }));
+    expect(screen.queryByTestId('favourite-selected-fill')).toBeNull();
+
+    screen.rerender(
+      <Favourite
+        accessibilityLabel="Add Alex to favourites"
+        checked
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+    expect(screen.getByRole('checkbox', {
+      checked: true,
+      name: 'Add Alex to favourites',
+    })).toBeTruthy();
+    expect(screen.getByTestId('favourite-selected-fill')).toBeTruthy();
+    expect(screen.getByTestId('phase3-artwork-heart')).toBeTruthy();
+    expect(screen.queryAllByRole('image')).toHaveLength(0);
+  });
+
+  it('blocks disabled changes and keeps exact 44-point geometry', async () => {
+    const onCheckedChange = jest.fn();
+    const user = userEvent.setup();
+    const screen = await render(
+      <Favourite
+        accessibilityLabel="Add Alex to favourites"
+        checked={false}
+        disabled
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+    const subject = screen.getByRole('checkbox', {
+      checked: false,
+      disabled: true,
+      name: 'Add Alex to favourites',
+    });
+    await user.press(subject);
+
+    expect(onCheckedChange).not.toHaveBeenCalled();
+    expect(subject.props.hitSlop).toEqual({ bottom: 0, left: 0, right: 0, top: 0 });
+    expect(flattenedStyle(subject.props.style)).toEqual(expect.objectContaining({
+      height: 44,
+      minHeight: 44,
+      minWidth: 44,
+      width: 44,
+    }));
+  });
+
+  it('rejects blank names, invalid controlled values, and simulated transient props', () => {
+    const onCheckedChange = jest.fn();
+    expect(() => Favourite({
+      accessibilityLabel: '',
+      checked: false,
+      onCheckedChange,
+    })).toThrow(/Unsupported design-system value: .*Supported values: non-empty accessibility label/u);
+    expect(() => Favourite({
+      accessibilityLabel: 'Favourite',
+      checked: 'mixed',
+      onCheckedChange,
+    } as unknown as FavouriteProps)).toThrow(/Unsupported design-system value: mixed/u);
+    expect(() => Favourite({
+      accessibilityLabel: 'Favourite',
+      checked: false,
+      onCheckedChange,
+      pressed: true,
+    } as unknown as FavouriteProps)).toThrow(/Unsupported design-system value: pressed/u);
+  });
+});
+
+describe('Favourite Storybook and action barrel contract', () => {
+  it('publishes only the bounded action components and their public registries', () => {
+    expect(Object.keys(actions).sort()).toEqual([
+      'Button',
+      'Favourite',
+      'IconButton',
+    ]);
+  });
+
+  it('publishes the exact group, source-ordered records, and long-name target boundary', () => {
+    expect(FavouriteStories.title).toBe('Actions/Favourite');
+    expect(FavouriteStories.argTypes).toEqual(expect.objectContaining({
+      checked: { control: 'boolean' },
+      disabled: { control: 'boolean' },
+      onCheckedChange: { action: 'checked changed' },
+    }));
+    const variants = FavouriteVariants.render?.({} as never, {} as never) as React.ReactElement<{
+      children: React.ReactNode;
+    }>;
+    expect(Children.toArray(variants.props.children)).toHaveLength(favouriteRecords.length);
+
+    const boundaries = FavouriteBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    expect(JSON.stringify(boundaries)).toContain('200%');
+    expect(JSON.stringify(boundaries)).toContain('44-point');
   });
 });
