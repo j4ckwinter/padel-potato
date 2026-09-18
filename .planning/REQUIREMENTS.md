@@ -58,7 +58,7 @@
 
 ### Identity, Status, and Progress
 
-- [ ] **IDEN-01**: Developer can use Avatar with every designed size and presence state.
+- [x] **IDEN-01**: Developer can use Avatar with every designed size and presence state.
 - [ ] **IDEN-02**: Developer can use Avatar Group with every designed content and state combination.
 - [ ] **IDEN-03**: Developer can use Avatar Picker with every designed content and state.
 - [ ] **STAT-01**: Developer can use Status Chip with every designed style and state.
@@ -170,7 +170,7 @@
 | NAVG-02 | Phase 3 | Complete |
 | NAVG-03 | Phase 3 | Complete |
 | NAVG-04 | Phase 3 | Complete |
-| IDEN-01 | Phase 4 | Pending |
+| IDEN-01 | Phase 4 | Complete |
 | IDEN-02 | Phase 4 | Pending |
 | IDEN-03 | Phase 4 | Pending |
 | STAT-01 | Phase 4 | Pending |

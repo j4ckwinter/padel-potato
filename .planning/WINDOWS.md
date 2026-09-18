@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 7
+open_count: 8
 waived_count: 0
 fixed_count: 0
-total_count: 7
-last_updated: 2026-09-18T18:17:21.524Z
+total_count: 8
+last_updated: 2026-09-18T22:49:17.676Z
 ---
 
 # Broken Windows Ledger
@@ -22,6 +22,7 @@ last_updated: 2026-09-18T18:17:21.524Z
 | 5 | 01 | deviation | tsconfig.json |  | Expo web normalized the TypeScript include list during startup | open |  | 2026-09-17T22:07:48.098Z |  |
 | 6 | 02 | unrun-verify | design-spec/phase-2-verification.md |  | Native 200% font-scale, target clipping, VoiceOver, and TalkBack checks deferred to Phase 5 because no physical or remote native route was available. | open |  | 2026-09-18T14:07:56.252Z |  |
 | 7 | 03 | deviation | scripts/extract-phase-3-artwork.mjs | 378 | Allowed only artwork-manifest.json as the required sidecar during exact binary artwork inventory checks | open |  | 2026-09-18T18:17:21.524Z |  |
+| 8 | 04 | deviation | tests/identity-status-progress-components.test.tsx |  | Corrected the tracer expectation to preserve Avatar variant-container order instead of the tuple order listed in the plan prose | open |  | 2026-09-18T22:49:17.676Z |  |
 
 ````json
 [
@@ -107,6 +108,18 @@ last_updated: 2026-09-18T18:17:21.524Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-09-18T18:17:21.524Z",
+    "resolved_at": null
+  },
+  {
+    "id": 8,
+    "kind": "deviation",
+    "phase": "04",
+    "file": "tests/identity-status-progress-components.test.tsx",
+    "line": null,
+    "description": "Corrected the tracer expectation to preserve Avatar variant-container order instead of the tuple order listed in the plan prose",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-18T22:49:17.676Z",
     "resolved_at": null
   }
 ]
