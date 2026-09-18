@@ -60,25 +60,27 @@ export function SectionHeader(props: SectionHeaderProps) {
   const actionProps = hasAction ? props as SectionHeaderWithAction : undefined;
 
   return (
-    <View style={styles.container} testID="section-header">
-      <Text accessibilityRole="header" style={styles.title} variant="heading">
-        {props.title}
-      </Text>
-      {hasAction ? (
-        <Pressable
-          accessibilityLabel={actionProps?.actionLabel}
-          accessibilityRole="button"
-          onPress={actionProps?.onActionPress}
-          size="controlHeight40"
-          style={styles.actionTarget}
-        >
-          <View style={styles.actionContent}>
-            <Text color="muted" variant="label">
-              {actionProps?.actionLabel}
-            </Text>
-          </View>
-        </Pressable>
-      ) : null}
+    <View style={styles.clearanceWrapper} testID="section-header">
+      <View style={styles.visualRow} testID="section-header-visual-row">
+        <Text accessibilityRole="header" style={styles.title} variant="heading">
+          {props.title}
+        </Text>
+        {hasAction ? (
+          <Pressable
+            accessibilityLabel={actionProps?.actionLabel}
+            accessibilityRole="button"
+            onPress={actionProps?.onActionPress}
+            size="controlHeight40"
+            style={styles.actionTarget}
+          >
+            <View style={styles.actionContent}>
+              <Text color="muted" variant="label">
+                {actionProps?.actionLabel}
+              </Text>
+            </View>
+          </Pressable>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -94,11 +96,18 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     height: 40,
   },
-  container: {
+  clearanceWrapper: {
+    alignItems: 'center',
+    height: 44,
+    justifyContent: 'center',
+    overflow: 'visible',
+    width: 354,
+  },
+  visualRow: {
     alignItems: 'center',
     flexDirection: 'row',
+    height: 28,
     justifyContent: 'space-between',
-    minHeight: 44,
     overflow: 'visible',
     width: 350,
   },

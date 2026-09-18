@@ -103,7 +103,7 @@ Component dimensions are geometry, not new spacing tokens:
 - Field: 350×84 normally and 350×100 when helper/error content is present.
 - Social Sign-In Button: 352×48. Auth Divider: 352×24.
 - Segmented Control: 350×48. Bottom Navigation: 390×76.
-- App Header: 390×112. Section Header: 350×28.
+- App Header: 390×112. Section Header: 350×28 visual row inside a 354×44 interaction-clearance wrapper.
 
 Canonical widths belong to source-faithful stories. Responsive placement may change outer width through the approved layout-only seam, but internal height, padding, radii, target sizes, and content order remain fixed to the source.
 
@@ -228,7 +228,7 @@ Do not infer a Cartesian product from the sparse Penpot specimen matrix. The pub
 | `BottomNavigation` | 390×76 white surface, one-point top/inner border, radius 24. Fixed order Home, Games, Create, Players, Profile. Icons are 20; label typography is fixed to the revision-296 family evidence. Active item uses `surfaceAccent`; Create retains its accent action treatment. |
 | `SegmentedControl` | 350×48 track, `surfaceMuted`, radius 20. Equal-width 2/3/4 segments with source-fixed label typography, selected surface/accent treatment, two-point accent focus ring, and shared disabled opacity. |
 | `AppHeader` | 390×112 canvas surface, radius 20, 18/700 title over 14/400 subtitle. Configuration controls mascot/back/right/favourite regions without changing hierarchy. All icon actions use 40/44 visuals with effective 44 targets. |
-| `SectionHeader` | 350×28 horizontal row: 18/700 section title and optional action whose typography is fixed to the revision-296 component evidence. Title may wrap only in the boundary layout; canonical remains one line. |
+| `SectionHeader` | 350×28 horizontal visual row inside a 354×44 interaction-clearance wrapper: 18/700 section title and optional action whose typography is fixed to the revision-296 component evidence. The wrapper preserves the visual row's authored rhythm while containing the 40-point action's two-point expansion on every edge. Title may wrap only in the boundary layout; canonical remains one line. |
 
 No component adds elevation or shadow unless revision-296 inspection explicitly evidences it. Caller styles cannot override typography metrics, state colours, border/radius, target geometry, icon size, or internal spacing.
 

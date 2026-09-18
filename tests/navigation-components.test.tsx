@@ -443,12 +443,15 @@ describe('SectionHeader optional action pair', () => {
     const screen = await render(<SectionHeader title="Open games near you" />);
     expect(screen.getByRole('header', { name: 'Open games near you' })).toBeTruthy();
     expect(screen.queryAllByRole('button')).toHaveLength(0);
+    expect(flattenedStyle(screen.getByTestId('section-header-visual-row').props.style)).toEqual(
+      expect.objectContaining({ height: 28, width: 350 }),
+    );
     expect(flattenedStyle(screen.getByTestId('section-header').props.style)).toEqual(
-      expect.objectContaining({ minHeight: 44, width: 350 }),
+      expect.objectContaining({ height: 44, width: 354 }),
     );
   });
 
-  it('leaves enough parent clearance for the separately named effective 44-point action target', async () => {
+  it('declares an effective 44-point action within independent wrapper clearance', async () => {
     const onActionPress = jest.fn();
     const user = userEvent.setup();
     const screen = await render(
@@ -457,12 +460,20 @@ describe('SectionHeader optional action pair', () => {
     const action = screen.getByRole('button', { name: 'See all ›' });
     expect(action.props.hitSlop).toEqual({ bottom: 2, left: 2, right: 2, top: 2 });
     expect(flattenedStyle(action.props.style)).toEqual(expect.objectContaining({
+      height: 40,
       minHeight: 40,
       minWidth: 40,
     }));
-    expect(flattenedStyle(screen.getByTestId('section-header').props.style)).toEqual(
-      expect.objectContaining({ minHeight: 44 }),
+    const visualRowStyle = flattenedStyle(
+      screen.getByTestId('section-header-visual-row').props.style,
     );
+    const wrapperStyle = flattenedStyle(screen.getByTestId('section-header').props.style);
+    expect(visualRowStyle).toEqual(expect.objectContaining({ height: 28, width: 350 }));
+    expect(wrapperStyle).toEqual(expect.objectContaining({ height: 44, width: 354 }));
+    expect((wrapperStyle.width as number) - (visualRowStyle.width as number)).toBe(4);
+    expect(action.props.hitSlop.left + action.props.hitSlop.right).toBe(4);
+    expect((flattenedStyle(action.props.style).height as number) +
+      action.props.hitSlop.top + action.props.hitSlop.bottom).toBe(44);
     await user.press(action);
     expect(onActionPress).toHaveBeenCalledTimes(1);
   });
