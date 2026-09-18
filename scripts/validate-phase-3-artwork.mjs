@@ -146,11 +146,36 @@ function validateManifestShape(manifest, root) {
   assert(games.length === 2 && games.every((entry) => entry.mascot === 'search' && entry.path.endsWith('/mascot-search.webp')), 'Games headers must explicitly reuse Search artwork');
 }
 
+const vectorPathAttributes = Object.freeze([
+  ['d', 'd'],
+  ['fill', 'fill'],
+  ['stroke', 'stroke'],
+  ['stroke-width', 'strokeWidth'],
+  ['stroke-linejoin', 'strokeLinejoin'],
+  ['stroke-linecap', 'strokeLinecap'],
+  ['fill-rule', 'fillRule'],
+  ['opacity', 'opacity'],
+  ['fill-opacity', 'fillOpacity'],
+  ['stroke-opacity', 'strokeOpacity'],
+  ['transform', 'transform'],
+]);
+
+function attributeValue(attributes, name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+  const match = attributes.match(new RegExp(`\\b${escaped}=(?:"([^"]*)"|\\{([^}]*)\\})`, 'u'));
+  return match ? (match[1] ?? match[2]).trim() : null;
+}
+
+function normalizedPathAttributes(attributes, runtime) {
+  return Object.fromEntries(vectorPathAttributes.map(([svgName, runtimeName]) => [
+    runtimeName,
+    attributeValue(attributes, runtime ? runtimeName : svgName),
+  ]));
+}
+
 function svgPaths(xml) {
-  return [...xml.matchAll(/<path\s+([^>]+)\/>/gu)].map((match) => ({
-    d: match[1].match(/\bd="([^"]+)"/u)?.[1],
-    paint: match[1].match(/\b(?:fill|stroke)="(#[a-f0-9]+)"/iu)?.[1],
-  }));
+  return [...xml.matchAll(/<path\s+([^>]+)\/>/gu)]
+    .map((match) => normalizedPathAttributes(match[1], false));
 }
 
 function runtimeFunctionSource(runtimeSource, exportName) {
@@ -165,10 +190,8 @@ function runtimeVectorProfile(runtimeSource, exportName) {
   const functionSource = runtimeFunctionSource(runtimeSource, exportName);
   const svg = functionSource.match(/<Svg\s+([\s\S]*?)>/u)?.[1];
   assert(svg, `${exportName} runtime Svg root is missing`);
-  const pathRecords = [...functionSource.matchAll(/<Path\s+([\s\S]*?)\/>/gu)].map((match) => ({
-    d: match[1].match(/\bd="([^"]+)"/u)?.[1],
-    paint: match[1].match(/\b(?:fill|stroke)="(#[a-f0-9]+)"/iu)?.[1],
-  }));
+  const pathRecords = [...functionSource.matchAll(/<Path\s+([\s\S]*?)\/>/gu)]
+    .map((match) => normalizedPathAttributes(match[1], true));
   return {
     height: Number(svg.match(/\bheight=\{(\d+)\}/u)?.[1]),
     paths: pathRecords,
@@ -283,6 +306,12 @@ function runSelfTest() {
       const googlePath = runtimeVectorProfile(candidate.runtimeSource, 'GoogleProviderArtwork').paths[0].d;
       const applePath = runtimeVectorProfile(candidate.runtimeSource, 'AppleProviderArtwork').paths[0].d;
       candidate.runtimeSource = candidate.runtimeSource.replace(applePath, googlePath);
+    }],
+    ['changed heart stroke width', (candidate) => {
+      candidate.runtimeSource = candidate.runtimeSource.replace('strokeWidth={1.75}', 'strokeWidth={9}');
+    }],
+    ['changed heart stroke join', (candidate) => {
+      candidate.runtimeSource = candidate.runtimeSource.replace('strokeLinejoin="round"', 'strokeLinejoin="bevel"');
     }],
   ];
   for (const [label, mutate] of cases) expectFailure(label, mutate);

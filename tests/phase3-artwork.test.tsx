@@ -166,9 +166,11 @@ describe('Phase 3 artwork integrity validator', () => {
       'generic artwork export',
       'swapped vector paths',
       'changed path ownership',
+      'changed heart stroke width',
+      'changed heart stroke join',
     ]) {
       expect(result.stdout).toContain(`rejected ${label}`);
     }
-    expect(result.stdout).toContain('17 controlled rejections passed');
+    expect(result.stdout).toContain('19 controlled rejections passed');
   });
 });
