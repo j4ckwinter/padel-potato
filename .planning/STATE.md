@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 03
 current_phase_name: Actions, Forms, and Navigation Components
 status: executing
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-09-18T18:29:15.178Z"
+stopped_at: Completed 03-05-PLAN.md
+last_updated: "2026-09-18T18:43:20.099Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 03 execution started
-state_head: 32a06848be9f314bab940e286965bd67ce99729b
+state_head: 36feb60c3f419f8617686651868238eb6b6a00b9
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 21
-  completed_plans: 16
+  completed_plans: 17
   percent: 40
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-18)
 ## Current Position
 
 Phase: 03 (Actions, Forms, and Navigation Components) — EXECUTING
-Plan: 5 of 9
+Plan: 6 of 9
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 03 execution started
 
@@ -74,6 +74,7 @@ Progress: [████░░░░░░] 40%
 | Phase 03 P02 | 8min | 3 tasks | 9 files |
 | Phase 03 P03 | 10min | 2 tasks | 5 files |
 | Phase 03 P04 | 11min | 3 tasks | 7 files |
+| Phase 03 P05 | 10min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -127,6 +128,9 @@ Recent decisions affecting current work:
 - [Phase 03]: Phase 03-04: Keep nested icons and heart artwork decorative so each outer action owns one stable role and name.
 - [Phase 03]: Phase 03-04: Model Favourite as a controlled checkbox-style toggle; visible and semantic checked state changes only after consumer rerender.
 - [Phase 03]: Phase 03-04: Preserve selected heart fidelity with a private exact-path fill beneath the fixed zero-argument HeartArtwork stroke.
+- [Phase 03]: Phase 03-05: Represent Field validation as a closed default-helper versus success/error-message union.
+- [Phase 03]: Phase 03-05: Keep select, date, and time as controlled trigger-only buttons with no picker ownership.
+- [Phase 03]: Phase 03-05: Use separately named 44-point stepper actions with independent controlled bounds.
 
 ### Pending Todos
 
@@ -155,6 +159,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T18:29:14.922Z
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-09-18T18:43:19.843Z
+Stopped at: Completed 03-05-PLAN.md
 Resume file: None

@@ -42,7 +42,7 @@
 - [x] **ACTN-01**: Developer can use Button with every designed style, size, and state.
 - [x] **ACTN-02**: Developer can use Icon Button with every designed size, icon, and state.
 - [x] **ACTN-03**: Developer can use Favourite with every designed state.
-- [ ] **FORM-01**: Developer can use Field with every designed type and state.
+- [x] **FORM-01**: Developer can use Field with every designed type and state.
 - [ ] **FORM-02**: Developer can use Choice Chip with every designed type, icon option, and state.
 - [ ] **FORM-03**: Developer can use Checkbox with every designed state.
 - [ ] **FORM-04**: Developer can use Day Time Selector with every designed type and state.
@@ -160,7 +160,7 @@
 | ACTN-01 | Phase 3 | Complete |
 | ACTN-02 | Phase 3 | Complete |
 | ACTN-03 | Phase 3 | Complete |
-| FORM-01 | Phase 3 | Pending |
+| FORM-01 | Phase 3 | Complete |
 | FORM-02 | Phase 3 | Pending |
 | FORM-03 | Phase 3 | Pending |
 | FORM-04 | Phase 3 | Pending |
