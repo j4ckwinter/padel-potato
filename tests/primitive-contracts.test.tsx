@@ -1,4 +1,7 @@
-import { describe, expect, it } from '@jest/globals';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+import { describe, expect, it, jest } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 import { StyleSheet, Text as NativeText } from 'react-native';
@@ -9,12 +12,20 @@ import {
 } from '../src/design-system/primitives/Inline';
 import { Stack, type StackProps } from '../src/design-system/primitives/Stack';
 import {
+  Surface,
+  type SurfaceProps,
+} from '../src/design-system/primitives/Surface';
+import {
   Text as DesignText,
   type TextProps as DesignTextProps,
 } from '../src/design-system/primitives/Text';
 import {
+  borders,
+  type BorderToken,
   colors,
   type ColorToken,
+  radii,
+  type RadiusToken,
   spacing,
   type SpacingToken,
   typography,
@@ -309,5 +320,206 @@ describe('Inline wrap boundary', () => {
     expect(() => Inline({ wrap: 'wrap' as unknown as boolean })).toThrow(
       /Unsupported design-system value: wrap\. Supported values: true, false/u,
     );
+  });
+});
+
+describe('Surface primitive', () => {
+  it('uses the documented surface and padding defaults', async () => {
+    const screen = await render(<Surface testID="subject" />);
+    expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+      expect.objectContaining({
+        backgroundColor: colors.surface,
+        padding: spacing.space16,
+      }),
+    );
+  });
+
+  it.each(Object.keys(colors) as ColorToken[])(
+    'resolves the %s background and border color exactly',
+    async (token) => {
+      const screen = await render(
+        <Surface background={token} borderColor={token} testID="subject" />,
+      );
+      expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+        expect.objectContaining({
+          backgroundColor: colors[token],
+          borderColor: colors[token],
+        }),
+      );
+    },
+  );
+
+  it.each(Object.keys(radii) as RadiusToken[])(
+    'resolves the %s radius exactly',
+    async (token) => {
+      const screen = await render(<Surface radius={token} testID="subject" />);
+      expect(
+        flattenedStyle(screen.getByTestId('subject').props.style).borderRadius,
+      ).toBe(radii[token]);
+    },
+  );
+
+  it.each(Object.keys(borders) as BorderToken[])(
+    'resolves the %s border width exactly',
+    async (token) => {
+      const screen = await render(
+        <Surface borderWidth={token} testID="subject" />,
+      );
+      expect(
+        flattenedStyle(screen.getByTestId('subject').props.style).borderWidth,
+      ).toBe(borders[token]);
+    },
+  );
+
+  it.each(Object.keys(spacing) as SpacingToken[])(
+    'resolves the %s padding exactly',
+    async (token) => {
+      const screen = await render(<Surface padding={token} testID="subject" />);
+      expect(flattenedStyle(screen.getByTestId('subject').props.style).padding).toBe(
+        spacing[token],
+      );
+    },
+  );
+
+  it.each([
+    ['background', { background: 'raw-color' }],
+    ['borderColor', { borderColor: null }],
+    ['borderWidth', { borderWidth: 'borderHeavy' }],
+    ['padding', { padding: 'space48' }],
+    ['radius', { radius: 'radius24' }],
+  ] as Array<[string, Record<string, unknown>]>) (
+    'rejects unsupported %s tokens',
+    (_name, props) => {
+      expect(() => Surface(props as unknown as SurfaceProps)).toThrow(
+        /Unsupported design-system value: .*Supported values:/u,
+      );
+    },
+  );
+
+  it.each([
+    'backgroundColor',
+    'borderBottomColor',
+    'borderBottomLeftRadius',
+    'borderBottomRightRadius',
+    'borderBottomWidth',
+    'borderColor',
+    'borderLeftColor',
+    'borderLeftWidth',
+    'borderRadius',
+    'borderRightColor',
+    'borderRightWidth',
+    'borderTopColor',
+    'borderTopLeftRadius',
+    'borderTopRightRadius',
+    'borderTopWidth',
+    'borderWidth',
+    'boxShadow',
+    'elevation',
+    'shadowColor',
+    'shadowOffset',
+    'shadowOpacity',
+    'shadowRadius',
+  ] as const)('rejects the reserved %s surface style key', (reservedKey) => {
+    const registered = StyleSheet.create({
+      protected: { [reservedKey]: reservedKey === 'shadowOffset' ? {} : 'tampered' },
+    });
+
+    expect(() =>
+      Surface({
+        style: [{ width: 100 }, registered.protected] as SurfaceProps['style'],
+      }),
+    ).toThrow(
+      new RegExp(
+        `Unsupported design-system value: ${reservedKey}\\. Supported values:`,
+        'u',
+      ),
+    );
+  });
+
+  it('applies allowed caller layout first and surface invariants last', async () => {
+    const screen = await render(
+      <Surface
+        background="surfaceMuted"
+        borderColor="border"
+        borderWidth="borderDefault"
+        padding="space24"
+        radius="radius20"
+        style={{ alignSelf: 'center', width: 240 }}
+        testID="subject"
+      />,
+    );
+    expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+      expect.objectContaining({
+        alignSelf: 'center',
+        backgroundColor: colors.surfaceMuted,
+        borderColor: colors.border,
+        borderRadius: radii.radius20,
+        borderWidth: borders.borderDefault,
+        padding: spacing.space24,
+        width: 240,
+      }),
+    );
+  });
+});
+
+describe('design-system primitive public boundaries', () => {
+  it('re-exports direct component identities and keeps guards private', () => {
+    const primitives = jest.requireActual<
+      typeof import('../src/design-system/primitives')
+    >('../src/design-system/primitives');
+    const root = jest.requireActual<typeof import('../src/design-system')>(
+      '../src/design-system',
+    );
+    const directText = jest.requireActual<
+      typeof import('../src/design-system/primitives/Text')
+    >('../src/design-system/primitives/Text');
+    const directStack = jest.requireActual<
+      typeof import('../src/design-system/primitives/Stack')
+    >('../src/design-system/primitives/Stack');
+    const directInline = jest.requireActual<
+      typeof import('../src/design-system/primitives/Inline')
+    >('../src/design-system/primitives/Inline');
+    const directSurface = jest.requireActual<
+      typeof import('../src/design-system/primitives/Surface')
+    >('../src/design-system/primitives/Surface');
+
+    expect(primitives.Text).toBe(directText.Text);
+    expect(primitives.Stack).toBe(directStack.Stack);
+    expect(primitives.Inline).toBe(directInline.Inline);
+    expect(primitives.Surface).toBe(directSurface.Surface);
+    expect(root.Text).toBe(directText.Text);
+    expect(root.Stack).toBe(directStack.Stack);
+    expect(root.Inline).toBe(directInline.Inline);
+    expect(root.Surface).toBe(directSurface.Surface);
+    expect(primitives).not.toHaveProperty('guardStyle');
+    expect(root).not.toHaveProperty('guardStyle');
+  });
+
+  it('re-exports original token objects without runtime evidence or product imports', () => {
+    const root = jest.requireActual<typeof import('../src/design-system')>(
+      '../src/design-system',
+    );
+    expect(root.colors).toBe(colors);
+    expect(root.spacing).toBe(spacing);
+    expect(root.radii).toBe(radii);
+    expect(root.borders).toBe(borders);
+
+    const runtimeFiles = [
+      'Text.tsx',
+      'Stack.tsx',
+      'Inline.tsx',
+      'Surface.tsx',
+      'styleGuards.ts',
+      'index.ts',
+    ];
+    runtimeFiles.forEach((file) => {
+      const source = readFileSync(
+        join(process.cwd(), 'src/design-system/primitives', file),
+        'utf8',
+      );
+      expect(source).not.toMatch(
+        /design-spec|penpot|navigation|storage|network|product-model|product-copy/iu,
+      );
+    });
   });
 });
