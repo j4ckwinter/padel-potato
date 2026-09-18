@@ -13,6 +13,7 @@
     "test": "jest",
     "storybook:native": "cross-env STORYBOOK_ENABLED=true expo start",
     "storybook:web": "cross-env STORYBOOK_ENABLED=true expo start --web",
+    "storybook:web:smoke": "node scripts/smoke-storybook-web.mjs",
     "storybook:ios": "cross-env STORYBOOK_ENABLED=true expo start --ios",
     "storybook:android": "cross-env STORYBOOK_ENABLED=true expo start --android"
   },
