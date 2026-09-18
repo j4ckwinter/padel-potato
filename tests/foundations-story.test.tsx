@@ -15,7 +15,7 @@ import {
   typography,
 } from '../src/design-system/tokens';
 
-const categoryCases = [
+const categoryCases: Array<[FoundationCategory, string, string[]]> = [
   ['colors', 'Colors', Object.keys(colors)],
   ['typography', 'Typography', Object.keys(typography)],
   ['spacing', 'Spacing', Object.keys(spacing)],
@@ -23,9 +23,7 @@ const categoryCases = [
   ['dimensions', 'Dimensions', Object.keys(dimensions)],
   ['borders', 'Borders', Object.keys(borders)],
   ['opacity', 'Opacity', Object.keys(opacity)],
-] as const satisfies ReadonlyArray<
-  readonly [FoundationCategory, string, readonly string[]]
->;
+];
 
 describe('FoundationGallery', () => {
   it('renders every category in the retained Penpot section order', async () => {
