@@ -127,6 +127,17 @@ describe('Icon asset contract', () => {
     await labelled.unmount();
   });
 
+  test.each(['', '   ', '\t\n'])(
+    'rejects the unusable explicit icon label %p',
+    async (accessibilityLabel) => {
+      await expect(
+        render(<Icon accessibilityLabel={accessibilityLabel} name="home" />),
+      ).rejects.toThrow(
+        /Supported values: non-empty accessibility label/u,
+      );
+    },
+  );
+
   test.each(invalidIconInputs)(
     'rejects unsupported runtime input %# instead of falling back',
     async (props, message) => {
@@ -185,6 +196,22 @@ describe('brand lockup asset contracts', () => {
     expect(stacked.getByRole('image', { name: label })).toBeTruthy();
     await stacked.unmount();
   });
+
+  test.each(['', '   ', '\t\n'])(
+    'rejects the unusable explicit brand label %p for both lockups',
+    async (accessibilityLabel) => {
+      await expect(
+        render(<BrandLockup accessibilityLabel={accessibilityLabel} width={300} />),
+      ).rejects.toThrow(
+        /Supported values: non-empty accessibility label/u,
+      );
+      await expect(
+        render(<BrandLockupStacked accessibilityLabel={accessibilityLabel} width={300} />),
+      ).rejects.toThrow(
+        /Supported values: non-empty accessibility label/u,
+      );
+    },
+  );
 
   test.each([
     0,

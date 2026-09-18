@@ -23,6 +23,12 @@ export function BrandLockup(props: BrandLockupProps) {
   if (typeof props.width !== 'number' || !Number.isFinite(props.width) || props.width <= 0) {
     unsupported(props.width, ['finite positive width']);
   }
+  if (
+    props.accessibilityLabel !== undefined &&
+    (typeof props.accessibilityLabel !== 'string' || props.accessibilityLabel.trim().length === 0)
+  ) {
+    unsupported(props.accessibilityLabel, ['non-empty accessibility label']);
+  }
 
   return (
     <Image

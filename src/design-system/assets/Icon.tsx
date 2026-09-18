@@ -64,8 +64,14 @@ export function Icon(props: IconProps) {
     unsupported(color, Object.keys(colors));
   }
   if (size !== 'iconSize20') unsupported(size, ['iconSize20']);
+  if (
+    accessibilityLabel !== undefined &&
+    (typeof accessibilityLabel !== 'string' || accessibilityLabel.trim().length === 0)
+  ) {
+    unsupported(accessibilityLabel, ['non-empty accessibility label']);
+  }
 
-  const labelled = typeof accessibilityLabel === 'string';
+  const labelled = accessibilityLabel !== undefined;
   const record = iconRegistry[name];
 
   return (
