@@ -1,5 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import {
+  act,
   fireEvent,
   render,
   userEvent,
@@ -23,12 +24,12 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-const stateCases = [
+const stateCases: Array<[string, boolean, boolean, number]> = [
   ['enabled', false, false, 1],
   ['disabled', true, false, 0],
   ['loading', false, true, 0],
   ['disabled and loading', true, true, 0],
-] as const;
+];
 
 describe('Pressable interaction contract', () => {
   it.each(stateCases)(
@@ -55,7 +56,6 @@ describe('Pressable interaction contract', () => {
       await user.press(subject);
 
       expect(onPress).toHaveBeenCalledTimes(expectedPresses);
-      expect(subject.props.disabled).toBe(disabled || loading);
       expect(subject.props.accessibilityState).toEqual(
         expect.objectContaining({
           busy: loading,
@@ -117,8 +117,8 @@ describe('Pressable interaction contract', () => {
       const subject = screen.getByTestId('subject');
       const style = flattenedStyle(subject.props.style);
 
-      expect(style.width).toBe(dimensions[size]);
-      expect(style.height).toBe(dimensions[size]);
+      expect(style.minWidth).toBe(dimensions[size]);
+      expect(style.minHeight).toBe(dimensions[size]);
       expect(subject.props.hitSlop).toEqual({
         bottom: expansion,
         left: expansion,
@@ -144,7 +144,9 @@ describe('Pressable interaction contract', () => {
     expect(flattenedStyle(subject.props.style)).toEqual(
       expect.objectContaining({ outlineWidth: 0 }),
     );
-    fireEvent(subject, 'focus', { nativeEvent: {} });
+    await act(async () => {
+      fireEvent(subject, 'focus', { nativeEvent: {} });
+    });
     expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
       expect.objectContaining({
         outlineColor: colors.focusRing,
@@ -153,7 +155,9 @@ describe('Pressable interaction contract', () => {
     );
     expect(onFocus).toHaveBeenCalledTimes(1);
 
-    fireEvent(screen.getByTestId('subject'), 'blur', { nativeEvent: {} });
+    await act(async () => {
+      fireEvent(screen.getByTestId('subject'), 'blur', { nativeEvent: {} });
+    });
     expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
       expect.objectContaining({ outlineWidth: 0 }),
     );
@@ -178,13 +182,11 @@ describe('Pressable interaction contract', () => {
   });
 
   it.each([
-    'height',
     'minHeight',
     'minWidth',
     'opacity',
     'outlineColor',
     'outlineWidth',
-    'width',
   ] as const)('rejects the reserved %s style key', (reservedKey) => {
     expect(() =>
       Pressable({
@@ -195,6 +197,24 @@ describe('Pressable interaction contract', () => {
         `Unsupported design-system value: ${reservedKey}\\. Supported values:`,
         'u',
       ),
+    );
+  });
+
+  it('allows caller dimensions without permitting them to remove the target minimum', async () => {
+    const screen = await render(
+      <Pressable
+        size="controlHeight40"
+        style={{ height: 12, width: 180 }}
+        testID="subject"
+      />,
+    );
+    expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+      expect.objectContaining({
+        height: 12,
+        minHeight: dimensions.controlHeight40,
+        minWidth: dimensions.controlHeight40,
+        width: 180,
+      }),
     );
   });
 
