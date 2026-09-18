@@ -3,6 +3,8 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 import { describe, expect, test } from '@jest/globals';
+import { render } from '@testing-library/react-native';
+import { SvgXml } from 'react-native-svg';
 
 import { iconNames, iconRegistry } from '../src/design-system/assets/generated/iconRegistry';
 
@@ -42,6 +44,15 @@ describe('Penpot asset evidence', () => {
       expect(fs.existsSync(path.join(root, brand.normalizedPath))).toBe(true);
       expect(fs.existsSync(path.join(root, brand.referencePath))).toBe(true);
     }
+  });
+
+  test('renders normalized local geometry through react-native-svg with semantic paint', () => {
+    const { getByTestId, unmount } = render(
+      <SvgXml testID="add-icon" xml={iconRegistry.add.xml} color="#0e1716" width={20} height={20} />,
+    );
+    expect(getByTestId('add-icon')).toHaveProp('color', '#0e1716');
+    expect(iconRegistry.add.xml.replaceAll('currentColor', '#0e1716')).toContain('stroke="#0e1716"');
+    unmount();
   });
 
   test('validator runs controlled tamper rejections and deterministic regeneration', () => {
