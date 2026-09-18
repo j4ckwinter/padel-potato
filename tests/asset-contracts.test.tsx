@@ -62,9 +62,13 @@ describe('Penpot asset evidence', () => {
     expect(manifest.brands.map((brand: { name: string }) => brand.name)).toEqual(['brand-lockup', 'brand-lockup-stacked']);
     expect(manifest.brands.map((brand: { width: number; height: number }) => [brand.width, brand.height])).toEqual([[300, 72], [300, 56]]);
     for (const brand of manifest.brands) {
-      expect(fs.existsSync(path.join(root, brand.rawPath))).toBe(true);
-      expect(fs.existsSync(path.join(root, brand.normalizedPath))).toBe(true);
-      expect(fs.existsSync(path.join(root, brand.referencePath))).toBe(true);
+      const copies = [brand.rawPath, brand.normalizedPath, brand.referencePath].map((assetPath) =>
+        fs.readFileSync(path.join(root, assetPath)),
+      );
+      expect(copies[1].equals(copies[0])).toBe(true);
+      expect(copies[2].equals(copies[0])).toBe(true);
+      expect(copies[0].readUInt32BE(16)).toBe(brand.width);
+      expect(copies[0].readUInt32BE(20)).toBe(brand.height);
     }
   });
 

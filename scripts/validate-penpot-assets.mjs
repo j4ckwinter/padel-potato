@@ -9,6 +9,54 @@ import { normalizeRawSvg, parseSvgProfile } from './penpot-svg-profile.mjs';
 const SHA = /^[a-f0-9]{64}$/;
 const sha256 = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 const assert = (ok, message) => { if (!ok) throw new Error(message); };
+const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+const CRC_TABLE = Array.from({ length: 256 }, (_, value) => {
+  let crc = value;
+  for (let bit = 0; bit < 8; bit += 1) crc = (crc & 1) ? (0xedb88320 ^ (crc >>> 1)) : (crc >>> 1);
+  return crc >>> 0;
+});
+
+function crc32(bytes) {
+  let crc = 0xffffffff;
+  for (const byte of bytes) crc = CRC_TABLE[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+export function readPngDimensions(bytes, name = 'PNG') {
+  assert(Buffer.isBuffer(bytes) && bytes.length >= 33, `${name} has a truncated PNG structure`);
+  assert(bytes.subarray(0, 8).equals(PNG_SIGNATURE), `${name} is not PNG`);
+  let offset = 8;
+  let dimensions;
+  let chunkIndex = 0;
+  let ended = false;
+  while (offset < bytes.length) {
+    assert(bytes.length - offset >= 12, `${name} has a truncated PNG chunk`);
+    const length = bytes.readUInt32BE(offset);
+    const dataEnd = offset + 12 + length;
+    assert(dataEnd <= bytes.length, `${name} has an out-of-bounds PNG chunk`);
+    const type = bytes.toString('ascii', offset + 4, offset + 8);
+    assert(/^[A-Za-z]{4}$/u.test(type), `${name} has an invalid PNG chunk type`);
+    const expectedCrc = bytes.readUInt32BE(offset + 8 + length);
+    const actualCrc = crc32(bytes.subarray(offset + 4, offset + 8 + length));
+    assert(actualCrc === expectedCrc, `${name} has a corrupt ${type} PNG chunk`);
+    if (chunkIndex === 0) {
+      assert(type === 'IHDR' && length === 13, `${name} must begin with a 13-byte IHDR chunk`);
+      dimensions = { width: bytes.readUInt32BE(offset + 8), height: bytes.readUInt32BE(offset + 12) };
+      assert(dimensions.width > 0 && dimensions.height > 0, `${name} has invalid IHDR dimensions`);
+    } else {
+      assert(type !== 'IHDR', `${name} has a duplicate IHDR chunk`);
+    }
+    offset = dataEnd;
+    chunkIndex += 1;
+    if (type === 'IEND') {
+      assert(length === 0, `${name} has an invalid IEND chunk`);
+      assert(offset === bytes.length, `${name} contains trailing PNG data`);
+      ended = true;
+    }
+  }
+  assert(ended, `${name} has no IEND chunk`);
+  return dimensions;
+}
 
 function resolveInside(repoRoot, relative, expectedRoot, extension) {
   assert(typeof relative === 'string' && !path.isAbsolute(relative), `unsafe absolute path: ${relative}`);
@@ -51,12 +99,16 @@ export function validateAssetEvidence({ manifest, repoRoot }) {
     const expected = BRAND_SOURCES[index];
     assert(record.sourceId === expected[2] && record.sourceNodeId === expected[3], `${record.name} source identity changed`);
     assert(record.width === expected[4] && record.height === expected[5], `${record.name} ratio changed`);
+    const retainedCopies = [];
     for (const [field, fixedRoot] of [['rawPath', 'design-spec/assets/raw'], ['normalizedPath', 'design-spec/assets/normalized'], ['referencePath', 'design-spec/references/components']]) {
       const bytes = fs.readFileSync(resolveInside(repoRoot, record[field], fixedRoot, '.png'));
-      assert(bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])), `${record.name} is not PNG`);
+      const dimensions = readPngDimensions(bytes, `${record.name} ${field}`);
+      assert(dimensions.width === expected[4] && dimensions.height === expected[5], `${record.name} ${field} IHDR dimensions changed`);
       const hashField = field === 'referencePath' ? 'referenceSha256' : field === 'rawPath' ? 'rawSha256' : 'normalizedSha256';
       assert(SHA.test(record[hashField]) && sha256(bytes) === record[hashField], `${record.name} ${field} hash mismatch`);
+      retainedCopies.push(bytes);
     }
+    assert(retainedCopies.slice(1).every((bytes) => bytes.equals(retainedCopies[0])), `${record.name} retained PNG copies differ`);
   }
   return true;
 }
