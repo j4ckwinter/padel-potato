@@ -75,13 +75,13 @@ describe('Phase 4 source registry', () => {
     }
     expect(recordIds).toHaveLength(76);
     expect(new Set(recordIds).size).toBe(76);
-    expect(recordIds).not.toEqual(expect.arrayContaining(DELETED_COMPONENT_IDS));
+    expect(recordIds).not.toEqual(expect.arrayContaining([...DELETED_COMPONENT_IDS]));
     expect(phase4SourceEvidence.excludedComponentIds).toEqual(DELETED_COMPONENT_IDS);
   });
 
   it('limits normalization to the approved preferences mapping and documented geometry cleanup', () => {
-    const preferences = phase4Families.find(({ key }) => key === 'playerPreferencesCard');
-    expect(preferences?.records.map(({ originalTuple, normalizedTuple }) => ({
+    const preferences = phase4Families[11];
+    expect(preferences.records.map(({ originalTuple, normalizedTuple }) => ({
       originalTuple,
       normalizedTuple,
     }))).toEqual([
@@ -104,8 +104,8 @@ describe('Phase 4 source registry', () => {
   });
 
   it('retains raw wrapper and named-child Avatar geometry independently', () => {
-    const avatar = phase4Families.find(({ key }) => key === 'avatar');
-    expect(avatar?.records.map(({ normalizedTuple, metrics }) => ({
+    const avatar = phase4Families[0];
+    expect(avatar.records.map(({ normalizedTuple, metrics }) => ({
       size: normalizedTuple.size,
       wrapper: metrics.normalized,
       avatar: metrics.avatar.normalized,

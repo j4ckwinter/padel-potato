@@ -52,6 +52,20 @@ const assert = (condition, message) => {
 
 const sha256 = (value) => crypto.createHash('sha256').update(value).digest('hex');
 
+function withinRoot(root, candidate) {
+  const relative = path.relative(root, candidate);
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+function fixedPath(root, relativePath, label) {
+  const resolvedRoot = path.resolve(root);
+  const candidate = path.resolve(resolvedRoot, relativePath);
+  const expected = path.resolve(resolvedRoot, relativePath);
+  assert(withinRoot(resolvedRoot, candidate), `unsafe ${label} path escapes the repository root: ${relativePath}`);
+  assert(candidate === expected, `unsafe ${label} path differs from the fixed Phase 4 path: ${relativePath}`);
+  return candidate;
+}
+
 const lowerCamel = (value) => {
   const words = value.trim().split(/[^A-Za-z0-9]+/u).filter(Boolean);
   assert(words.length > 0, `cannot normalize an empty source value: ${JSON.stringify(value)}`);
@@ -217,7 +231,11 @@ function assertActive(component) {
 }
 
 export function generatePhase4Outputs({ root = repoRoot } = {}) {
-  const archivePath = path.join(root, 'design-source', 'padel-potato UI Concepts.penpot');
+  const archivePath = fixedPath(
+    root,
+    'design-source/padel-potato UI Concepts.penpot',
+    'source archive',
+  );
   const archiveBytes = fs.readFileSync(archivePath);
   const index = buildSourceIndex(parseZip(archiveBytes));
   assert(index.file.id === EXPECTED_FILE_ID, `Phase 4 source file differs: ${index.file.id}`);
@@ -344,12 +362,12 @@ export const avatarPresences = Object.freeze(['online', 'away', 'offline'] as co
 export function writePhase4Outputs({ root = repoRoot, evidence = true, registry = true } = {}) {
   const outputs = generatePhase4Outputs({ root });
   if (evidence) {
-    const outputPath = path.join(root, EVIDENCE_PATH);
+    const outputPath = fixedPath(root, EVIDENCE_PATH, 'evidence output');
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, outputs.evidenceText);
   }
   if (registry) {
-    const outputPath = path.join(root, REGISTRY_PATH);
+    const outputPath = fixedPath(root, REGISTRY_PATH, 'registry output');
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, outputs.registryText);
   }
