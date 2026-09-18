@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 import { describe, expect, it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
@@ -127,5 +128,45 @@ describe('closed Phase 3 runtime artwork', () => {
     expect(source).not.toMatch(/export type|props[:),]|source\s*[:=]\s*\w|uri\s*:/u);
     expect(source.match(/require\('\.\.\/\.\.\/\.\.\/\.\.\/design-spec\/assets\/phase-3\/mascot-[a-z]+\.webp'\)/gu))
       .toHaveLength(5);
+  });
+});
+
+describe('Phase 3 artwork integrity validator', () => {
+  it('passes clean retained evidence deterministically offline', () => {
+    const result = spawnSync(process.execPath, ['scripts/validate-phase-3-artwork.mjs'], {
+      cwd: root,
+      encoding: 'utf8',
+    });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Phase 3 artwork validation passed');
+  });
+
+  it('uses isolated fixtures to reject every controlled drift and unsafe surface', () => {
+    const result = spawnSync(
+      process.execPath,
+      ['scripts/validate-phase-3-artwork.mjs', '--self-test'],
+      { cwd: root, encoding: 'utf8' },
+    );
+    expect(result.status).toBe(0);
+    for (const label of [
+      'file identity',
+      'page identity',
+      'revision',
+      'changed hash',
+      'unsafe traversal path',
+      'unsafe absolute path',
+      'remote path',
+      'unsupported profile',
+      'changed source id',
+      'missing inventory entry',
+      'extra inventory entry',
+      'changed header mapping',
+      'remote runtime reference',
+      'runtime source access',
+      'generic artwork export',
+    ]) {
+      expect(result.stdout).toContain(`rejected ${label}`);
+    }
+    expect(result.stdout).toContain('15 controlled rejections passed');
   });
 });
