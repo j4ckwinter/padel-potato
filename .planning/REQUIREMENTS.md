@@ -16,10 +16,10 @@
 
 ### Penpot Provenance
 
-- [ ] **PNPT-01**: Developer can generate a versioned manifest of Penpot foundations, components, variant axes, states, and source IDs through the Penpot MCP.
+- [x] **PNPT-01**: Developer can generate a versioned manifest of Penpot foundations, components, variant axes, states, and source IDs through the Penpot MCP.
 - [ ] **PNPT-02**: Every implemented token and component is traceable to its authoritative Penpot source.
-- [ ] **PNPT-03**: Developer can export and retain Penpot reference renders used for visual verification.
-- [ ] **PNPT-04**: Every intentional implementation difference is recorded with its source, platform, reason, and disposition.
+- [x] **PNPT-03**: Developer can export and retain Penpot reference renders used for visual verification.
+- [x] **PNPT-04**: Every intentional implementation difference is recorded with its source, platform, reason, and disposition.
 
 ### Foundations
 
@@ -136,10 +136,10 @@
 | WORK-04 | Phase 1 | Complete |
 | WORK-05 | Phase 5 | Pending |
 | WORK-06 | Phase 1 | Complete |
-| PNPT-01 | Phase 1 | Pending |
+| PNPT-01 | Phase 1 | Complete |
 | PNPT-02 | Phase 1 | Pending |
-| PNPT-03 | Phase 1 | Pending |
-| PNPT-04 | Phase 1 | Pending |
+| PNPT-03 | Phase 1 | Complete |
+| PNPT-04 | Phase 1 | Complete |
 | FNDT-01 | Phase 1 | Pending |
 | FNDT-02 | Phase 1 | Pending |
 | FNDT-03 | Phase 1 | Pending |
