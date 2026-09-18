@@ -6,6 +6,8 @@ import { describe, expect, test } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { SvgXml } from 'react-native-svg';
 
+import { BrandLockup } from '../src/design-system/assets/BrandLockup';
+import { BrandLockupStacked } from '../src/design-system/assets/BrandLockupStacked';
 import { Icon, type IconProps } from '../src/design-system/assets/Icon';
 import { iconNames, iconRegistry } from '../src/design-system/assets/generated/iconRegistry';
 import { colors, dimensions } from '../src/design-system/tokens';
@@ -127,5 +129,80 @@ describe('Icon asset contract', () => {
       'utf8',
     );
     expect(source).not.toMatch(/https?:|fetch\(|XMLHttpRequest|penpot-assets\.json|design-spec/u);
+  });
+});
+
+describe('brand lockup asset contracts', () => {
+  test('derives exact authored ratios from the sole public sizing axis', async () => {
+    const horizontal = await render(
+      <BrandLockup testID="horizontal-lockup" width={250} />,
+    );
+    expect(horizontal.getByRole('image', { name: 'Padel Potato' })).toHaveStyle({
+      height: 60,
+      width: 250,
+    });
+    await horizontal.unmount();
+
+    const stacked = await render(
+      <BrandLockupStacked testID="stacked-lockup" width={150} />,
+    );
+    expect(stacked.getByRole('image', { name: 'Padel Potato' })).toHaveStyle({
+      height: 28,
+      width: 150,
+    });
+    await stacked.unmount();
+  });
+
+  test('passes a contextual accessible name through without changing authored media', async () => {
+    const label = 'Padel Potato home — 主頁';
+    const horizontal = await render(
+      <BrandLockup width={125} accessibilityLabel={label} />,
+    );
+    expect(horizontal.getByRole('image', { name: label })).toBeTruthy();
+    await horizontal.unmount();
+
+    const stacked = await render(
+      <BrandLockupStacked width={75} accessibilityLabel={label} />,
+    );
+    expect(stacked.getByRole('image', { name: label })).toBeTruthy();
+    await stacked.unmount();
+  });
+
+  test.each([
+    0,
+    -1,
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    null,
+    '300',
+  ])('rejects invalid lockup width %p explicitly', async (width) => {
+    await expect(
+      render(<BrandLockup width={width as number} />),
+    ).rejects.toThrow(/Unsupported design-system value: .*Supported values: finite positive width/u);
+    await expect(
+      render(<BrandLockupStacked width={width as number} />),
+    ).rejects.toThrow(/Unsupported design-system value: .*Supported values: finite positive width/u);
+  });
+
+  test.each(['height', 'style', 'color', 'source', 'image', 'copy', 'ratio']) (
+    'rejects the unsupported %s override',
+    async (key) => {
+      await expect(
+        render(<BrandLockup {...({ width: 300, [key]: 'override' } as never)} />),
+      ).rejects.toThrow(
+        new RegExp(`Unsupported design-system value: ${key}\\. Supported values:`),
+      );
+    },
+  );
+
+  test('uses only the two retained synchronous local lockup files', () => {
+    for (const file of ['BrandLockup.tsx', 'BrandLockupStacked.tsx']) {
+      const source = fs.readFileSync(
+        path.join(root, 'src/design-system/assets', file),
+        'utf8',
+      );
+      expect(source).toMatch(/design-spec\/assets\/normalized\/brand-lockup/u);
+      expect(source).not.toMatch(/https?:|fetch\(|XMLHttpRequest|loading|placeholder|penpot-assets\.json/u);
+    }
   });
 });
