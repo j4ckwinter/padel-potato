@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 const STARTUP_TIMEOUT_MS = 120_000;
 const POLL_INTERVAL_MS = 500;
@@ -31,7 +33,14 @@ async function reserveAvailablePort() {
   return port;
 }
 
-async function terminateProcessTree(child) {
+export async function terminateProcessTree(
+  child,
+  {
+    platform = process.platform,
+    spawnProcess = spawn,
+    killProcess = process.kill.bind(process),
+  } = {},
+) {
   if (!Number.isInteger(child.pid) || child.pid <= 0) {
     return;
   }
@@ -40,23 +49,30 @@ async function terminateProcessTree(child) {
     return;
   }
 
-  if (process.platform === "win32") {
-    await new Promise((resolve) => {
-      const killer = spawn(
+  if (platform === "win32") {
+    await new Promise((resolve, reject) => {
+      const killer = spawnProcess(
         "taskkill.exe",
         ["/pid", String(child.pid), "/t", "/f"],
         { stdio: "ignore", windowsHide: true },
       );
-      killer.once("error", resolve);
-      killer.once("exit", resolve);
+      killer.once("error", reject);
+      killer.once("exit", (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`taskkill exited with code ${code}`));
+        }
+      });
     });
     return;
   }
 
   try {
-    process.kill(-child.pid, "SIGTERM");
+    killProcess(-child.pid, "SIGTERM");
   } catch (error) {
     if (error.code !== "ESRCH") throw error;
+    return;
   }
 
   await Promise.race([
@@ -66,9 +82,18 @@ async function terminateProcessTree(child) {
 
   if (child.exitCode === null && child.signalCode === null) {
     try {
-      process.kill(-child.pid, "SIGKILL");
+      killProcess(-child.pid, "SIGKILL");
     } catch (error) {
       if (error.code !== "ESRCH") throw error;
+      return;
+    }
+
+    await Promise.race([
+      new Promise((resolve) => child.once("exit", resolve)),
+      delay(3_000),
+    ]);
+    if (child.exitCode === null && child.signalCode === null) {
+      throw new Error(`process group ${child.pid} did not exit after SIGKILL`);
     }
   }
 }
@@ -84,24 +109,32 @@ function registerProcessCleanup(child) {
     process.removeListener("uncaughtException", handleUncaughtException);
   };
   const cleanup = () => {
-    cleanupPromise ??= terminateProcessTree(child)
-      .catch((error) => {
-        console.error(`Storybook cleanup warning: ${error.message}`);
-      })
-      .finally(removeHandlers);
+    cleanupPromise ??= terminateProcessTree(child).finally(removeHandlers);
     return cleanupPromise;
   };
   const handleSignal = (signal) => {
-    void cleanup().finally(() => {
-      process.kill(process.pid, signal);
-    });
+    void cleanup()
+      .catch((error) => {
+        console.error(
+          `Storybook cleanup failed during ${signal}: ${error.message}`,
+        );
+      })
+      .finally(() => {
+        process.kill(process.pid, signal);
+      });
   };
   const handleUncaughtException = (error) => {
-    void cleanup().finally(() => {
-      setImmediate(() => {
-        throw error;
+    void cleanup()
+      .catch((cleanupError) => {
+        console.error(
+          `Storybook cleanup failed after uncaught exception: ${cleanupError.message}`,
+        );
+      })
+      .finally(() => {
+        setImmediate(() => {
+          throw error;
+        });
       });
-    });
   };
 
   for (const signal of ["SIGINT", "SIGTERM"]) {
@@ -112,6 +145,26 @@ function registerProcessCleanup(child) {
   process.once("uncaughtException", handleUncaughtException);
 
   return cleanup;
+}
+
+export async function finishCleanup(
+  cleanup,
+  primaryError,
+  reportCleanupError = console.error,
+) {
+  try {
+    await cleanup();
+  } catch (cleanupError) {
+    if (primaryError) {
+      reportCleanupError(
+        `Storybook cleanup also failed: ${cleanupError.message}`,
+      );
+      throw primaryError;
+    }
+    throw cleanupError;
+  }
+
+  if (primaryError) throw primaryError;
 }
 
 function bundleUrlsFromHtml(html, baseUrl) {
@@ -221,6 +274,8 @@ async function main() {
     }
   });
 
+  let successMessage;
+  let primaryError;
   try {
     const deadline = startedAt + STARTUP_TIMEOUT_MS;
     let lastError = new Error("Expo web has not responded yet.");
@@ -230,26 +285,118 @@ async function main() {
       try {
         await assertStorybookEntry(url);
         const duration = Date.now() - startedAt;
-        console.log(
-          `Storybook web smoke passed: ${url} (${duration} ms, Storybook entry confirmed)`,
-        );
-        return;
+        successMessage = `Storybook web smoke passed: ${url} (${duration} ms, Storybook entry confirmed)`;
+        break;
       } catch (error) {
         lastError = error;
         await delay(POLL_INTERVAL_MS);
       }
     }
 
-    const recentOutput = output.join("").slice(-4_000);
+    if (!successMessage) {
+      const recentOutput = output.join("").slice(-4_000);
+      throw new Error(
+        `Timed out after ${STARTUP_TIMEOUT_MS} ms: ${lastError.message}\n${recentOutput}`,
+      );
+    }
+  } catch (error) {
+    primaryError = error;
+  }
+
+  await finishCleanup(cleanup, primaryError);
+  console.log(successMessage);
+}
+
+async function expectCleanupFailure(label, action, pattern) {
+  let message = "";
+  try {
+    await action();
+  } catch (error) {
+    message = error instanceof Error ? error.message : String(error);
+  }
+  if (!message || !pattern.test(message)) {
     throw new Error(
-      `Timed out after ${STARTUP_TIMEOUT_MS} ms: ${lastError.message}\n${recentOutput}`,
+      `cleanup controlled rejection "${label}" failed; received: ${message || "no error"}`,
     );
-  } finally {
-    await cleanup();
   }
 }
 
-main().catch((error) => {
-  console.error(`Storybook web smoke failed: ${error.message}`);
-  process.exitCode = 1;
-});
+async function runControlledCleanupChecks() {
+  const child = { pid: 123, exitCode: null, signalCode: null };
+  await expectCleanupFailure(
+    "nonzero taskkill exit",
+    () =>
+      terminateProcessTree(child, {
+        platform: "win32",
+        spawnProcess: () => ({
+          once(event, handler) {
+            if (event === "exit") queueMicrotask(() => handler(1));
+            return this;
+          },
+        }),
+      }),
+    /taskkill exited with code 1/u,
+  );
+  await expectCleanupFailure(
+    "failed POSIX termination",
+    () =>
+      terminateProcessTree(child, {
+        platform: "linux",
+        killProcess: () => {
+          const error = new Error("operation not permitted");
+          error.code = "EPERM";
+          throw error;
+        },
+      }),
+    /operation not permitted/u,
+  );
+  await expectCleanupFailure(
+    "cleanup-only smoke failure",
+    () =>
+      finishCleanup(async () => {
+        throw new Error("cleanup was not proven");
+      }),
+    /cleanup was not proven/u,
+  );
+
+  const primaryError = new Error("primary launch failure");
+  let reportedCleanupError = "";
+  await expectCleanupFailure(
+    "primary failure preservation",
+    () =>
+      finishCleanup(
+        async () => {
+          throw new Error("secondary cleanup failure");
+        },
+        primaryError,
+        (message) => {
+          reportedCleanupError = message;
+        },
+      ),
+    /primary launch failure/u,
+  );
+  if (!reportedCleanupError.includes("secondary cleanup failure")) {
+    throw new Error(
+      "cleanup controlled rejection did not report the secondary failure",
+    );
+  }
+}
+
+async function run() {
+  if (process.argv.includes("--self-test-cleanup")) {
+    await runControlledCleanupChecks();
+    console.log("Storybook cleanup controlled rejections passed.");
+    return;
+  }
+  await main();
+}
+
+if (
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+  run().catch((error) => {
+    console.error(`Storybook web smoke failed: ${error.message}`);
+    process.exitCode = 1;
+  });
+}
