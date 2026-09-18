@@ -60,6 +60,43 @@ export const VECTOR_SOURCES = Object.freeze([
   }),
 ]);
 
+export const MASCOT_SOURCES_A = Object.freeze([
+  Object.freeze({
+    key: 'wave',
+    output: 'mascot-wave.webp',
+    headerPage: 'home',
+    componentId: '482a7222-5a3b-8086-8008-a614fb46e43a',
+    mainInstanceId: '482a7222-5a3b-8086-8008-a614dff3284e',
+    imageShapeId: '482a7222-5a3b-8086-8008-a61da312a643',
+    mediaRecordId: 'c514c1fb-1cda-8125-8008-a60625a0cf34',
+    mediaId: 'b182ba2e-059e-48a6-82c3-f838818775a0',
+    mediaName: 'e702fd124798d19abe908d7061bfb733ca665d58',
+  }),
+  Object.freeze({
+    key: 'search',
+    output: 'mascot-search.webp',
+    headerPage: 'games',
+    reusedAs: 'search',
+    componentId: '482a7222-5a3b-8086-8008-a61da425e5db',
+    mainInstanceId: '482a7222-5a3b-8086-8008-a61da39f0926',
+    imageShapeId: '482a7222-5a3b-8086-8008-a63bf83c829e',
+    mediaRecordId: 'c514c1fb-1cda-8125-8008-a60625a0cf31',
+    mediaId: 'a8b806ba-2ae5-4ccb-ae49-8f81d87534fe',
+    mediaName: 'e445ec0d563359b642ce256643c1259fc89efe67',
+  }),
+  Object.freeze({
+    key: 'create',
+    output: 'mascot-create.webp',
+    headerPage: 'create',
+    componentId: '482a7222-5a3b-8086-8008-a61da49f5f47',
+    mainInstanceId: '482a7222-5a3b-8086-8008-a61da42ebece',
+    imageShapeId: '482a7222-5a3b-8086-8008-a64c36657cce',
+    mediaRecordId: 'c514c1fb-1cda-8125-8008-a60625a0cf2c',
+    mediaId: 'aef1de20-ccc2-45c0-85b6-f69bf13e840f',
+    mediaName: '5540264d09ceb5a953e2124d56dbbe52327074b6',
+  }),
+]);
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const assert = (condition, message) => {
@@ -80,9 +117,13 @@ function loadSource(root = repoRoot) {
   );
   return {
     archiveBytes,
+    archive: index.archive,
     index,
     shapeById: new Map(index.shapes.map((shape) => [shape.id, shape])),
     componentById: new Map(index.components.map((component) => [component.id, component])),
+    mediaById: new Map(index.records
+      .filter((record) => record.archivePath.includes('/media/'))
+      .map((record) => [record.id, record])),
   };
 }
 
@@ -151,6 +192,53 @@ export function generateVectorOutputs({ root = repoRoot } = {}) {
   return new Map(VECTOR_SOURCES.map((source) => [source.output, vectorOutput(source, context)]));
 }
 
+function mascotOutput(source, context) {
+  const component = context.componentById.get(source.componentId);
+  assert(component, `${source.key} header component is missing: ${source.componentId}`);
+  assert(component.data.deleted !== true && component.data.deletedAt == null, `${source.key} header component is deleted`);
+  assert(component.data.mainInstanceId === source.mainInstanceId, `${source.key} header main instance differs`);
+  assert(
+    component.data.variantProperties?.length === 1 &&
+      component.data.variantProperties[0].name === 'Page' &&
+      component.data.variantProperties[0].value.toLowerCase() === source.headerPage,
+    `${source.key} header page mapping differs`,
+  );
+
+  const shape = context.shapeById.get(source.imageShapeId);
+  assert(shape?.pageId === PAGE_ID, `${source.key} header image shape is missing from the Components page`);
+  assert(shape.data.width === 64 && shape.data.height === 64, `${source.key} header image is no longer 64 by 64`);
+  const imageFills = (shape.data.fills ?? []).filter((fill) => fill.fillImage);
+  assert(imageFills.length === 1, `${source.key} header must have exactly one local image fill`);
+  const image = imageFills[0].fillImage;
+  assert(image.id === source.mediaRecordId, `${source.key} header media record differs`);
+  assert(image.name === source.mediaName, `${source.key} header media name differs`);
+  assert(image.mtype === 'image/webp' && image.width === 1254 && image.height === 1254, `${source.key} header media profile differs`);
+
+  const media = context.mediaById.get(source.mediaRecordId);
+  assert(media, `${source.key} media record is missing: ${source.mediaRecordId}`);
+  assert(media.data.isLocal === true, `${source.key} media record is not local`);
+  assert(media.data.mediaId === source.mediaId, `${source.key} object media ID differs`);
+  assert(media.data.name === source.mediaName, `${source.key} media record name differs`);
+  assert(media.data.mtype === 'image/webp' && media.data.width === 1254 && media.data.height === 1254, `${source.key} media record profile differs`);
+
+  const archivePath = `objects/${source.mediaId}.webp`;
+  const entry = context.archive.byPath.get(archivePath);
+  assert(entry, `${source.key} local media object is missing: ${archivePath}`);
+  const bytes = context.archive.readEntry(entry);
+  assert(
+    bytes.length >= 12 && bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP',
+    `${source.key} local media object is not a WebP`,
+  );
+  return bytes;
+}
+
+export function generateMascotOutputsA({ root = repoRoot } = {}) {
+  const context = loadSource(root);
+  const outputs = new Map(MASCOT_SOURCES_A.map((source) => [source.output, mascotOutput(source, context)]));
+  assert(new Set([...outputs.values()].map(sha256)).size === outputs.size, 'mascot subset contains duplicate media bytes');
+  return outputs;
+}
+
 function writeOutputs(root, outputs) {
   fs.mkdirSync(path.join(root, OUTPUT_ROOT), { recursive: true });
   for (const [relative, bytes] of outputs) fs.writeFileSync(assertFixedOutput(root, relative), bytes);
@@ -174,13 +262,20 @@ function checkOutputs(root, outputs, extension) {
 
 function main() {
   const args = process.argv.slice(2);
-  assert(args.length === 1, 'expected exactly one mode: --write-vectors or --check-vectors');
-  const vectors = generateVectorOutputs();
-  if (args[0] === '--write-vectors') writeOutputs(repoRoot, vectors);
-  else if (args[0] === '--check-vectors') checkOutputs(repoRoot, vectors, '.svg');
+  assert(args.length === 1, 'expected exactly one write or check mode');
+  let outputs;
+  if (args[0] === '--write-vectors' || args[0] === '--check-vectors') {
+    outputs = generateVectorOutputs();
+    if (args[0] === '--write-vectors') writeOutputs(repoRoot, outputs);
+    else checkOutputs(repoRoot, outputs, '.svg');
+  } else if (args[0] === '--write-mascots-a' || args[0] === '--check-mascots-a') {
+    outputs = generateMascotOutputsA();
+    if (args[0] === '--write-mascots-a') writeOutputs(repoRoot, outputs);
+    else checkOutputs(repoRoot, outputs, '.webp');
+  }
   else throw new Error(`unsupported mode: ${args[0]}`);
-  const hashes = [...vectors].map(([name, bytes]) => `${name}=${sha256(bytes)}`).join(', ');
-  console.log(`Phase 3 vectors valid: revision ${REVISION}; ${hashes}`);
+  const hashes = [...outputs].map(([name, bytes]) => `${name}=${sha256(bytes)}`).join(', ');
+  console.log(`Phase 3 artwork valid: revision ${REVISION}; ${hashes}`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
