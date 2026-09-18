@@ -238,7 +238,7 @@ const phase3Definitions = Object.freeze([
   ['IconButton', 'iconButton', 'Actions/Icon Button', ['size', 'icon', 'disabled'], ['onPress']],
   ['Favourite', 'favourite', 'Actions/Favourite', ['checked', 'disabled'], ['onCheckedChange']],
   ['Field', 'field', 'Forms/Field', ['type', 'disabled', 'readOnly', 'status'], ['onChangeText', 'onPress', 'onDecrement', 'onIncrement']],
-  ['ChoiceChip', 'choiceChip', 'Forms/Choice Chip', ['type', 'icon', 'selected', 'disabled'], ['onSelectedChange']],
+  ['ChoiceChip', 'choiceChip', 'Forms/Choice Chip', ['type', 'selected', 'disabled'], ['onSelectedChange']],
   ['Checkbox', 'checkbox', 'Forms/Checkbox', ['checked', 'disabled'], ['onCheckedChange']],
   ['DayTimeSelector', 'dayTimeSelector', 'Forms/Day Time Selector', ['type', 'selected', 'disabled'], ['onSelect']],
   ['SocialSignInButton', 'socialSignInButton', 'Authentication/Social Sign-In Button', ['provider', 'disabled'], ['onPress']],

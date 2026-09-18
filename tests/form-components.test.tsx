@@ -691,7 +691,7 @@ describe('ChoiceChip Storybook contract', () => {
     expect(ChoiceChipStories.title).toBe('Forms/Choice Chip');
     expect(ChoiceChipStories.argTypes).toEqual(expect.objectContaining({
       disabled: { control: 'boolean' },
-      icon: { control: 'select', options: ['none', 'leading', 'trailing'] },
+      icon: { control: false, table: { disable: true } },
       selected: { control: 'boolean' },
       type: { control: 'select', options: ['option', 'filter'] },
     }));
@@ -701,24 +701,34 @@ describe('ChoiceChip Storybook contract', () => {
     expect(React.Children.toArray(variants.props.children)).toHaveLength(choiceChipRecords.length);
   });
 
-  it('normalizes every independent type, icon, selected, and disabled transition', async () => {
+  it('normalizes every visible type, selected, and disabled transition to the exact source tuple', async () => {
     for (const type of ['option', 'filter'] as const) {
-      for (const icon of ['none', 'leading', 'trailing'] as const) {
-        for (const selected of [false, true]) {
-          for (const disabled of [false, true]) {
-            const props = normalizeChoiceChipStoryArgs({
-              disabled,
-              icon,
-              label: 'Controlled chip',
-              selected,
-              type,
-            });
-            const screen = await render(<ChoiceChip {...props} />);
-            expect(screen.getByRole(type === 'option' ? 'radio' : 'checkbox', {
-              name: 'Controlled chip',
-            })).toBeTruthy();
-            await screen.unmount();
-          }
+      for (const selected of [false, true]) {
+        for (const disabled of [false, true]) {
+          const props = normalizeChoiceChipStoryArgs({
+            disabled,
+            label: 'Controlled chip',
+            selected,
+            type,
+          });
+          const effectiveSelected = selected && !disabled;
+          expect(props).toEqual(expect.objectContaining({
+            disabled: disabled || undefined,
+            icon: effectiveSelected ? 'leading' : type === 'option' ? 'none' : 'trailing',
+            selected: effectiveSelected,
+            type,
+          }));
+          const screen = await render(<ChoiceChip {...props} />);
+          const chip = screen.getByRole(type === 'option' ? 'radio' : 'checkbox', {
+            checked: effectiveSelected,
+            disabled,
+            name: 'Controlled chip',
+          });
+          expect(chip.props.accessibilityState).toEqual(expect.objectContaining({
+            checked: effectiveSelected,
+            disabled,
+          }));
+          await screen.unmount();
         }
       }
     }

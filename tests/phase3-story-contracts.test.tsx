@@ -63,6 +63,7 @@ describe('Phase 3 Storybook catalogue contract', () => {
       expect(contract.controls.every((control) => !prohibited.includes(control))).toBe(true);
       expect(contract.actions.every((action) => action.startsWith('on'))).toBe(true);
     }
+    expect(phase3StoryContracts.ChoiceChip.controls).toEqual(['type', 'selected', 'disabled']);
   });
 
   it('retains machine-readable UI backstops without claiming native acceptance', () => {

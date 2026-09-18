@@ -7,7 +7,6 @@ import { Text } from '../../primitives/Text';
 import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
 import {
   ChoiceChip,
-  choiceChipIcons,
   choiceChipTypes,
   type ChoiceChipProps,
   type ChoiceChipType,
@@ -24,7 +23,7 @@ const meta = {
   component: ChoiceChip,
   argTypes: {
     disabled: { control: 'boolean' },
-    icon: { control: 'select', options: choiceChipIcons },
+    icon: { control: false, table: { disable: true } },
     onSelectedChange: { action: 'selection changed' },
     selected: { control: 'boolean' },
     type: { control: 'select', options: choiceChipTypes },
@@ -36,7 +35,6 @@ type Story = StoryObj<typeof meta>;
 
 type ChoiceChipStoryArgs = Readonly<{
   disabled?: unknown;
-  icon?: unknown;
   label?: unknown;
   onSelectedChange?: unknown;
   selected?: unknown;
