@@ -302,7 +302,7 @@ describe('AppHeader closed page configurations', () => {
     ['games', 'Games', 'Find your next match', 'search'],
     ['create', 'Create game', 'Set up your next match', 'create'],
     ['players', 'Players', 'Find your next partner', 'players'],
-  ] as const)('renders %s with decorative mascot and notification-only intent', async (page, title, subtitle, mascot) => {
+  ] as Array<['home' | 'games' | 'create' | 'players', string, string, string]>)('renders %s with decorative mascot and notification-only intent', async (page, title, subtitle, mascot) => {
     const onNotificationPress = jest.fn();
     const user = userEvent.setup();
     const screen = await render(
@@ -334,7 +334,7 @@ describe('AppHeader closed page configurations', () => {
     ['notifications', 'Notifications', 'Updates and activity'],
     ['gameDetails', 'Game details', 'Open game · 1 spot left'],
     ['settings', 'Settings', 'Manage your account'],
-  ] as const)('renders %s with only a 40-point back visual and effective 44 target', async (page, title, subtitle) => {
+  ] as Array<['notifications' | 'gameDetails' | 'settings', string, string]>)('renders %s with only a 40-point back visual and effective 44 target', async (page, title, subtitle) => {
     const onBackPress = jest.fn();
     const user = userEvent.setup();
     const screen = await render(<AppHeader page={page} onBackPress={onBackPress} />);
