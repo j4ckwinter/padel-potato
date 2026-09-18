@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 03
 current_phase_name: Actions, Forms, and Navigation Components
 status: executing
-stopped_at: Completed 03-06-PLAN.md
-last_updated: "2026-09-18T19:06:35.582Z"
+stopped_at: Completed 03-08-PLAN.md
+last_updated: "2026-09-18T19:20:47.693Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 03 execution started
-state_head: 0636ef072773a44ab6ac61b934cc1140090bd2df
+state_head: 71c2589b70a7305afa238c7669c05d19ea2ffde5
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 21
-  completed_plans: 19
+  completed_plans: 20
   percent: 40
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-18)
 ## Current Position
 
 Phase: 03 (Actions, Forms, and Navigation Components) — EXECUTING
-Plan: 8 of 9
+Plan: 9 of 9
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 03 execution started
 
@@ -77,6 +77,7 @@ Progress: [████░░░░░░] 40%
 | Phase 03 P05 | 10min | 2 tasks | 3 files |
 | Phase 03 P07 | 14min | 2 tasks | 6 files |
 | Phase 03 P06 | 10min | 3 tasks | 8 files |
+| Phase 03 P08 | 12min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -138,6 +139,10 @@ Recent decisions affecting current work:
 - [Phase 03]: Phase 03-06: Encode ChoiceChip as only the source-backed persistent tuples; focused records derive from native focus.
 - [Phase 03]: Phase 03-06: Keep Checkbox boolean-only and reject indeterminate or unknown runtime state.
 - [Phase 03]: Phase 03-06: Keep DayTimeSelector disabled opacity 0.55 family-local and name each radio from both visible lines.
+- [Phase 03]: Phase 03-08: Keep BottomNavigation visual and focus order fixed as Home, Games, Create, Players, Profile independently from retained variant-record order.
+- [Phase 03]: Phase 03-08: Use zero-basis flex growth for deterministic native equal allocation across 2, 3, or 4 SegmentedControl items.
+- [Phase 03]: Phase 03-08: Encode AppHeader as closed notification, no-action Profile, back, and Player Details branches with only source-valid callbacks.
+- [Phase 03]: Phase 03-08: Require SectionHeader action label and callback together and preserve its 44-point effective target.
 
 ### Pending Todos
 
@@ -166,6 +171,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T19:06:35.322Z
-Stopped at: Completed 03-06-PLAN.md
+Last session: 2026-09-18T19:20:47.434Z
+Stopped at: Completed 03-08-PLAN.md
 Resume file: None

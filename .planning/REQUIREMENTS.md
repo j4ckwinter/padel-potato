@@ -51,10 +51,10 @@
 
 ### Navigation and Structure
 
-- [ ] **NAVG-01**: Developer can use Bottom Navigation with every designed active destination.
-- [ ] **NAVG-02**: Developer can use Segmented Control with every designed option count and state.
+- [x] **NAVG-01**: Developer can use Bottom Navigation with every designed active destination.
+- [x] **NAVG-02**: Developer can use Segmented Control with every designed option count and state.
 - [x] **NAVG-03**: Developer can use App Header with every designed page configuration.
-- [ ] **NAVG-04**: Developer can use Section Header as designed.
+- [x] **NAVG-04**: Developer can use Section Header as designed.
 
 ### Identity, Status, and Progress
 
@@ -166,10 +166,10 @@
 | FORM-04 | Phase 3 | Complete |
 | AUTH-01 | Phase 3 | Complete |
 | AUTH-02 | Phase 3 | Complete |
-| NAVG-01 | Phase 3 | Pending |
-| NAVG-02 | Phase 3 | Pending |
+| NAVG-01 | Phase 3 | Complete |
+| NAVG-02 | Phase 3 | Complete |
 | NAVG-03 | Phase 3 | Complete |
-| NAVG-04 | Phase 3 | Pending |
+| NAVG-04 | Phase 3 | Complete |
 | IDEN-01 | Phase 4 | Pending |
 | IDEN-02 | Phase 4 | Pending |
 | IDEN-03 | Phase 4 | Pending |
