@@ -178,6 +178,9 @@ function validateFieldProps(props: FieldProps) {
     }
   } else if (trigger) {
     const triggerProps = props as TriggerFieldProps;
+    if (!isNonEmptyString(triggerProps.value) && !isNonEmptyString(triggerProps.placeholder)) {
+      unsupported(triggerProps.placeholder, ['non-empty placeholder when trigger value is empty']);
+    }
     if (typeof triggerProps.onPress !== 'function') {
       unsupported(triggerProps.onPress, ['onPress callback']);
     }
@@ -331,7 +334,8 @@ function EditableField(props: EditableFieldProps) {
 
 function TriggerField(props: TriggerFieldProps) {
   const status = props.status ?? 'default';
-  const displayedValue = props.value || props.placeholder || '';
+  const hasValue = isNonEmptyString(props.value);
+  const displayedValue = hasValue ? props.value : props.placeholder as string;
   return (
     <FieldShell props={props}>
       <Pressable
@@ -355,7 +359,7 @@ function TriggerField(props: TriggerFieldProps) {
           ]}
         >
           <Text
-            color={props.value ? 'ink' : 'muted'}
+            color={hasValue ? 'ink' : 'muted'}
             style={styles.triggerText}
             variant="body"
           >

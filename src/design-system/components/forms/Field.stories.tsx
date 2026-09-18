@@ -182,6 +182,7 @@ export const Boundaries: Story = {
   render: () => (
     <Stack gap="space12" style={{ width: 260 }}>
       <Field label="Required empty value" onChangeText={noop} placeholder="Enter game name" required type="text" value="" />
+      <Field label="Empty trigger value" onPress={noop} placeholder="Choose level" type="select" value="" />
       <Field
         label="A deliberately long password label that must wrap at constrained width"
         message="A long error remains visible and associated while the field demonstrates vertical growth"

@@ -276,11 +276,10 @@ describe('Field trigger branches', () => {
     },
   );
 
-  it('announces the placeholder and blocks a disabled trigger', async () => {
+  it('renders and announces a non-empty placeholder for an empty controlled trigger', async () => {
     const onPress = jest.fn();
     const screen = await render(
       <Field
-        disabled
         label="Time"
         onPress={onPress}
         placeholder="Choose time"
@@ -288,12 +287,34 @@ describe('Field trigger branches', () => {
         value=""
       />,
     );
-    const trigger = screen.getByRole('button', { disabled: true, name: 'Time' });
+    const trigger = screen.getByRole('button', { name: 'Time' });
     await userEvent.setup().press(trigger);
 
     expect(trigger.props.accessibilityValue).toEqual({ text: 'Choose time' });
-    expect(onPress).not.toHaveBeenCalled();
+    expect(onPress).toHaveBeenCalledTimes(1);
     expect(screen.getByText('Choose time', { includeHiddenElements: true })).toBeTruthy();
+  });
+
+  it.each([undefined, '', '   '])(
+    'rejects an empty controlled trigger with placeholder %p',
+    (placeholder) => {
+      expect(() => Field({
+        label: 'Level',
+        onPress: () => undefined,
+        placeholder,
+        type: 'select',
+        value: '',
+      })).toThrow(/non-empty placeholder/u);
+    },
+  );
+
+  it('rejects a whitespace-only controlled trigger value without a placeholder', () => {
+    expect(() => Field({
+      label: 'Date',
+      onPress: () => undefined,
+      type: 'date',
+      value: '   ',
+    })).toThrow(/non-empty placeholder when trigger value is empty/u);
   });
 });
 
