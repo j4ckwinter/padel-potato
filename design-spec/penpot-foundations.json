@@ -1,0 +1,2195 @@
+{
+  "schemaVersion": 1,
+  "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+  "fileName": "padel-potato UI Concepts",
+  "sourceRevision": 292,
+  "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+  "pageName": "01 Foundations",
+  "capturedAt": "2026-09-18T07:09:03.209Z",
+  "source": {
+    "tool": "Penpot MCP Plugin API",
+    "pluginVersion": "2.18.0",
+    "mode": "read-only"
+  },
+  "categoryOrder": [
+    "borderWidths",
+    "colors",
+    "dimensions",
+    "opacities",
+    "radii",
+    "spacing",
+    "typography"
+  ],
+  "categories": {
+    "borderWidths": [
+      {
+        "name": "border.default",
+        "kind": "borderWidth",
+        "rawValue": "1",
+        "resolvedValue": "1",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5e976196",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "focus.ring.width",
+        "kind": "borderWidth",
+        "rawValue": "2",
+        "resolvedValue": "2",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5eab3030",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      }
+    ],
+    "colors": [
+      {
+        "name": "color.accent",
+        "kind": "color",
+        "rawValue": "#ade533",
+        "resolvedValue": "#ade533",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072ba51242",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.border",
+        "kind": "color",
+        "rawValue": "#edede8",
+        "resolvedValue": "#edede8",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bb99dbc",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.canvas",
+        "kind": "color",
+        "rawValue": "#fbf8f0",
+        "resolvedValue": "#fbf8f0",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bb32981",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.danger",
+        "kind": "color",
+        "rawValue": "#ffd6d6",
+        "resolvedValue": "#ffd6d6",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bbb5f25",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.deep",
+        "kind": "color",
+        "rawValue": "#384540",
+        "resolvedValue": "#384540",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bb124b3",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.info",
+        "kind": "color",
+        "rawValue": "#d6edfa",
+        "resolvedValue": "#d6edfa",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bb836a8",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.ink",
+        "kind": "color",
+        "rawValue": "#0e1716",
+        "resolvedValue": "#0e1716",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072ba7fed1",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.muted",
+        "kind": "color",
+        "rawValue": "#636b6e",
+        "resolvedValue": "#636b6e",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bbd0527",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.olive",
+        "kind": "color",
+        "rawValue": "#636657",
+        "resolvedValue": "#636657",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bb6a79d",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.surface",
+        "kind": "color",
+        "rawValue": "#ffffff",
+        "resolvedValue": "#ffffff",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072babe9c2",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.surfaceAccent",
+        "kind": "color",
+        "rawValue": "#d1f28a",
+        "resolvedValue": "#d1f28a",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072baa38e7",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.surfaceMuted",
+        "kind": "color",
+        "rawValue": "#f0f0eb",
+        "resolvedValue": "#f0f0eb",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bad8395",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.textSecondary",
+        "kind": "color",
+        "rawValue": "#3b4742",
+        "resolvedValue": "#3b4742",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072baf945e",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "color.warning",
+        "kind": "color",
+        "rawValue": "#ffeb9e",
+        "resolvedValue": "#ffeb9e",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bb4bf99",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "focus.ring.color",
+        "kind": "color",
+        "rawValue": "#ADE533",
+        "resolvedValue": "#ADE533",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5ed0af1b",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      }
+    ],
+    "dimensions": [
+      {
+        "name": "control.height.40",
+        "kind": "dimension",
+        "rawValue": "40",
+        "resolvedValue": "40",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5e58e0cf",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "control.height.44",
+        "kind": "dimension",
+        "rawValue": "44",
+        "resolvedValue": "44",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5e62fb1e",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "control.height.48",
+        "kind": "dimension",
+        "rawValue": "48",
+        "resolvedValue": "48",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5e6f55dc",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "icon.size.20",
+        "kind": "dimension",
+        "rawValue": "20",
+        "resolvedValue": "20",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5e832077",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      }
+    ],
+    "opacities": [
+      {
+        "name": "opacity.disabled",
+        "kind": "opacity",
+        "rawValue": "0.4",
+        "resolvedValue": "0.4",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a60e5ebdb065",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      }
+    ],
+    "radii": [
+      {
+        "name": "radius.12",
+        "kind": "borderRadius",
+        "rawValue": "12",
+        "resolvedValue": "12",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bcf0bc4",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "radius.16",
+        "kind": "borderRadius",
+        "rawValue": "16",
+        "resolvedValue": "16",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bd0c57c",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "radius.20",
+        "kind": "borderRadius",
+        "rawValue": "20",
+        "resolvedValue": "20",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bd2e100",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "radius.28",
+        "kind": "borderRadius",
+        "rawValue": "28",
+        "resolvedValue": "28",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bd49f48",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "radius.36",
+        "kind": "borderRadius",
+        "rawValue": "36",
+        "resolvedValue": "36",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bd6b8cb",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "radius.8",
+        "kind": "borderRadius",
+        "rawValue": "8",
+        "resolvedValue": "8",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bcd81d1",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      }
+    ],
+    "spacing": [
+      {
+        "name": "space.12",
+        "kind": "spacing",
+        "rawValue": "12",
+        "resolvedValue": "12",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bc267f5",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "space.16",
+        "kind": "spacing",
+        "rawValue": "16",
+        "resolvedValue": "16",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bc42252",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "space.20",
+        "kind": "spacing",
+        "rawValue": "20",
+        "resolvedValue": "20",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bc67f7f",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "space.24",
+        "kind": "spacing",
+        "rawValue": "24",
+        "resolvedValue": "24",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bc826dd",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "space.32",
+        "kind": "spacing",
+        "rawValue": "32",
+        "resolvedValue": "32",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bc9ddb9",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "space.4",
+        "kind": "spacing",
+        "rawValue": "4",
+        "resolvedValue": "4",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bbed5bc",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "space.40",
+        "kind": "spacing",
+        "rawValue": "40",
+        "resolvedValue": "40",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bcb648e",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      },
+      {
+        "name": "space.8",
+        "kind": "spacing",
+        "rawValue": "8",
+        "resolvedValue": "8",
+        "aliases": [],
+        "tokenSet": {
+          "id": "482a7222-5a3b-8086-8008-a6072ba16270",
+          "name": "Core"
+        },
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072bc0bac7",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924"
+      }
+    ],
+    "typography": [
+      {
+        "name": "Body",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "14",
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": 400,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b69005a",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "regular",
+          "weight": 400,
+          "style": "normal",
+          "size": 14,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Body Strong",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "15",
+          "fontWeight": "600",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": 600,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b4a8597",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "600",
+          "weight": 600,
+          "style": "normal",
+          "size": 15,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Caption",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "11",
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": 400,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b84b5bb",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "regular",
+          "weight": 400,
+          "style": "normal",
+          "size": 11,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Display",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "28",
+          "fontWeight": "700",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": 700,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072aee7656",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "700",
+          "weight": 700,
+          "style": "normal",
+          "size": 28,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Heading",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "18",
+          "fontWeight": "700",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 18,
+          "fontWeight": 700,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b33c237",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "700",
+          "weight": 700,
+          "style": "normal",
+          "size": 18,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Label",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "12",
+          "fontWeight": "600",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": 600,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b76f580",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "600",
+          "weight": 600,
+          "style": "normal",
+          "size": 12,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Micro",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "10",
+          "fontWeight": "600",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 10,
+          "fontWeight": 600,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b92b5b9",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "600",
+          "weight": 600,
+          "style": "normal",
+          "size": 10,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Section",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "20",
+          "fontWeight": "700",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": 700,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b1ca408",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "700",
+          "weight": 700,
+          "style": "normal",
+          "size": 20,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      },
+      {
+        "name": "Title",
+        "kind": "typography",
+        "rawValue": {
+          "fontFamily": "Inter",
+          "fontSize": "25",
+          "fontWeight": "700",
+          "fontStyle": "normal",
+          "lineHeight": "1.2",
+          "letterSpacing": "0",
+          "textTransform": "none"
+        },
+        "resolvedValue": {
+          "fontFamily": "Inter",
+          "fontSize": 25,
+          "fontWeight": 700,
+          "fontStyle": "normal",
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "aliases": [],
+        "tokenSet": null,
+        "themes": [],
+        "sourceId": "482a7222-5a3b-8086-8008-a6072b05bfb9",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+        "font": {
+          "id": "gfont-inter",
+          "family": "Inter",
+          "variantId": "700",
+          "weight": 700,
+          "style": "normal",
+          "size": 25,
+          "lineHeight": 1.2,
+          "letterSpacing": 0,
+          "textTransform": "none"
+        },
+        "libraryPath": "Padel Potato / Type"
+      }
+    ]
+  },
+  "componentInventory": {
+    "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+    "records": [
+      {
+        "name": "Auth Divider",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Auth",
+        "sourceId": "482a7222-5a3b-8086-8008-a61e93b191ff",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61e93553c6b",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Social Sign-In Button",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Auth / Social Sign-In Button",
+        "sourceId": "482a7222-5a3b-8086-8008-a61e8cd600f5",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61e8c7d1bea",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Provider",
+            "values": [
+              "Apple",
+              "Google"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Focused",
+              "Pressed"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a61e8cd600f5",
+          "482a7222-5a3b-8086-8008-a61e8d34ebc3",
+          "482a7222-5a3b-8086-8008-a61e8d8f8695",
+          "482a7222-5a3b-8086-8008-a61e8e15b0be",
+          "482a7222-5a3b-8086-8008-a61e8ebdd214",
+          "482a7222-5a3b-8086-8008-a61e8f4a29d0",
+          "482a7222-5a3b-8086-8008-a61e8fbc12cc",
+          "482a7222-5a3b-8086-8008-a61e902c685a"
+        ]
+      },
+      {
+        "name": "Avatar",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Avatars / Avatar",
+        "sourceId": "482a7222-5a3b-8086-8008-a60fcadde1a1",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60fca8f7e1e",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Size",
+            "values": [
+              "32",
+              "40",
+              "48",
+              "56"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Away",
+              "Offline",
+              "Online"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60fcadde1a1",
+          "482a7222-5a3b-8086-8008-a60fcb3084a2",
+          "482a7222-5a3b-8086-8008-a60fcb824def",
+          "482a7222-5a3b-8086-8008-a60fcbd40fb2",
+          "482a7222-5a3b-8086-8008-a60fcc233ec6"
+        ]
+      },
+      {
+        "name": "Avatar Group",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Avatars / Avatar Group",
+        "sourceId": "482a7222-5a3b-8086-8008-a60f7cc4bb25",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60f7c8e29a9",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Content",
+            "values": [
+              "2 players",
+              "2 slots",
+              "3 players",
+              "4 players"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Empty",
+              "Overflow"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60f7cc4bb25",
+          "482a7222-5a3b-8086-8008-a60f7d1221be",
+          "482a7222-5a3b-8086-8008-a60f7d6eacef",
+          "482a7222-5a3b-8086-8008-a60f7dec259e",
+          "482a7222-5a3b-8086-8008-a60f7e4a95a7"
+        ]
+      },
+      {
+        "name": "Avatar Picker",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Avatars / Avatar Picker",
+        "sourceId": "482a7222-5a3b-8086-8008-a626585f883a",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a62657702d60",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Content",
+            "values": [
+              "Empty",
+              "Initials",
+              "Photo"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Error",
+              "Selected"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a626585f883a",
+          "482a7222-5a3b-8086-8008-a6265912970f",
+          "482a7222-5a3b-8086-8008-a62659d33d60",
+          "482a7222-5a3b-8086-8008-a6265a92cddb"
+        ]
+      },
+      {
+        "name": "Brand Lockup",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Brand",
+        "sourceId": "482a7222-5a3b-8086-8008-a61e9426c83d",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61e93b8acee",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Brand Lockup Stacked",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Brand",
+        "sourceId": "482a7222-5a3b-8086-8008-a62b8a2c0f47",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a62b89c01b88",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Apple",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Brand Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a61e69c05b3a",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61e69c01a41",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Google",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Brand Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a61e69a70af1",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61e69a69126",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Button",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Buttons / Button",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e9febb9fe",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e8ffb4b23",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Style",
+            "values": [
+              "Destructive",
+              "Ghost",
+              "Primary",
+              "Secondary"
+            ]
+          },
+          {
+            "name": "Size",
+            "values": [
+              "40",
+              "48"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Focused",
+              "Loading",
+              "Pressed"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60e9febb9fe",
+          "482a7222-5a3b-8086-8008-a60e9fef8841",
+          "482a7222-5a3b-8086-8008-a60e9ff37cc9",
+          "482a7222-5a3b-8086-8008-a60e9ff76866",
+          "482a7222-5a3b-8086-8008-a60e9ffb012d",
+          "482a7222-5a3b-8086-8008-a60e9fff0e5a",
+          "482a7222-5a3b-8086-8008-a60ea002fe1f",
+          "482a7222-5a3b-8086-8008-a60ea006c15d",
+          "482a7222-5a3b-8086-8008-a60ea00aa7c3"
+        ]
+      },
+      {
+        "name": "Favourite",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Buttons / Icon Button",
+        "sourceId": "ab02a31f-1852-80be-8008-a6fb4b6d6c28",
+        "sourceNodeId": "ab02a31f-1852-80be-8008-a6fb4b0ee385",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Property 1",
+            "values": [
+              "Default",
+              "Selected"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "ab02a31f-1852-80be-8008-a6fb4b6d6c28",
+          "ab02a31f-1852-80be-8008-a6fb4b70487f"
+        ]
+      },
+      {
+        "name": "Icon Button",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Buttons / Icon Button",
+        "sourceId": "ab02a31f-1852-80be-8008-a6fb1c6fcb94",
+        "sourceNodeId": "ab02a31f-1852-80be-8008-a6fb1c6fcb95",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Size",
+            "values": [
+              "40",
+              "44"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Focused",
+              "Pressed"
+            ]
+          },
+          {
+            "name": "Icon",
+            "values": [
+              "Notification",
+              "Value 2"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60eda7950b0",
+          "482a7222-5a3b-8086-8008-a60eda7d0395",
+          "482a7222-5a3b-8086-8008-a60eda809f18",
+          "482a7222-5a3b-8086-8008-a60eda8475eb",
+          "482a7222-5a3b-8086-8008-a60eda87a472",
+          "ab02a31f-1852-80be-8008-a6fb1c6fcb94"
+        ]
+      },
+      {
+        "name": "Player Preferences Card",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Cards",
+        "sourceId": "ab02a31f-1852-80be-8008-a6fde659b715",
+        "sourceNodeId": "ab02a31f-1852-80be-8008-a6fde524765a",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Property 1",
+            "values": [
+              "Content=Full",
+              "Content=Profile"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "ab02a31f-1852-80be-8008-a6fde659b715",
+          "ab02a31f-1852-80be-8008-a6fde65d2643"
+        ]
+      },
+      {
+        "name": "Game Card",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Cards / Game Card",
+        "sourceId": "482a7222-5a3b-8086-8008-a6100a5050b8",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a610098187e7",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Compact",
+              "Completed",
+              "Next",
+              "Open"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Full"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a6100a5050b8",
+          "482a7222-5a3b-8086-8008-a6100b253edc",
+          "482a7222-5a3b-8086-8008-a6100b790e54",
+          "482a7222-5a3b-8086-8008-a6100c5259a8",
+          "482a7222-5a3b-8086-8008-a6100d2d2918"
+        ]
+      },
+      {
+        "name": "Illustrated Card",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Cards / Illustrated Card",
+        "sourceId": "482a7222-5a3b-8086-8008-a6186df77c83",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a6186d641359",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Game created",
+              "Invite players",
+              "Match result",
+              "Next game"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a6186df77c83",
+          "482a7222-5a3b-8086-8008-a6186e8e05ac",
+          "482a7222-5a3b-8086-8008-a6186f6404b0",
+          "482a7222-5a3b-8086-8008-a618702cb23a"
+        ]
+      },
+      {
+        "name": "Lost match",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Cards / Illustrated Card",
+        "sourceId": "ab02a31f-1852-80be-8008-a700be582869",
+        "sourceNodeId": "ab02a31f-1852-80be-8008-a700bd15ee71",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Section Header",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Content",
+        "sourceId": "482a7222-5a3b-8086-8008-a608c3bde79a",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a608c3a6e672",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Checkbox",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Controls / Checkbox",
+        "sourceId": "482a7222-5a3b-8086-8008-a61e91ee2b48",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61e91a0a113",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "State",
+            "values": [
+              "Checked",
+              "Disabled",
+              "Focused",
+              "Unchecked"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a61e91ee2b48",
+          "482a7222-5a3b-8086-8008-a61e925d864e",
+          "482a7222-5a3b-8086-8008-a61e929bb3af",
+          "482a7222-5a3b-8086-8008-a61e92d8b300"
+        ]
+      },
+      {
+        "name": "Choice Chip",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Controls / Choice Chip",
+        "sourceId": "482a7222-5a3b-8086-8008-a61b0dda64ca",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61b0d9dab27",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Filter",
+              "Option"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Focused",
+              "Selected"
+            ]
+          },
+          {
+            "name": "Icon",
+            "values": [
+              "Leading",
+              "None",
+              "Trailing"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a61b0dda64ca",
+          "482a7222-5a3b-8086-8008-a61b0e2824c4",
+          "482a7222-5a3b-8086-8008-a61b0e64f36b",
+          "482a7222-5a3b-8086-8008-a61b0ea19e36",
+          "482a7222-5a3b-8086-8008-a61b0ef148b4",
+          "482a7222-5a3b-8086-8008-a61b0f7340b2",
+          "482a7222-5a3b-8086-8008-a61b0fe4e063",
+          "482a7222-5a3b-8086-8008-a61b104c83d8"
+        ]
+      },
+      {
+        "name": "Day Time Selector",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Controls / Day Time Selector",
+        "sourceId": "482a7222-5a3b-8086-8008-a6257eaab1fe",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a6257e41d227",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Day",
+              "Time"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Selected"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a6257eaab1fe",
+          "482a7222-5a3b-8086-8008-a6257f13960f",
+          "482a7222-5a3b-8086-8008-a6257f7809c0",
+          "482a7222-5a3b-8086-8008-a6257fe39820",
+          "482a7222-5a3b-8086-8008-a62580512f9f",
+          "482a7222-5a3b-8086-8008-a62580bacfc1"
+        ]
+      },
+      {
+        "name": "Score Result Block",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Data Display / Score Result Block",
+        "sourceId": "482a7222-5a3b-8086-8008-a61c41085295",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61c3ffc6a91",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Compact",
+              "Full"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Live",
+              "Lost",
+              "Won"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a61c41085295",
+          "482a7222-5a3b-8086-8008-a61c4222d89f",
+          "482a7222-5a3b-8086-8008-a61c435b115b",
+          "482a7222-5a3b-8086-8008-a61c454507bb",
+          "482a7222-5a3b-8086-8008-a61c473db658",
+          "482a7222-5a3b-8086-8008-a61c496f377b"
+        ]
+      },
+      {
+        "name": "Stat Tile",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Data Display / Stat Tile",
+        "sourceId": "482a7222-5a3b-8086-8008-a61be94257ca",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61be8dcbfad",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Compact",
+              "Featured"
+            ]
+          },
+          {
+            "name": "Content",
+            "values": [
+              "Games played",
+              "Rating",
+              "Streak",
+              "Win rate"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Neutral",
+              "Positive"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a61be94257ca",
+          "482a7222-5a3b-8086-8008-a61be9c140e4",
+          "482a7222-5a3b-8086-8008-a61bea307e5f",
+          "482a7222-5a3b-8086-8008-a61beab1ba7f",
+          "482a7222-5a3b-8086-8008-a61beb378f4f",
+          "482a7222-5a3b-8086-8008-a61bebbc0aa0"
+        ]
+      },
+      {
+        "name": "Banner Toast",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Feedback / Banner Toast",
+        "sourceId": "482a7222-5a3b-8086-8008-a6101228a359",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61011d5ff12",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Style",
+            "values": [
+              "Error",
+              "Info",
+              "Success",
+              "Warning"
+            ]
+          },
+          {
+            "name": "Type",
+            "values": [
+              "Banner",
+              "Toast"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a6101228a359",
+          "482a7222-5a3b-8086-8008-a6101283b381",
+          "482a7222-5a3b-8086-8008-a61012e23eed",
+          "482a7222-5a3b-8086-8008-a6101347dcce"
+        ]
+      },
+      {
+        "name": "Empty State",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Feedback / Empty State",
+        "sourceId": "482a7222-5a3b-8086-8008-a61014763913",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61013db2f5b",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Content",
+            "values": [
+              "No games",
+              "No notifications",
+              "No players"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "No action",
+              "With action"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a61014763913",
+          "482a7222-5a3b-8086-8008-a61014f19a5e",
+          "482a7222-5a3b-8086-8008-a6101594d030"
+        ]
+      },
+      {
+        "name": "Field",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Forms / Field",
+        "sourceId": "482a7222-5a3b-8086-8008-a60edc611d1f",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60edacdd3e9",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Date",
+              "Password",
+              "Search",
+              "Select",
+              "Stepper",
+              "Text",
+              "Time"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Error",
+              "Filled",
+              "Focused",
+              "Read only",
+              "Success"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60edc611d1f",
+          "482a7222-5a3b-8086-8008-a60edc64ca3f",
+          "482a7222-5a3b-8086-8008-a60edc68782c",
+          "482a7222-5a3b-8086-8008-a60edc6c2e7a",
+          "482a7222-5a3b-8086-8008-a60edc6fee32",
+          "482a7222-5a3b-8086-8008-a60edc73a9ee",
+          "482a7222-5a3b-8086-8008-a61ebfb41d52",
+          "482a7222-5a3b-8086-8008-a61ebfc2534d",
+          "482a7222-5a3b-8086-8008-a61ebfcf9740",
+          "482a7222-5a3b-8086-8008-a61ebfdba0fd",
+          "482a7222-5a3b-8086-8008-a6441b03c008",
+          "ab02a31f-1852-80be-8008-a70ba55b7418"
+        ]
+      },
+      {
+        "name": "App Header",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Headers / App Header",
+        "sourceId": "482a7222-5a3b-8086-8008-a614fb46e43a",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a614dff3284e",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Page",
+            "values": [
+              "Create",
+              "Game details",
+              "Games",
+              "Home",
+              "Notifications",
+              "Player details",
+              "Players",
+              "Profile",
+              "Settings"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a614fb46e43a",
+          "482a7222-5a3b-8086-8008-a61da425e5db",
+          "482a7222-5a3b-8086-8008-a61da49f5f47",
+          "482a7222-5a3b-8086-8008-a61da51a620a",
+          "482a7222-5a3b-8086-8008-a61da5958fa0",
+          "482a7222-5a3b-8086-8008-a61da612fc3a",
+          "482a7222-5a3b-8086-8008-a6412e721e27",
+          "482a7222-5a3b-8086-8008-a64ea95a3902",
+          "482a7222-5a3b-8086-8008-a64fd4f7c3a8"
+        ]
+      },
+      {
+        "name": "Add",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e7bbce77f",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e7bbc99e5",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Back",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e6e694800",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e6e69353f",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Calendar",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e6e9e4153",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e6e9e32e7",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Check",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e7bc9aef3",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e7bc96659",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Chevron",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e7befcdb4",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e7befbc6c",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Clock",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e6eab2572",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e6eaac496",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Close",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e7bd66cd5",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e7bd62cb7",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Court",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e7bb01686",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e7bafe5b9",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Eye",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a61e69da23e1",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61e69d9fed0",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Filter",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e6e83efb1",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e6e838190",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Home",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a61a33319dc0",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61a3331720e",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Location",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e7ba2b593",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e7ba27798",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Notification",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e6e5c487b",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e6e5bf52b",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Overflow",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e6e910446",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e6e90e037",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Players",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a61a3346509b",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61a33461c37",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Profile",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a61a335ada61",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61a335a9c4a",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Search",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e6e776490",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e6e771cb6",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Warning",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Icons",
+        "sourceId": "482a7222-5a3b-8086-8008-a60e7be35f1c",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60e7be35f19",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": false,
+        "axes": [],
+        "variantSourceIds": []
+      },
+      {
+        "name": "Bottom Navigation",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Navigation / Bottom Navigation",
+        "sourceId": "482a7222-5a3b-8086-8008-a608c35c3552",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a608c2fbaafa",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Active",
+            "values": [
+              "Create",
+              "Games",
+              "Home",
+              "Players",
+              "Profile"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a608c35c3552",
+          "482a7222-5a3b-8086-8008-a61a521a8296",
+          "482a7222-5a3b-8086-8008-a61a534ab071",
+          "482a7222-5a3b-8086-8008-a61a547e5269",
+          "482a7222-5a3b-8086-8008-a64a6bb0ef3a"
+        ]
+      },
+      {
+        "name": "Segmented Control",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Navigation / Segmented Control",
+        "sourceId": "482a7222-5a3b-8086-8008-a60ede15a862",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60edcb6377d",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Options",
+            "values": [
+              "2",
+              "3",
+              "4"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Focused",
+              "Selected"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60ede15a862",
+          "482a7222-5a3b-8086-8008-a60ede19acec",
+          "482a7222-5a3b-8086-8008-a60ede1db175",
+          "482a7222-5a3b-8086-8008-a60ede21f882"
+        ]
+      },
+      {
+        "name": "Player Item",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Players / Player Item",
+        "sourceId": "482a7222-5a3b-8086-8008-a60fd047779f",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60fcfd2a404",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Game slot",
+              "Invite result",
+              "List"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Empty",
+              "Selected"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60fd047779f",
+          "482a7222-5a3b-8086-8008-a60fd0c9fc69",
+          "482a7222-5a3b-8086-8008-a60fd1565177",
+          "482a7222-5a3b-8086-8008-a60fd1d7f1ee",
+          "482a7222-5a3b-8086-8008-a60fd257b3ed",
+          "482a7222-5a3b-8086-8008-a60fd2db4dd2"
+        ]
+      },
+      {
+        "name": "Step Progress",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Progress / Step Progress",
+        "sourceId": "482a7222-5a3b-8086-8008-a6243a555582",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a62439e8920b",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Content",
+            "values": [
+              "1",
+              "2",
+              "3",
+              "Complete"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Active",
+              "Complete"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a6243a555582",
+          "482a7222-5a3b-8086-8008-a6243ac791e4",
+          "482a7222-5a3b-8086-8008-a6243b3b4cd0",
+          "482a7222-5a3b-8086-8008-a6243bc1bd93"
+        ]
+      },
+      {
+        "name": "Notification Row",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Rows / Notification Row",
+        "sourceId": "482a7222-5a3b-8086-8008-a6100e51e86f",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a6100dcb8c66",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Booking",
+              "Game",
+              "Social",
+              "Warning"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Read",
+              "Unread"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a6100e51e86f",
+          "482a7222-5a3b-8086-8008-a6100ee14e79",
+          "482a7222-5a3b-8086-8008-a6100f72fc9a",
+          "482a7222-5a3b-8086-8008-a61010056baf",
+          "482a7222-5a3b-8086-8008-a610108dcba6",
+          "482a7222-5a3b-8086-8008-a610110edc0f"
+        ]
+      },
+      {
+        "name": "Settings Row",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Rows / Settings Row",
+        "sourceId": "482a7222-5a3b-8086-8008-a61b6da5d8ef",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a61b6d506667",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Type",
+            "values": [
+              "Destructive",
+              "Navigation",
+              "Toggle",
+              "Value"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Off",
+              "On",
+              "Pressed"
+            ]
+          },
+          {
+            "name": "Icon",
+            "values": [
+              "Close",
+              "Court",
+              "Location",
+              "Notification",
+              "Profile"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a61b6da5d8ef",
+          "482a7222-5a3b-8086-8008-a61b6dfe821d",
+          "482a7222-5a3b-8086-8008-a61b6e59b565",
+          "482a7222-5a3b-8086-8008-a61b6ecf2511",
+          "482a7222-5a3b-8086-8008-a61b6f41db13",
+          "482a7222-5a3b-8086-8008-a61b6fb55db4",
+          "482a7222-5a3b-8086-8008-a61b7028a728",
+          "482a7222-5a3b-8086-8008-a61b7085e24e",
+          "482a7222-5a3b-8086-8008-a64fd43afc66"
+        ]
+      },
+      {
+        "name": "Status Chip",
+        "kind": "component",
+        "libraryPath": "Padel Potato / Components / Status / Status Chip",
+        "sourceId": "482a7222-5a3b-8086-8008-a60fcd524563",
+        "sourceNodeId": "482a7222-5a3b-8086-8008-a60fcd17e12a",
+        "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+        "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+        "isVariant": true,
+        "axes": [
+          {
+            "name": "Style",
+            "values": [
+              "Error",
+              "Info",
+              "Neutral",
+              "Success",
+              "Warning"
+            ]
+          },
+          {
+            "name": "State",
+            "values": [
+              "Default",
+              "Disabled",
+              "Selected"
+            ]
+          }
+        ],
+        "variantSourceIds": [
+          "482a7222-5a3b-8086-8008-a60fcd524563",
+          "482a7222-5a3b-8086-8008-a60fcd957bb2",
+          "482a7222-5a3b-8086-8008-a60fcdd83013",
+          "482a7222-5a3b-8086-8008-a60fce1c0d09",
+          "482a7222-5a3b-8086-8008-a60fce63fdab",
+          "482a7222-5a3b-8086-8008-a60fcea9e9cd",
+          "482a7222-5a3b-8086-8008-a60fceedaa5b"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+    "pageId": "482a7222-5a3b-8086-8008-a6072bd7e924",
+    "revision": 292
+  },
+  "requiredEntryFields": [
+    "source",
+    "platform",
+    "reason",
+    "disposition"
+  ],
+  "deviations": []
+}
