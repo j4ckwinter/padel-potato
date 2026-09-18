@@ -29,6 +29,7 @@ describe('shared accessibility and interaction assertions', () => {
         accessibilityRole="adjustable"
         accessibilityState={{ disabled: true, selected: true }}
         accessibilityValue={{ max: 4, min: 0, now: 2, text: 'Two of four' }}
+        accessible
       />,
     );
 

@@ -13,6 +13,10 @@ import {
   type PressableSize,
 } from '../src/design-system/primitives/Pressable';
 import {
+  expectPressContract,
+  expectTouchTargetContract,
+} from '../src/design-system/testing';
+import {
   borders,
   colors,
   dimensions,
@@ -24,7 +28,7 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-const stateCases: Array<[string, boolean, boolean, number]> = [
+const stateCases: Array<[string, boolean, boolean, 0 | 1]> = [
   ['enabled', false, false, 1],
   ['disabled', true, false, 0],
   ['loading', false, true, 0],
@@ -53,9 +57,8 @@ describe('Pressable interaction contract', () => {
       const subject = screen.getByRole('button', {
         name: 'Activate example',
       });
-      await user.press(subject);
+      await expectPressContract(user, subject, onPress, expectedPresses);
 
-      expect(onPress).toHaveBeenCalledTimes(expectedPresses);
       expect(subject.props.accessibilityState).toEqual(
         expect.objectContaining({
           busy: loading,
@@ -126,6 +129,7 @@ describe('Pressable interaction contract', () => {
         top: expansion,
       });
       expect(visualSize + expansion * 2).toBeGreaterThanOrEqual(44);
+      expectTouchTargetContract(subject, visualSize as 40 | 44 | 48);
     },
   );
 
