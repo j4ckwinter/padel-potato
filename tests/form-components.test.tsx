@@ -17,6 +17,15 @@ import {
   ChoiceChip,
   type ChoiceChipProps,
 } from '../src/design-system/components/forms/ChoiceChip';
+import CheckboxStories, {
+  Boundaries as CheckboxBoundaries,
+  Interactive as CheckboxInteractive,
+  Variants as CheckboxVariants,
+} from '../src/design-system/components/forms/Checkbox.stories';
+import {
+  Checkbox,
+  type CheckboxProps,
+} from '../src/design-system/components/forms/Checkbox';
 import {
   Field,
   type EditableFieldProps,
@@ -34,6 +43,7 @@ const flattenedStyle = (style: unknown) =>
 
 const fieldRecords = phase3Families[3].records;
 const choiceChipRecords = phase3Families[4].records;
+const checkboxRecords = phase3Families[5].records;
 
 describe('Field source and public contract', () => {
   it('retains the exact twelve-record sparse ledger in source order', () => {
@@ -687,5 +697,156 @@ describe('ChoiceChip Storybook contract', () => {
     expect(boundaryJson).toContain('Phase 5');
     const interactive = ChoiceChipInteractive.render?.({} as never, {} as never) as React.ReactElement;
     expect((interactive.type as { name?: string }).name).toBe('InteractiveChoiceChipHarness');
+  });
+});
+
+describe('Checkbox source and controlled contract', () => {
+  it('retains only unchecked, checked, focused, and disabled in source order', () => {
+    expect(phase3Families[5]).toEqual(expect.objectContaining({
+      key: 'checkbox',
+      recordCount: 4,
+      sourceId: '482a7222-5a3b-8086-8008-a61e92e286a2',
+    }));
+    expect(checkboxRecords.map((record) => record.normalizedTuple)).toEqual([
+      { state: 'disabled' },
+      { state: 'focused' },
+      { state: 'checked' },
+      { state: 'unchecked' },
+    ]);
+    expect(checkboxRecords.some((record) =>
+      Object.values(record.normalizedTuple).includes('indeterminate'))).toBe(false);
+  });
+
+  it('emits the opposite boolean once while checked state remains consumer-owned', async () => {
+    const onCheckedChange = jest.fn();
+    const screen = await render(
+      <Checkbox
+        accessibilityLabel="Include completed games"
+        checked={false}
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+    const checkbox = screen.getByRole('checkbox', {
+      checked: false,
+      name: 'Include completed games',
+    });
+    await userEvent.setup().press(checkbox);
+
+    expect(onCheckedChange).toHaveBeenCalledTimes(1);
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
+    expect(checkbox.props.accessibilityState).toEqual(expect.objectContaining({ checked: false }));
+
+    await screen.rerender(
+      <Checkbox
+        accessibilityLabel="Include completed games"
+        checked
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+    expect(screen.getByRole('checkbox', {
+      checked: true,
+      name: 'Include completed games',
+    })).toBeTruthy();
+  });
+
+  it('blocks disabled activation and keeps the outer stable semantic name', async () => {
+    const onCheckedChange = jest.fn();
+    const screen = await render(
+      <Checkbox
+        accessibilityLabel="Include completed games"
+        checked={false}
+        disabled
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+    const checkbox = screen.getByRole('checkbox', {
+      checked: false,
+      disabled: true,
+      name: 'Include completed games',
+    });
+    await userEvent.setup().press(checkbox);
+    expect(onCheckedChange).not.toHaveBeenCalled();
+    expect(screen.queryAllByRole('image')).toHaveLength(0);
+  });
+
+  it('expands the 40 visual to 44, derives native focus, and keeps decorative check art hidden', async () => {
+    const screen = await render(
+      <Checkbox
+        accessibilityLabel="Include completed games"
+        checked
+        onCheckedChange={() => undefined}
+      />,
+    );
+    const checkbox = screen.getByRole('checkbox', { name: 'Include completed games' });
+    expect(checkbox.props.hitSlop).toEqual({ bottom: 2, left: 2, right: 2, top: 2 });
+    expect(flattenedStyle(checkbox.props.style)).toEqual(expect.objectContaining({
+      height: 40,
+      minHeight: 40,
+      minWidth: 40,
+      width: 40,
+    }));
+    expect(flattenedStyle(screen.getByTestId(
+      'checkbox-content',
+      { includeHiddenElements: true },
+    ).props.style)).toEqual(expect.objectContaining({
+      backgroundColor: colors.accent,
+      borderRadius: 8,
+      height: 40,
+      width: 40,
+    }));
+
+    await act(async () => fireEvent(checkbox, 'focus', { nativeEvent: {} }));
+    expect(flattenedStyle(screen.getByTestId(
+      'checkbox-content',
+      { includeHiddenElements: true },
+    ).props.style)).toEqual(expect.objectContaining({
+      borderColor: colors.focusRing,
+      borderWidth: 2,
+    }));
+    expect(screen.queryAllByRole('image')).toHaveLength(0);
+  });
+
+  it('rejects indeterminate, malformed booleans, empty names, and unknown props', () => {
+    expect(() => Checkbox({
+      accessibilityLabel: 'Include completed games',
+      checked: 'mixed',
+      onCheckedChange: () => undefined,
+    } as unknown as CheckboxProps)).toThrow(/Unsupported design-system value: mixed/u);
+    expect(() => Checkbox({
+      accessibilityLabel: '',
+      checked: false,
+      onCheckedChange: () => undefined,
+    })).toThrow(/Supported values: non-empty accessibility label/u);
+    expect(() => Checkbox({
+      accessibilityLabel: 'Include completed games',
+      checked: false,
+      indeterminate: true,
+      onCheckedChange: () => undefined,
+    } as unknown as CheckboxProps)).toThrow(/Unsupported design-system value: indeterminate/u);
+  });
+});
+
+describe('Checkbox Storybook contract', () => {
+  it('publishes Forms/Checkbox with boolean-only controls and every source row', () => {
+    expect(CheckboxStories.title).toBe('Forms/Checkbox');
+    expect(CheckboxStories.argTypes).toEqual(expect.objectContaining({
+      checked: { control: 'boolean' },
+      disabled: { control: 'boolean' },
+    }));
+    expect(CheckboxStories.argTypes).not.toHaveProperty('indeterminate');
+    const variants = CheckboxVariants.render?.({} as never, {} as never) as React.ReactElement<{
+      children: React.ReactNode;
+    }>;
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(checkboxRecords.length);
+  });
+
+  it('records adjacency, 200%-name, target-clearance, and interactive witnesses', () => {
+    const boundaries = CheckboxBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const boundaryJson = JSON.stringify(boundaries);
+    expect(boundaryJson).toContain('200%');
+    expect(boundaryJson).toContain('target clearance');
+    expect(boundaryJson).toContain('Phase 5');
+    const interactive = CheckboxInteractive.render?.({} as never, {} as never) as React.ReactElement;
+    expect((interactive.type as { name?: string }).name).toBe('InteractiveCheckboxHarness');
   });
 });
