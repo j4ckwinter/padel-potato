@@ -13,7 +13,7 @@ This milestone establishes Padel Potato's React Native design system as a depend
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundations Storybook** - Build the Penpot Foundations screen in React Native/Expo and expose it in Storybook without app integration.
+- [x] **Phase 1: Foundations Storybook** - Build the Penpot Foundations screen in React Native/Expo and expose it in Storybook without app integration. (completed 2026-09-18)
 - [ ] **Phase 2: Primitives, Assets, and Component Contracts** - Establish the reusable assets, primitives, typed states, stories, tests, and accessibility rules components need.
 - [ ] **Phase 3: Actions, Forms, and Navigation Components** - Deliver the first dependency-ordered reusable component families in Storybook.
 - [ ] **Phase 4: Identity, Content, and Feedback Components** - Complete the remaining reusable Penpot component families in Storybook.
@@ -133,7 +133,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Native Workbench and Validation Seams | 7/7 | In Progress|  |
+| 1. Native Workbench and Validation Seams | 7/7 | Complete    | 2026-09-18 |
 | 2. Penpot Provenance, Foundations, and Assets | 0/TBD | Not started | - |
 | 3. Interaction and Accessibility Contracts | 0/TBD | Not started | - |
 | 4. Verified Component Families | 0/TBD | Not started | - |
