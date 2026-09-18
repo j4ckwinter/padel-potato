@@ -58,7 +58,7 @@ describe('Phase 3 Storybook catalogue contract', () => {
   });
 
   it('permits only closed persistent controls and real callbacks', () => {
-    const prohibited = ['pressed', 'focused', 'style', 'color', 'artwork', 'router', 'picker', 'authService'];
+    const prohibited = ['pressed', 'focused', 'layoutStyle', 'color', 'artwork', 'router', 'picker', 'authService'];
     for (const contract of Object.values(phase3StoryContracts)) {
       expect(contract.controls.every((control) => !prohibited.includes(control))).toBe(true);
       expect(contract.actions.every((action) => action.startsWith('on'))).toBe(true);

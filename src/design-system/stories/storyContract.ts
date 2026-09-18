@@ -200,3 +200,131 @@ export const phase2Backstops = Object.freeze({
     status: 'host-contract',
   }),
 } as const);
+
+import { phase3SourceEvidence } from '../components/sourceRegistry';
+
+export type Phase3PublicExport =
+  | 'Button'
+  | 'IconButton'
+  | 'Favourite'
+  | 'Field'
+  | 'ChoiceChip'
+  | 'Checkbox'
+  | 'DayTimeSelector'
+  | 'SocialSignInButton'
+  | 'AuthDivider'
+  | 'BottomNavigation'
+  | 'SegmentedControl'
+  | 'AppHeader'
+  | 'SectionHeader';
+
+export type Phase3StorySourceIdentity = Readonly<{
+  fileId: string;
+  pageId: string;
+  revision: 296;
+  sourceId: string;
+}>;
+
+const allStories = categories(
+  story('Canonical'),
+  story('Variants'),
+  story('States'),
+  story('Boundaries'),
+  story('Interactive'),
+);
+
+const phase3Definitions = Object.freeze([
+  ['Button', 'button', 'Actions/Button', ['style', 'size', 'disabled', 'loading'], ['onPress']],
+  ['IconButton', 'iconButton', 'Actions/Icon Button', ['size', 'icon', 'disabled'], ['onPress']],
+  ['Favourite', 'favourite', 'Actions/Favourite', ['checked', 'disabled'], ['onCheckedChange']],
+  ['Field', 'field', 'Forms/Field', ['type', 'disabled', 'readOnly', 'status'], ['onChangeText', 'onPress', 'onDecrement', 'onIncrement']],
+  ['ChoiceChip', 'choiceChip', 'Forms/Choice Chip', ['type', 'icon', 'selected', 'disabled'], ['onSelectedChange']],
+  ['Checkbox', 'checkbox', 'Forms/Checkbox', ['checked', 'disabled'], ['onCheckedChange']],
+  ['DayTimeSelector', 'dayTimeSelector', 'Forms/Day Time Selector', ['type', 'selected', 'disabled'], ['onSelect']],
+  ['SocialSignInButton', 'socialSignInButton', 'Authentication/Social Sign-In Button', ['provider', 'disabled'], ['onPress']],
+  ['AuthDivider', 'authDivider', 'Authentication/Auth Divider', ['label'], []],
+  ['BottomNavigation', 'bottomNavigation', 'Navigation/Bottom Navigation', ['activeDestination'], ['onDestinationPress']],
+  ['SegmentedControl', 'segmentedControl', 'Navigation/Segmented Control', ['options', 'value', 'disabled'], ['onValueChange']],
+  ['AppHeader', 'appHeader', 'Navigation/App Header', ['page', 'favouriteChecked'], ['onNotificationPress', 'onBackPress', 'onFavouriteChange']],
+  ['SectionHeader', 'sectionHeader', 'Navigation/Section Header', ['title', 'actionLabel'], ['onActionPress']],
+] as const);
+
+const phase3Family = (familyKey: string) => {
+  const family = phase3SourceEvidence.families.find(({ key }) => key === familyKey);
+  if (!family) throw new Error(`Missing Phase 3 source family: ${familyKey}`);
+  return family;
+};
+
+export const phase3StoryContracts = Object.freeze(
+  Object.fromEntries(phase3Definitions.map(([exportName, familyKey, title, controls, actions]) => {
+    const family = phase3Family(familyKey);
+    return [exportName, Object.freeze({
+      exportName,
+      familyKey,
+      title,
+      categories: exportName === 'AuthDivider'
+        ? categories(
+            story('Canonical'), story('Variants'),
+            inapplicable('AuthDivider is static readable content with no authored transient state.'),
+            story('Boundaries'),
+            inapplicable('AuthDivider exposes no callback or product interaction.'),
+          )
+        : allStories,
+      controls: Object.freeze([...controls]),
+      actions: Object.freeze([...actions]),
+      recordIds: Object.freeze(family.records.map(({ id }) => id)),
+    })];
+  })),
+) as Readonly<Record<Phase3PublicExport, Readonly<{
+  exportName: Phase3PublicExport;
+  familyKey: string;
+  title: string;
+  categories: Readonly<Record<StoryCategory, StoryApplicability>>;
+  controls: readonly string[];
+  actions: readonly string[];
+  recordIds: readonly string[];
+}>>>;
+
+export const phase3StorySources = Object.freeze(
+  Object.fromEntries(phase3Definitions.map(([exportName, familyKey]) => {
+    const family = phase3Family(familyKey);
+    return [exportName, Object.freeze({
+      fileId: phase3SourceEvidence.source.fileId,
+      pageId: phase3SourceEvidence.source.pageId,
+      revision: 296 as const,
+      sourceId: family.sourceId,
+    })];
+  })),
+) as Readonly<Record<Phase3PublicExport, Phase3StorySourceIdentity>>;
+
+export const phase3Backstops = Object.freeze({
+  emptyField: Object.freeze({ witness: 'field-boundary-empty', status: 'host-contract' }),
+  longContent: Object.freeze({
+    witnesses: Object.freeze(['field-boundary-long-content', 'header-boundary-long-content']),
+    nativeStatus: 'deferred-to-phase-5',
+    status: 'host-contract',
+  }),
+  compositeOrder: Object.freeze({
+    bottomNavigation: Object.freeze(['home', 'games', 'create', 'players', 'profile']),
+    witness: 'bottom-navigation',
+    status: 'host-contract',
+  }),
+  segmentCardinality: Object.freeze({
+    counts: Object.freeze([2, 3, 4] as const),
+    equalAllocation: true,
+    witness: 'segmented-control',
+    status: 'host-contract',
+  }),
+  targetClearance: Object.freeze({
+    minimumEffectiveTarget: 44,
+    witness: 'boundary-adjacent-targets',
+    status: 'host-contract',
+  }),
+  nativeReview: Object.freeze({
+    ios: 'deferred-to-phase-5',
+    android: 'deferred-to-phase-5',
+    fontScale200: 'deferred-to-phase-5',
+    voiceOver: 'deferred-to-phase-5',
+    talkBack: 'deferred-to-phase-5',
+  }),
+} as const);
