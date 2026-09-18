@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import zlib from 'node:zlib';
 import { BRAND_SOURCES, FILE_ID, ICON_SOURCES, PAGE_ID, REVISION, generateAssetOutputs } from './export-penpot-assets.mjs';
 import { normalizeRawSvg, parseSvgProfile } from './penpot-svg-profile.mjs';
 
@@ -27,8 +28,11 @@ export function readPngDimensions(bytes, name = 'PNG') {
   assert(bytes.subarray(0, 8).equals(PNG_SIGNATURE), `${name} is not PNG`);
   let offset = 8;
   let dimensions;
+  let imageProfile;
   let chunkIndex = 0;
   let ended = false;
+  let idatEnded = false;
+  const imageData = [];
   while (offset < bytes.length) {
     assert(bytes.length - offset >= 12, `${name} has a truncated PNG chunk`);
     const length = bytes.readUInt32BE(offset);
@@ -43,8 +47,22 @@ export function readPngDimensions(bytes, name = 'PNG') {
       assert(type === 'IHDR' && length === 13, `${name} must begin with a 13-byte IHDR chunk`);
       dimensions = { width: bytes.readUInt32BE(offset + 8), height: bytes.readUInt32BE(offset + 12) };
       assert(dimensions.width > 0 && dimensions.height > 0, `${name} has invalid IHDR dimensions`);
+      imageProfile = {
+        bitDepth: bytes[offset + 16],
+        colorType: bytes[offset + 17],
+        compression: bytes[offset + 18],
+        filter: bytes[offset + 19],
+        interlace: bytes[offset + 20],
+      };
     } else {
       assert(type !== 'IHDR', `${name} has a duplicate IHDR chunk`);
+    }
+    if (type === 'IDAT') {
+      assert(!idatEnded, `${name} has a non-consecutive IDAT sequence`);
+      assert(length > 0, `${name} has an empty IDAT chunk`);
+      imageData.push(bytes.subarray(offset + 8, offset + 8 + length));
+    } else if (imageData.length > 0) {
+      idatEnded = true;
     }
     offset = dataEnd;
     chunkIndex += 1;
@@ -55,7 +73,62 @@ export function readPngDimensions(bytes, name = 'PNG') {
     }
   }
   assert(ended, `${name} has no IEND chunk`);
+  assert(imageData.length > 0, `${name} has no IDAT image data`);
+  assert(imageProfile.compression === 0, `${name} has an unsupported PNG compression method`);
+  assert(imageProfile.filter === 0, `${name} has an unsupported PNG filter method`);
+  assert(imageProfile.interlace === 0, `${name} has an unsupported interlaced PNG profile`);
+  const validDepths = {
+    0: [1, 2, 4, 8, 16],
+    2: [8, 16],
+    3: [1, 2, 4, 8],
+    4: [8, 16],
+    6: [8, 16],
+  };
+  const channels = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 }[imageProfile.colorType];
+  assert(channels && validDepths[imageProfile.colorType]?.includes(imageProfile.bitDepth), `${name} has an invalid PNG colour profile`);
+  let decoded;
+  try {
+    decoded = zlib.inflateSync(Buffer.concat(imageData));
+  } catch {
+    throw new Error(`${name} has corrupt compressed IDAT image data`);
+  }
+  const rowBytes = Math.ceil((dimensions.width * channels * imageProfile.bitDepth) / 8);
+  assert(decoded.length === dimensions.height * (rowBytes + 1), `${name} has invalid decoded image-data length`);
+  for (let row = 0; row < dimensions.height; row += 1) {
+    assert(decoded[row * (rowBytes + 1)] <= 4, `${name} has an invalid PNG row filter`);
+  }
   return dimensions;
+}
+
+function encodePngChunk(type, data = Buffer.alloc(0)) {
+  const typeBytes = Buffer.from(type, 'ascii');
+  const chunk = Buffer.alloc(12 + data.length);
+  chunk.writeUInt32BE(data.length, 0);
+  typeBytes.copy(chunk, 4);
+  data.copy(chunk, 8);
+  chunk.writeUInt32BE(crc32(Buffer.concat([typeBytes, data])), 8 + data.length);
+  return chunk;
+}
+
+function splitPngChunks(bytes) {
+  const chunks = [];
+  for (let offset = 8; offset < bytes.length;) {
+    const length = bytes.readUInt32BE(offset);
+    const end = offset + 12 + length;
+    chunks.push({
+      bytes: bytes.subarray(offset, end),
+      data: bytes.subarray(offset + 8, offset + 8 + length),
+      type: bytes.toString('ascii', offset + 4, offset + 8),
+    });
+    offset = end;
+  }
+  return chunks;
+}
+
+function expectPngFailure(label, bytes) {
+  let error;
+  try { readPngDimensions(bytes, label); } catch (caught) { error = caught; }
+  assert(error, `controlled PNG rejection did not fail: ${label}`);
 }
 
 function resolveInside(repoRoot, relative, expectedRoot, extension) {
@@ -160,6 +233,25 @@ function main() {
   expectSvgFailure('additional paint', safeSvg, safeRecord, (xml) => xml.replace('fill="none"', 'fill="#ffffff"'));
   expectSvgFailure('alternate child namespace', safeSvg, safeRecord, (xml) => xml.replace('<path ', '<path xmlns="https://evil.example" '));
   expectSvgFailure('redundant child namespace', safeSvg, safeRecord, (xml) => xml.replace('<path ', '<path xmlns="http://www.w3.org/2000/svg" '));
+  const safePng = fs.readFileSync(path.join(repoRoot, manifest.brands[0].normalizedPath));
+  const safePngChunks = splitPngChunks(safePng);
+  expectPngFailure(
+    'PNG without IDAT',
+    Buffer.concat([PNG_SIGNATURE, ...safePngChunks.filter((chunk) => chunk.type !== 'IDAT').map((chunk) => chunk.bytes)]),
+  );
+  expectPngFailure(
+    'PNG with IDAT after IEND',
+    Buffer.concat([safePng, encodePngChunk('IDAT', Buffer.from([1]))]),
+  );
+  expectPngFailure(
+    'PNG with corrupt compressed IDAT',
+    Buffer.concat([
+      PNG_SIGNATURE,
+      safePngChunks[0].bytes,
+      encodePngChunk('IDAT', Buffer.from([0, 1, 2, 3])),
+      safePngChunks.at(-1).bytes,
+    ]),
+  );
   const disposableRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'padel-assets-'));
   try {
     fs.cpSync(path.join(repoRoot, 'design-spec'), path.join(disposableRoot, 'design-spec'), { recursive: true });

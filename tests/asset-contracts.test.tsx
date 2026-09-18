@@ -97,6 +97,10 @@ describe('Penpot asset evidence', () => {
     expect(profile).toContain('unsupported authored paint');
     expect(profile).toContain('ALLOWED_ATTRIBUTES_BY_TAG');
     expect(profile).not.toContain("'data-penpot-shape-id', 'd', 'x', 'y', 'cx'");
+    const validator = fs.readFileSync(path.join(root, 'scripts/validate-penpot-assets.mjs'), 'utf8');
+    expect(validator).toContain('PNG without IDAT');
+    expect(validator).toContain('PNG with IDAT after IEND');
+    expect(validator).toContain('PNG with corrupt compressed IDAT');
   });
 });
 
