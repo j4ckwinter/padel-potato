@@ -55,7 +55,7 @@ export const foundationCategories = Object.freeze([
 ] as const satisfies readonly FoundationCategory[]);
 
 const categoryHeadings: Readonly<Record<FoundationCategory, string>> = {
-  colors: 'Colors',
+  colors: 'Semantic colors',
   typography: 'Typography',
   spacing: 'Spacing',
   radii: 'Radii',
@@ -119,7 +119,7 @@ function SourceText({
 function ColorSpecimens() {
   return (
     <View style={styles.wrapRow}>
-      {(Object.keys(colors) as Array<keyof typeof colors>).map((tokenName) => (
+      {(Object.keys(colors) as (keyof typeof colors)[]).map((tokenName) => (
         <View
           key={tokenName}
           style={styles.colorItem}
@@ -145,7 +145,7 @@ function ColorSpecimens() {
 function TypographySpecimens() {
   return (
     <View style={styles.stack}>
-      {(Object.keys(typography) as Array<keyof typeof typography>).map(
+      {(Object.keys(typography) as (keyof typeof typography)[]).map(
         (tokenName) => {
           const token = typography[tokenName];
           return (
@@ -313,7 +313,7 @@ export function FoundationGallery({ category }: FoundationGalleryProps = {}) {
           Padel Potato Foundations
         </Text>
         <Text style={styles.subtitle}>
-          Extracted from the retained Penpot revision 292 foundations source.
+          Extracted directly from the preferred imported Home screen.
         </Text>
       </View>
       {visibleCategories.map((visibleCategory) => (

@@ -26,7 +26,7 @@ import {
 } from '../src/design-system/tokens';
 
 const categoryCases: Array<[FoundationCategory, string, string[]]> = [
-  ['colors', 'Colors', Object.keys(colors)],
+  ['colors', 'Semantic colors', Object.keys(colors)],
   ['typography', 'Typography', Object.keys(typography)],
   ['spacing', 'Spacing', Object.keys(spacing)],
   ['radii', 'Radii', Object.keys(radii)],
