@@ -44,14 +44,13 @@ describe('Phase 3 source registry', () => {
       key, name, sourceId, recordCount: count,
     })));
 
-    const records = phase3Families.flatMap((family) => family.records);
-    expect(records).toHaveLength(75);
-    expect(new Set(records.map((record) => record.id))).toHaveSize(75);
+    const recordIds: string[] = [];
     for (const family of phase3Families) {
       expect(family.records.map((record) => record.sourceIndex)).toEqual(
         family.records.map((_, index) => index),
       );
       for (const record of family.records) {
+        recordIds.push(record.id);
         expect(record.id).toMatch(
           /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u,
         );
@@ -61,6 +60,8 @@ describe('Phase 3 source registry', () => {
         expect(record.active).toBe(true);
       }
     }
+    expect(recordIds).toHaveLength(75);
+    expect(new Set(recordIds).size).toBe(75);
   });
 
   it('retains only the approved metadata and fractional geometry normalizations', () => {
@@ -81,9 +82,14 @@ describe('Phase 3 source registry', () => {
       icon: 'notification',
     });
 
-    const geometryNormalizations = phase3Families
-      .flatMap((family) => family.records)
-      .filter((record) => record.metrics.normalization !== null);
+    const geometryNormalizations: Array<{
+      metrics: { normalization: string | null; normalized: { width: number } };
+    }> = [];
+    for (const family of phase3Families) {
+      for (const record of family.records) {
+        if (record.metrics.normalization !== null) geometryNormalizations.push(record);
+      }
+    }
     expect(geometryNormalizations.length).toBeGreaterThan(0);
     expect(new Set(geometryNormalizations.map((record) => record.metrics.normalization))).toEqual(
       new Set(['fractional 352/390 serialization cleanup']),
@@ -127,7 +133,9 @@ describe('Phase 3 source registry', () => {
     expect(Object.isFrozen(phase3Families[0].records[0].metrics)).toBe(true);
 
     const registrySource = fs.readFileSync(registryPath, 'utf8');
-    expect(registrySource).not.toMatch(/phase-3-components\.json|design-source|\.penpot/u);
+    expect(registrySource).not.toMatch(
+      /(?:from|require\()\s*['"][^'"]*(?:phase-3-components\.json|design-source|\.penpot)|readFileSync|parseZip|https?:\/\//u,
+    );
   });
 });
 

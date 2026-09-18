@@ -188,6 +188,7 @@ export function generatePhase3Outputs({ root = repoRoot } = {}) {
           id: component.id,
           mainInstanceId: component.data.mainInstanceId,
           sourceIndex,
+          active: true,
           originalTuple: tupleObject(originalProperties),
           normalizedTuple: normalizeTuple(source.key, originalProperties),
           metrics: recordMetrics(shape, shapeById),
