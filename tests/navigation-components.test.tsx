@@ -425,11 +425,11 @@ describe('SectionHeader optional action pair', () => {
     expect(screen.getByRole('header', { name: 'Open games near you' })).toBeTruthy();
     expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(flattenedStyle(screen.getByTestId('section-header').props.style)).toEqual(
-      expect.objectContaining({ height: 28, width: 350 }),
+      expect.objectContaining({ minHeight: 44, width: 350 }),
     );
   });
 
-  it('renders the complete action pair as a separately named effective 44-point target', async () => {
+  it('leaves enough parent clearance for the separately named effective 44-point action target', async () => {
     const onActionPress = jest.fn();
     const user = userEvent.setup();
     const screen = await render(
@@ -441,6 +441,9 @@ describe('SectionHeader optional action pair', () => {
       minHeight: 40,
       minWidth: 40,
     }));
+    expect(flattenedStyle(screen.getByTestId('section-header').props.style)).toEqual(
+      expect.objectContaining({ minHeight: 44 }),
+    );
     await user.press(action);
     expect(onActionPress).toHaveBeenCalledTimes(1);
   });

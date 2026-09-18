@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flexDirection: 'row',
-    height: 28,
     justifyContent: 'space-between',
+    minHeight: 44,
     overflow: 'visible',
     width: 350,
   },
