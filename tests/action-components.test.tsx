@@ -7,6 +7,9 @@ import ButtonStories, {
   Boundaries as ButtonBoundaries,
   Variants as ButtonVariants,
 } from '../src/design-system/components/actions/Button.stories';
+import IconButtonStories, {
+  Variants as IconButtonVariants,
+} from '../src/design-system/components/actions/IconButton.stories';
 import {
   Button,
   type ButtonProps,
@@ -14,9 +17,15 @@ import {
   type ButtonStyle,
 } from '../src/design-system/components/actions/Button';
 import {
+  IconButton,
+  type IconButtonProps,
+  type IconButtonSize,
+} from '../src/design-system/components/actions/IconButton';
+import {
   buttonRecords,
   buttonSizes,
   buttonStyles,
+  phase3Families,
   phase3SourceIdentity,
 } from '../src/design-system/components/sourceRegistry';
 import { colors } from '../src/design-system/tokens';
@@ -257,5 +266,126 @@ describe('Button Storybook contract', () => {
     const boundaries = ButtonBoundaries.render?.({} as never, {} as never) as React.ReactElement;
     expect(JSON.stringify(boundaries)).toContain('200%');
     expect(JSON.stringify(boundaries)).toContain('hit-area');
+  });
+});
+
+const iconButtonRecords = phase3Families[1].records;
+
+describe('IconButton source and public contract', () => {
+  it('retains the exact six records and approved Value 2 normalization in source order', () => {
+    expect(phase3Families[1]).toEqual(expect.objectContaining({
+      key: 'iconButton',
+      recordCount: 6,
+      sourceId: '482a7222-5a3b-8086-8008-a60eda8bf731',
+    }));
+    expect(iconButtonRecords.map((record) => record.id)).toEqual([
+      '482a7222-5a3b-8086-8008-a60eda87a472',
+      '482a7222-5a3b-8086-8008-a60eda8475eb',
+      '482a7222-5a3b-8086-8008-a60eda809f18',
+      '482a7222-5a3b-8086-8008-a60eda7d0395',
+      '482a7222-5a3b-8086-8008-a60eda7950b0',
+      'ab02a31f-1852-80be-8008-a6fb1c6fcb94',
+    ]);
+    expect(iconButtonRecords.at(-1)).toEqual(expect.objectContaining({
+      originalTuple: { Icon: 'Value 2', Size: '44', State: 'Default' },
+      normalizedTuple: { icon: 'notification', size: 44, state: 'default' },
+    }));
+
+    const closedSizes: IconButtonSize[] = [40, 44];
+    type VisualEscape = Extract<'pressed' | 'focused' | 'style' | 'color', keyof IconButtonProps>;
+    const hasNoVisualEscape: VisualEscape extends never ? true : false = true;
+    expect(closedSizes).toEqual([40, 44]);
+    expect(hasNoVisualEscape).toBe(true);
+  });
+
+  it.each([
+    ['enabled', false, 1],
+    ['disabled', true, 0],
+  ] as Array<[string, boolean, 0 | 1]>)('%s activation follows the shared blocked contract', async (_name, disabled, expectedCalls) => {
+    const onPress = jest.fn();
+    const user = userEvent.setup();
+    const screen = await render(
+      <IconButton
+        accessibilityLabel="Open notifications"
+        disabled={disabled}
+        icon="notification"
+        onPress={onPress}
+      />,
+    );
+    const subject = screen.getByRole('button', { name: 'Open notifications' });
+    await user.press(subject);
+
+    expect(onPress).toHaveBeenCalledTimes(expectedCalls);
+    expect(subject.props.accessibilityState).toEqual(expect.objectContaining({ disabled }));
+    expect(screen.queryAllByRole('image')).toHaveLength(0);
+  });
+
+  it.each([
+    [40, 2],
+    [44, 0],
+  ] as Array<[IconButtonSize, number]>)('keeps the %s visual and declares the effective 44-point target', async (size, expansion) => {
+    const screen = await render(
+      <IconButton accessibilityLabel={`${size} action`} icon="notification" size={size} />,
+    );
+    const subject = screen.getByRole('button', { name: `${size} action` });
+    expect(subject.props.hitSlop).toEqual({
+      bottom: expansion,
+      left: expansion,
+      right: expansion,
+      top: expansion,
+    });
+    expect(flattenedStyle(subject.props.style)).toEqual(expect.objectContaining({
+      height: size,
+      minHeight: size,
+      minWidth: size,
+      width: size,
+    }));
+  });
+
+  it('derives pressed styling from the native render state', () => {
+    const rendered = IconButton({
+      accessibilityLabel: 'Open notifications',
+      icon: 'notification',
+    }) as React.ReactElement<{
+      children: (state: { pressed: boolean }) => React.ReactElement<{ style: unknown }>;
+    }>;
+    expect(flattenedStyle(rendered.props.children({ pressed: false }).props.style).backgroundColor).toBe(colors.surface);
+    expect(flattenedStyle(rendered.props.children({ pressed: true }).props.style).backgroundColor).toBe(colors.surfaceAccent);
+  });
+
+  it('rejects missing names and casted invalid values with the standard diagnostic', () => {
+    expect(() => IconButton({ accessibilityLabel: '', icon: 'notification' })).toThrow(
+      /Unsupported design-system value: .*Supported values: non-empty accessibility label/u,
+    );
+    expect(() => IconButton({
+      accessibilityLabel: 'Example',
+      icon: 'not-authored' as IconButtonProps['icon'],
+    })).toThrow(/Unsupported design-system value: not-authored/u);
+    expect(() => IconButton({
+      accessibilityLabel: 'Example',
+      icon: 'notification',
+      size: 48 as IconButtonSize,
+    })).toThrow(/Unsupported design-system value: 48/u);
+    expect(() => IconButton({
+      accessibilityLabel: 'Example',
+      disabled: 'yes',
+      icon: 'notification',
+    } as unknown as IconButtonProps)).toThrow(/Unsupported design-system value: yes/u);
+  });
+});
+
+describe('IconButton Storybook contract', () => {
+  it('publishes the exact group, bounded controls, and six source-ordered records', () => {
+    expect(IconButtonStories.title).toBe('Actions/Icon Button');
+    expect(IconButtonStories.argTypes).toEqual(expect.objectContaining({
+      disabled: { control: 'boolean' },
+      icon: expect.objectContaining({ control: 'select' }),
+      onPress: { action: 'pressed' },
+      size: { control: 'select', options: [40, 44] },
+    }));
+    const variants = IconButtonVariants.render?.({} as never, {} as never) as React.ReactElement<{
+      children: React.ReactNode;
+    }>;
+    expect(Children.toArray(variants.props.children)).toHaveLength(iconButtonRecords.length);
   });
 });
