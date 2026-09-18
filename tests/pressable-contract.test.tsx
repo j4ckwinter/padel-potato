@@ -36,6 +36,31 @@ const stateCases: Array<[string, boolean, boolean, 0 | 1]> = [
 ];
 
 describe('Pressable interaction contract', () => {
+  it('excludes native visual and interaction escape routes from its public and runtime contracts', () => {
+    type EscapeRoute = Extract<
+      | 'android_disableSound'
+      | 'android_ripple'
+      | 'delayLongPress'
+      | 'pressRetentionOffset'
+      | 'unstable_pressDelay',
+      keyof PressableProps
+    >;
+    const publicContractIsClosed: EscapeRoute extends never ? true : false = true;
+    expect(publicContractIsClosed).toBe(true);
+
+    for (const key of [
+      'android_disableSound',
+      'android_ripple',
+      'delayLongPress',
+      'pressRetentionOffset',
+      'unstable_pressDelay',
+    ]) {
+      expect(() => Pressable({ [key]: true } as unknown as PressableProps)).toThrow(
+        new RegExp(`Unsupported design-system value: ${key}\\. Supported values:`, 'u'),
+      );
+    }
+  });
+
   it.each(stateCases)(
     '%s exposes accurate state and invokes the action the expected number of times',
     async (_name, disabled, loading, expectedPresses) => {

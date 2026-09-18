@@ -55,14 +55,35 @@ const pressableOwnedStyleKeys = [
   'outlineWidth',
 ] as const satisfies readonly (keyof ViewStyle)[];
 
-const forbiddenRuntimeProps = [
-  'focused',
-  'hitSlop',
-  'onLongPress',
-  'onPressIn',
-  'onPressMove',
-  'onPressOut',
-  'testOnly_pressed',
+const supportedRuntimeProps = [
+  'accessibilityActions',
+  'accessibilityElementsHidden',
+  'accessibilityHint',
+  'accessibilityLabel',
+  'accessibilityLanguage',
+  'accessibilityLiveRegion',
+  'accessibilityRole',
+  'accessibilityState',
+  'accessibilityValue',
+  'accessible',
+  'children',
+  'disabled',
+  'focusable',
+  'id',
+  'importantForAccessibility',
+  'loading',
+  'nativeID',
+  'onAccessibilityAction',
+  'onAccessibilityEscape',
+  'onAccessibilityTap',
+  'onBlur',
+  'onFocus',
+  'onLayout',
+  'onMagicTap',
+  'onPress',
+  'size',
+  'style',
+  'testID',
 ] as const;
 
 const own = (record: object, key: PropertyKey) =>
@@ -80,18 +101,34 @@ export type PressableLayoutStyle = Pick<
   (typeof pressableLayoutStyleKeys)[number]
 >;
 
-type RemovedNativeProps =
-  | 'disabled'
-  | 'hitSlop'
-  | 'onLongPress'
-  | 'onPress'
-  | 'onPressIn'
-  | 'onPressMove'
-  | 'onPressOut'
-  | 'style'
-  | 'testOnly_pressed';
+type SupportedNativeProps = Pick<
+  NativePressableProps,
+  | 'accessibilityActions'
+  | 'accessibilityElementsHidden'
+  | 'accessibilityHint'
+  | 'accessibilityLabel'
+  | 'accessibilityLanguage'
+  | 'accessibilityLiveRegion'
+  | 'accessibilityRole'
+  | 'accessibilityState'
+  | 'accessibilityValue'
+  | 'accessible'
+  | 'children'
+  | 'focusable'
+  | 'id'
+  | 'importantForAccessibility'
+  | 'nativeID'
+  | 'onAccessibilityAction'
+  | 'onAccessibilityEscape'
+  | 'onAccessibilityTap'
+  | 'onBlur'
+  | 'onFocus'
+  | 'onLayout'
+  | 'onMagicTap'
+  | 'testID'
+>;
 
-export type PressableProps = Omit<NativePressableProps, RemovedNativeProps> & {
+export type PressableProps = SupportedNativeProps & {
   disabled?: boolean;
   loading?: boolean;
   onPress?: (event: GestureResponderEvent) => void;
@@ -107,8 +144,10 @@ export type PressableProps = Omit<NativePressableProps, RemovedNativeProps> & {
  * must retain at least two points of clear surrounding parent space.
  */
 export function Pressable(props: PressableProps) {
-  for (const key of forbiddenRuntimeProps) {
-    if (own(props, key)) unsupported(key, []);
+  for (const key of Object.keys(props)) {
+    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+      unsupported(key, supportedRuntimeProps);
+    }
   }
 
   const {
