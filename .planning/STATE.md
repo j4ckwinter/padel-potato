@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 01
 current_phase_name: Foundations Storybook
 status: executing
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-09-18T09:18:56.083Z"
+stopped_at: Completed 01-05-PLAN.md
+last_updated: "2026-09-18T09:24:57.355Z"
 last_activity: 2026-09-17
 last_activity_desc: Phase 01 execution started
-state_head: 50e93f5e68139f85be9711756db69c39ba5c0528
+state_head: bccd49b0475edaa4faf3057b40ba998f4240fce0
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 7
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 01 (Foundations Storybook) — EXECUTING
-Plan: 5 of 7
+Plan: 6 of 7
 Status: Ready to execute
 Last activity: 2026-09-17 — Phase 01 execution started
 
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P02 | 18min | 2 tasks | 15 files |
 | Phase 01 P03 | 15min | 2 tasks | 5 files |
 | Phase 01 P04 | 1h 59m | 2 tasks | 11 files |
+| Phase 01 P05 | 12m | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Map authored Inter weights to separate static runtime families to prevent native weight synthesis.
 - [Phase 01]: Convert Penpot's unitless 1.2 line-height to exact React Native absolute line heights.
 - [Phase 01]: Gate all Storybook stories on authoritative font readiness and fail visibly without fallback specimens.
+- [Phase 01]: Normalize Penpot scalar names to lower camel case by splitting only on non-alphanumeric runs while preserving numeric segments.
+- [Phase 01]: Keep the public foundation token boundary re-export-only so barrel imports preserve direct-module object identity.
 
 ### Pending Todos
 
@@ -105,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T09:18:56.058Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-09-18T09:24:57.329Z
+Stopped at: Completed 01-05-PLAN.md
 Resume file: None
