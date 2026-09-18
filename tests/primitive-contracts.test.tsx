@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
+import type { ReactElement } from 'react';
 import { StyleSheet, Text as NativeText } from 'react-native';
 
 import {
@@ -30,6 +31,18 @@ const invalidTextTokenCases: Array<[string, Record<string, unknown>]> = [
   ['null typography token', { variant: null }],
   ['missing color token', { color: 'missing', variant: 'body' }],
   ['null color token', { color: null, variant: 'body' }],
+];
+
+const layoutPrimitiveCases: Array<
+  [string, (props: StackProps) => ReactElement, 'column' | 'row']
+> = [
+  ['Stack', Stack, 'column'],
+  ['Inline', Inline, 'row'],
+];
+
+const inlineWrapCases: Array<[boolean, 'wrap' | 'nowrap']> = [
+  [true, 'wrap'],
+  [false, 'nowrap'],
 ];
 
 describe('Text primitive', () => {
@@ -157,10 +170,7 @@ describe('Text primitive', () => {
   });
 });
 
-describe.each([
-  ['Stack', Stack, 'column'],
-  ['Inline', Inline, 'row'],
-] as const)('%s layout primitive', (_name, Component, direction) => {
+describe.each(layoutPrimitiveCases)('%s layout primitive', (_name, Component, direction) => {
   it.each(Object.keys(spacing) as SpacingToken[])(
     'resolves the complete %s spacing token exactly',
     async (token) => {
@@ -246,7 +256,7 @@ describe.each([
   it('preserves zero, one, many, null, equal, and adjacent children in React order', async () => {
     const empty = await render(<Component testID="empty" />);
     expect(empty.getByTestId('empty').props.children).toBeUndefined();
-    empty.unmount();
+    await empty.unmount();
 
     const screen = await render(
       <Component testID="subject">
@@ -260,7 +270,8 @@ describe.each([
     expect(screen.getAllByText('Same')).toHaveLength(2);
     expect(
       screen.getByTestId('subject').props.children.map(
-        (child: React.ReactElement | null) => child?.props.testID ?? null,
+        (child: ReactElement<{ testID?: string }> | null) =>
+          child?.props.testID ?? null,
       ),
     ).toEqual(['first', null, 'second', 'third']);
   });
@@ -268,7 +279,7 @@ describe.each([
   it('passes caller accessibility props through without inventing a role', async () => {
     const unlabelled = await render(<Component testID="unlabelled" />);
     expect(unlabelled.getByTestId('unlabelled').props.accessibilityRole).toBeUndefined();
-    unlabelled.unmount();
+    await unlabelled.unmount();
 
     const labelled = await render(
       <Component
@@ -285,10 +296,7 @@ describe.each([
 });
 
 describe('Inline wrap boundary', () => {
-  it.each([
-    [true, 'wrap'],
-    [false, 'nowrap'],
-  ] as const)('maps %s to %s without changing row direction', async (wrap, expected) => {
+  it.each(inlineWrapCases)('maps %s to %s without changing row direction', async (wrap, expected) => {
     const screen = await render(
       <Inline testID="subject" wrap={wrap} />,
     );

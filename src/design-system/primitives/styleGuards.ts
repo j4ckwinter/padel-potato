@@ -1,4 +1,8 @@
-import { StyleSheet, type StyleProp } from 'react-native';
+import {
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
 type NamedValues = Readonly<Record<string, unknown>>;
 
@@ -10,6 +14,56 @@ const unsupported = (value: unknown, supportedValues: readonly string[]): never 
     `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
   );
 };
+
+export const containerLayoutStyleKeys = [
+  'alignSelf',
+  'bottom',
+  'flex',
+  'flexBasis',
+  'flexGrow',
+  'flexShrink',
+  'height',
+  'left',
+  'margin',
+  'marginBottom',
+  'marginEnd',
+  'marginHorizontal',
+  'marginLeft',
+  'marginRight',
+  'marginStart',
+  'marginTop',
+  'marginVertical',
+  'maxHeight',
+  'maxWidth',
+  'minHeight',
+  'minWidth',
+  'position',
+  'right',
+  'top',
+  'width',
+] as const satisfies readonly (keyof ViewStyle)[];
+
+export const containerOwnedStyleKeys = [
+  'alignItems',
+  'flexDirection',
+  'flexWrap',
+  'gap',
+  'justifyContent',
+  'padding',
+  'paddingBottom',
+  'paddingEnd',
+  'paddingHorizontal',
+  'paddingLeft',
+  'paddingRight',
+  'paddingStart',
+  'paddingTop',
+  'paddingVertical',
+] as const satisfies readonly (keyof ViewStyle)[];
+
+export type ContainerLayoutStyle = Pick<
+  ViewStyle,
+  (typeof containerLayoutStyleKeys)[number]
+>;
 
 export const resolveDesignToken = <
   Values extends NamedValues,
@@ -42,4 +96,16 @@ export const guardStyle = <Style extends object>(
       unsupported(key, supportedKeys);
     }
   }
+};
+
+export const resolveBooleanDesignValue = <TrueValue, FalseValue>(
+  value: boolean,
+  trueValue: TrueValue,
+  falseValue: FalseValue,
+) => {
+  if (typeof value !== 'boolean') {
+    return unsupported(value, ['true', 'false']);
+  }
+
+  return value ? trueValue : falseValue;
 };
