@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+    "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+    "productPageId": "482a7222-5a3b-8086-8008-a608ebaf11cd",
+    "revision": 296
+  },
+  "vectors": [
+    {
+      "key": "heart",
+      "path": "design-spec/assets/phase-3/heart.svg",
+      "sha256": "4702408560540bb24bfa75f3126a97928a80e5f9e1d40f128f1caaa7d12a2540",
+      "bytes": 916,
+      "source": {
+        "componentId": "ab02a31f-1852-80be-8008-a6fb4b6d6c28",
+        "mainInstanceId": "ab02a31f-1852-80be-8008-a6fb4b0ee385",
+        "groupId": "ab02a31f-1852-80be-8008-a6fb4b29b8b1",
+        "childIds": ["ab02a31f-1852-80be-8008-a6fb4b2b84cf", "ab02a31f-1852-80be-8008-a6fb4b2c42fc"]
+      },
+      "profile": { "format": "svg", "width": 20, "height": 20, "viewBox": [1052, 1102, 20, 20], "pathCount": 1, "paints": ["#384540"] }
+    },
+    {
+      "key": "google",
+      "path": "design-spec/assets/phase-3/google.svg",
+      "sha256": "1f3dca4391638cce542471073844fc18f3a099ebd73839692fc9f6295e36dcb3",
+      "bytes": 1888,
+      "source": {
+        "componentId": "482a7222-5a3b-8086-8008-a61e8cd600f5",
+        "mainInstanceId": "482a7222-5a3b-8086-8008-a61e8c7d1bea",
+        "groupId": "482a7222-5a3b-8086-8008-a61e8c9e36b1",
+        "childIds": ["482a7222-5a3b-8086-8008-a61e8c9e36b2", "482a7222-5a3b-8086-8008-a61e8c9e36b3", "482a7222-5a3b-8086-8008-a61e8c9e36b4", "482a7222-5a3b-8086-8008-a61e8c9e36b5", "482a7222-5a3b-8086-8008-a61e8c9e36b6"]
+      },
+      "profile": { "format": "svg", "width": 20, "height": 20, "viewBox": [57, 4865, 20, 20], "pathCount": 4, "paints": ["#4285f4", "#34a853", "#fbbc05", "#ea4335"] }
+    },
+    {
+      "key": "apple",
+      "path": "design-spec/assets/phase-3/apple.svg",
+      "sha256": "a1df0ff0799a3473f2f3e5a158af3f3919b04c6edca868aa6866e9ae33fd7b56",
+      "bytes": 1764,
+      "source": {
+        "componentId": "482a7222-5a3b-8086-8008-a61e8ebdd214",
+        "mainInstanceId": "482a7222-5a3b-8086-8008-a61e8e22e75b",
+        "groupId": "482a7222-5a3b-8086-8008-a61e8e4c6652",
+        "childIds": ["482a7222-5a3b-8086-8008-a61e8e4c6653", "482a7222-5a3b-8086-8008-a61e8e4c6654", "482a7222-5a3b-8086-8008-a61e8e4c6655"]
+      },
+      "profile": { "format": "svg", "width": 20, "height": 20, "viewBox": [57, 4993, 20, 20], "pathCount": 2, "paints": ["#0e1716", "#0e1716"] }
+    }
+  ],
+  "mascots": [
+    {
+      "key": "wave",
+      "path": "design-spec/assets/phase-3/mascot-wave.webp",
+      "sha256": "14836e94d5eb17be36c05a8aa594fc9ad790e2e7adb41010ba1801a868012e95",
+      "bytes": 93200,
+      "source": { "componentId": "482a7222-5a3b-8086-8008-a614fb46e43a", "mainInstanceId": "482a7222-5a3b-8086-8008-a614dff3284e", "imageShapeId": "482a7222-5a3b-8086-8008-a61da312a643", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf34", "mediaId": "b182ba2e-059e-48a6-82c3-f838818775a0", "mediaName": "e702fd124798d19abe908d7061bfb733ca665d58" },
+      "profile": { "format": "webp", "mimeType": "image/webp", "sourceWidth": 1254, "sourceHeight": 1254, "renderWidth": 64, "renderHeight": 64 }
+    },
+    {
+      "key": "search",
+      "path": "design-spec/assets/phase-3/mascot-search.webp",
+      "sha256": "d4f0b4a19e0cdccf88966be9922fd2c0e176f8511b5d8d636e801dce68f0463d",
+      "bytes": 85106,
+      "source": { "componentId": "482a7222-5a3b-8086-8008-a61da425e5db", "mainInstanceId": "482a7222-5a3b-8086-8008-a61da39f0926", "imageShapeId": "482a7222-5a3b-8086-8008-a63bf83c829e", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf31", "mediaId": "a8b806ba-2ae5-4ccb-ae49-8f81d87534fe", "mediaName": "e445ec0d563359b642ce256643c1259fc89efe67" },
+      "profile": { "format": "webp", "mimeType": "image/webp", "sourceWidth": 1254, "sourceHeight": 1254, "renderWidth": 64, "renderHeight": 64 }
+    },
+    {
+      "key": "create",
+      "path": "design-spec/assets/phase-3/mascot-create.webp",
+      "sha256": "e667bac94cba09749f0d5575a1baa8e580f8ebce9d11c4aa3610f93ce3c5cb52",
+      "bytes": 76744,
+      "source": { "componentId": "482a7222-5a3b-8086-8008-a61da49f5f47", "mainInstanceId": "482a7222-5a3b-8086-8008-a61da42ebece", "imageShapeId": "482a7222-5a3b-8086-8008-a64c36657cce", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf2c", "mediaId": "aef1de20-ccc2-45c0-85b6-f69bf13e840f", "mediaName": "5540264d09ceb5a953e2124d56dbbe52327074b6" },
+      "profile": { "format": "webp", "mimeType": "image/webp", "sourceWidth": 1254, "sourceHeight": 1254, "renderWidth": 64, "renderHeight": 64 }
+    },
+    {
+      "key": "players",
+      "path": "design-spec/assets/phase-3/mascot-players.webp",
+      "sha256": "5c9fa96ceadf392fb673b3661bc3a394ac9537b4de5ced0df2f77ac857dd1588",
+      "bytes": 78088,
+      "source": { "componentId": "482a7222-5a3b-8086-8008-a61da51a620a", "mainInstanceId": "482a7222-5a3b-8086-8008-a61da4a7b606", "imageShapeId": "ab02a31f-1852-80be-8008-a6f847c072bc", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf35", "mediaId": "4f24b68a-8a89-45cf-8dc3-a12fe1411fe8", "mediaName": "d32f82ab4823901c297bfa69c34d696ec14c55ac" },
+      "profile": { "format": "webp", "mimeType": "image/webp", "sourceWidth": 1254, "sourceHeight": 1254, "renderWidth": 64, "renderHeight": 64 }
+    },
+    {
+      "key": "profile",
+      "path": "design-spec/assets/phase-3/mascot-profile.webp",
+      "sha256": "f49ed736291310bae80e6734f6aedd5c868efd2e65a4ea161e93dc97011b314b",
+      "bytes": 109494,
+      "source": { "componentId": "482a7222-5a3b-8086-8008-a61da5958fa0", "mainInstanceId": "482a7222-5a3b-8086-8008-a61da522fa4d", "imageShapeId": "ab02a31f-1852-80be-8008-a704d8e2d15b", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf33", "mediaId": "3b4c67c1-ffea-4516-a8bf-ee5656e09ecd", "mediaName": "0dea1183f8acc0519dfd0c099082030a130a5b41" },
+      "profile": { "format": "webp", "mimeType": "image/webp", "sourceWidth": 1254, "sourceHeight": 1254, "renderWidth": 64, "renderHeight": 64 }
+    }
+  ],
+  "appHeaderReferences": [
+    { "key": "home", "screenId": "482a7222-5a3b-8086-8008-a62cd6a88459", "screenName": "Screen / Home", "headerInstanceId": "482a7222-5a3b-8086-8008-a62cd6b454aa", "imageInstanceId": "482a7222-5a3b-8086-8008-a62cd6b48b7e", "mascot": "wave", "path": "design-spec/assets/phase-3/mascot-wave.webp", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf34", "mediaId": "b182ba2e-059e-48a6-82c3-f838818775a0" },
+    { "key": "gamesDiscover", "screenId": "482a7222-5a3b-8086-8008-a63a68bc1f9f", "screenName": "Screen / Games / Discover", "headerInstanceId": "482a7222-5a3b-8086-8008-a63a68c6f48f", "imageInstanceId": "482a7222-5a3b-8086-8008-a63bf8f3efc7", "mascot": "search", "path": "design-spec/assets/phase-3/mascot-search.webp", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf31", "mediaId": "a8b806ba-2ae5-4ccb-ae49-8f81d87534fe" },
+    { "key": "gamesMyGames", "screenId": "482a7222-5a3b-8086-8008-a64512b62eb0", "screenName": "Screen / Games / My games", "headerInstanceId": "482a7222-5a3b-8086-8008-a64512b62eb1", "imageInstanceId": "482a7222-5a3b-8086-8008-a64512b62ebf", "mascot": "search", "path": "design-spec/assets/phase-3/mascot-search.webp", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf31", "mediaId": "a8b806ba-2ae5-4ccb-ae49-8f81d87534fe" },
+    { "key": "create", "screenId": "482a7222-5a3b-8086-8008-a64a92297532", "screenName": "Screen / Create Game", "headerInstanceId": "482a7222-5a3b-8086-8008-a64a924c0a36", "imageInstanceId": "482a7222-5a3b-8086-8008-a64c3798b4b1", "mascot": "create", "path": "design-spec/assets/phase-3/mascot-create.webp", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf2c", "mediaId": "aef1de20-ccc2-45c0-85b6-f69bf13e840f" },
+    { "key": "players", "screenId": "482a7222-5a3b-8086-8008-a64e1dd1ab3c", "screenName": "Screen / Players / Directory", "headerInstanceId": "ab02a31f-1852-80be-8008-a6f8ad90374a", "imageInstanceId": "ab02a31f-1852-80be-8008-a6f8ad90374b", "mascot": "players", "path": "design-spec/assets/phase-3/mascot-players.webp", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf35", "mediaId": "4f24b68a-8a89-45cf-8dc3-a12fe1411fe8" },
+    { "key": "profile", "screenId": "482a7222-5a3b-8086-8008-a64f6f61a4f8", "screenName": "Screen / Profile", "headerInstanceId": "ab02a31f-1852-80be-8008-a704d91f707a", "imageInstanceId": "ab02a31f-1852-80be-8008-a704d91fad93", "mascot": "profile", "path": "design-spec/assets/phase-3/mascot-profile.webp", "mediaRecordId": "c514c1fb-1cda-8125-8008-a60625a0cf33", "mediaId": "3b4c67c1-ffea-4516-a8bf-ee5656e09ecd" }
+  ]
+}

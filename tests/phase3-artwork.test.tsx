@@ -76,7 +76,7 @@ describe('Phase 3 artwork evidence', () => {
 
   it('records six full App Header references over five outputs and explicit Games reuse', () => {
     expect(manifest.appHeaderReferences).toHaveLength(6);
-    expect(new Set(manifest.appHeaderReferences.map((reference) => reference.path))).toHaveSize(5);
+    expect(new Set(manifest.appHeaderReferences.map((reference) => reference.path)).size).toBe(5);
     expect(manifest.appHeaderReferences.map((reference) => reference.key)).toEqual([
       'home',
       'gamesDiscover',
@@ -108,7 +108,7 @@ describe('closed Phase 3 runtime artwork', () => {
     ['create', CreateHeaderMascot],
     ['players', PlayersHeaderMascot],
     ['profile', ProfileHeaderMascot],
-  ] as const)('renders %s as fixed decorative artwork', async (_name, Artwork) => {
+  ])('renders %s as fixed decorative artwork', async (_name, Artwork) => {
     const screen = await render(<Artwork />);
     expect(screen.queryByRole('image')).toBeNull();
     const hidden = screen.getByTestId(`phase3-artwork-${_name}`, { includeHiddenElements: true });

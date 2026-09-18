@@ -375,6 +375,7 @@ function checkOutputs(root, outputs, extension, allowedNames) {
     .filter((name) => extension == null || name.endsWith(extension))
     .sort();
   const actual = fs.readdirSync(outputRoot, { withFileTypes: true })
+    .filter((entry) => extension != null || entry.name !== 'artwork-manifest.json')
     .filter((entry) => extension == null || (entry.isFile() && entry.name.endsWith(extension)))
     .map((entry) => {
       assert(entry.isFile(), `unexpected non-file artwork output: ${entry.name}`);
