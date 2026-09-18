@@ -160,3 +160,87 @@ describe('shared accessibility and interaction assertions', () => {
     expect(screen.getByText('Registered')).toBeVisible();
   });
 });
+
+describe('published interaction and long-content host contract', () => {
+  it('publishes Pressable by identity while keeping test helpers on a dedicated boundary', () => {
+    const primitives = jest.requireActual<
+      typeof import('../src/design-system/primitives')
+    >('../src/design-system/primitives');
+    const root = jest.requireActual<typeof import('../src/design-system')>(
+      '../src/design-system',
+    );
+    const testing = jest.requireActual<typeof import('../src/design-system/testing')>(
+      '../src/design-system/testing',
+    );
+
+    expect(primitives.Pressable).toBe(Pressable);
+    expect(root.Pressable).toBe(Pressable);
+    expect(root).not.toHaveProperty('expectRoleAndName');
+    expect(testing.expectRoleAndName).toBe(expectRoleAndName);
+    expect(testing.expectTouchTargetContract).toBe(expectTouchTargetContract);
+  });
+
+  it('keeps long Unicode name, scaling, wrapping host props, and activation observable', async () => {
+    const name =
+      'Create a four-player padel match 🎾 for Café Norte · مرحبا · e\u0301 · confirm every invited player';
+    const onPress = jest.fn();
+    const user = userEvent.setup();
+    const screen = await render(
+      <Pressable
+        accessibilityLabel={name}
+        accessibilityRole="button"
+        onPress={onPress}
+        style={{ width: 180 }}
+        testID="action"
+      >
+        <Text style={{ width: 180 }} testID="content" variant="body">
+          {name}
+        </Text>
+      </Pressable>,
+    );
+
+    const action = expectRoleAndName(screen, 'button', name);
+    const content = screen.getByTestId('content');
+    expect(content.props.children).toBe(name);
+    expect(content.props.allowFontScaling).not.toBe(false);
+    expect(content.props.maxFontSizeMultiplier).toBeUndefined();
+    expect(StyleSheet.flatten(content.props.style)).toEqual(
+      expect.objectContaining({ width: 180 }),
+    );
+    await expectPressContract(user, action, onPress, 1);
+  });
+
+  it('retains an explicit required-action name across loading while empty text stays empty', async () => {
+    const screen = await render(
+      <Pressable
+        accessibilityLabel="Confirm result"
+        accessibilityRole="button"
+        loading
+      >
+        <Text testID="empty-content" variant="body">
+          {null}
+        </Text>
+      </Pressable>,
+    );
+
+    expectRoleAndName(screen, 'button', 'Confirm result');
+    expect(screen.getByRole('button', { name: 'Confirm result' })).toBeBusy();
+    expect(screen.getByRole('button', { name: 'Confirm result' })).toBeDisabled();
+    expect(screen.getByTestId('empty-content').props.children).toBeNull();
+    expect(screen.queryByText(/.+/u)).toBeNull();
+  });
+
+  it('proves host semantics only, not native measurement, clipping, focus order, VoiceOver, or TalkBack', async () => {
+    const screen = await render(
+      <Pressable
+        accessibilityLabel="Host contract"
+        accessibilityRole="button"
+        size="controlHeight40"
+        testID="subject"
+      />,
+    );
+
+    expectRoleAndName(screen, 'button', 'Host contract');
+    expectTouchTargetContract(screen.getByTestId('subject'), 40);
+  });
+});
