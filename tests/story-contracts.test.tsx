@@ -244,18 +244,20 @@ describe('Phase 2 Storybook contract', () => {
   it('distinguishes decorative and labelled icons and scales local assets by authored ratios', async () => {
     const icons = await renderStory(IconBoundaries);
     expect(icons.getByRole('image', { name: 'Labelled icon' })).toBeVisible();
-    expect(
-      icons.getByTestId('decorative-icon', { includeHiddenElements: true }),
-    ).toBeVisible();
+    const decorative = icons.getByTestId('decorative-icon', {
+      includeHiddenElements: true,
+    });
+    expect(decorative).toHaveProp('accessible', false);
+    expect(decorative).toHaveProp('importantForAccessibility', 'no-hide-descendants');
     await icons.unmount();
 
     const brands = await renderStory(BrandBoundaries);
     expect(brands.getByTestId('brand-boundary-horizontal')).toHaveStyle({
-      height: 28.8,
+      height: 120 * (6 / 25),
       width: 120,
     });
     expect(brands.getByTestId('brand-boundary-stacked')).toHaveStyle({
-      height: 22.4,
+      height: 120 * (14 / 75),
       width: 120,
     });
   });
