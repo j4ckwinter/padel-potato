@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 
 import ButtonStories, {
   Boundaries as ButtonBoundaries,
+  normalizeButtonStoryArgs,
   Variants as ButtonVariants,
 } from '../src/design-system/components/actions/Button.stories';
 import IconButtonStories, {
@@ -267,6 +268,27 @@ describe('Button Storybook contract', () => {
         style: { control: 'select', options: buttonStyles },
       }),
     );
+  });
+
+  it('normalizes every independent control transition to an authored tuple', async () => {
+    for (const style of buttonStyles) {
+      for (const size of buttonSizes) {
+        for (const disabled of [false, true]) {
+          for (const loading of [false, true]) {
+            const props = normalizeButtonStoryArgs({
+              disabled,
+              label: 'Controlled button',
+              loading,
+              size,
+              style,
+            });
+            const screen = await render(<Button {...props} />);
+            expect(screen.getByRole('button', { name: 'Controlled button' })).toBeTruthy();
+            await screen.unmount();
+          }
+        }
+      }
+    }
   });
 
   it('keeps source-ordered variants and explicit long-label target-clearance boundaries', () => {

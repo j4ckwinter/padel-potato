@@ -15,6 +15,7 @@ import {
 } from '../src/design-system/components/navigation/BottomNavigation';
 import SegmentedControlStories, {
   Boundaries as SegmentedControlBoundaries,
+  normalizeSegmentedControlStoryArgs,
   Variants as SegmentedControlVariants,
 } from '../src/design-system/components/navigation/SegmentedControl.stories';
 import {
@@ -25,6 +26,7 @@ import {
 import { phase3Families } from '../src/design-system/components/sourceRegistry';
 import AppHeaderStories, {
   Boundaries as AppHeaderBoundaries,
+  normalizeAppHeaderStoryArgs,
   Variants as AppHeaderVariants,
 } from '../src/design-system/components/navigation/AppHeader.stories';
 import {
@@ -248,12 +250,29 @@ describe('Navigation composite Storybook contract', () => {
     expect(SegmentedControlStories.argTypes).toEqual(expect.objectContaining({
       disabled: { control: 'boolean' },
       onValueChange: { action: 'value changed' },
+      value: { control: 'select', options: ['Upcoming', 'Open'] },
     }));
 
     const bottomVariants = BottomNavigationVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
     const segmentVariants = SegmentedControlVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
     expect(Children.toArray(bottomVariants.props.children)).toHaveLength(bottomNavigationRecords.length);
     expect(Children.toArray(segmentVariants.props.children)).toHaveLength(segmentedControlRecords.length);
+  });
+
+  it('keeps every SegmentedControl value transition inside the controlled options', async () => {
+    for (const value of ['Upcoming', 'Open', 'Past', '', 'not-authored']) {
+      for (const disabled of [false, true]) {
+        const props = normalizeSegmentedControlStoryArgs({
+          disabled,
+          options: ['Upcoming', 'Open'],
+          value,
+        });
+        expect(props.options).toContain(props.value);
+        const screen = await render(<SegmentedControl {...props} />);
+        expect(screen.getAllByRole('tab')).toHaveLength(2);
+        await screen.unmount();
+      }
+    }
   });
 
   it('discloses native width, long labels, 200% scale, and adjacent-target boundaries', () => {
@@ -477,6 +496,24 @@ describe('Header Storybook contract', () => {
     const sectionVariants = SectionHeaderVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
     expect(Children.toArray(appVariants.props.children)).toHaveLength(appHeaderRecords.length);
     expect(Children.toArray(sectionVariants.props.children)).toHaveLength(sectionHeaderRecords.length);
+  });
+
+  it('rebuilds a valid action contract for every AppHeader page transition', async () => {
+    for (const page of appHeaderPages) {
+      const props = normalizeAppHeaderStoryArgs({
+        favouriteChecked: true,
+        onBackPress: jest.fn(),
+        onFavouriteChange: jest.fn(),
+        onNotificationPress: jest.fn(),
+        page,
+        subtitle: 'Controlled subtitle',
+        title: 'Controlled title',
+      });
+      expect(props.page).toBe(page);
+      const screen = await render(<AppHeader {...props} />);
+      expect(screen.getByRole('header', { name: 'Controlled title' })).toBeTruthy();
+      await screen.unmount();
+    }
   });
 
   it('discloses long text, 200% scale, action overlap, and Profile no-overflow boundaries', () => {

@@ -29,6 +29,38 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+type ButtonStoryArgs = Readonly<{
+  disabled?: unknown;
+  label?: unknown;
+  loading?: unknown;
+  onPress?: unknown;
+  size?: unknown;
+  style?: unknown;
+}>;
+
+export const normalizeButtonStoryArgs = (args: ButtonStoryArgs): ButtonProps => {
+  const label = typeof args.label === 'string' && args.label.trim().length > 0
+    ? args.label
+    : 'Button label';
+  const onPress = typeof args.onPress === 'function'
+    ? args.onPress as ButtonProps['onPress']
+    : undefined;
+
+  if (args.loading === true) {
+    return { label, loading: true, onPress, size: 48, style: 'primary' };
+  }
+  if (args.disabled === true) {
+    return { disabled: true, label, onPress, size: 48, style: 'primary' };
+  }
+
+  const size = buttonSizes.includes(args.size as 40 | 48) ? args.size as 40 | 48 : 48;
+  const style = buttonStyles.includes(args.style as ButtonProps['style'])
+    ? args.style as ButtonProps['style']
+    : 'primary';
+  if (size === 40) return { label, onPress, size, style: 'primary' };
+  return { label, onPress, size, style } as ButtonProps;
+};
+
 export const Canonical: Story = {
   args: {
     label: 'Create game',
@@ -37,7 +69,7 @@ export const Canonical: Story = {
   },
   render: (args) => (
     <Stack gap="space8">
-      <Button {...args} />
+      <Button {...normalizeButtonStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
         {sourceLabel('482a7222-5a3b-8086-8008-a60ea006c15d')}
       </Text>

@@ -34,6 +34,35 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+type ChoiceChipStoryArgs = Readonly<{
+  disabled?: unknown;
+  icon?: unknown;
+  label?: unknown;
+  onSelectedChange?: unknown;
+  selected?: unknown;
+  type?: unknown;
+}>;
+
+export const normalizeChoiceChipStoryArgs = (args: ChoiceChipStoryArgs): ChoiceChipProps => {
+  const type = choiceChipTypes.includes(args.type as ChoiceChipType)
+    ? args.type as ChoiceChipType
+    : 'option';
+  const disabled = args.disabled === true;
+  const selected = !disabled && args.selected === true;
+  return {
+    disabled: disabled || undefined,
+    icon: selected ? 'leading' : type === 'option' ? 'none' : 'trailing',
+    label: typeof args.label === 'string' && args.label.trim().length > 0
+      ? args.label
+      : type === 'option' ? 'Social' : 'Intermediate',
+    onSelectedChange: typeof args.onSelectedChange === 'function'
+      ? args.onSelectedChange as ChoiceChipProps['onSelectedChange']
+      : noop,
+    selected,
+    type,
+  } as ChoiceChipProps;
+};
+
 export const Canonical: Story = {
   args: {
     icon: 'none',
@@ -44,7 +73,7 @@ export const Canonical: Story = {
   },
   render: (args) => (
     <Stack gap="space8">
-      <ChoiceChip {...args} />
+      <ChoiceChip {...normalizeChoiceChipStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
         {sourceLabel('482a7222-5a3b-8086-8008-a61b0dda64ca')}
       </Text>

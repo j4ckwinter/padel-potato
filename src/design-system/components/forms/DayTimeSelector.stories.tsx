@@ -31,6 +31,42 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+type DayTimeSelectorStoryArgs = Readonly<Record<string, unknown>>;
+
+export const normalizeDayTimeSelectorStoryArgs = (
+  args: DayTimeSelectorStoryArgs,
+): DayTimeSelectorProps => {
+  const type = dayTimeSelectorTypes.includes(args.type as 'day' | 'time')
+    ? args.type as 'day' | 'time'
+    : 'day';
+  const disabled = args.disabled === true;
+  const stateProps = {
+    disabled: disabled || undefined,
+    onSelect: typeof args.onSelect === 'function'
+      ? args.onSelect as DayTimeSelectorProps['onSelect']
+      : noop,
+    selected: !disabled && args.selected === true,
+  };
+  if (type === 'time') {
+    return {
+      ...stateProps,
+      availability: typeof args.availability === 'string' && args.availability.trim().length > 0
+        ? args.availability
+        : '3 spots',
+      time: typeof args.time === 'string' && args.time.trim().length > 0
+        ? args.time
+        : '18:30',
+      type,
+    } as DayTimeSelectorProps;
+  }
+  return {
+    ...stateProps,
+    date: typeof args.date === 'string' && args.date.trim().length > 0 ? args.date : '16 Sep',
+    day: typeof args.day === 'string' && args.day.trim().length > 0 ? args.day : 'Mon',
+    type,
+  } as DayTimeSelectorProps;
+};
+
 export const Canonical: Story = {
   args: {
     date: '16 Sep',
@@ -41,7 +77,7 @@ export const Canonical: Story = {
   },
   render: (args) => (
     <Stack gap="space8">
-      <DayTimeSelector {...args} />
+      <DayTimeSelector {...normalizeDayTimeSelectorStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
         {sourceLabel('482a7222-5a3b-8086-8008-a6257eaab1fe')}
       </Text>

@@ -11,6 +11,7 @@ import FieldStories, {
 import ChoiceChipStories, {
   Boundaries as ChoiceChipBoundaries,
   Interactive as ChoiceChipInteractive,
+  normalizeChoiceChipStoryArgs,
   Variants as ChoiceChipVariants,
 } from '../src/design-system/components/forms/ChoiceChip.stories';
 import {
@@ -29,6 +30,7 @@ import {
 import DayTimeSelectorStories, {
   Boundaries as DayTimeSelectorBoundaries,
   Interactive as DayTimeSelectorInteractive,
+  normalizeDayTimeSelectorStoryArgs,
   Variants as DayTimeSelectorVariants,
 } from '../src/design-system/components/forms/DayTimeSelector.stories';
 import {
@@ -699,6 +701,29 @@ describe('ChoiceChip Storybook contract', () => {
     expect(React.Children.toArray(variants.props.children)).toHaveLength(choiceChipRecords.length);
   });
 
+  it('normalizes every independent type, icon, selected, and disabled transition', async () => {
+    for (const type of ['option', 'filter'] as const) {
+      for (const icon of ['none', 'leading', 'trailing'] as const) {
+        for (const selected of [false, true]) {
+          for (const disabled of [false, true]) {
+            const props = normalizeChoiceChipStoryArgs({
+              disabled,
+              icon,
+              label: 'Controlled chip',
+              selected,
+              type,
+            });
+            const screen = await render(<ChoiceChip {...props} />);
+            expect(screen.getByRole(type === 'option' ? 'radio' : 'checkbox', {
+              name: 'Controlled chip',
+            })).toBeTruthy();
+            await screen.unmount();
+          }
+        }
+      }
+    }
+  });
+
   it('records long-copy, 200%-scale, clearance, and interactive witnesses', () => {
     const boundaries = ChoiceChipBoundaries.render?.({} as never, {} as never) as React.ReactElement;
     const boundaryJson = JSON.stringify(boundaries);
@@ -1042,6 +1067,29 @@ describe('DayTimeSelector Storybook and forms publication contract', () => {
       children: React.ReactNode;
     }>;
     expect(React.Children.toArray(variants.props.children)).toHaveLength(dayTimeSelectorRecords.length);
+  });
+
+  it('normalizes branch and state transitions without retaining incompatible content keys', async () => {
+    for (const type of ['day', 'time'] as const) {
+      for (const selected of [false, true]) {
+        for (const disabled of [false, true]) {
+          const props = normalizeDayTimeSelectorStoryArgs({
+            availability: '3 spots',
+            date: '16 Sep',
+            day: 'Mon',
+            disabled,
+            selected,
+            time: '18:30',
+            type,
+          });
+          expect('day' in props).toBe(type === 'day');
+          expect('time' in props).toBe(type === 'time');
+          const screen = await render(<DayTimeSelector {...props} />);
+          expect(screen.getByRole('radio')).toBeTruthy();
+          await screen.unmount();
+        }
+      }
+    }
   });
 
   it('records long-content, 200%-scale, target-clearance, and interactive witnesses', () => {

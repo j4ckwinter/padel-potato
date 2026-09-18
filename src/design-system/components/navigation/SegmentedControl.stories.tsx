@@ -7,6 +7,7 @@ import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
 import {
   SegmentedControl,
   type SegmentOptions,
+  type SegmentedControlProps,
 } from './SegmentedControl';
 
 const family = phase3Families[10];
@@ -27,12 +28,36 @@ const meta = {
     disabled: { control: 'boolean' },
     onValueChange: { action: 'value changed' },
     options: { control: false },
-    value: { control: 'text' },
+    value: { control: 'select', options: optionsByCount[2] },
   },
 } satisfies Meta<typeof SegmentedControl>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+type SegmentedControlStoryArgs = Readonly<Record<string, unknown>>;
+
+const validStoryOptions = (options: unknown): options is SegmentOptions =>
+  Array.isArray(options)
+  && [2, 3, 4].includes(options.length)
+  && options.every((option) => typeof option === 'string' && option.trim().length > 0)
+  && new Set(options).size === options.length;
+
+export const normalizeSegmentedControlStoryArgs = (
+  args: SegmentedControlStoryArgs,
+): SegmentedControlProps => {
+  const options = validStoryOptions(args.options) ? args.options : optionsByCount[2];
+  return {
+    disabled: args.disabled === true || undefined,
+    onValueChange: typeof args.onValueChange === 'function'
+      ? args.onValueChange as (value: string) => void
+      : noop,
+    options,
+    value: typeof args.value === 'string' && options.includes(args.value)
+      ? args.value
+      : options[0],
+  };
+};
 
 export const Canonical: Story = {
   args: {
@@ -42,7 +67,7 @@ export const Canonical: Story = {
   },
   render: (args) => (
     <Stack gap="space8">
-      <SegmentedControl {...args} />
+      <SegmentedControl {...normalizeSegmentedControlStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
         {sourceLabel('482a7222-5a3b-8086-8008-a60ede15a862')}
       </Text>
