@@ -41,19 +41,19 @@
 
 - [x] **ACTN-01**: Developer can use Button with every designed style, size, and state.
 - [ ] **ACTN-02**: Developer can use Icon Button with every designed size, icon, and state.
-- [ ] **ACTN-03**: Developer can use Favourite with every designed state.
+- [x] **ACTN-03**: Developer can use Favourite with every designed state.
 - [ ] **FORM-01**: Developer can use Field with every designed type and state.
 - [ ] **FORM-02**: Developer can use Choice Chip with every designed type, icon option, and state.
 - [ ] **FORM-03**: Developer can use Checkbox with every designed state.
 - [ ] **FORM-04**: Developer can use Day Time Selector with every designed type and state.
-- [ ] **AUTH-01**: Developer can use Social Sign-In Button with every designed provider and state.
+- [x] **AUTH-01**: Developer can use Social Sign-In Button with every designed provider and state.
 - [ ] **AUTH-02**: Developer can use Auth Divider as designed.
 
 ### Navigation and Structure
 
 - [ ] **NAVG-01**: Developer can use Bottom Navigation with every designed active destination.
 - [ ] **NAVG-02**: Developer can use Segmented Control with every designed option count and state.
-- [ ] **NAVG-03**: Developer can use App Header with every designed page configuration.
+- [x] **NAVG-03**: Developer can use App Header with every designed page configuration.
 - [ ] **NAVG-04**: Developer can use Section Header as designed.
 
 ### Identity, Status, and Progress
@@ -159,16 +159,16 @@
 | QUAL-07 | Phase 2 | Complete |
 | ACTN-01 | Phase 3 | Complete |
 | ACTN-02 | Phase 3 | Pending |
-| ACTN-03 | Phase 3 | Pending |
+| ACTN-03 | Phase 3 | Complete |
 | FORM-01 | Phase 3 | Pending |
 | FORM-02 | Phase 3 | Pending |
 | FORM-03 | Phase 3 | Pending |
 | FORM-04 | Phase 3 | Pending |
-| AUTH-01 | Phase 3 | Pending |
+| AUTH-01 | Phase 3 | Complete |
 | AUTH-02 | Phase 3 | Pending |
 | NAVG-01 | Phase 3 | Pending |
 | NAVG-02 | Phase 3 | Pending |
-| NAVG-03 | Phase 3 | Pending |
+| NAVG-03 | Phase 3 | Complete |
 | NAVG-04 | Phase 3 | Pending |
 | IDEN-01 | Phase 4 | Pending |
 | IDEN-02 | Phase 4 | Pending |
