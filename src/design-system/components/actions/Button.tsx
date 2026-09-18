@@ -64,34 +64,32 @@ const backgroundByStyle = Object.freeze({
   ghost: colors.canvas,
 } as const);
 
-function unsupported(label: string, value: unknown, supported: readonly unknown[]): never {
+function unsupported(value: unknown, supported: readonly unknown[]): never {
   throw new Error(
-    `Unsupported Button ${label}: ${String(value)}. Supported values: ${supported.join(', ')}`,
+    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
   );
 }
 
 function validateButtonProps(props: ButtonProps) {
   for (const key of Object.keys(props)) {
     if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
-      throw new Error(
-        `Unsupported Button prop: ${key}. Supported values: ${supportedRuntimeProps.join(', ')}`,
-      );
+      unsupported(key, supportedRuntimeProps);
     }
   }
 
   if (typeof props.label !== 'string' || props.label.trim().length === 0) {
-    throw new Error('Button label must be non-empty.');
+    unsupported(props.label, ['non-empty label']);
   }
   if (!buttonStyles.includes(props.style)) {
-    unsupported('style', props.style, buttonStyles);
+    unsupported(props.style, buttonStyles);
   }
   const size = props.size ?? 48;
-  if (!buttonSizes.includes(size)) unsupported('size', size, buttonSizes);
+  if (!buttonSizes.includes(size)) unsupported(size, buttonSizes);
   if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
-    unsupported('disabled', props.disabled, [true, false]);
+    unsupported(props.disabled, [true, false]);
   }
   if (typeof props.loading !== 'undefined' && typeof props.loading !== 'boolean') {
-    unsupported('loading', props.loading, [true, false]);
+    unsupported(props.loading, [true, false]);
   }
   if (props.disabled && props.loading) {
     throw new Error('Unsupported Button state: disabled and loading cannot both be true.');
@@ -117,7 +115,11 @@ export function Button(props: ButtonProps) {
     style: buttonStyle,
   } = props;
   const radius = size / 2;
-  const defaultBackground = backgroundByStyle[buttonStyle];
+  // Pressable supplies the shared 0.4 blocked opacity. The authored Button
+  // disabled fill is 0.32, so its inner accent alpha is 0.8 (0.8 * 0.4).
+  const defaultBackground = disabled
+    ? 'rgba(173, 229, 51, 0.8)'
+    : backgroundByStyle[buttonStyle];
 
   return (
     <Pressable

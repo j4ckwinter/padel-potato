@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, render, userEvent } from '@testing-library/react-native';
+import { act, fireEvent, render, userEvent } from '@testing-library/react-native';
 import { Children } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -164,7 +164,9 @@ describe('Button interaction and visual contract', () => {
       <Button label="Focus action" style="primary" />,
     );
     const focusSubject = focused.getByRole('button', { name: 'Focus action' });
-    fireEvent(focusSubject, 'focus', { nativeEvent: {} });
+    await act(async () => {
+      fireEvent(focusSubject, 'focus', { nativeEvent: {} });
+    });
     expect(flattenedStyle(focused.getByRole('button', { name: 'Focus action' }).props.style)).toEqual(
       expect.objectContaining({ outlineColor: colors.focusRing, outlineWidth: 2 }),
     );
