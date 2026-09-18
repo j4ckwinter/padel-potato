@@ -457,17 +457,18 @@ The exact diagnostic template is quoted as `Unsupported {family} configuration: 
 |---|-------|---------|---------------|
 | — | None. Recommendations are grounded in locked context, opened project files, direct archive inspection, current official React Native/Storybook docs, and passing local design-source validation. | — | — |
 
-## Open Questions
+## Execution-Time Resolutions
 
 1. **What approved visible body and CTA copy should replace or retain the generic Empty State strings?**
+   - **RESOLVED BY blocking checkpoint 04-08 — copy remains undecided until human approval, and `04-UI-SPEC.md` remains draft/pending.**
    - What we know: the archive literally contains `There’s nothing here yet.` for all three branches and `Get started` for the two action branches; full accessible action intents are `Create game` and `Invite players`. [VERIFIED: direct archive text inspection; UI-SPEC lines 163-173,254]
    - What's unclear: the UI checker passed 6/7 dimensions and left the generic empty-state copy conflict for manual resolution; `04-UI-SPEC.md` remains draft/pending at lines 378-388. [VERIFIED: caller-provided status; UI-SPEC lines 378-388]
-   - Recommendation: planner adds a human checkpoint before the EmptyState story copy and assertions are locked. Do not block registry, geometry, artwork, or component-shell work.
+   - Resolution path: Plan 04-08 stops at a never-auto-approved human decision before EmptyState story copy and assertions are locked. No visible copy is approved by this research disposition; registry, geometry, artwork, and component-shell work may proceed independently.
 
 2. **Which local image should serve as the Photo/Selected avatar fixture?**
+   - **RESOLVED in Plan 04-01 — use `design-spec/assets/phase-3/mascot-profile.webp` only as clearly labelled deterministic story photo fixture content, never as claimed Penpot-authored Avatar design artwork.**
    - What we know: the public contract accepts a React Native image source; the Avatar source contains no photo media fill; stories must be deterministic and local. [VERIFIED: `04-CONTEXT.md`; direct archive inspection; UI-SPEC lines 223,304,321]
-   - What's unclear: no dedicated player-photo fixture currently exists in the repository. [VERIFIED: repository image inventory on 2026-09-18]
-   - Recommendation: reuse a retained local mascot only as clearly labelled fixture content or add a tiny deterministic non-design fixture with provenance; do not claim it is Penpot-authored Avatar artwork.
+   - Disposition: the retained mascot-profile bytes satisfy deterministic local fixture needs without adding an asset. The Avatar story/provenance text must distinguish fixture content from source-authored Avatar artwork.
 
 ## Environment Availability
 
