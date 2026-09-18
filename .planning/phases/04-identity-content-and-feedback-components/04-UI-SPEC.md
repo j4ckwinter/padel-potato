@@ -92,11 +92,12 @@ This table is a non-exhaustive list of known-good dependencies for Phase 4, neve
 | 48 | Not authored | Do not synthesize or use as a raw literal |
 | 64 | Not authored | Do not synthesize or use as a raw literal |
 
-The complete inherited Penpot spacing inventory remains `space4`, `space8`, `space12`, `space16`, `space20`, `space24`, `space32`, and `space40`. `space12`, `space20`, and `space40` are source-dependent exceptions only where a revision-296 record requires them.
+The declared Phase 4 spacing scale is exactly `space4`, `space8`, `space16`, `space24`, and `space32`. Phase 4 public props, catalogue layout, and general component composition must not select `space12`, `space20`, or `space40`.
 
 Exceptions:
 
 - Authored component dimensions such as 32, 36, 40, 44, 48, 56, 64, 72, 80, 88, 92, 96, 112, 120, 136, 152, 160, 176, 220, 328, 350, and 352 are geometry, not spacing tokens. Record them in family evidence and do not promote them into spacing APIs.
+- Where a revision-296 node measures 12, 20, or 40 points, retain that measurement only as a private, source-ID-backed component geometry constant, analogous to Phase 3's private 12-point Choice Chip inset. It is not a declared spacing token or caller-selectable value.
 - Interactive visuals smaller than 44×44 retain their authored visual size inside an effective target of at least 44×44, using the existing `Pressable` contract without changing visible spacing.
 - Overlapping avatar offsets, progress-track widths, illustration placement, and score-column widths are source-owned geometry. They remain private implementation constants tied to source IDs.
 
@@ -115,7 +116,7 @@ Phase 4 documentation and surrounding Storybook presentation use exactly four si
 | Heading | `heading` | 18 | 700 | 21.6 |
 | Display | `display` | 28 | 700 | 33.6 |
 
-Source-traced component internals may additionally use the existing `micro` (10/600/12), `label` (12/600/14.4), `bodyStrong` (15/600/18), `section` (20/700/24), or `title` (25/700/30) tokens only when the corresponding revision-296 node requires them. This does not add new typography values.
+The declared Phase 4 hierarchy is limited to the four rows above and weights 400/700. If a retained revision-296 node uses another text treatment, preserve its exact font metrics only as fixed, private, component-owned source evidence tied to that node ID. Such a treatment is not a Phase 4 token, role, reusable variant, Storybook control, or caller-selectable value.
 
 Contract:
 
@@ -156,20 +157,20 @@ Visible fixture copy comes from revision 296. Callers may replace content-bearin
 
 | Element | Copy |
 |---------|------|
-| Primary CTA | `Get started` — No games / No players Empty State action |
-| Empty state headings | `No games`; `No notifications`; `No players` |
-| Empty state body | `There’s nothing here yet.` |
+| No games Empty State | Heading `No games`; retain this tuple's revision-296 supporting line; authored next action `Get started`, exposed semantically as `Create game` |
+| No notifications Empty State | Heading `No notifications`; retain this tuple's revision-296 informational supporting line; no action is authored or rendered |
+| No players Empty State | Heading `No players`; retain this tuple's revision-296 supporting line; authored next action `Get started`, exposed semantically as `Invite players` |
 | Avatar Picker empty action | `Add a profile photo` |
 | Avatar Picker selected action | `Change profile photo` |
 | Avatar Picker error | `Choose a JPG or PNG under 5 MB` |
 | Success toast | `Game created` / `Your game is ready to share.` |
-| Info banner | `Booking update` / `Court details have changed.` / `View` |
-| Warning banner | `Check game details` / `One player still needs to confirm.` / `View` |
+| Info banner | `Booking update` / `Court details have changed.` / visible `View`; full action name `View booking update` |
+| Warning banner | `Check game details` / `One player still needs to confirm.` / visible `View`; full action name `View game details` |
 | Error toast | `Something went wrong` / `Please try again in a moment.` |
 | Unsupported tuple diagnostic | `Unsupported {family} configuration: {tuple}. Supported configurations: {list}.` |
 | Destructive action | `Sign out` — invoke the supplied destructive callback only; no confirmation dialog/copy is authored in this milestone, so do not invent one |
 
-Other fixed canonical labels include `View`, `Results`, `Invite`, `Share`, `Step 1 of 3`, `Step 2 of 3`, `Step 3 of 3`, and `Setup complete`. Copy exposed as caller data must preserve the same visual hierarchy and semantic associations.
+Source-authored compact labels map to branch-specific action names and callbacks: Game Card `View` → `View game`, Game Card `Results` → `View results`, Illustrated Card `View` → `View game`, Illustrated Card `Results` → `View results`, Illustrated Card `Invite` → `Invite players`, and Illustrated Card `Share` → `Share game`. The compact visible word remains source-faithful where the 352-point layout requires it; the full verb+noun string is the accessible name, callback intent, story action label, and test expectation. Progress labels remain exactly `Step 1 of 3`, `Step 2 of 3`, `Step 3 of 3`, and `Setup complete`.
 
 ---
 
@@ -209,7 +210,7 @@ Registry generation must retain source order, component ID, main-instance ID, va
 | Status Chip | 132×36 source frame; semantic icon, label, fill/border, selected, and disabled treatment come from the exact tuple. Caller content must not alter the authored height. |
 | Step Progress | 352×48; label is `Step n of 3` or `Setup complete`; track/value and completion icon remain source-owned. |
 | Player Item | 328×80; preserve avatar/empty slot, primary name, supporting line, and one trailing authored action without exposing arbitrary accessory slots. |
-| Game Card | 352×176 except Compact at 352×112; preserve status, title, venue, optional time, participant group, and authored `View`/`Results` action by branch. |
+| Game Card | 352×176 except Compact at 352×112; preserve status, title, venue, optional time, participant group, and source-authored compact action. Its full branch-specific action name is `View game` or `View results`. |
 | Notification Row | 352×92; type icon, title, message, timestamp, and unread indicator retain fixed reading order. Read state removes unread emphasis without removing content. |
 | Settings Row | 352×64; one leading source icon, label/value where authored, and exactly one branch-specific trailing affordance. |
 | Stat Tile | Compact 160×112; Featured 328×112. Preserve label, value, supporting text, and positive trend indicator only for positive tuples. |
@@ -243,15 +244,15 @@ Illustrations, avatars, and mascots use retained deterministic local fixtures in
 | Status Chip | Default semantic chips may be static. The authored Selected branch is a controlled checkbox-style option; Disabled suppresses activation. Do not support selection for unauthored style/state tuples. |
 | Step Progress | Read-only progress indicator; no press callback. Current step/complete is explicit, not inferred from label text. |
 | Player Item | List/Selected and invite/game-slot actions use a single branch-specific press callback. Selected is controlled. Empty slot names the invitation action. Disabled invite results suppress callback. |
-| Game Card | Only the visible `View` or `Results` action is interactive. Compact has no invented action. Card composition does not own navigation. |
+| Game Card | Only the authored action is interactive: `View game` for Next/Open and `View results` for Completed. Compact has no invented action. Card composition does not own navigation. |
 | Notification Row | A supplied row callback emits the notification intent; `read`/`unread` is explicit and does not change until rerender. No live notification or persistence behavior. |
 | Settings Row | Navigation, Value, and Destructive are named buttons. Toggle is a controlled switch emitting the next boolean. Pressed is native-driven; Disabled suppresses navigation/toggle callbacks. |
 | Stat Tile | Presentational summary; no callbacks. Positive/neutral is explicit rather than inferred from numeric content. |
 | Score Result Block | Presentational score summary; no callbacks or timers. `won`, `lost`, and `live` are explicit. |
 | Player Preferences Card | Presentational summary; no generic chip-selection behavior inside the card. |
-| Banner Toast | Info/Warning Banner exposes `View`; Success/Error Toast exposes a named close callback. No auto-dismiss timer or global portal is owned by the component. |
-| Empty State | `With action` requires label and callback together; `No action` forbids both. The component owns no navigation. |
-| Illustrated Card | Each type exposes its exact visible action (`View`, `Results`, `Invite`, or `Share`) and callback; no whole-card press or product behavior. |
+| Banner Toast | Info Banner exposes `View booking update`; Warning Banner exposes `View game details`; Success/Error Toast exposes a named close callback. No auto-dismiss timer or global portal is owned by the component. |
+| Empty State | `No games/With action` exposes `Create game`; `No players/With action` exposes `Invite players`; `No notifications/No action` forbids an action. Visible compact source copy remains as documented above. The component owns no navigation. |
+| Illustrated Card | Next game exposes `View game`; Match result exposes `View results`; Invite players exposes `Invite players`; Game created exposes `Share game`. Each has one matching callback; no whole-card press or product behavior. |
 
 ---
 
