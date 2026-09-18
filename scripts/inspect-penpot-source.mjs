@@ -51,10 +51,20 @@ function runSelfTests(sourceBytes, manifestText) {
   assert(headers.length > 2, 'controlled rejection fixture has too few entries');
 
   const duplicate = Buffer.from(sourceBytes);
-  const firstLength = duplicate.readUInt16LE(headers[0] + 28);
-  const sameLengthHeader = headers.slice(1).find((offset) => duplicate.readUInt16LE(offset + 28) === firstLength);
-  assert(sameLengthHeader !== undefined, 'controlled rejection fixture has no equal-length paths');
-  const firstName = duplicate.toString('utf8', headers[0] + 46, headers[0] + 46 + firstLength);
+  const headerByLength = new Map();
+  let duplicatePair;
+  for (const header of headers) {
+    const length = duplicate.readUInt16LE(header + 28);
+    if (headerByLength.has(length)) {
+      duplicatePair = [headerByLength.get(length), header];
+      break;
+    }
+    headerByLength.set(length, header);
+  }
+  assert(duplicatePair, 'controlled rejection fixture has no equal-length paths');
+  const [firstHeader, sameLengthHeader] = duplicatePair;
+  const firstLength = duplicate.readUInt16LE(firstHeader + 28);
+  const firstName = duplicate.toString('utf8', firstHeader + 46, firstHeader + 46 + firstLength);
   overwriteCentralName(duplicate, sameLengthHeader, firstName);
   expectRejection('duplicate ZIP path', () => parseZip(duplicate), /duplicate ZIP path/i);
 
@@ -70,7 +80,7 @@ function runSelfTests(sourceBytes, manifestText) {
   expectRejection('truncated header', () => parseZip(sourceBytes.subarray(0, 12)), /truncated|end of central directory/i);
 
   const offset = Buffer.from(sourceBytes);
-  offset.writeUInt32LE(0xffffffff, headers[0] + 42);
+  offset.writeUInt32LE(0xffffff00, headers[0] + 42);
   expectRejection('out-of-bounds local offset', () => parseZip(offset), /offset|bounds/i);
 
   expectRejection('entry count limit', () => parseZip(sourceBytes, { ...DEFAULT_LIMITS, maxEntries: 1 }), /entry count/i);
