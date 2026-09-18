@@ -427,22 +427,22 @@ export async function expectPressContract(renderCase: (state: 'enabled' | 'disab
 | A12 | Node SHA-256 is evidence integrity rather than authentication; fixed filename mapping, fail-closed SVG validation, and no remote asset fetch are the appropriate build-input threat controls. | Don't Hand-Roll / Security | Medium; the actual export syntax may demand additional parser-level controls. |
 | A13 | Native 200% text review can be scheduled through a physical device or later Phase 5 route. | Validation | High; no Android CLI/emulator or local iOS simulator is available on this Windows machine. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Are all 18 icon exports compatible with the constrained SVG profile?**
    - What we know: their names/source IDs/order are retained; the approved contract expects a 20×20 canvas and 1.75 stroke. [VERIFIED: `.planning/phases/02-primitives-assets-and-component-contracts/02-UI-SPEC.md:200-214`]
    - What's unclear: actual path/primitive markup, paints, transforms, IDs, and unsupported elements could not be inspected because the Penpot tab suspended.
-   - Recommendation: make this a blocking execution gate; export, validate, hash, and render all 18 before implementing the public registry.
+   - Resolution: 02-01 Tasks 1-2 make compatibility a blocking execution gate; all 18 icons must export, validate, hash, and render before the public registry can be completed.
 
 2. **How are the mascot and lockup text represented in exported SVG?**
    - What we know: fixed source IDs, ratios, visible copy, and colorway are locked. [VERIFIED: `.planning/phases/02-primitives-assets-and-component-contracts/02-UI-SPEC.md:216-230`]
    - What's unclear: whether the mascot is an image fill, SVG geometry, or embedded data, and whether text exports as text or paths.
-   - Recommendation: branch only on inspected MCP evidence as described above; no redrawing or substitution.
+   - Resolution: 02-01 Tasks 1-2 branch only on inspected MCP evidence and fail closed; redrawing and substitution are prohibited.
 
 3. **Which native route will perform the Phase 2 large-text/assistive spot check?**
    - What we know: local Windows has no `adb`, Android emulator, or Java; RNTL cannot prove native layout/focus; full native catalogue acceptance remains Phase 5. [VERIFIED: local environment probe; VERIFIED: `.planning/phases/02-primitives-assets-and-component-contracts/02-CONTEXT.md:73-78`]
    - What's unclear: availability of a physical Expo Go device or remote runner during Phase 2.
-   - Recommendation: plan automated contract tests plus a boundary story now; add an end-of-phase human checkpoint for one available native route, while reserving complete iOS/Android evidence for Phase 5.
+   - Resolution: 02-05 Task 3 requires automated contract tests and boundary stories now, then records either concrete native-route evidence or an explicit `deferred-to-phase-5` disposition without claiming native proof.
 
 ## Environment Availability
 
