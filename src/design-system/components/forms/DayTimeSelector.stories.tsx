@@ -1,0 +1,167 @@
+import type { Meta, StoryObj } from '@storybook/react-native';
+import { Fragment, useState } from 'react';
+
+import { Inline } from '../../primitives/Inline';
+import { Stack } from '../../primitives/Stack';
+import { Text } from '../../primitives/Text';
+import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
+import {
+  DayTimeSelector,
+  dayTimeSelectorTypes,
+  type DayTimeSelectorProps,
+} from './DayTimeSelector';
+
+const selectorFamily = phase3Families[6];
+const selectorRecords = selectorFamily.records;
+const noop = () => undefined;
+const sourceLabel = (recordId: string) =>
+  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set ${selectorFamily.sourceId} / record ${recordId}`;
+
+const meta = {
+  title: 'Forms/Day Time Selector',
+  component: DayTimeSelector,
+  argTypes: {
+    disabled: { control: 'boolean' },
+    onSelect: { action: 'selected' },
+    selected: { control: 'boolean' },
+    type: { control: 'select', options: dayTimeSelectorTypes },
+  },
+} satisfies Meta<typeof DayTimeSelector>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Canonical: Story = {
+  args: {
+    date: '16 Sep',
+    day: 'Mon',
+    onSelect: noop,
+    selected: false,
+    type: 'day',
+  },
+  render: (args) => (
+    <Stack gap="space8">
+      <DayTimeSelector {...args} />
+      <Text color="textSecondary" variant="caption">
+        {sourceLabel('482a7222-5a3b-8086-8008-a6257eaab1fe')}
+      </Text>
+    </Stack>
+  ),
+};
+
+const recordProps = (record: (typeof selectorRecords)[number]): DayTimeSelectorProps => {
+  const { state, type } = record.normalizedTuple;
+  const stateProps = {
+    disabled: state === 'disabled',
+    onSelect: noop,
+    selected: state === 'selected',
+  };
+  if (type === 'day') {
+    const content = state === 'disabled'
+      ? { day: 'Wed', date: '18 Sep' }
+      : state === 'selected'
+        ? { day: 'Tue', date: '17 Sep' }
+        : { day: 'Mon', date: '16 Sep' };
+    return { ...content, ...stateProps, type } as DayTimeSelectorProps;
+  }
+  const content = state === 'disabled'
+    ? { time: '20:30', availability: 'Full' }
+    : state === 'selected'
+      ? { time: '19:00', availability: 'Selected' }
+      : { time: '18:30', availability: '3 spots' };
+  return { ...content, ...stateProps, type } as DayTimeSelectorProps;
+};
+
+export const Variants: Story = {
+  args: Canonical.args,
+  render: () => (
+    <Stack gap="space12">
+      {selectorRecords.map((record) => (
+        <Fragment key={record.id}>
+          <DayTimeSelector {...recordProps(record)} />
+          <Text color="textSecondary" variant="caption">
+            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+          </Text>
+        </Fragment>
+      ))}
+    </Stack>
+  ),
+};
+
+export const States: Story = {
+  args: Canonical.args,
+  render: () => (
+    <Stack gap="space12">
+      <Inline gap="space8">
+        <DayTimeSelector date="16 Sep" day="Mon" onSelect={noop} selected={false} type="day" />
+        <DayTimeSelector date="17 Sep" day="Tue" onSelect={noop} selected type="day" />
+        <DayTimeSelector date="18 Sep" day="Wed" disabled onSelect={noop} selected={false} type="day" />
+      </Inline>
+      <Inline gap="space8">
+        <DayTimeSelector availability="3 spots" onSelect={noop} selected={false} time="18:30" type="time" />
+        <DayTimeSelector availability="Selected" onSelect={noop} selected time="19:00" type="time" />
+        <DayTimeSelector availability="Full" disabled onSelect={noop} selected={false} time="20:30" type="time" />
+      </Inline>
+    </Stack>
+  ),
+};
+
+export const Boundaries: Story = {
+  args: Canonical.args,
+  render: () => (
+    <Stack gap="space8">
+      <Inline gap="space8">
+        <DayTimeSelector date="Wednesday 17 September" day="Tournament finals day" onSelect={noop} selected={false} type="day" />
+        <DayTimeSelector availability="Only one tournament place remaining" onSelect={noop} selected={false} time="18:30 GMT" type="time" />
+      </Inline>
+      <Text color="textSecondary" variant="caption">
+        Full long content remains in each individual radio name at 200%; eight points preserve target clearance with no hit-area overlap. Native measurement remains Phase 5.
+      </Text>
+    </Stack>
+  ),
+};
+
+export function InteractiveDayTimeSelectorHarness() {
+  const [selectedDay, setSelectedDay] = useState('Mon');
+  const [selectedTime, setSelectedTime] = useState('18:30');
+  return (
+    <Stack gap="space12">
+      <Inline gap="space8">
+        {[
+          ['Mon', '16 Sep'],
+          ['Tue', '17 Sep'],
+          ['Wed', '18 Sep'],
+        ].map(([day, date]) => (
+          <DayTimeSelector
+            date={date}
+            day={day}
+            key={day}
+            onSelect={() => setSelectedDay(day)}
+            selected={selectedDay === day}
+            type="day"
+          />
+        ))}
+      </Inline>
+      <Inline gap="space8">
+        {[
+          ['18:30', '3 spots'],
+          ['19:00', '2 spots'],
+        ].map(([time, availability]) => (
+          <DayTimeSelector
+            availability={availability}
+            key={time}
+            onSelect={() => setSelectedTime(time)}
+            selected={selectedTime === time}
+            time={time}
+            type="time"
+          />
+        ))}
+      </Inline>
+    </Stack>
+  );
+}
+
+export const Interactive: Story = {
+  args: Canonical.args,
+  render: () => <InteractiveDayTimeSelectorHarness />,
+};
