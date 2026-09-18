@@ -146,7 +146,7 @@ export function Button(props: ButtonProps) {
             },
           ]}
         >
-          <Text variant="label">{loading ? '…' : label}</Text>
+          <Text variant="label">{loading ? '•••' : label}</Text>
         </View>
       )}
     </Pressable>

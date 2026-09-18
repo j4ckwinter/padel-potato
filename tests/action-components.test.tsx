@@ -121,10 +121,10 @@ describe('Button interaction and visual contract', () => {
       <Button label="Create game" loading style="primary" />,
     );
     const subject = screen.getByRole('button', { name: 'Create game' });
-    const visual = screen.getByText('…', { includeHiddenElements: true }).parent;
+    const visual = screen.getByText('•••', { includeHiddenElements: true }).parent;
 
     expect(subject).toBeDisabled();
-    expect(screen.getByText('…', { includeHiddenElements: true })).toBeTruthy();
+    expect(screen.getByText('•••', { includeHiddenElements: true })).toBeTruthy();
     expect(flattenedStyle(subject.props.style)).toEqual(
       expect.objectContaining({
         height: 48,
