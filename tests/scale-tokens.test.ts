@@ -4,10 +4,20 @@ import { join } from 'node:path';
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  borders,
+  borderSources,
+  type BorderToken,
+} from '../src/design-system/tokens/borders';
+import {
   dimensions,
   dimensionSources,
   type DimensionToken,
 } from '../src/design-system/tokens/dimensions';
+import {
+  opacity,
+  opacitySources,
+  type OpacityToken,
+} from '../src/design-system/tokens/opacity';
 import {
   radii,
   radiusSources,
@@ -129,5 +139,21 @@ describe('Penpot layout measurement scale contracts', () => {
       const normalized = manifest.categories[category].map(({ name }) => tokenKey(name));
       expect(new Set(normalized).size).toBe(normalized.length);
     }
+  });
+});
+
+describe('Penpot border and opacity scale contracts', () => {
+  it('publishes both border-width tokens in exact manifest order', () => {
+    assertScaleContract('borderWidths', 2, borders, borderSources);
+    expect(Object.values(borders).every(Number.isInteger)).toBe(true);
+    const token: BorderToken = 'focusRingWidth';
+    expect(borders[token]).toBe(2);
+  });
+
+  it('publishes the opacity token with its exact fractional value', () => {
+    assertScaleContract('opacities', 1, opacity, opacitySources);
+    expect(Object.values(opacity).every((value) => value <= 1)).toBe(true);
+    const token: OpacityToken = 'opacityDisabled';
+    expect(opacity[token]).toBe(0.4);
   });
 });
