@@ -72,13 +72,13 @@ export const States: Story = {
 
 export const Boundaries: Story = {
   args: { accessibilityLabel: 'Activate example', accessibilityRole: 'button' },
-  render: () => (
+  render: (args) => (
     <Stack gap="space8" style={{ width: 220 }} testID="boundary-constrained-width">
       <Text testID="boundary-required-content" variant="body">{longUnicode}</Text>
       <Pressable
-        accessibilityLabel="Activate example"
-        accessibilityRole="button"
-        onPress={() => undefined}
+        accessibilityLabel={args.accessibilityLabel}
+        accessibilityRole={args.accessibilityRole}
+        onPress={args.onPress}
         testID="boundary-long-text-action"
       >
         <Text variant="bodyStrong">{longUnicode}</Text>

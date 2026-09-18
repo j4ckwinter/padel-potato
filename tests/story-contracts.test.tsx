@@ -45,13 +45,13 @@ import { colors, spacing, typography } from '../src/design-system/tokens';
 
 type StoryLike = { args?: unknown; render?: unknown };
 
-const renderStory = async (story: StoryLike, args = story.args ?? {}) => {
+const renderStory = async (story: StoryLike, args: Record<string, unknown> = {}) => {
   if (typeof story.render !== 'function') throw new Error('Story has no render function');
   const storyRender = story.render as (
     storyArgs: Record<string, unknown>,
     context: Record<string, never>,
   ) => ReactElement;
-  return render(storyRender(args as Record<string, unknown>, {}));
+  return render(storyRender({ ...(story.args as Record<string, unknown> ?? {}), ...args }, {}));
 };
 
 describe('Phase 2 Storybook contract', () => {
@@ -267,7 +267,7 @@ describe('Phase 2 Storybook contract', () => {
     });
   });
 
-  it('keeps both UI backstops machine-detectable without claiming native proof', () => {
+  it('keeps both UI backstops machine-detectable without claiming native proof', async () => {
     expect(phase2Backstops.overflow).toEqual({
       exports: ['Text', 'Stack', 'Inline', 'Surface'],
       constrainedWidthRendered: true,
@@ -284,5 +284,21 @@ describe('Phase 2 Storybook contract', () => {
       nativeStatus: 'deferred-to-phase-5',
       status: 'host-contract',
     });
+
+    const onPress = jest.fn();
+    const boundary = await renderStory(PressableBoundaries, { onPress });
+    const action = boundary.getByTestId(
+      phase2Backstops.longText.reachableActionWitness,
+    );
+    expect(
+      boundary.getByRole('button', {
+        name: phase2Backstops.longText.preservedAccessibleName,
+      }),
+    ).toBe(action);
+    expect(
+      boundary.getAllByText(/Activate example for/u).length,
+    ).toBeGreaterThan(0);
+    fireEvent.press(action);
+    expect(onPress).toHaveBeenCalledTimes(1);
   });
 });
