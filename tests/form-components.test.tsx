@@ -3,10 +3,16 @@ import { fireEvent, render, userEvent } from '@testing-library/react-native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
+import FieldStories, {
+  Boundaries as FieldBoundaries,
+  Interactive as FieldInteractive,
+  Variants as FieldVariants,
+} from '../src/design-system/components/forms/Field.stories';
 import {
   Field,
   type EditableFieldProps,
   type FieldProps,
+  type StepperFieldProps,
   type TriggerFieldProps,
 } from '../src/design-system/components/forms/Field';
 import { phase3Families } from '../src/design-system/components/sourceRegistry';
@@ -258,6 +264,142 @@ describe('Field trigger branches', () => {
   });
 });
 
+describe('Field stepper branch', () => {
+  it('emits separate decrement and increment requests while retaining the controlled value', async () => {
+    const onDecrement = jest.fn();
+    const onIncrement = jest.fn();
+    const screen = await render(
+      <Field
+        label="Players"
+        onDecrement={onDecrement}
+        onIncrement={onIncrement}
+        type="stepper"
+        value="4 players"
+      />,
+    );
+    const decrement = screen.getByRole('button', { name: 'Decrease Players' });
+    const increment = screen.getByRole('button', { name: 'Increase Players' });
+
+    await userEvent.setup().press(decrement);
+    expect(onDecrement).toHaveBeenCalledTimes(1);
+    expect(onIncrement).not.toHaveBeenCalled();
+    expect(screen.getByText('4 players', { includeHiddenElements: true })).toBeTruthy();
+
+    await userEvent.setup().press(increment);
+    expect(onDecrement).toHaveBeenCalledTimes(1);
+    expect(onIncrement).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('field-stepper-value').props.accessibilityValue).toEqual({
+      text: '4 players',
+    });
+  });
+
+  it('announces independent bounds and keeps both targets exactly 44x44', async () => {
+    const onDecrement = jest.fn();
+    const onIncrement = jest.fn();
+    const screen = await render(
+      <Field
+        decrementDisabled
+        label="Players"
+        onDecrement={onDecrement}
+        onIncrement={onIncrement}
+        type="stepper"
+        value="2 players"
+      />,
+    );
+    const decrement = screen.getByRole('button', {
+      disabled: true,
+      name: 'Decrease Players',
+    });
+    const increment = screen.getByRole('button', {
+      disabled: false,
+      name: 'Increase Players',
+    });
+    await userEvent.setup().press(decrement);
+    await userEvent.setup().press(increment);
+
+    expect(onDecrement).not.toHaveBeenCalled();
+    expect(onIncrement).toHaveBeenCalledTimes(1);
+    for (const action of [decrement, increment]) {
+      expect(action.props.hitSlop).toEqual({ bottom: 0, left: 0, right: 0, top: 0 });
+      expect(flattenedStyle(action.props.style)).toEqual(expect.objectContaining({
+        height: 44,
+        minHeight: 44,
+        minWidth: 44,
+        width: 44,
+      }));
+    }
+  });
+
+  it('blocks both actions when the whole Field is disabled', async () => {
+    const onDecrement = jest.fn();
+    const onIncrement = jest.fn();
+    const screen = await render(
+      <Field
+        disabled
+        label="Players"
+        onDecrement={onDecrement}
+        onIncrement={onIncrement}
+        type="stepper"
+        value="4 players"
+      />,
+    );
+    await userEvent.setup().press(screen.getByRole('button', {
+      disabled: true,
+      name: 'Decrease Players',
+    }));
+    await userEvent.setup().press(screen.getByRole('button', {
+      disabled: true,
+      name: 'Increase Players',
+    }));
+    expect(onDecrement).not.toHaveBeenCalled();
+    expect(onIncrement).not.toHaveBeenCalled();
+  });
+});
+
+describe('Field focus, geometry, and content boundaries', () => {
+  it('derives focus treatment from native events and preserves exact shell metrics', async () => {
+    const screen = await render(
+      <Field
+        label="Game name"
+        onChangeText={() => undefined}
+        type="text"
+        value="Wednesday"
+      />,
+    );
+    const input = screen.getByLabelText('Game name');
+    fireEvent(input, 'focus', { nativeEvent: {} });
+    expect(flattenedStyle(screen.getByTestId('field-control').props.style)).toEqual(
+      expect.objectContaining({ borderColor: colors.focusRing, borderWidth: 2, height: 52 }),
+    );
+    expect(flattenedStyle(screen.getByTestId('field').props.style)).toEqual(
+      expect.objectContaining({ minHeight: 84, width: 350 }),
+    );
+
+    fireEvent(input, 'blur', { nativeEvent: {} });
+    expect(flattenedStyle(screen.getByTestId('field-control').props.style)).toEqual(
+      expect.objectContaining({ borderColor: colors.border, borderWidth: 1 }),
+    );
+
+    await screen.rerender(
+      <Field
+        label="A deliberately long password label that wraps without hiding the field"
+        message="A long error remains visible, reachable, and associated while the shell grows vertically"
+        onChangeText={() => undefined}
+        status="error"
+        type="password"
+        value="short"
+      />,
+    );
+    expect(screen.getByText(/A long error remains visible/u)).toBeTruthy();
+    expect(screen.getByLabelText(/A deliberately long password label/u).props.accessibilityHint).toContain(
+      'A long error remains visible',
+    );
+    expect(flattenedStyle(screen.getByTestId('field').props.style)).toEqual(
+      expect.objectContaining({ minHeight: 100, width: 350 }),
+    );
+  });
+});
+
 describe('Field runtime closure', () => {
   it('rejects malformed and impossible cast combinations', () => {
     expect(() => Field({
@@ -294,5 +436,54 @@ describe('Field runtime closure', () => {
       type: 'text',
       value: '',
     } as unknown as FieldProps)).toThrow(/Unsupported design-system value: warning/u);
+    expect(() => Field({
+      label: 'Players',
+      onDecrement: () => undefined,
+      onIncrement: () => undefined,
+      onPress: () => undefined,
+      type: 'stepper',
+      value: '4 players',
+    } as unknown as StepperFieldProps)).toThrow(/Unsupported design-system value: onPress/u);
+    expect(() => Field({
+      decrementDisabled: 'minimum',
+      label: 'Players',
+      onDecrement: () => undefined,
+      onIncrement: () => undefined,
+      type: 'stepper',
+      value: '4 players',
+    } as unknown as StepperFieldProps)).toThrow(/Unsupported design-system value: minimum/u);
+  });
+});
+
+describe('Field Storybook contract', () => {
+  it('publishes the exact group, bounded controls, and twelve source-ordered rows', () => {
+    expect(FieldStories.title).toBe('Forms/Field');
+    expect(FieldStories.argTypes).toEqual(expect.objectContaining({
+      disabled: { control: 'boolean' },
+      required: { control: 'boolean' },
+      status: { control: 'select', options: ['default', 'success', 'error'] },
+      type: {
+        control: 'select',
+        options: ['text', 'password', 'search', 'select', 'date', 'time', 'stepper'],
+      },
+    }));
+    const variants = FieldVariants.render?.({} as never, {} as never) as React.ReactElement<{
+      children: React.ReactNode;
+    }>;
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(fieldRecords.length);
+  });
+
+  it('records all required boundary and interactive witnesses without native-proof claims', () => {
+    const boundaries = FieldBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const boundaryJson = JSON.stringify(boundaries);
+    expect(boundaryJson).toContain('200%');
+    expect(boundaryJson).toContain('constrained width');
+    expect(boundaryJson).toContain('empty');
+    expect(boundaryJson).toContain('vertical growth');
+    expect(boundaryJson).toContain('nested target clearance');
+    expect(boundaryJson).toContain('Phase 5');
+
+    const interactive = FieldInteractive.render?.({} as never, {} as never) as React.ReactElement;
+    expect(JSON.stringify(interactive)).toContain('InteractiveFieldHarness');
   });
 });
