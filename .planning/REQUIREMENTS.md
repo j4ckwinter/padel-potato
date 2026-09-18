@@ -77,8 +77,8 @@
 ### Feedback and Illustrated Content
 
 - [ ] **FDBK-01**: Developer can use Banner Toast with every designed style and type.
-- [ ] **FDBK-02**: Developer can use Empty State with every designed content and action state.
-- [ ] **CARD-01**: Developer can use Illustrated Card with every designed type and state.
+- [x] **FDBK-02**: Developer can use Empty State with every designed content and action state.
+- [x] **CARD-01**: Developer can use Illustrated Card with every designed type and state.
 
 ### Story, Test, and Accessibility Coverage
 
@@ -183,8 +183,8 @@
 | CONT-06 | Phase 4 | Pending |
 | CONT-07 | Phase 4 | Pending |
 | FDBK-01 | Phase 4 | Pending |
-| FDBK-02 | Phase 4 | Pending |
-| CARD-01 | Phase 4 | Pending |
+| FDBK-02 | Phase 4 | Complete |
+| CARD-01 | Phase 4 | Complete |
 | VRFY-01 | Phase 5 | Pending |
 | VRFY-02 | Phase 5 | Pending |
 | VRFY-03 | Phase 5 | Pending |
