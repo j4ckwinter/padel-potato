@@ -198,6 +198,8 @@ export function Pressable(props: PressableProps) {
   return (
     <NativePressable
       {...nativeProps}
+      aria-busy={isLoading}
+      aria-disabled={blocked}
       accessibilityState={{
         ...accessibilityState,
         busy: isLoading,

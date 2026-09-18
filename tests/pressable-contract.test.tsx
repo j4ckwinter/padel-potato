@@ -167,6 +167,9 @@ describe('Pressable interaction contract', () => {
           expanded: true,
           selected: true,
         }}
+        aria-busy={false}
+        aria-disabled={false}
+        disabled
         accessibilityValue={{ max: 4, min: 0, now: 2, text: 'Two players' }}
         loading
         testID="subject"
@@ -183,6 +186,8 @@ describe('Pressable interaction contract', () => {
       expanded: true,
       selected: true,
     });
+    expect(subject.props['aria-busy']).not.toBe(false);
+    expect(subject.props['aria-disabled']).not.toBe(false);
     expect(subject).toHaveAccessibilityValue({
       max: 4,
       min: 0,
