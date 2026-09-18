@@ -1,0 +1,62 @@
+import { describe, expect, it, jest } from '@jest/globals';
+import { render } from '@testing-library/react-native';
+import { Text } from 'react-native';
+
+const mockUseFonts = jest.fn<() => [boolean, Error | null]>();
+
+jest.mock('expo-font', () => ({
+  useFonts: () => mockUseFonts(),
+}));
+
+import { FoundationFontGate } from '../src/design-system/fonts/FoundationFontGate';
+
+const content = <Text>Authoritative typography specimen</Text>;
+
+describe('FoundationFontGate', () => {
+  it('hides children behind an accessible loading state while fonts are pending', async () => {
+    mockUseFonts.mockReturnValue([false, null]);
+
+    const { getByLabelText, queryByText } = await render(
+      <FoundationFontGate>{content}</FoundationFontGate>,
+    );
+
+    expect(getByLabelText('Loading foundation fonts')).toHaveAccessibilityState({
+      busy: true,
+    });
+    expect(queryByText('Authoritative typography specimen')).toBeNull();
+  });
+
+  it('renders children only after all authoritative font assets load', async () => {
+    mockUseFonts.mockReturnValue([true, null]);
+
+    const { getByText, queryByLabelText } = await render(
+      <FoundationFontGate>{content}</FoundationFontGate>,
+    );
+
+    expect(getByText('Authoritative typography specimen')).toBeVisible();
+    expect(queryByLabelText('Loading foundation fonts')).toBeNull();
+  });
+
+  it('shows an accessible diagnostic and withholds children after a load error', async () => {
+    mockUseFonts.mockReturnValue([false, new Error('Inter 600 could not be decoded')]);
+
+    const { getByLabelText, getByText, queryByText } = await render(
+      <FoundationFontGate>{content}</FoundationFontGate>,
+    );
+
+    expect(getByLabelText('Foundation fonts failed to load')).toBeVisible();
+    expect(getByText('Inter 600 could not be decoded')).toBeVisible();
+    expect(queryByText('Authoritative typography specimen')).toBeNull();
+  });
+
+  it('takes the deterministic ready path when a manifest uses only system fonts', async () => {
+    mockUseFonts.mockClear();
+
+    const { getByText } = await render(
+      <FoundationFontGate assets={{}}>{content}</FoundationFontGate>,
+    );
+
+    expect(getByText('Authoritative typography specimen')).toBeVisible();
+    expect(mockUseFonts).not.toHaveBeenCalled();
+  });
+});
