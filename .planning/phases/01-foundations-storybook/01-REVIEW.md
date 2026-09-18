@@ -1,6 +1,6 @@
 ---
 phase: 01-foundations-storybook
-reviewed: 2026-09-18T11:21:18Z
+reviewed: 2026-09-18T11:41:22Z
 depth: standard
 files_reviewed: 44
 files_reviewed_list:
@@ -49,88 +49,34 @@ files_reviewed_list:
   - tests/typography.test.tsx
   - tsconfig.json
 findings:
-  critical: 1
-  warning: 2
+  critical: 0
+  warning: 0
   info: 0
-  total: 3
-status: issues_found
+  total: 0
+status: clean
 ---
 
 # Phase 1: Code Review Report
 
-**Reviewed:** 2026-09-18T11:21:18Z
+**Reviewed:** 2026-09-18T11:41:22Z
 **Depth:** standard
 **Files Reviewed:** 44
-**Status:** issues_found
+**Status:** clean
 
 ## Summary
 
-The foundation tokens, font provenance, Storybook catalogue, and focused tests are internally consistent, and the submitted typecheck, lint, and 41 tests pass. The release gate is nevertheless capable of approving a dependency tree that no longer matches its approved evidence, and two portability/lifecycle gaps weaken the repeatability claimed by the phase.
+All reviewed files meet quality standards. No issues found.
+
+The convergence review confirmed that commit `2b59393` resolves the remaining cleanup blocker without regressing the prior dependency or pinned-runtime fixes. The smoke now rejects non-zero `taskkill` results and POSIX termination errors, waits for forced POSIX shutdown, propagates cleanup-only failures, and preserves a primary launch/runtime failure while reporting a secondary cleanup error. Controlled cleanup rejection checks passed under both the active Node runtime and pinned Node 22.13.1.
+
+The complete verification set passed: strict typecheck, Expo lint, all 5 Jest suites and 41 tests, Penpot evidence validation, web verification validation, live manifest/lockfile compatibility validation under Node 24 and Node 22.13.1, cleanup controlled rejections under both runtimes, and the live Storybook web smoke. The smoke's tested application port and Storybook channel port were both closed afterward.
 
 ## Narrative Findings (AI reviewer)
 
-## Critical Issues
-
-### CR-01: Compatibility validation never compares evidence with the repository being shipped
-
-**Classification:** BLOCKER
-
-**File:** `C:/Users/jackw/Documents/dev/padel/scripts/validate-toolchain-compatibility.mjs:160-170`
-
-**Issue:** The validator reads only `design-spec/toolchain-compatibility.json` and compares that document with constants embedded in the same script. It never reads `package.json` or `package-lock.json`, and it never queries the installed top-level tree. Consequently, changing a Storybook package, adding an unapproved direct dependency, or allowing the lockfile to resolve a different version leaves this validator green. The final closure command's separate `npm ls --all --json` invocation proves only that npm can form a valid tree; it does not compare that tree with `approvedVersions`. This breaks the exact-package/version approval boundary and can falsely approve unreviewed dependencies.
-
-**Fix:** Read the live manifest and lockfile in this validator and compare their direct and resolved versions with the approved inventory. Reject unexpected direct dependencies as well as missing or substituted ones. For example:
-
-```js
-const packageJson = JSON.parse(
-  await readFile(new URL('../package.json', import.meta.url), 'utf8'),
-);
-const lockfile = JSON.parse(
-  await readFile(new URL('../package-lock.json', import.meta.url), 'utf8'),
-);
-
-const liveDirect = new Map(
-  Object.entries({
-    ...packageJson.dependencies,
-    ...packageJson.devDependencies,
-  }),
-);
-
-for (const [name, version] of approvedVersions) {
-  assert(liveDirect.get(name) === version, `${name} differs from its approval`);
-  assert(
-    lockfile.packages[`node_modules/${name}`]?.version === version,
-    `${name} lockfile resolution differs from its approval`,
-  );
-}
-```
-
-Also compare the complete live direct-dependency key set with the recorded `directDependencies` and `directDevDependencies` collections so additions cannot bypass review.
-
-## Warnings
-
-### WR-01: The advertised cleanup guarantee does not cover interruption or spawn failure
-
-**Classification:** WARNING
-
-**File:** `C:/Users/jackw/Documents/dev/padel/scripts/smoke-storybook-web.mjs:34-69,194-196`
-
-**Issue:** Cleanup runs only through the async `finally` block. `SIGINT`, `SIGTERM`, and an abrupt parent shutdown are not handled, so cancelling the smoke can leave the detached POSIX Expo process group alive. In addition, a spawn failure can leave `child.pid` undefined; the POSIX branch then calls `process.kill(-child.pid, ...)`, which throws an argument error and masks the original launch failure. This contradicts the script's "always cleans up" acceptance guarantee and can leak a Metro/Expo listener in CI or local development.
-
-**Fix:** Guard `child.pid` before attempting process-group termination, register one idempotent cleanup function for `SIGINT`, `SIGTERM`, `uncaughtException`, and normal completion, and remove handlers once cleanup finishes. Preserve the original spawn error when no child PID was created.
-
-### WR-02: Compatibility evidence was generated on a different Node major than the pinned project runtime
-
-**Classification:** WARNING
-
-**File:** `C:/Users/jackw/Documents/dev/padel/.nvmrc:1`; `C:/Users/jackw/Documents/dev/padel/design-spec/toolchain-compatibility.json:49-53`
-
-**Issue:** The repository pins Node `22.13.1`, but the clean probe and all retained compatibility evidence were produced on Node `v24.20.0`. The validator only checks that the evidence contains some semantic Node version, so it accepts this mismatch. A developer following `.nvmrc` is therefore using a runtime for which the claimed clean install, Expo Doctor result, web smoke, and process behavior were not actually exercised.
-
-**Fix:** Run the compatibility probe and full closure gate under the `.nvmrc` version and record that matching version, or change the project pin through the approval process. Add a validator assertion that normalizes an optional leading `v` and requires `probe.nodeVersion` to equal `.nvmrc`.
+No blocker or warning findings remain.
 
 ---
 
-_Reviewed: 2026-09-18T11:21:18Z_
+_Reviewed: 2026-09-18T11:41:22Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: standard_
