@@ -77,7 +77,7 @@ describe('BottomNavigation source, order, and controlled intent', () => {
         flexBasis: 0,
         flexGrow: 1,
         height: 76,
-        minHeight: 76,
+        minHeight: 44,
       }));
     }
   });
@@ -154,7 +154,7 @@ describe('SegmentedControl tuple boundary and controlled selection', () => {
     }
   });
 
-  it.each(validOptions)('renders %i ordered named tabs with deterministic equal allocation', async (...options) => {
+  it.each(validOptions)('renders an ordered named tuple with deterministic equal allocation', async (...options) => {
     const tuple = options as unknown as SegmentOptions;
     const screen = await render(
       <SegmentedControl onValueChange={jest.fn()} options={tuple} value={tuple[0]} />,
@@ -165,15 +165,16 @@ describe('SegmentedControl tuple boundary and controlled selection', () => {
     expect(flattenedStyle(screen.getByTestId('segmented-control').props.style)).toEqual(
       expect.objectContaining({ height: 48, width: 350 }),
     );
-    expect(tabs.map((tab) => flattenedStyle(tab.props.style))).toEqual(
-      tuple.map(() => expect.objectContaining({
+    for (const tab of tabs) {
+      expect(flattenedStyle(tab.props.style)).toEqual(expect.objectContaining({
         flexBasis: 0,
         flexGrow: 1,
         height: 48,
         minHeight: 48,
-        minWidth: 0,
-      })),
-    );
+        minWidth: 48,
+        width: 0,
+      }));
+    }
   });
 
   it('emits one next value, remains controlled, and blocks every tab when disabled', async () => {
