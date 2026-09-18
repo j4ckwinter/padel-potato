@@ -535,42 +535,46 @@ describe('ChoiceChip source and controlled contract', () => {
   });
 
   it.each([
-    ['option', 'none', 'radio'],
-    ['option', 'leading', 'radio'],
-    ['filter', 'leading', 'checkbox'],
-    ['filter', 'trailing', 'checkbox'],
-  ] as const)('%s/%s emits the next controlled value once with %s semantics', async (
+    ['option', 'none', false, 'radio'],
+    ['option', 'leading', true, 'radio'],
+    ['filter', 'leading', true, 'checkbox'],
+    ['filter', 'trailing', false, 'checkbox'],
+  ] as Array<[
+    ChoiceChipProps['type'],
+    ChoiceChipProps['icon'],
+    boolean,
+    'checkbox' | 'radio',
+  ]>)('%s/%s selected=%s emits the next controlled value once with %s semantics', async (
     type,
     icon,
+    selected,
     role,
   ) => {
     const onSelectedChange = jest.fn();
-    const screen = await render(
-      <ChoiceChip
-        icon={icon}
-        label="Intermediate"
-        onSelectedChange={onSelectedChange}
-        selected={false}
-        type={type}
-      />,
-    );
-    const chip = screen.getByRole(role, { checked: false, name: 'Intermediate' });
+    const initialProps = {
+      icon,
+      label: 'Intermediate',
+      onSelectedChange,
+      selected,
+      type,
+    } as ChoiceChipProps;
+    const screen = await render(<ChoiceChip {...initialProps} />);
+    const chip = screen.getByRole(role, { checked: selected, name: 'Intermediate' });
 
     await userEvent.setup().press(chip);
     expect(onSelectedChange).toHaveBeenCalledTimes(1);
-    expect(onSelectedChange).toHaveBeenCalledWith(true);
-    expect(chip.props.accessibilityState).toEqual(expect.objectContaining({ checked: false }));
+    expect(onSelectedChange).toHaveBeenCalledWith(!selected);
+    expect(chip.props.accessibilityState).toEqual(expect.objectContaining({ checked: selected }));
 
-    await screen.rerender(
-      <ChoiceChip
-        icon={icon}
-        label="Intermediate"
-        onSelectedChange={onSelectedChange}
-        selected
-        type={type}
-      />,
-    );
-    expect(screen.getByRole(role, { checked: true, name: 'Intermediate' })).toBeTruthy();
+    const nextProps = {
+      icon: selected ? (type === 'option' ? 'none' : 'trailing') : 'leading',
+      label: 'Intermediate',
+      onSelectedChange,
+      selected: !selected,
+      type,
+    } as ChoiceChipProps;
+    await screen.rerender(<ChoiceChip {...nextProps} />);
+    expect(screen.getByRole(role, { checked: !selected, name: 'Intermediate' })).toBeTruthy();
   });
 
   it('blocks disabled activation, hides icon semantics, and owns 148x40 plus 44 target geometry', async () => {
@@ -600,7 +604,10 @@ describe('ChoiceChip source and controlled contract', () => {
       minWidth: 40,
       width: 148,
     }));
-    expect(flattenedStyle(screen.getByTestId('choice-chip-content').props.style)).toEqual(
+    expect(flattenedStyle(screen.getByTestId(
+      'choice-chip-content',
+      { includeHiddenElements: true },
+    ).props.style)).toEqual(
       expect.objectContaining({ borderRadius: 20, height: 40, paddingHorizontal: 12 }),
     );
     expect(screen.queryAllByRole('image')).toHaveLength(0);
@@ -618,14 +625,27 @@ describe('ChoiceChip source and controlled contract', () => {
     );
     const chip = screen.getByRole('radio', { name: 'Social' });
     await act(async () => fireEvent(chip, 'focus', { nativeEvent: {} }));
-    expect(flattenedStyle(screen.getByTestId('choice-chip-content').props.style)).toEqual(
+    expect(flattenedStyle(screen.getByTestId(
+      'choice-chip-content',
+      { includeHiddenElements: true },
+    ).props.style)).toEqual(
       expect.objectContaining({ borderColor: colors.focusRing, borderWidth: 2 }),
     );
     await act(async () => fireEvent(chip, 'blur', { nativeEvent: {} }));
-    expect(flattenedStyle(screen.getByTestId('choice-chip-content').props.style)).toEqual(
+    expect(flattenedStyle(screen.getByTestId(
+      'choice-chip-content',
+      { includeHiddenElements: true },
+    ).props.style)).toEqual(
       expect.objectContaining({ borderColor: colors.border, borderWidth: 1 }),
     );
 
+    expect(() => ChoiceChip({
+      icon: 'leading',
+      label: 'Social',
+      onSelectedChange: () => undefined,
+      selected: false,
+      type: 'option',
+    } as unknown as ChoiceChipProps)).toThrow(/Unsupported design-system value: option\/leading\/default/u);
     expect(() => ChoiceChip({
       icon: 'trailing',
       label: 'Social',
