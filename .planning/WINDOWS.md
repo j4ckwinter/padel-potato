@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 6
+open_count: 7
 waived_count: 0
 fixed_count: 0
-total_count: 6
-last_updated: 2026-09-18T14:07:56.252Z
+total_count: 7
+last_updated: 2026-09-18T18:17:21.524Z
 ---
 
 # Broken Windows Ledger
@@ -21,6 +21,7 @@ last_updated: 2026-09-18T14:07:56.252Z
 | 4 | 01 | deviation | package.json |  | Generic launcher is storybook:native because Expo Doctor rejects a storybook script that shadows the installed binary | open |  | 2026-09-17T22:07:47.642Z |  |
 | 5 | 01 | deviation | tsconfig.json |  | Expo web normalized the TypeScript include list during startup | open |  | 2026-09-17T22:07:48.098Z |  |
 | 6 | 02 | unrun-verify | design-spec/phase-2-verification.md |  | Native 200% font-scale, target clipping, VoiceOver, and TalkBack checks deferred to Phase 5 because no physical or remote native route was available. | open |  | 2026-09-18T14:07:56.252Z |  |
+| 7 | 03 | deviation | scripts/extract-phase-3-artwork.mjs | 378 | Allowed only artwork-manifest.json as the required sidecar during exact binary artwork inventory checks | open |  | 2026-09-18T18:17:21.524Z |  |
 
 ````json
 [
@@ -94,6 +95,18 @@ last_updated: 2026-09-18T14:07:56.252Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-09-18T14:07:56.252Z",
+    "resolved_at": null
+  },
+  {
+    "id": 7,
+    "kind": "deviation",
+    "phase": "03",
+    "file": "scripts/extract-phase-3-artwork.mjs",
+    "line": 378,
+    "description": "Allowed only artwork-manifest.json as the required sidecar during exact binary artwork inventory checks",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-18T18:17:21.524Z",
     "resolved_at": null
   }
 ]
