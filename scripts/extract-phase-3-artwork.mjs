@@ -12,6 +12,7 @@ import {
 
 export const REVISION = 296;
 export const PAGE_ID = '482a7222-5a3b-8086-8008-a6073072bbb1';
+export const PRODUCT_PAGE_ID = '482a7222-5a3b-8086-8008-a608ebaf11cd';
 export const OUTPUT_ROOT = 'design-spec/assets/phase-3';
 
 export const VECTOR_SOURCES = Object.freeze([
@@ -97,6 +98,86 @@ export const MASCOT_SOURCES_A = Object.freeze([
   }),
 ]);
 
+export const MASCOT_SOURCES_B = Object.freeze([
+  Object.freeze({
+    key: 'players',
+    output: 'mascot-players.webp',
+    headerPage: 'players',
+    componentId: '482a7222-5a3b-8086-8008-a61da51a620a',
+    mainInstanceId: '482a7222-5a3b-8086-8008-a61da4a7b606',
+    imageShapeId: 'ab02a31f-1852-80be-8008-a6f847c072bc',
+    mediaRecordId: 'c514c1fb-1cda-8125-8008-a60625a0cf35',
+    mediaId: '4f24b68a-8a89-45cf-8dc3-a12fe1411fe8',
+    mediaName: 'd32f82ab4823901c297bfa69c34d696ec14c55ac',
+  }),
+  Object.freeze({
+    key: 'profile',
+    output: 'mascot-profile.webp',
+    headerPage: 'profile',
+    componentId: '482a7222-5a3b-8086-8008-a61da5958fa0',
+    mainInstanceId: '482a7222-5a3b-8086-8008-a61da522fa4d',
+    imageShapeId: 'ab02a31f-1852-80be-8008-a704d8e2d15b',
+    mediaRecordId: 'c514c1fb-1cda-8125-8008-a60625a0cf33',
+    mediaId: '3b4c67c1-ffea-4516-a8bf-ee5656e09ecd',
+    mediaName: '0dea1183f8acc0519dfd0c099082030a130a5b41',
+  }),
+]);
+
+export const MASCOT_SOURCES = Object.freeze([...MASCOT_SOURCES_A, ...MASCOT_SOURCES_B]);
+
+// The product-screen source contains six App Header instances over five unique
+// mascot objects: both Games views deliberately reuse the Search artwork.
+export const APP_HEADER_MASCOT_REFERENCES = Object.freeze([
+  Object.freeze({
+    key: 'home',
+    screenId: '482a7222-5a3b-8086-8008-a62cd6a88459',
+    screenName: 'Screen / Home',
+    headerInstanceId: '482a7222-5a3b-8086-8008-a62cd6b454aa',
+    imageInstanceId: '482a7222-5a3b-8086-8008-a62cd6b48b7e',
+    mascot: 'wave',
+  }),
+  Object.freeze({
+    key: 'gamesDiscover',
+    screenId: '482a7222-5a3b-8086-8008-a63a68bc1f9f',
+    screenName: 'Screen / Games / Discover',
+    headerInstanceId: '482a7222-5a3b-8086-8008-a63a68c6f48f',
+    imageInstanceId: '482a7222-5a3b-8086-8008-a63bf8f3efc7',
+    mascot: 'search',
+  }),
+  Object.freeze({
+    key: 'gamesMyGames',
+    screenId: '482a7222-5a3b-8086-8008-a64512b62eb0',
+    screenName: 'Screen / Games / My games',
+    headerInstanceId: '482a7222-5a3b-8086-8008-a64512b62eb1',
+    imageInstanceId: '482a7222-5a3b-8086-8008-a64512b62ebf',
+    mascot: 'search',
+  }),
+  Object.freeze({
+    key: 'create',
+    screenId: '482a7222-5a3b-8086-8008-a64a92297532',
+    screenName: 'Screen / Create Game',
+    headerInstanceId: '482a7222-5a3b-8086-8008-a64a924c0a36',
+    imageInstanceId: '482a7222-5a3b-8086-8008-a64c3798b4b1',
+    mascot: 'create',
+  }),
+  Object.freeze({
+    key: 'players',
+    screenId: '482a7222-5a3b-8086-8008-a64e1dd1ab3c',
+    screenName: 'Screen / Players / Directory',
+    headerInstanceId: 'ab02a31f-1852-80be-8008-a6f8ad90374a',
+    imageInstanceId: 'ab02a31f-1852-80be-8008-a6f8ad90374b',
+    mascot: 'players',
+  }),
+  Object.freeze({
+    key: 'profile',
+    screenId: '482a7222-5a3b-8086-8008-a64f6f61a4f8',
+    screenName: 'Screen / Profile',
+    headerInstanceId: 'ab02a31f-1852-80be-8008-a704d91f707a',
+    imageInstanceId: 'ab02a31f-1852-80be-8008-a704d91fad93',
+    mascot: 'profile',
+  }),
+]);
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const assert = (condition, message) => {
@@ -114,6 +195,10 @@ function loadSource(root = repoRoot) {
   assert(
     index.pages.some((page) => page.id === PAGE_ID && page.name === '02 Components'),
     `Phase 3 artwork page is missing: ${PAGE_ID}`,
+  );
+  assert(
+    index.pages.some((page) => page.id === PRODUCT_PAGE_ID && page.name === '03 Product Screens'),
+    `Phase 3 product reference page is missing: ${PRODUCT_PAGE_ID}`,
   );
   return {
     archiveBytes,
@@ -239,22 +324,67 @@ export function generateMascotOutputsA({ root = repoRoot } = {}) {
   return outputs;
 }
 
+function validateHeaderReferences(context) {
+  const mascotByKey = new Map(MASCOT_SOURCES.map((source) => [source.key, source]));
+  assert(APP_HEADER_MASCOT_REFERENCES.length === 6, 'App Header reference count differs');
+  assert(new Set(APP_HEADER_MASCOT_REFERENCES.map((reference) => reference.mascot)).size === 5, 'App Header references no longer map six instances to five mascots');
+  for (const reference of APP_HEADER_MASCOT_REFERENCES) {
+    const source = mascotByKey.get(reference.mascot);
+    assert(source, `App Header reference has an unknown mascot: ${reference.mascot}`);
+    const screen = context.shapeById.get(reference.screenId);
+    assert(screen?.pageId === PRODUCT_PAGE_ID && screen.name === reference.screenName, `${reference.key} product screen reference differs`);
+    const header = context.shapeById.get(reference.headerInstanceId);
+    assert(header?.data.parentId === reference.screenId, `${reference.key} App Header parent differs`);
+    assert(header.data.componentId === source.componentId && header.data.shapeRef === source.mainInstanceId, `${reference.key} App Header component reference differs`);
+    const image = context.shapeById.get(reference.imageInstanceId);
+    assert(image?.data.parentId === reference.headerInstanceId, `${reference.key} mascot instance parent differs`);
+    assert(image.data.shapeRef === source.imageShapeId, `${reference.key} mascot source reference differs`);
+    assert(image.data.fills?.length === 1 && image.data.fills[0].fillImage?.id === source.mediaRecordId, `${reference.key} mascot media reference differs`);
+  }
+  const games = APP_HEADER_MASCOT_REFERENCES.filter((reference) => reference.key.startsWith('games'));
+  assert(games.length === 2 && games.every((reference) => reference.mascot === 'search'), 'Games to Search mascot reuse differs');
+}
+
+export function generateMascotOutputs({ root = repoRoot } = {}) {
+  const context = loadSource(root);
+  validateHeaderReferences(context);
+  const outputs = new Map(MASCOT_SOURCES.map((source) => [source.output, mascotOutput(source, context)]));
+  assert(outputs.size === 5, 'mascot output count differs');
+  assert(new Set([...outputs.values()].map(sha256)).size === outputs.size, 'mascot outputs contain duplicate media bytes');
+  return outputs;
+}
+
+export function generateArtworkOutputs({ root = repoRoot } = {}) {
+  const outputs = new Map([
+    ...generateVectorOutputs({ root }),
+    ...generateMascotOutputs({ root }),
+  ]);
+  assert(outputs.size === 8, 'Phase 3 retained artwork count differs');
+  return outputs;
+}
+
 function writeOutputs(root, outputs) {
   fs.mkdirSync(path.join(root, OUTPUT_ROOT), { recursive: true });
   for (const [relative, bytes] of outputs) fs.writeFileSync(assertFixedOutput(root, relative), bytes);
 }
 
-function checkOutputs(root, outputs, extension) {
+function checkOutputs(root, outputs, extension, allowedNames) {
   const outputRoot = path.join(root, OUTPUT_ROOT);
   assert(fs.existsSync(outputRoot), `Phase 3 artwork output directory is missing: ${OUTPUT_ROOT}`);
-  const expected = [...outputs.keys()].filter((name) => name.endsWith(extension)).sort();
+  const expected = (allowedNames ?? [...outputs.keys()])
+    .filter((name) => extension == null || name.endsWith(extension))
+    .sort();
   const actual = fs.readdirSync(outputRoot, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith(extension))
+    .filter((entry) => extension == null || (entry.isFile() && entry.name.endsWith(extension)))
+    .map((entry) => {
+      assert(entry.isFile(), `unexpected non-file artwork output: ${entry.name}`);
+      return entry;
+    })
     .map((entry) => entry.name)
     .sort();
   assertExactIds(actual, expected, `${extension} output inventory`);
   for (const [relative, bytes] of outputs) {
-    if (!relative.endsWith(extension)) continue;
+    if (extension != null && !relative.endsWith(extension)) continue;
     const checkedIn = fs.readFileSync(assertFixedOutput(root, relative));
     assert(bytes.equals(checkedIn), `${relative} differs from deterministic revision-${REVISION} bytes`);
   }
@@ -271,9 +401,12 @@ function main() {
   } else if (args[0] === '--write-mascots-a' || args[0] === '--check-mascots-a') {
     outputs = generateMascotOutputsA();
     if (args[0] === '--write-mascots-a') writeOutputs(repoRoot, outputs);
-    else checkOutputs(repoRoot, outputs, '.webp');
-  }
-  else throw new Error(`unsupported mode: ${args[0]}`);
+    else checkOutputs(repoRoot, outputs, '.webp', MASCOT_SOURCES.map((source) => source.output));
+  } else if (args[0] === '--write' || args[0] === '--check') {
+    outputs = generateArtworkOutputs();
+    if (args[0] === '--write') writeOutputs(repoRoot, outputs);
+    else checkOutputs(repoRoot, outputs, null);
+  } else throw new Error(`unsupported mode: ${args[0]}`);
   const hashes = [...outputs].map(([name, bytes]) => `${name}=${sha256(bytes)}`).join(', ');
   console.log(`Phase 3 artwork valid: revision ${REVISION}; ${hashes}`);
 }
