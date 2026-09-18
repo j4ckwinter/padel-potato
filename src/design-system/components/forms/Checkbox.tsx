@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Icon } from '../../assets/Icon';
@@ -52,7 +51,6 @@ function validateCheckboxProps(props: CheckboxProps) {
 export function Checkbox(props: CheckboxProps) {
   validateCheckboxProps(props);
   const { accessibilityLabel, checked, disabled = false, onCheckedChange } = props;
-  const [focused, setFocused] = useState(false);
 
   return (
     <Pressable
@@ -60,8 +58,6 @@ export function Checkbox(props: CheckboxProps) {
       accessibilityRole="checkbox"
       accessibilityState={{ checked }}
       disabled={disabled}
-      onBlur={() => setFocused(false)}
-      onFocus={() => setFocused(true)}
       onPress={() => onCheckedChange(!checked)}
       size="controlHeight40"
       style={styles.target}
@@ -78,8 +74,8 @@ export function Checkbox(props: CheckboxProps) {
               : checked
                 ? colors.accent
                 : colors.surface,
-            borderColor: focused ? colors.focusRing : colors.border,
-            borderWidth: focused ? 2 : 1,
+            borderColor: colors.border,
+            borderWidth: 1,
           },
         ]}
         testID="checkbox-content"

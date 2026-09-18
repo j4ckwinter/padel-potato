@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Icon } from '../../assets/Icon';
@@ -95,7 +94,6 @@ function validateChoiceChipProps(props: ChoiceChipProps) {
 export function ChoiceChip(props: ChoiceChipProps) {
   validateChoiceChipProps(props);
   const { disabled = false, icon, label, onSelectedChange, selected, type } = props;
-  const [focused, setFocused] = useState(false);
 
   return (
     <Pressable
@@ -103,8 +101,6 @@ export function ChoiceChip(props: ChoiceChipProps) {
       accessibilityRole={type === 'option' ? 'radio' : 'checkbox'}
       accessibilityState={{ checked: selected }}
       disabled={disabled}
-      onBlur={() => setFocused(false)}
-      onFocus={() => setFocused(true)}
       onPress={() => onSelectedChange(!selected)}
       size="controlHeight40"
       style={styles.target}
@@ -121,8 +117,8 @@ export function ChoiceChip(props: ChoiceChipProps) {
               : selected
                 ? colors.accent
                 : colors.surface,
-            borderColor: focused ? colors.focusRing : colors.border,
-            borderWidth: focused ? 2 : 1,
+            borderColor: colors.border,
+            borderWidth: 1,
           },
         ]}
         testID="choice-chip-content"

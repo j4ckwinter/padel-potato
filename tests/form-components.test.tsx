@@ -636,7 +636,7 @@ describe('ChoiceChip source and controlled contract', () => {
     expect(screen.queryAllByRole('image')).toHaveLength(0);
   });
 
-  it('derives focus from native events and rejects unsupported runtime tuples', async () => {
+  it('renders one shared two-point focus indicator and rejects unsupported runtime tuples', async () => {
     const screen = await render(
       <ChoiceChip
         icon="none"
@@ -648,13 +648,17 @@ describe('ChoiceChip source and controlled contract', () => {
     );
     const chip = screen.getByRole('radio', { name: 'Social' });
     await act(async () => fireEvent(chip, 'focus', { nativeEvent: {} }));
+    expect(flattenedStyle(chip.props.style)).toEqual(
+      expect.objectContaining({ outlineColor: colors.focusRing, outlineWidth: 2 }),
+    );
     expect(flattenedStyle(screen.getByTestId(
       'choice-chip-content',
       { includeHiddenElements: true },
     ).props.style)).toEqual(
-      expect.objectContaining({ borderColor: colors.focusRing, borderWidth: 2 }),
+      expect.objectContaining({ borderColor: colors.border, borderWidth: 1 }),
     );
     await act(async () => fireEvent(chip, 'blur', { nativeEvent: {} }));
+    expect(flattenedStyle(chip.props.style).outlineWidth).toBe(0);
     expect(flattenedStyle(screen.getByTestId(
       'choice-chip-content',
       { includeHiddenElements: true },
@@ -815,7 +819,7 @@ describe('Checkbox source and controlled contract', () => {
     expect(screen.queryAllByRole('image')).toHaveLength(0);
   });
 
-  it('expands the 40 visual to 44, derives native focus, and keeps decorative check art hidden', async () => {
+  it('expands the 40 visual to 44, renders one shared focus indicator, and hides decorative check art', async () => {
     const screen = await render(
       <Checkbox
         accessibilityLabel="Include completed games"
@@ -842,12 +846,15 @@ describe('Checkbox source and controlled contract', () => {
     }));
 
     await act(async () => fireEvent(checkbox, 'focus', { nativeEvent: {} }));
+    expect(flattenedStyle(checkbox.props.style)).toEqual(
+      expect.objectContaining({ outlineColor: colors.focusRing, outlineWidth: 2 }),
+    );
     expect(flattenedStyle(screen.getByTestId(
       'checkbox-content',
       { includeHiddenElements: true },
     ).props.style)).toEqual(expect.objectContaining({
-      borderColor: colors.focusRing,
-      borderWidth: 2,
+      borderColor: colors.border,
+      borderWidth: 1,
     }));
     expect(screen.queryAllByRole('image')).toHaveLength(0);
   });
