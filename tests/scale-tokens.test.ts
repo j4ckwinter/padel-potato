@@ -1,33 +1,31 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 
 import {
   borders,
   borderSources,
+  colors,
+  colorSources,
   type BorderToken,
-} from '../src/design-system/tokens/borders';
-import {
   dimensions,
   dimensionSources,
   type DimensionToken,
-} from '../src/design-system/tokens/dimensions';
-import {
+  fontAssets,
+  fontProvenance,
   opacity,
   opacitySources,
   type OpacityToken,
-} from '../src/design-system/tokens/opacity';
-import {
   radii,
   radiusSources,
   type RadiusToken,
-} from '../src/design-system/tokens/radii';
-import {
   spacing,
   spacingSources,
   type SpacingToken,
-} from '../src/design-system/tokens/spacing';
+  typography,
+  typographySources,
+} from '../src/design-system/tokens';
 
 type ScaleCategory =
   | 'spacing'
@@ -36,9 +34,11 @@ type ScaleCategory =
   | 'borderWidths'
   | 'opacities';
 
+type FoundationCategory = ScaleCategory | 'colors' | 'typography';
+
 type ManifestRecord = {
   name: string;
-  resolvedValue: string;
+  resolvedValue: unknown;
   sourceId: string;
   fileId: string;
   pageId: string;
@@ -48,7 +48,7 @@ type Manifest = {
   fileId: string;
   pageId: string;
   sourceRevision: number;
-  categories: Record<ScaleCategory, ManifestRecord[]>;
+  categories: Record<FoundationCategory, ManifestRecord[]>;
 };
 
 type TokenSource = {
@@ -155,5 +155,60 @@ describe('Penpot border and opacity scale contracts', () => {
     expect(Object.values(opacity).every((value) => value <= 1)).toBe(true);
     const token: OpacityToken = 'opacityDisabled';
     expect(opacity[token]).toBe(0.4);
+  });
+});
+
+describe('foundation-token public barrel', () => {
+  it('exposes all seven categories and their provenance without copying objects', () => {
+    const directBorders = jest.requireActual<
+      typeof import('../src/design-system/tokens/borders')
+    >('../src/design-system/tokens/borders');
+    const directColors = jest.requireActual<
+      typeof import('../src/design-system/tokens/colors')
+    >('../src/design-system/tokens/colors');
+    const directDimensions = jest.requireActual<
+      typeof import('../src/design-system/tokens/dimensions')
+    >('../src/design-system/tokens/dimensions');
+    const directOpacity = jest.requireActual<
+      typeof import('../src/design-system/tokens/opacity')
+    >('../src/design-system/tokens/opacity');
+    const directRadii = jest.requireActual<
+      typeof import('../src/design-system/tokens/radii')
+    >('../src/design-system/tokens/radii');
+    const directSpacing = jest.requireActual<
+      typeof import('../src/design-system/tokens/spacing')
+    >('../src/design-system/tokens/spacing');
+    const directTypography = jest.requireActual<
+      typeof import('../src/design-system/tokens/typography')
+    >('../src/design-system/tokens/typography');
+
+    expect(borders).toBe(directBorders.borders);
+    expect(borderSources).toBe(directBorders.borderSources);
+    expect(colors).toBe(directColors.colors);
+    expect(colorSources).toBe(directColors.colorSources);
+    expect(dimensions).toBe(directDimensions.dimensions);
+    expect(dimensionSources).toBe(directDimensions.dimensionSources);
+    expect(opacity).toBe(directOpacity.opacity);
+    expect(opacitySources).toBe(directOpacity.opacitySources);
+    expect(radii).toBe(directRadii.radii);
+    expect(radiusSources).toBe(directRadii.radiusSources);
+    expect(spacing).toBe(directSpacing.spacing);
+    expect(spacingSources).toBe(directSpacing.spacingSources);
+    expect(typography).toBe(directTypography.typography);
+    expect(typographySources).toBe(directTypography.typographySources);
+    expect(fontAssets).toBe(directTypography.fontAssets);
+    expect(fontProvenance).toBe(directTypography.fontProvenance);
+  });
+
+  it('retains exact manifest coverage for every public category', () => {
+    expect(Object.values(colors)).toEqual(
+      manifest.categories.colors.map(({ resolvedValue }) => resolvedValue),
+    );
+    expect(Object.keys(typography)).toHaveLength(manifest.categories.typography.length);
+    assertScaleContract('spacing', 8, spacing, spacingSources);
+    assertScaleContract('radii', 6, radii, radiusSources);
+    assertScaleContract('dimensions', 4, dimensions, dimensionSources);
+    assertScaleContract('borderWidths', 2, borders, borderSources);
+    assertScaleContract('opacities', 1, opacity, opacitySources);
   });
 });
