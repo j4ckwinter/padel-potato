@@ -164,9 +164,11 @@ describe('Phase 3 artwork integrity validator', () => {
       'remote runtime reference',
       'runtime source access',
       'generic artwork export',
+      'swapped vector paths',
+      'changed path ownership',
     ]) {
       expect(result.stdout).toContain(`rejected ${label}`);
     }
-    expect(result.stdout).toContain('15 controlled rejections passed');
+    expect(result.stdout).toContain('17 controlled rejections passed');
   });
 });

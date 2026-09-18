@@ -43,6 +43,11 @@ const runtimeExports = Object.freeze([
   'PlayersHeaderMascot',
   'ProfileHeaderMascot',
 ]);
+const vectorRuntimeExports = Object.freeze({
+  heart: 'HeartArtwork',
+  google: 'GoogleProviderArtwork',
+  apple: 'AppleProviderArtwork',
+});
 
 const sha256 = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 
@@ -148,6 +153,30 @@ function svgPaths(xml) {
   }));
 }
 
+function runtimeFunctionSource(runtimeSource, exportName) {
+  const marker = `export function ${exportName}(`;
+  const start = runtimeSource.indexOf(marker);
+  assert(start >= 0, `${exportName} runtime export is missing`);
+  const next = runtimeSource.indexOf('\nexport function ', start + marker.length);
+  return runtimeSource.slice(start, next >= 0 ? next : runtimeSource.length);
+}
+
+function runtimeVectorProfile(runtimeSource, exportName) {
+  const functionSource = runtimeFunctionSource(runtimeSource, exportName);
+  const svg = functionSource.match(/<Svg\s+([\s\S]*?)>/u)?.[1];
+  assert(svg, `${exportName} runtime Svg root is missing`);
+  const pathRecords = [...functionSource.matchAll(/<Path\s+([\s\S]*?)\/>/gu)].map((match) => ({
+    d: match[1].match(/\bd="([^"]+)"/u)?.[1],
+    paint: match[1].match(/\b(?:fill|stroke)="(#[a-f0-9]+)"/iu)?.[1],
+  }));
+  return {
+    height: Number(svg.match(/\bheight=\{(\d+)\}/u)?.[1]),
+    paths: pathRecords,
+    viewBox: svg.match(/\bviewBox="([^"]+)"/u)?.[1],
+    width: Number(svg.match(/\bwidth=\{(\d+)\}/u)?.[1]),
+  };
+}
+
 function validateRuntimeSource(runtimeSource, manifest, root) {
   assert(!/https?:|fetch\s*\(|XMLHttpRequest|\.penpot|penpot-source|artwork-manifest\.json/iu.test(runtimeSource), 'runtime source contains remote or runtime source access');
   assert(!/IconName|from\s+['"][^'"]*(?:tokens|themes?)[^'"]*['"]/u.test(runtimeSource), 'runtime source expands a shared icon, token, or theme surface');
@@ -163,11 +192,13 @@ function validateRuntimeSource(runtimeSource, manifest, root) {
 
   for (const entry of manifest.vectors) {
     const xml = fs.readFileSync(ensureSafeLocalPath(root, entry.path), 'utf8');
-    assert(runtimeSource.includes(`viewBox="${entry.profile.viewBox.join(' ')}"`), `${entry.key} runtime viewBox differs`);
-    for (const vectorPath of svgPaths(xml)) {
-      assert(vectorPath.d && runtimeSource.includes(`d="${vectorPath.d}"`), `${entry.key} runtime path geometry differs`);
-      assert(vectorPath.paint && runtimeSource.includes(vectorPath.paint), `${entry.key} runtime paint differs`);
-    }
+    const exportName = vectorRuntimeExports[entry.key];
+    assert(exportName, `${entry.key} has no fixed runtime export owner`);
+    const runtimeProfile = runtimeVectorProfile(runtimeSource, exportName);
+    assert.equal(runtimeProfile.viewBox, entry.profile.viewBox.join(' '), `${entry.key} runtime viewBox differs`);
+    assert.equal(runtimeProfile.width, entry.profile.width, `${entry.key} runtime width differs`);
+    assert.equal(runtimeProfile.height, entry.profile.height, `${entry.key} runtime height differs`);
+    assert.deepEqual(runtimeProfile.paths, svgPaths(xml), `${entry.key} runtime path ownership differs`);
   }
   for (const entry of manifest.mascots) {
     const filename = path.posix.basename(entry.path);
@@ -240,6 +271,19 @@ function runSelfTest() {
     ['remote runtime reference', (candidate) => { candidate.runtimeSource += '\nconst remote = { uri: "https://example.invalid/mascot.webp" };\n'; }],
     ['runtime source access', (candidate) => { candidate.runtimeSource += '\nfetch("design.penpot.app");\n'; }],
     ['generic artwork export', (candidate) => { candidate.runtimeSource += '\nexport function Mascot(name: string) { return name; }\n'; }],
+    ['swapped vector paths', (candidate) => {
+      const googlePath = runtimeVectorProfile(candidate.runtimeSource, 'GoogleProviderArtwork').paths[0].d;
+      const applePath = runtimeVectorProfile(candidate.runtimeSource, 'AppleProviderArtwork').paths[0].d;
+      candidate.runtimeSource = candidate.runtimeSource
+        .replace(googlePath, '__SWAPPED_VECTOR_PATH__')
+        .replace(applePath, googlePath)
+        .replace('__SWAPPED_VECTOR_PATH__', applePath);
+    }],
+    ['changed path ownership', (candidate) => {
+      const googlePath = runtimeVectorProfile(candidate.runtimeSource, 'GoogleProviderArtwork').paths[0].d;
+      const applePath = runtimeVectorProfile(candidate.runtimeSource, 'AppleProviderArtwork').paths[0].d;
+      candidate.runtimeSource = candidate.runtimeSource.replace(applePath, googlePath);
+    }],
   ];
   for (const [label, mutate] of cases) expectFailure(label, mutate);
   console.log(`${cases.length} controlled rejections passed`);
