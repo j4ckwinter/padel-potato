@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BRAND_SOURCES, FILE_ID, ICON_SOURCES, PAGE_ID, REVISION, generateAssetOutputs } from './export-penpot-assets.mjs';
@@ -7,6 +8,11 @@ import { BRAND_SOURCES, FILE_ID, ICON_SOURCES, PAGE_ID, REVISION, generateAssetO
 const SHA = /^[a-f0-9]{64}$/;
 const FORBIDDEN = /<script|<style|foreignObject|\son[a-z]+\s*=|(?:href|src)="https?:|xlink:href|<image|javascript:/i;
 const ALLOWED_TAGS = new Set(['svg', 'path', 'rect', 'ellipse']);
+const ALLOWED_ATTRIBUTES = new Set([
+  'xmlns', 'width', 'height', 'viewBox', 'fill', 'fill-opacity', 'stroke', 'stroke-width',
+  'stroke-opacity', 'stroke-linecap', 'stroke-linejoin', 'data-penpot-source-id',
+  'data-penpot-shape-id', 'd', 'x', 'y', 'cx', 'cy', 'rx', 'ry',
+]);
 const sha256 = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 const assert = (ok, message) => { if (!ok) throw new Error(message); };
 
@@ -21,15 +27,21 @@ function resolveInside(repoRoot, relative, expectedRoot, extension) {
   return resolved;
 }
 
-function validateSvg(xml, record) {
+export function validateSvg(xml, record, semantic = true) {
   assert(!FORBIDDEN.test(xml), `${record.name} contains unsafe or external SVG content`);
+  assert(!/NaN|Infinity/.test(xml), `${record.name} contains non-finite numeric content`);
   assert(!/\bid="([^"]+)"[\s\S]*\bid="\1"/.test(xml), `${record.name} contains duplicate ids`);
-  for (const match of xml.matchAll(/<\/?([A-Za-z][\w:-]*)\b/g)) assert(ALLOWED_TAGS.has(match[1]), `${record.name} has unsupported tag ${match[1]}`);
+  for (const match of xml.matchAll(/<([A-Za-z][\w:-]*)\b([^>]*)>/g)) {
+    assert(ALLOWED_TAGS.has(match[1]), `${record.name} has unsupported tag ${match[1]}`);
+    for (const attribute of match[2].matchAll(/\s([A-Za-z_:][\w:.-]*)\s*=/g)) {
+      assert(ALLOWED_ATTRIBUTES.has(attribute[1]), `${record.name} has unsupported attribute ${attribute[1]}`);
+    }
+  }
   const viewBox = xml.match(/viewBox="([^"]+)"/)?.[1].split(/\s+/).map(Number);
   assert(viewBox?.length === 4 && viewBox.every(Number.isFinite), `${record.name} has invalid viewBox`);
   assert(viewBox[2] === 20 && viewBox[3] === 20, `${record.name} canvas must be 20x20`);
   assert(/stroke-width="1\.75"/.test(xml), `${record.name} has no authored 1.75 stroke`);
-  assert(xml.includes('currentColor'), `${record.name} normalized paint is not semantic`);
+  assert(semantic ? xml.includes('currentColor') : xml.includes('#0e1716'), `${record.name} paint evidence is invalid`);
 }
 
 export function validateAssetEvidence({ manifest, repoRoot }) {
@@ -50,6 +62,7 @@ export function validateAssetEvidence({ manifest, repoRoot }) {
     const normalized = fs.readFileSync(resolveInside(repoRoot, record.normalizedPath, 'design-spec/assets/normalized', '.svg'));
     assert(SHA.test(record.rawSha256) && sha256(raw) === record.rawSha256, `${record.name} raw hash mismatch`);
     assert(SHA.test(record.normalizedSha256) && sha256(normalized) === record.normalizedSha256, `${record.name} normalized hash mismatch`);
+    validateSvg(raw.toString('utf8'), record, false);
     validateSvg(normalized.toString('utf8'), record);
   }
   for (const [index, record] of manifest.brands.entries()) {
@@ -72,6 +85,12 @@ function expectFailure(label, manifest, repoRoot, mutate) {
   assert(error, `controlled rejection did not fail: ${label}`);
 }
 
+function expectSvgFailure(label, xml, mutate) {
+  let error;
+  try { validateSvg(mutate(xml), { name: label }); } catch (caught) { error = caught; }
+  assert(error, `controlled SVG rejection did not fail: ${label}`);
+}
+
 function main() {
   const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const manifest = JSON.parse(fs.readFileSync(path.join(repoRoot, 'design-spec/assets/penpot-assets.json'), 'utf8'));
@@ -79,9 +98,32 @@ function main() {
   expectFailure('revision', manifest, repoRoot, (copy) => { copy.revision = 291; });
   expectFailure('page', manifest, repoRoot, (copy) => { copy.pageId = '../outside'; });
   expectFailure('duplicate', manifest, repoRoot, (copy) => { copy.icons[1].name = copy.icons[0].name; });
+  expectFailure('missing', manifest, repoRoot, (copy) => { copy.icons.pop(); });
+  expectFailure('extra', manifest, repoRoot, (copy) => { copy.icons.push(structuredClone(copy.icons[0])); });
   expectFailure('reorder', manifest, repoRoot, (copy) => { copy.icons.reverse(); });
   expectFailure('traversal', manifest, repoRoot, (copy) => { copy.icons[0].rawPath = '../add.svg'; });
+  expectFailure('absolute path', manifest, repoRoot, (copy) => { copy.icons[0].rawPath = path.resolve(repoRoot, 'add.svg'); });
   expectFailure('hash', manifest, repoRoot, (copy) => { copy.icons[0].rawSha256 = '0'.repeat(64); });
+  expectFailure('source', manifest, repoRoot, (copy) => { copy.icons[0].sourceId = 'spoofed'; });
+  expectFailure('ratio', manifest, repoRoot, (copy) => { copy.brands[0].height = 71; });
+  const safeSvg = fs.readFileSync(path.join(repoRoot, manifest.icons[0].normalizedPath), 'utf8');
+  expectSvgFailure('script', safeSvg, (xml) => xml.replace('</svg>', '<script/></svg>'));
+  expectSvgFailure('event', safeSvg, (xml) => xml.replace('<path ', '<path onclick="x" '));
+  expectSvgFailure('external', safeSvg, (xml) => xml.replace('<path ', '<path href="https://example.test/x" '));
+  expectSvgFailure('unsupported tag', safeSvg, (xml) => xml.replace('</svg>', '<foreignObject/></svg>'));
+  expectSvgFailure('unsupported attribute', safeSvg, (xml) => xml.replace('<path ', '<path vector-effect="x" '));
+  expectSvgFailure('canvas', safeSvg, (xml) => xml.replace(/viewBox="[^"]+"/, 'viewBox="0 0 24 24"'));
+  expectSvgFailure('stroke', safeSvg, (xml) => xml.replaceAll('stroke-width="1.75"', 'stroke-width="2"'));
+  expectSvgFailure('finite number', safeSvg, (xml) => xml.replace('width="20"', 'width="Infinity"'));
+  const disposableRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'padel-assets-'));
+  try {
+    fs.cpSync(path.join(repoRoot, 'design-spec'), path.join(disposableRoot, 'design-spec'), { recursive: true });
+    const alteredPath = path.join(disposableRoot, manifest.icons[0].normalizedPath);
+    fs.appendFileSync(alteredPath, '\n');
+    expectFailure('altered bytes', manifest, disposableRoot, () => {});
+  } finally {
+    fs.rmSync(disposableRoot, { recursive: true, force: true });
+  }
   const regenerated = generateAssetOutputs({ repoRoot, write: false });
   assert(regenerated.manifestText === `${JSON.stringify(manifest, null, 2)}\n`, 'manifest regeneration is not byte-identical');
   assert(regenerated.registryText === fs.readFileSync(path.join(repoRoot, 'src/design-system/assets/generated/iconRegistry.ts'), 'utf8'), 'registry regeneration is not byte-identical');
