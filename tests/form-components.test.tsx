@@ -26,6 +26,16 @@ import {
   Checkbox,
   type CheckboxProps,
 } from '../src/design-system/components/forms/Checkbox';
+import DayTimeSelectorStories, {
+  Boundaries as DayTimeSelectorBoundaries,
+  Interactive as DayTimeSelectorInteractive,
+  Variants as DayTimeSelectorVariants,
+} from '../src/design-system/components/forms/DayTimeSelector.stories';
+import {
+  DayTimeSelector,
+  type DayTimeSelectorProps,
+} from '../src/design-system/components/forms/DayTimeSelector';
+import * as forms from '../src/design-system/components/forms';
 import {
   Field,
   type EditableFieldProps,
@@ -44,6 +54,7 @@ const flattenedStyle = (style: unknown) =>
 const fieldRecords = phase3Families[3].records;
 const choiceChipRecords = phase3Families[4].records;
 const checkboxRecords = phase3Families[5].records;
+const dayTimeSelectorRecords = phase3Families[6].records;
 
 describe('Field source and public contract', () => {
   it('retains the exact twelve-record sparse ledger in source order', () => {
@@ -848,5 +859,214 @@ describe('Checkbox Storybook contract', () => {
     expect(boundaryJson).toContain('Phase 5');
     const interactive = CheckboxInteractive.render?.({} as never, {} as never) as React.ReactElement;
     expect((interactive.type as { name?: string }).name).toBe('InteractiveCheckboxHarness');
+  });
+});
+
+describe('DayTimeSelector source and controlled contract', () => {
+  it('retains the exact six records in time-then-day source order', () => {
+    expect(phase3Families[6]).toEqual(expect.objectContaining({
+      key: 'dayTimeSelector',
+      recordCount: 6,
+      sourceId: '482a7222-5a3b-8086-8008-a62580c2b764',
+    }));
+    expect(dayTimeSelectorRecords.map((record) => record.normalizedTuple)).toEqual([
+      { type: 'time', state: 'disabled' },
+      { type: 'time', state: 'selected' },
+      { type: 'time', state: 'default' },
+      { type: 'day', state: 'disabled' },
+      { type: 'day', state: 'selected' },
+      { type: 'day', state: 'default' },
+    ]);
+
+    type ImpossibleDayTime = Extract<DayTimeSelectorProps, {
+      type: 'day'; time: string;
+    }>;
+    type ImpossibleTimeDate = Extract<DayTimeSelectorProps, {
+      type: 'time'; date: string;
+    }>;
+    const discriminatedContent: [ImpossibleDayTime, ImpossibleTimeDate] extends [never, never]
+      ? true
+      : false = true;
+    expect(discriminatedContent).toBe(true);
+  });
+
+  it('names each day option from visible day/date content and retains caller-owned selection', async () => {
+    const onSelect = jest.fn();
+    const screen = await render(
+      <DayTimeSelector
+        date="17 Sep"
+        day="Tue"
+        onSelect={onSelect}
+        selected={false}
+        type="day"
+      />,
+    );
+    const option = screen.getByRole('radio', { checked: false, name: 'Tue, 17 Sep' });
+    await userEvent.setup().press(option);
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(option.props.accessibilityState).toEqual(expect.objectContaining({ checked: false }));
+
+    await screen.rerender(
+      <DayTimeSelector
+        date="17 Sep"
+        day="Tue"
+        onSelect={onSelect}
+        selected
+        type="day"
+      />,
+    );
+    expect(screen.getByRole('radio', { checked: true, name: 'Tue, 17 Sep' })).toBeTruthy();
+  });
+
+  it('names each time option from visible time/availability content and emits once', async () => {
+    const onSelect = jest.fn();
+    const screen = await render(
+      <DayTimeSelector
+        availability="3 spots"
+        onSelect={onSelect}
+        selected={false}
+        time="18:30"
+        type="time"
+      />,
+    );
+    const option = screen.getByRole('radio', {
+      checked: false,
+      name: '18:30, 3 spots',
+    });
+    await userEvent.setup().press(option);
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps options individually named, in rendered order, and without overlapping targets', async () => {
+    const screen = await render(
+      <>
+        <DayTimeSelector date="16 Sep" day="Mon" onSelect={() => undefined} selected={false} type="day" />
+        <DayTimeSelector date="17 Sep" day="Tue" onSelect={() => undefined} selected type="day" />
+        <DayTimeSelector availability="3 spots" onSelect={() => undefined} selected={false} time="18:30" type="time" />
+      </>,
+    );
+    expect(screen.getAllByRole('radio').map((option) => option.props.accessibilityLabel)).toEqual([
+      'Mon, 16 Sep',
+      'Tue, 17 Sep',
+      '18:30, 3 spots',
+    ]);
+    expect(screen.getByRole('radio', { name: 'Mon, 16 Sep' }).props.hitSlop).toEqual({
+      bottom: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+    });
+    expect(screen.getByRole('radio', { name: 'Tue, 17 Sep' }).props.hitSlop).toEqual({
+      bottom: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+    });
+  });
+
+  it('uses exact day/time geometry and the family-owned 0.55 disabled exception', async () => {
+    const onSelect = jest.fn();
+    const day = await render(
+      <DayTimeSelector date="18 Sep" day="Wed" disabled onSelect={onSelect} selected={false} type="day" />,
+    );
+    const dayOption = day.getByRole('radio', {
+      checked: false,
+      disabled: true,
+      name: 'Wed, 18 Sep',
+    });
+    await userEvent.setup().press(dayOption);
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(flattenedStyle(dayOption.props.style)).toEqual(expect.objectContaining({
+      height: 72,
+      minHeight: 44,
+      minWidth: 44,
+      width: 104,
+    }));
+    expect(flattenedStyle(day.getByTestId('day-time-selector-root').props.style).opacity).toBe(0.55);
+
+    const time = await render(
+      <DayTimeSelector availability="3 spots" onSelect={() => undefined} selected={false} time="18:30" type="time" />,
+    );
+    expect(flattenedStyle(time.getByRole('radio', { name: '18:30, 3 spots' }).props.style)).toEqual(
+      expect.objectContaining({ height: 56, width: 112 }),
+    );
+    expect(flattenedStyle(time.getByTestId(
+      'day-time-selector-content',
+      { includeHiddenElements: true },
+    ).props.style)).toEqual(expect.objectContaining({ borderRadius: 16 }));
+  });
+
+  it('rejects mixed content, unsupported tuples, empty copy, and unknown props', () => {
+    expect(() => DayTimeSelector({
+      date: '17 Sep',
+      day: 'Tue',
+      onSelect: () => undefined,
+      selected: true,
+      disabled: true,
+      type: 'day',
+    } as unknown as DayTimeSelectorProps)).toThrow(/Unsupported design-system value: selected\/disabled/u);
+    expect(() => DayTimeSelector({
+      availability: '3 spots',
+      date: '17 Sep',
+      onSelect: () => undefined,
+      selected: false,
+      time: '18:30',
+      type: 'time',
+    } as unknown as DayTimeSelectorProps)).toThrow(/Unsupported design-system value: date/u);
+    expect(() => DayTimeSelector({
+      date: '',
+      day: 'Tue',
+      onSelect: () => undefined,
+      selected: false,
+      type: 'day',
+    })).toThrow(/Supported values: non-empty date/u);
+    expect(() => DayTimeSelector({
+      availability: '3 spots',
+      onSelect: () => undefined,
+      selected: false,
+      time: '18:30',
+      type: 'slot',
+    } as unknown as DayTimeSelectorProps)).toThrow(/Unsupported design-system value: slot/u);
+  });
+});
+
+describe('DayTimeSelector Storybook and forms publication contract', () => {
+  it('publishes Forms/Day Time Selector with closed controls and every source row', () => {
+    expect(DayTimeSelectorStories.title).toBe('Forms/Day Time Selector');
+    expect(DayTimeSelectorStories.argTypes).toEqual(expect.objectContaining({
+      disabled: { control: 'boolean' },
+      selected: { control: 'boolean' },
+      type: { control: 'select', options: ['day', 'time'] },
+    }));
+    const variants = DayTimeSelectorVariants.render?.({} as never, {} as never) as React.ReactElement<{
+      children: React.ReactNode;
+    }>;
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(dayTimeSelectorRecords.length);
+  });
+
+  it('records long-content, 200%-scale, target-clearance, and interactive witnesses', () => {
+    const boundaries = DayTimeSelectorBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const boundaryJson = JSON.stringify(boundaries);
+    expect(boundaryJson).toContain('200%');
+    expect(boundaryJson).toContain('long content');
+    expect(boundaryJson).toContain('target clearance');
+    expect(boundaryJson).toContain('Phase 5');
+    const interactive = DayTimeSelectorInteractive.render?.({} as never, {} as never) as React.ReactElement;
+    expect((interactive.type as { name?: string }).name).toBe('InteractiveDayTimeSelectorHarness');
+  });
+
+  it('publishes only the four forms families while accounting for all 30 records', () => {
+    expect(Object.keys(forms).sort()).toEqual([
+      'Checkbox',
+      'ChoiceChip',
+      'DayTimeSelector',
+      'Field',
+    ]);
+    expect([
+      phase3Families[3],
+      phase3Families[4],
+      phase3Families[5],
+      phase3Families[6],
+    ].reduce((total, family) => total + family.recordCount, 0)).toBe(30);
   });
 });
