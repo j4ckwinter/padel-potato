@@ -86,9 +86,6 @@ const supportedRuntimeProps = [
   'testID',
 ] as const;
 
-const own = (record: object, key: PropertyKey) =>
-  Object.prototype.hasOwnProperty.call(record, key);
-
 const unsupported = (value: unknown, supportedValues: readonly string[]): never => {
   throw new Error(
     `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
