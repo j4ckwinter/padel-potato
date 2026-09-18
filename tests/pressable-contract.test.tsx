@@ -36,6 +36,65 @@ const stateCases: Array<[string, boolean, boolean, 0 | 1]> = [
 ];
 
 describe('Pressable interaction contract', () => {
+  it('types and passes through the complete standard accessibility surface', async () => {
+    const accessibilityProps: PressableProps = {
+      accessibilityIgnoresInvertColors: true,
+      accessibilityLabelledBy: ['heading', 'detail'],
+      accessibilityLargeContentTitle: 'Create game',
+      accessibilityRespondsToUserInteraction: true,
+      accessibilityShowsLargeContentViewer: true,
+      accessibilityViewIsModal: true,
+      'aria-busy': false,
+      'aria-checked': 'mixed',
+      'aria-disabled': false,
+      'aria-expanded': true,
+      'aria-hidden': false,
+      'aria-label': 'Create a game',
+      'aria-labelledby': 'heading',
+      'aria-live': 'polite',
+      'aria-modal': true,
+      'aria-selected': true,
+      'aria-valuemax': 4,
+      'aria-valuemin': 0,
+      'aria-valuenow': 2,
+      'aria-valuetext': 'Two of four players',
+      role: 'button',
+      screenReaderFocusable: true,
+      testID: 'subject',
+    };
+    const screen = await render(<Pressable {...accessibilityProps} />);
+    const subject = screen.getByTestId('subject');
+
+    expect(subject.props).toEqual(expect.objectContaining({
+      accessibilityIgnoresInvertColors: true,
+      accessibilityLabel: 'Create a game',
+      accessibilityLabelledBy: ['heading', 'detail'],
+      accessibilityLargeContentTitle: 'Create game',
+      accessibilityLiveRegion: 'polite',
+      accessibilityRespondsToUserInteraction: true,
+      accessibilityShowsLargeContentViewer: true,
+      accessibilityViewIsModal: true,
+      'aria-hidden': false,
+      'aria-labelledby': 'heading',
+      'aria-modal': true,
+      role: 'button',
+      screenReaderFocusable: true,
+    }));
+    expect(subject.props.accessibilityState).toEqual({
+      busy: false,
+      checked: 'mixed',
+      disabled: false,
+      expanded: true,
+      selected: true,
+    });
+    expect(subject.props.accessibilityValue).toEqual({
+      max: 4,
+      min: 0,
+      now: 2,
+      text: 'Two of four players',
+    });
+  });
+
   it('excludes native visual and interaction escape routes from its public and runtime contracts', () => {
     type EscapeRoute = Extract<
       | 'android_disableSound'

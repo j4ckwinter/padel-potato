@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Pressable as NativePressable,
+  type AccessibilityProps,
   type GestureResponderEvent,
   type NativeSyntheticEvent,
   type PressableProps as NativePressableProps,
@@ -55,31 +56,57 @@ const pressableOwnedStyleKeys = [
   'outlineWidth',
 ] as const satisfies readonly (keyof ViewStyle)[];
 
-const supportedRuntimeProps = [
+const accessibilityPropKeys = [
   'accessibilityActions',
   'accessibilityElementsHidden',
   'accessibilityHint',
+  'accessibilityIgnoresInvertColors',
   'accessibilityLabel',
+  'accessibilityLabelledBy',
   'accessibilityLanguage',
+  'accessibilityLargeContentTitle',
   'accessibilityLiveRegion',
+  'accessibilityRespondsToUserInteraction',
   'accessibilityRole',
+  'accessibilityShowsLargeContentViewer',
   'accessibilityState',
   'accessibilityValue',
+  'accessibilityViewIsModal',
   'accessible',
+  'aria-busy',
+  'aria-checked',
+  'aria-disabled',
+  'aria-expanded',
+  'aria-hidden',
+  'aria-label',
+  'aria-labelledby',
+  'aria-live',
+  'aria-modal',
+  'aria-selected',
+  'aria-valuemax',
+  'aria-valuemin',
+  'aria-valuenow',
+  'aria-valuetext',
+  'importantForAccessibility',
+  'onAccessibilityAction',
+  'onAccessibilityEscape',
+  'onAccessibilityTap',
+  'onMagicTap',
+  'role',
+  'screenReaderFocusable',
+] as const satisfies readonly (keyof AccessibilityProps)[];
+
+const supportedRuntimeProps = [
+  ...accessibilityPropKeys,
   'children',
   'disabled',
   'focusable',
   'id',
-  'importantForAccessibility',
   'loading',
   'nativeID',
-  'onAccessibilityAction',
-  'onAccessibilityEscape',
-  'onAccessibilityTap',
   'onBlur',
   'onFocus',
   'onLayout',
-  'onMagicTap',
   'onPress',
   'size',
   'style',
@@ -98,30 +125,15 @@ export type PressableLayoutStyle = Pick<
   (typeof pressableLayoutStyleKeys)[number]
 >;
 
-type SupportedNativeProps = Pick<
+type SupportedNativeProps = AccessibilityProps & Pick<
   NativePressableProps,
-  | 'accessibilityActions'
-  | 'accessibilityElementsHidden'
-  | 'accessibilityHint'
-  | 'accessibilityLabel'
-  | 'accessibilityLanguage'
-  | 'accessibilityLiveRegion'
-  | 'accessibilityRole'
-  | 'accessibilityState'
-  | 'accessibilityValue'
-  | 'accessible'
   | 'children'
   | 'focusable'
   | 'id'
-  | 'importantForAccessibility'
   | 'nativeID'
-  | 'onAccessibilityAction'
-  | 'onAccessibilityEscape'
-  | 'onAccessibilityTap'
   | 'onBlur'
   | 'onFocus'
   | 'onLayout'
-  | 'onMagicTap'
   | 'testID'
 >;
 
