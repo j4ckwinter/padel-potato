@@ -1,19 +1,26 @@
 {
   "schemaVersion": 1,
-  "decision": "Expo 57.0.23, React Native 0.86.3, React 19.2.3, and the complete exact Storybook 10.5.0 family",
+  "decision": "Expo 57.0.24, React Native 0.86.3, React 19.2.3, and the complete exact Storybook 10.5.0 family",
   "approval": {
     "response": "approved",
     "approvedAt": "2026-09-17",
     "packageCount": 23,
     "scope": "exact-package-version-matrix-only",
+    "patchUpdate": {
+      "response": "approved",
+      "approvedAt": "2026-09-18",
+      "expo": "57.0.24",
+      "metroRuntime": "57.0.16",
+      "scope": "these-two-exact-patches-and-lockfile-only"
+    },
     "excludes": ["@storybook/react-native-web-vite", "expo-template-storybook", "Storybook 10.6.x", "caret version drift", "substituted native-peer versions"]
   },
   "approvedPackages": [
-    {"name":"expo","version":"57.0.23","npmUrl":"https://www.npmjs.com/package/expo/v/57.0.23","repository":"https://github.com/expo/expo","weeklyDownloads":6940331,"deprecated":null,"lifecycleScripts":{"names":["lint","test","build","clean"],"preinstall":false,"install":false,"postinstall":false}},
+    {"name":"expo","version":"57.0.24","npmUrl":"https://www.npmjs.com/package/expo/v/57.0.24","repository":"https://github.com/expo/expo","weeklyDownloads":6940331,"deprecated":null,"lifecycleScripts":{"names":["lint","test","build","clean"],"preinstall":false,"install":false,"postinstall":false}},
     {"name":"react","version":"19.2.3","npmUrl":"https://www.npmjs.com/package/react/v/19.2.3","repository":"https://github.com/facebook/react","weeklyDownloads":128119130,"deprecated":null,"lifecycleScripts":{"names":[],"preinstall":false,"install":false,"postinstall":false}},
     {"name":"react-native","version":"0.86.3","npmUrl":"https://www.npmjs.com/package/react-native/v/0.86.3","repository":"https://github.com/react/react-native","weeklyDownloads":10005630,"deprecated":null,"lifecycleScripts":{"names":["prepack","featureflags"],"preinstall":false,"install":false,"postinstall":false}},
     {"name":"react-dom","version":"19.2.3","npmUrl":"https://www.npmjs.com/package/react-dom/v/19.2.3","repository":"https://github.com/facebook/react","weeklyDownloads":120650097,"deprecated":null,"lifecycleScripts":{"names":["start"],"preinstall":false,"install":false,"postinstall":false}},
-    {"name":"@expo/metro-runtime","version":"57.0.15","npmUrl":"https://www.npmjs.com/package/@expo/metro-runtime/v/57.0.15","repository":"https://github.com/expo/expo","weeklyDownloads":5188571,"deprecated":null,"lifecycleScripts":{"names":["lint","test","build","clean","expo-module"],"preinstall":false,"install":false,"postinstall":false}},
+    {"name":"@expo/metro-runtime","version":"57.0.16","npmUrl":"https://www.npmjs.com/package/@expo/metro-runtime/v/57.0.16","repository":"https://github.com/expo/expo","weeklyDownloads":5188571,"deprecated":null,"lifecycleScripts":{"names":["lint","test","build","clean","expo-module"],"preinstall":false,"install":false,"postinstall":false}},
     {"name":"expo-font","version":"57.0.4","npmUrl":"https://www.npmjs.com/package/expo-font/v/57.0.4","repository":"https://github.com/expo/expo","weeklyDownloads":6916968,"deprecated":null,"lifecycleScripts":{"names":["lint","test","build","clean","expo-module"],"preinstall":false,"install":false,"postinstall":false}},
     {"name":"jest-expo","version":"57.0.5","npmUrl":"https://www.npmjs.com/package/jest-expo/v/57.0.5","repository":"https://github.com/expo/expo","weeklyDownloads":2218046,"deprecated":null,"lifecycleScripts":{"names":["lint","test"],"preinstall":false,"install":false,"postinstall":false}},
     {"name":"storybook","version":"10.5.0","npmUrl":"https://www.npmjs.com/package/storybook/v/10.5.0","repository":"https://github.com/storybookjs/storybook","weeklyDownloads":15983829,"deprecated":null,"lifecycleScripts":{"names":[],"preinstall":false,"install":false,"postinstall":false}},
@@ -34,7 +41,7 @@
     {"name":"@react-native-community/slider","version":"5.2.0","npmUrl":"https://www.npmjs.com/package/@react-native-community/slider/v/5.2.0","repository":"https://github.com/callstack/react-native-slider","weeklyDownloads":1031104,"deprecated":null,"lifecycleScripts":{"names":["lint","test","prepack","prepare"],"preinstall":false,"install":false,"postinstall":false}}
   ],
   "directDependencies": [
-    {"name":"@expo/metro-runtime","version":"57.0.15"},{"name":"@gorhom/bottom-sheet","version":"5.2.14"},{"name":"@react-native-community/datetimepicker","version":"9.1.0"},{"name":"@react-native-community/slider","version":"5.2.0"},{"name":"expo","version":"57.0.23"},{"name":"expo-font","version":"57.0.4"},{"name":"expo-status-bar","version":"57.0.1"},{"name":"react","version":"19.2.3"},{"name":"react-dom","version":"19.2.3"},{"name":"react-native","version":"0.86.3"},{"name":"react-native-gesture-handler","version":"2.32.0"},{"name":"react-native-reanimated","version":"4.5.1"},{"name":"react-native-safe-area-context","version":"5.7.0"},{"name":"react-native-svg","version":"15.15.4"},{"name":"react-native-web","version":"0.21.2"},{"name":"react-native-worklets","version":"0.10.1"}
+    {"name":"@expo/metro-runtime","version":"57.0.16"},{"name":"@gorhom/bottom-sheet","version":"5.2.14"},{"name":"@react-native-community/datetimepicker","version":"9.1.0"},{"name":"@react-native-community/slider","version":"5.2.0"},{"name":"expo","version":"57.0.24"},{"name":"expo-font","version":"57.0.4"},{"name":"expo-status-bar","version":"57.0.1"},{"name":"react","version":"19.2.3"},{"name":"react-dom","version":"19.2.3"},{"name":"react-native","version":"0.86.3"},{"name":"react-native-gesture-handler","version":"2.32.0"},{"name":"react-native-reanimated","version":"4.5.1"},{"name":"react-native-safe-area-context","version":"5.7.0"},{"name":"react-native-svg","version":"15.15.4"},{"name":"react-native-web","version":"0.21.2"},{"name":"react-native-worklets","version":"0.10.1"}
   ],
   "directDevDependencies": [
     {"name":"@storybook/addon-ondevice-actions","version":"10.5.0"},{"name":"@storybook/addon-ondevice-backgrounds","version":"10.5.0"},{"name":"@storybook/addon-ondevice-controls","version":"10.5.0"},{"name":"@storybook/react","version":"10.5.0"},{"name":"@storybook/react-native","version":"10.5.0"},{"name":"@storybook/react-native-theming","version":"10.5.0"},{"name":"@storybook/react-native-ui","version":"10.5.0"},{"name":"@storybook/react-native-ui-common","version":"10.5.0"},{"name":"@testing-library/react-native","version":"14.0.1"},{"name":"@types/react","version":"19.2.4"},{"name":"cross-env","version":"10.1.0"},{"name":"eslint","version":"9.39.2"},{"name":"eslint-config-expo","version":"57.0.2"},{"name":"jest","version":"29.7.0"},{"name":"jest-expo","version":"57.0.5"},{"name":"prettier","version":"3.9.7"},{"name":"storybook","version":"10.5.0"},{"name":"test-renderer","version":"1.2.0"},{"name":"typescript","version":"6.0.3"}
@@ -54,8 +61,15 @@
   },
   "dependencyTreeScope": "Every root package from the successful npm ls tree; approval-controlled rows are fully represented",
   "dependencyTree": [
-    {"name":"@expo/metro-runtime","version":"57.0.15"},{"name":"@gorhom/bottom-sheet","version":"5.2.14"},{"name":"@react-native-community/datetimepicker","version":"9.1.0"},{"name":"@react-native-community/slider","version":"5.2.0"},{"name":"expo","version":"57.0.23"},{"name":"expo-font","version":"57.0.4"},{"name":"expo-status-bar","version":"57.0.1"},{"name":"react","version":"19.2.3"},{"name":"react-dom","version":"19.2.3"},{"name":"react-native","version":"0.86.3"},{"name":"react-native-gesture-handler","version":"2.32.0"},{"name":"react-native-reanimated","version":"4.5.1"},{"name":"react-native-safe-area-context","version":"5.7.0"},{"name":"react-native-svg","version":"15.15.4"},{"name":"react-native-web","version":"0.21.2"},{"name":"react-native-worklets","version":"0.10.1"},{"name":"@storybook/addon-ondevice-actions","version":"10.5.0"},{"name":"@storybook/addon-ondevice-backgrounds","version":"10.5.0"},{"name":"@storybook/addon-ondevice-controls","version":"10.5.0"},{"name":"@storybook/react","version":"10.5.0"},{"name":"@storybook/react-native","version":"10.5.0"},{"name":"@storybook/react-native-theming","version":"10.5.0"},{"name":"@storybook/react-native-ui","version":"10.5.0"},{"name":"@storybook/react-native-ui-common","version":"10.5.0"},{"name":"@testing-library/react-native","version":"14.0.1"},{"name":"@types/react","version":"19.2.4"},{"name":"cross-env","version":"10.1.0"},{"name":"eslint","version":"9.39.2"},{"name":"eslint-config-expo","version":"57.0.2"},{"name":"jest","version":"29.7.0"},{"name":"jest-expo","version":"57.0.5"},{"name":"prettier","version":"3.9.7"},{"name":"storybook","version":"10.5.0"},{"name":"test-renderer","version":"1.2.0"},{"name":"typescript","version":"6.0.3"}
+    {"name":"@expo/metro-runtime","version":"57.0.16"},{"name":"@gorhom/bottom-sheet","version":"5.2.14"},{"name":"@react-native-community/datetimepicker","version":"9.1.0"},{"name":"@react-native-community/slider","version":"5.2.0"},{"name":"expo","version":"57.0.24"},{"name":"expo-font","version":"57.0.4"},{"name":"expo-status-bar","version":"57.0.1"},{"name":"react","version":"19.2.3"},{"name":"react-dom","version":"19.2.3"},{"name":"react-native","version":"0.86.3"},{"name":"react-native-gesture-handler","version":"2.32.0"},{"name":"react-native-reanimated","version":"4.5.1"},{"name":"react-native-safe-area-context","version":"5.7.0"},{"name":"react-native-svg","version":"15.15.4"},{"name":"react-native-web","version":"0.21.2"},{"name":"react-native-worklets","version":"0.10.1"},{"name":"@storybook/addon-ondevice-actions","version":"10.5.0"},{"name":"@storybook/addon-ondevice-backgrounds","version":"10.5.0"},{"name":"@storybook/addon-ondevice-controls","version":"10.5.0"},{"name":"@storybook/react","version":"10.5.0"},{"name":"@storybook/react-native","version":"10.5.0"},{"name":"@storybook/react-native-theming","version":"10.5.0"},{"name":"@storybook/react-native-ui","version":"10.5.0"},{"name":"@storybook/react-native-ui-common","version":"10.5.0"},{"name":"@testing-library/react-native","version":"14.0.1"},{"name":"@types/react","version":"19.2.4"},{"name":"cross-env","version":"10.1.0"},{"name":"eslint","version":"9.39.2"},{"name":"eslint-config-expo","version":"57.0.2"},{"name":"jest","version":"29.7.0"},{"name":"jest-expo","version":"57.0.5"},{"name":"prettier","version":"3.9.7"},{"name":"storybook","version":"10.5.0"},{"name":"test-renderer","version":"1.2.0"},{"name":"typescript","version":"6.0.3"}
   ],
+  "patchRefresh": {
+    "timestamp": "2026-09-18T11:11:23.848Z",
+    "command": "npm install --save-exact expo@57.0.24 @expo/metro-runtime@57.0.16",
+    "dependencyTreeExitCode": 0,
+    "expoInstallCheck": "Dependencies are up to date",
+    "expoDoctor": "21/21 checks passed. No issues detected!"
+  },
   "safeguards": {"force":false,"legacyPeerDeps":false,"overrides":false,"expoDoctorExclusions":false,"unresolvedDependencyWarnings":false},
   "notes": [
     "Storybook 10.6.x remains rejected because its safe-area requirement does not satisfy Expo 57.",

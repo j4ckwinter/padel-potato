@@ -4,11 +4,11 @@ import { fileURLToPath } from 'node:url';
 const evidenceUrl = new URL('../design-spec/toolchain-compatibility.json', import.meta.url);
 
 const approvedVersions = new Map([
-  ['expo', '57.0.23'],
+  ['expo', '57.0.24'],
   ['react', '19.2.3'],
   ['react-native', '0.86.3'],
   ['react-dom', '19.2.3'],
-  ['@expo/metro-runtime', '57.0.15'],
+  ['@expo/metro-runtime', '57.0.16'],
   ['expo-font', '57.0.4'],
   ['jest-expo', '57.0.5'],
   ['storybook', '10.5.0'],
@@ -93,6 +93,9 @@ function validateApprovedPackages(evidence) {
   assert(evidence.approval?.response === 'approved', 'human approval response must be recorded as approved');
   assert(evidence.approval?.packageCount === 23, 'approval must be scoped to exactly 23 packages');
   assert(evidence.approval?.scope === 'exact-package-version-matrix-only', 'approval scope must reject substitutions and additions');
+  assert(evidence.approval?.patchUpdate?.response === 'approved', 'Expo patch update approval must be recorded');
+  assert(evidence.approval?.patchUpdate?.expo === '57.0.24', 'Expo patch approval must be limited to 57.0.24');
+  assert(evidence.approval?.patchUpdate?.metroRuntime === '57.0.16', 'Metro runtime patch approval must be limited to 57.0.16');
 }
 
 function validateDirectInventory(evidence) {
@@ -147,6 +150,11 @@ function validateProbe(evidence) {
   assert(safeguards?.overrides === false, 'dependency overrides are forbidden');
   assert(safeguards?.expoDoctorExclusions === false, 'Expo Doctor exclusions are forbidden');
   assert(safeguards?.unresolvedDependencyWarnings === false, 'unresolved dependency warnings are forbidden');
+  assert(evidence.patchRefresh?.command === 'npm install --save-exact expo@57.0.24 @expo/metro-runtime@57.0.16', 'patch refresh command is missing');
+  assert(evidence.patchRefresh?.dependencyTreeExitCode === 0, 'refreshed dependency tree did not exit successfully');
+  assert(evidence.patchRefresh?.expoInstallCheck === 'Dependencies are up to date', 'refreshed Expo install check is missing');
+  assert(evidence.patchRefresh?.expoDoctor === '21/21 checks passed. No issues detected!', 'refreshed Expo Doctor result is missing');
+  assert(typeof evidence.patchRefresh?.timestamp === 'string' && !Number.isNaN(Date.parse(evidence.patchRefresh.timestamp)), 'patch refresh timestamp is missing');
 }
 
 async function main() {
