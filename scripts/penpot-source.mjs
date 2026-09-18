@@ -227,7 +227,9 @@ export function buildSourceIndex(archive) {
     match = entry.archivePath.match(categoryPattern);
     if (match) {
       const singular = match[1] === 'typographies' ? 'typography' : match[1].slice(0, -1);
-      const record = stableRecord(singular, entry, parseJsonEntry(archive, entry));
+      const data = parseJsonEntry(archive, entry);
+      const owningPage = match[1] === 'components' ? pageById.get(data.mainInstancePage) : undefined;
+      const record = stableRecord(singular, entry, data, owningPage);
       records.push(record);
       counts[match[1]] += 1;
       if (match[1] === 'components') components.push(record);
