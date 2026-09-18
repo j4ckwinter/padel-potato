@@ -2,17 +2,17 @@
 gsd_state_version: 1.0
 current_phase: 02
 current_phase_name: Primitives, Assets, and Component Contracts
-status: executing
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-09-18T13:57:27.817Z"
+status: verifying
+stopped_at: Completed 02-05-PLAN.md
+last_updated: "2026-09-18T14:09:13.985Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 02 execution started
-state_head: a99c036d3841df7894d66042d30a739ebdbe7dcd
+state_head: a967ad0b85a9ea5100bc17b1df824d28e6bc8939
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
   percent: 20
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 
 Phase: 02 (Primitives, Assets, and Component Contracts) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-18 — Phase 02 execution started
 
 Progress: [██░░░░░░░░] 20%
@@ -68,6 +68,7 @@ Progress: [██░░░░░░░░] 20%
 | Phase 02 P01 | 21min | 3 tasks | 47 files |
 | Phase 02 P03 | 10min | 2 tasks | 6 files |
 | Phase 02 P04 | 8min | 3 tasks | 6 files |
+| Phase 02 P05 | 9min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,9 @@ Recent decisions affecting current work:
 - [Phase 02]: Phase 02-03: Brand lockups use exact retained local PNGs with width-only 25:6 and 75:14 sizing and fixed visible identity.
 - [Phase 02]: Phase 02-04: Pressable uses one disabled-or-loading predicate for native state, callback suppression, accessibility disabled/busy, and token opacity.
 - [Phase 02]: Phase 02-04: Testing helpers live behind a dedicated testing barrel and explicitly limit Jest proof to host semantics and declared geometry.
+- [Phase 02]: Phase 02-05: Story applicability is immutable data: all eight exports account for Canonical, Variants, States, Boundaries, and Interactive through a story or non-empty reason.
+- [Phase 02]: Phase 02-05: Canonical stories visibly render exact retained Penpot file, page, revision, and source identity.
+- [Phase 02]: Phase 02-05: Host and web evidence remains distinct from native proof; 200% font-scale, target clipping, VoiceOver, and TalkBack checks are deferred to Phase 5.
 
 ### Pending Todos
 
@@ -128,6 +132,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T13:57:27.669Z
-Stopped at: Completed 02-04-PLAN.md
+Last session: 2026-09-18T14:09:13.852Z
+Stopped at: Completed 02-05-PLAN.md
 Resume file: None

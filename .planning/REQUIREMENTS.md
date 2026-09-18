@@ -83,8 +83,8 @@
 ### Story, Test, and Accessibility Coverage
 
 - [x] **QUAL-01**: Every public component has typed props constrained to its supported Penpot variants.
-- [ ] **QUAL-02**: Every component has canonical, variant, state, and relevant content-boundary stories.
-- [ ] **QUAL-03**: Interactive stories expose useful controls and actions without inventing unsupported prop combinations.
+- [x] **QUAL-02**: Every component has canonical, variant, state, and relevant content-boundary stories.
+- [x] **QUAL-03**: Interactive stories expose useful controls and actions without inventing unsupported prop combinations.
 - [x] **QUAL-04**: Every interactive component has semantic and interaction tests.
 - [x] **QUAL-05**: Components expose appropriate React Native roles, labels, values, and states.
 - [x] **QUAL-06**: Interactive targets meet the project's native touch-target rule.
@@ -151,8 +151,8 @@
 | PRIM-04 | Phase 2 | Complete |
 | PRIM-02 | Phase 2 | Complete |
 | QUAL-01 | Phase 2 | Complete |
-| QUAL-02 | Phase 2 | Pending |
-| QUAL-03 | Phase 2 | Pending |
+| QUAL-02 | Phase 2 | Complete |
+| QUAL-03 | Phase 2 | Complete |
 | QUAL-04 | Phase 2 | Complete |
 | QUAL-05 | Phase 2 | Complete |
 | QUAL-06 | Phase 2 | Complete |

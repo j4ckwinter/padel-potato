@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 5
+open_count: 6
 waived_count: 0
 fixed_count: 0
-total_count: 5
-last_updated: 2026-09-17T22:07:48.098Z
+total_count: 6
+last_updated: 2026-09-18T14:07:56.252Z
 ---
 
 # Broken Windows Ledger
@@ -20,6 +20,7 @@ last_updated: 2026-09-17T22:07:48.098Z
 | 3 | 01 | deviation | package.json |  | Storybook initializer proposed unapproved 10.6-era dependencies; exact approved 10.5.0 inventory was restored | open |  | 2026-09-17T22:07:47.176Z |  |
 | 4 | 01 | deviation | package.json |  | Generic launcher is storybook:native because Expo Doctor rejects a storybook script that shadows the installed binary | open |  | 2026-09-17T22:07:47.642Z |  |
 | 5 | 01 | deviation | tsconfig.json |  | Expo web normalized the TypeScript include list during startup | open |  | 2026-09-17T22:07:48.098Z |  |
+| 6 | 02 | unrun-verify | design-spec/phase-2-verification.md |  | Native 200% font-scale, target clipping, VoiceOver, and TalkBack checks deferred to Phase 5 because no physical or remote native route was available. | open |  | 2026-09-18T14:07:56.252Z |  |
 
 ````json
 [
@@ -81,6 +82,18 @@ last_updated: 2026-09-17T22:07:48.098Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-09-17T22:07:48.098Z",
+    "resolved_at": null
+  },
+  {
+    "id": 6,
+    "kind": "unrun-verify",
+    "phase": "02",
+    "file": "design-spec/phase-2-verification.md",
+    "line": null,
+    "description": "Native 200% font-scale, target clipping, VoiceOver, and TalkBack checks deferred to Phase 5 because no physical or remote native route was available.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-18T14:07:56.252Z",
     "resolved_at": null
   }
 ]
