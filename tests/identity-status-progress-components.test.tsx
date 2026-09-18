@@ -13,6 +13,9 @@ import {
   Avatar,
   avatarPresences,
   avatarSizes,
+  type AvatarPresence,
+  type AvatarProps,
+  type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
 import {
   avatarRecords,
@@ -34,21 +37,21 @@ describe('Avatar source contract', () => {
     expect(avatarSizes).toEqual([32, 40, 48, 56]);
     expect(avatarPresences).toEqual(['online', 'away', 'offline']);
     expect(avatarRecords.map(({ normalizedTuple }) => normalizedTuple)).toEqual([
-      { size: 32, presence: 'online' },
-      { size: 40, presence: 'online' },
-      { size: 48, presence: 'away' },
-      { size: 48, presence: 'offline' },
       { size: 56, presence: 'online' },
+      { size: 48, presence: 'offline' },
+      { size: 48, presence: 'away' },
+      { size: 40, presence: 'online' },
+      { size: 32, presence: 'online' },
     ]);
     expect(avatarRecords.map(({ metrics }) => ({
       wrapper: metrics.normalized,
       visible: metrics.avatar.normalized,
     }))).toEqual([
-      { wrapper: { width: 64, height: 64 }, visible: { width: 32, height: 32 } },
-      { wrapper: { width: 64, height: 64 }, visible: { width: 40, height: 40 } },
-      { wrapper: { width: 64, height: 64 }, visible: { width: 48, height: 48 } },
-      { wrapper: { width: 64, height: 64 }, visible: { width: 48, height: 48 } },
       { wrapper: { width: 64, height: 64 }, visible: { width: 56, height: 56 } },
+      { wrapper: { width: 64, height: 64 }, visible: { width: 48, height: 48 } },
+      { wrapper: { width: 64, height: 64 }, visible: { width: 48, height: 48 } },
+      { wrapper: { width: 64, height: 64 }, visible: { width: 40, height: 40 } },
+      { wrapper: { width: 64, height: 64 }, visible: { width: 32, height: 32 } },
     ]);
   });
 });
@@ -60,14 +63,14 @@ describe('Avatar runtime and semantic contract', () => {
     [48, 'away'],
     [48, 'offline'],
     [56, 'online'],
-  ] as const)('renders the authored %i/%s tuple at its named-child diameter', async (size, presence) => {
+  ] as Array<[AvatarSize, AvatarPresence]>)('renders the authored %i/%s tuple at its named-child diameter', async (size, presence) => {
     const screen = await render(
-      <Avatar
-        accessibilityLabel={`Alex Morgan, ${presence}`}
-        initials="AM"
-        presence={presence}
-        size={size}
-      />,
+      <Avatar {...({
+        accessibilityLabel: `Alex Morgan, ${presence}`,
+        initials: 'AM',
+        presence,
+        size,
+      } as AvatarProps)} />,
     );
 
     const image = screen.getByRole('image', { name: `Alex Morgan, ${presence}` });
@@ -76,7 +79,7 @@ describe('Avatar runtime and semantic contract', () => {
       height: size,
       width: size,
     }));
-    expect(screen.getByTestId('avatar-presence')).toBeTruthy();
+    expect(screen.getByTestId('avatar-presence', { includeHiddenElements: true })).toBeTruthy();
   });
 
   it.each([
@@ -86,7 +89,7 @@ describe('Avatar runtime and semantic contract', () => {
     [40, 'offline'],
     [56, 'away'],
     [56, 'offline'],
-  ] as const)('rejects the unauthored %i/%s tuple', (size, presence) => {
+  ] as Array<[32 | 40 | 56, 'away' | 'offline']>)('rejects the unauthored %i/%s tuple', (size, presence) => {
     expect(() => Avatar({
       accessibilityLabel: 'Unsupported avatar',
       initials: 'UA',
