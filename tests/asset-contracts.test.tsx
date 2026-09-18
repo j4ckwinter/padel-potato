@@ -46,13 +46,13 @@ describe('Penpot asset evidence', () => {
     }
   });
 
-  test('renders normalized local geometry through react-native-svg with semantic paint', () => {
-    const { getByTestId, unmount } = render(
+  test('renders normalized local geometry through react-native-svg with semantic paint', async () => {
+    const { getByTestId, unmount } = await render(
       <SvgXml testID="add-icon" xml={iconRegistry.add.xml} color="#0e1716" width={20} height={20} />,
     );
     expect(getByTestId('add-icon')).toHaveProp('color', '#0e1716');
     expect(iconRegistry.add.xml.replaceAll('currentColor', '#0e1716')).toContain('stroke="#0e1716"');
-    unmount();
+    await unmount();
   });
 
   test('validator runs controlled tamper rejections and deterministic regeneration', () => {
