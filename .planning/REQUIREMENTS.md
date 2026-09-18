@@ -17,17 +17,17 @@
 ### Penpot Provenance
 
 - [x] **PNPT-01**: Developer can generate a versioned manifest of Penpot foundations, components, variant axes, states, and source IDs through the Penpot MCP.
-- [ ] **PNPT-02**: Every implemented token and component is traceable to its authoritative Penpot source.
+- [x] **PNPT-02**: Every implemented token and component is traceable to its authoritative Penpot source.
 - [x] **PNPT-03**: Developer can export and retain Penpot reference renders used for visual verification.
 - [x] **PNPT-04**: Every intentional implementation difference is recorded with its source, platform, reason, and disposition.
 
 ### Foundations
 
-- [ ] **FNDT-01**: Developer can use all 15 Penpot colors through named design tokens.
-- [ ] **FNDT-02**: Developer can use all 9 Penpot typography styles through reusable typed styles.
+- [x] **FNDT-01**: Developer can use all 15 Penpot colors through named design tokens.
+- [x] **FNDT-02**: Developer can use all 9 Penpot typography styles through reusable typed styles.
 - [ ] **FNDT-03**: Developer can use all Penpot spacing, radius, dimension, border-width, and opacity values through named tokens.
 - [ ] **FNDT-04**: Components consume semantic tokens rather than embedding unexplained design literals.
-- [ ] **FNDT-05**: Fonts render with the intended families, weights, and metrics on iOS and Android.
+- [x] **FNDT-05**: Fonts render with the intended families, weights, and metrics on iOS and Android.
 - [ ] **FNDT-06**: Storybook contains navigable foundation stories showing colors, typography, spacing, radii, dimensions, borders, and opacity.
 
 ### Primitives and Assets
@@ -137,14 +137,14 @@
 | WORK-05 | Phase 5 | Pending |
 | WORK-06 | Phase 1 | Complete |
 | PNPT-01 | Phase 1 | Complete |
-| PNPT-02 | Phase 1 | Pending |
+| PNPT-02 | Phase 1 | Complete |
 | PNPT-03 | Phase 1 | Complete |
 | PNPT-04 | Phase 1 | Complete |
-| FNDT-01 | Phase 1 | Pending |
-| FNDT-02 | Phase 1 | Pending |
+| FNDT-01 | Phase 1 | Complete |
+| FNDT-02 | Phase 1 | Complete |
 | FNDT-03 | Phase 1 | Pending |
 | FNDT-04 | Phase 1 | Pending |
-| FNDT-05 | Phase 1 | Pending |
+| FNDT-05 | Phase 1 | Complete |
 | FNDT-06 | Phase 1 | Pending |
 | PRIM-01 | Phase 2 | Pending |
 | PRIM-03 | Phase 2 | Pending |

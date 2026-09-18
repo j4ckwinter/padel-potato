@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 01
 current_phase_name: Foundations Storybook
 status: executing
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-09-18T07:17:14.768Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-09-18T09:18:56.083Z"
 last_activity: 2026-09-17
 last_activity_desc: Phase 01 execution started
-state_head: b169ec835c029e49ab96a0a4b4a7b25e6074abb3
+state_head: 50e93f5e68139f85be9711756db69c39ba5c0528
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 7
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 01 (Foundations Storybook) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-09-17 — Phase 01 execution started
 
@@ -60,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P01 | 12min | 2 tasks | 4 files |
 | Phase 01 P02 | 18min | 2 tasks | 15 files |
 | Phase 01 P03 | 15min | 2 tasks | 5 files |
+| Phase 01 P04 | 1h 59m | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Recent decisions affecting current work:
 - [Phase 01]: Penpot revision 292 is the source revision for Phase 1 foundation implementation and its retained reference render.
 - [Phase 01]: Foundation evidence uses code-point ordering so browser and Node runtimes validate identically.
 - [Phase 01]: The Penpot component inventory remains design evidence and is not a runtime dependency.
+- [Phase 01]: Map authored Inter weights to separate static runtime families to prevent native weight synthesis.
+- [Phase 01]: Convert Penpot's unitless 1.2 line-height to exact React Native absolute line heights.
+- [Phase 01]: Gate all Storybook stories on authoritative font readiness and fail visibly without fallback specimens.
 
 ### Pending Todos
 
@@ -101,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T07:17:14.743Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-09-18T09:18:56.058Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
