@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 03
 current_phase_name: Actions, Forms, and Navigation Components
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-09-18T18:17:37.777Z"
+stopped_at: Completed 03-04-PLAN.md
+last_updated: "2026-09-18T18:29:15.178Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 03 execution started
-state_head: 4e4f8feade577c9e2f9a90775d21d986dc4b1a83
+state_head: 32a06848be9f314bab940e286965bd67ce99729b
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 21
-  completed_plans: 15
+  completed_plans: 16
   percent: 40
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-18)
 ## Current Position
 
 Phase: 03 (Actions, Forms, and Navigation Components) — EXECUTING
-Plan: 4 of 9
+Plan: 5 of 9
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 03 execution started
 
@@ -73,6 +73,7 @@ Progress: [████░░░░░░] 40%
 | Phase 03 P01 | 13min | 2 tasks | 8 files |
 | Phase 03 P02 | 8min | 3 tasks | 9 files |
 | Phase 03 P03 | 10min | 2 tasks | 5 files |
+| Phase 03 P04 | 11min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -123,6 +124,9 @@ Recent decisions affecting current work:
 - [Phase 03]: Phase 03-03: Expose eight named zero-argument family renderers rather than a caller-selectable artwork or mascot API.
 - [Phase 03]: Phase 03-03: Record both Games screen references explicitly while resolving both to the retained Search mascot output.
 - [Phase 03]: Phase 03-03: Validate artwork identities, profiles, hashes, safe roots, extractor agreement, runtime geometry, imports, exports, and decorative semantics offline.
+- [Phase 03]: Phase 03-04: Keep nested icons and heart artwork decorative so each outer action owns one stable role and name.
+- [Phase 03]: Phase 03-04: Model Favourite as a controlled checkbox-style toggle; visible and semantic checked state changes only after consumer rerender.
+- [Phase 03]: Phase 03-04: Preserve selected heart fidelity with a private exact-path fill beneath the fixed zero-argument HeartArtwork stroke.
 
 ### Pending Todos
 
@@ -151,6 +155,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T18:17:37.526Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-09-18T18:29:14.922Z
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
