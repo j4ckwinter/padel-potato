@@ -33,7 +33,7 @@
 ### Primitives and Assets
 
 - [x] **PRIM-01**: Developer can build components from token-backed text, layout, surface, and icon primitives.
-- [ ] **PRIM-02**: Interactive primitives provide consistent press, disabled, loading, focus, and accessibility behavior.
+- [x] **PRIM-02**: Interactive primitives provide consistent press, disabled, loading, focus, and accessibility behavior.
 - [x] **PRIM-03**: Developer can use both Penpot brand lockups as reusable assets.
 - [x] **PRIM-04**: Developer can use the complete Penpot icon set through a consistent typed interface.
 
@@ -85,9 +85,9 @@
 - [x] **QUAL-01**: Every public component has typed props constrained to its supported Penpot variants.
 - [ ] **QUAL-02**: Every component has canonical, variant, state, and relevant content-boundary stories.
 - [ ] **QUAL-03**: Interactive stories expose useful controls and actions without inventing unsupported prop combinations.
-- [ ] **QUAL-04**: Every interactive component has semantic and interaction tests.
+- [x] **QUAL-04**: Every interactive component has semantic and interaction tests.
 - [x] **QUAL-05**: Components expose appropriate React Native roles, labels, values, and states.
-- [ ] **QUAL-06**: Interactive targets meet the project's native touch-target rule.
+- [x] **QUAL-06**: Interactive targets meet the project's native touch-target rule.
 - [x] **QUAL-07**: Representative components remain usable with large text and native assistive technology.
 
 ### Verification and Completion
@@ -149,13 +149,13 @@
 | PRIM-01 | Phase 2 | Complete |
 | PRIM-03 | Phase 2 | Complete |
 | PRIM-04 | Phase 2 | Complete |
-| PRIM-02 | Phase 2 | Pending |
+| PRIM-02 | Phase 2 | Complete |
 | QUAL-01 | Phase 2 | Complete |
 | QUAL-02 | Phase 2 | Pending |
 | QUAL-03 | Phase 2 | Pending |
-| QUAL-04 | Phase 2 | Pending |
+| QUAL-04 | Phase 2 | Complete |
 | QUAL-05 | Phase 2 | Complete |
-| QUAL-06 | Phase 2 | Pending |
+| QUAL-06 | Phase 2 | Complete |
 | QUAL-07 | Phase 2 | Complete |
 | ACTN-01 | Phase 3 | Pending |
 | ACTN-02 | Phase 3 | Pending |

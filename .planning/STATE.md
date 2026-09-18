@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 02
 current_phase_name: Primitives, Assets, and Component Contracts
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-09-18T13:46:24.179Z"
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-09-18T13:57:27.817Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 02 execution started
-state_head: 80686afd6f24ba2a4729783ead5d951fb619b54a
+state_head: a99c036d3841df7894d66042d30a739ebdbe7dcd
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
   percent: 20
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 02 (Primitives, Assets, and Component Contracts) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 02 execution started
 
@@ -67,6 +67,7 @@ Progress: [██░░░░░░░░] 20%
 | Phase 02 P02 | 8min | 3 tasks | 8 files |
 | Phase 02 P01 | 21min | 3 tasks | 47 files |
 | Phase 02 P03 | 10min | 2 tasks | 6 files |
+| Phase 02 P04 | 8min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Recent decisions affecting current work:
 - [Phase 02]: Phase 2 assets serialize exact icon geometry from the live Penpot Plugin API and retain remote-image lockups as local authored PNG evidence.
 - [Phase 02]: Phase 02-03: Icon exposes only authored generated names, semantic token paint, iconSize20, and label-controlled image semantics.
 - [Phase 02]: Phase 02-03: Brand lockups use exact retained local PNGs with width-only 25:6 and 75:14 sizing and fixed visible identity.
+- [Phase 02]: Phase 02-04: Pressable uses one disabled-or-loading predicate for native state, callback suppression, accessibility disabled/busy, and token opacity.
+- [Phase 02]: Phase 02-04: Testing helpers live behind a dedicated testing barrel and explicitly limit Jest proof to host semantics and declared geometry.
 
 ### Pending Todos
 
@@ -125,6 +128,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T13:46:24.045Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-09-18T13:57:27.669Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None
