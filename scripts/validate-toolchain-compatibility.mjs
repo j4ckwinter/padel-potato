@@ -1,7 +1,8 @@
 import { readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
 
 const evidenceUrl = new URL('../design-spec/toolchain-compatibility.json', import.meta.url);
+const packageJsonUrl = new URL('../package.json', import.meta.url);
+const packageLockUrl = new URL('../package-lock.json', import.meta.url);
 
 const approvedVersions = new Map([
   ['expo', '57.0.24'],
@@ -77,6 +78,33 @@ function entriesToMap(entries, label) {
   return result;
 }
 
+function objectToMap(value, label) {
+  assert(value && typeof value === 'object' && !Array.isArray(value), `${label} must be an object`);
+  const result = new Map();
+  for (const [name, version] of Object.entries(value)) {
+    assert(typeof version === 'string', `${label}.${name} must be a string`);
+    result.set(name, version);
+  }
+  return result;
+}
+
+function validateExactInventory(actual, expected, actualLabel, expectedLabel) {
+  assert(
+    actual.size === expected.size,
+    `${actualLabel} contains ${actual.size} packages but ${expectedLabel} contains ${expected.size}`,
+  );
+  for (const [name, version] of expected) {
+    assert(actual.has(name), `${actualLabel} is missing ${name} recorded in ${expectedLabel}`);
+    assert(
+      actual.get(name) === version,
+      `${actualLabel} has ${name}@${actual.get(name)} but ${expectedLabel} records ${version}`,
+    );
+  }
+  for (const name of actual.keys()) {
+    assert(expected.has(name), `${actualLabel} contains unexpected direct dependency ${name}`);
+  }
+}
+
 function validateApprovedPackages(evidence) {
   const approved = entriesToMap(evidence.approvedPackages, 'approvedPackages');
   assert(approved.size === approvedVersions.size, `approvedPackages must contain exactly ${approvedVersions.size} rows`);
@@ -123,6 +151,68 @@ function validateDirectInventory(evidence) {
   }
 }
 
+function validateLiveInventory(evidence, packageJson, lockfile) {
+  const recordedDependencies = entriesToMap(evidence.directDependencies, 'directDependencies');
+  const recordedDevDependencies = entriesToMap(evidence.directDevDependencies, 'directDevDependencies');
+  const liveDependencies = objectToMap(packageJson.dependencies ?? {}, 'package.json dependencies');
+  const liveDevDependencies = objectToMap(packageJson.devDependencies ?? {}, 'package.json devDependencies');
+
+  validateExactInventory(
+    liveDependencies,
+    recordedDependencies,
+    'package.json dependencies',
+    'directDependencies',
+  );
+  validateExactInventory(
+    liveDevDependencies,
+    recordedDevDependencies,
+    'package.json devDependencies',
+    'directDevDependencies',
+  );
+
+  const lockRoot = lockfile.packages?.[''];
+  assert(lockRoot, 'package-lock.json is missing its root package record');
+  const lockDependencies = objectToMap(lockRoot.dependencies ?? {}, 'package-lock root dependencies');
+  const lockDevDependencies = objectToMap(lockRoot.devDependencies ?? {}, 'package-lock root devDependencies');
+  validateExactInventory(
+    lockDependencies,
+    liveDependencies,
+    'package-lock root dependencies',
+    'package.json dependencies',
+  );
+  validateExactInventory(
+    lockDevDependencies,
+    liveDevDependencies,
+    'package-lock root devDependencies',
+    'package.json devDependencies',
+  );
+
+  const liveDirect = new Map([...liveDependencies, ...liveDevDependencies]);
+  assert(
+    liveDirect.size === liveDependencies.size + liveDevDependencies.size,
+    'package.json lists a package in both dependencies and devDependencies',
+  );
+  for (const [name, declaredVersion] of liveDirect) {
+    const resolvedVersion = lockfile.packages?.[`node_modules/${name}`]?.version;
+    assert(resolvedVersion, `package-lock.json has no top-level resolution for ${name}`);
+    assert(
+      resolvedVersion === declaredVersion,
+      `package-lock.json resolves ${name}@${resolvedVersion}, expected exact ${declaredVersion}`,
+    );
+  }
+
+  for (const [name, approvedVersion] of approvedVersions) {
+    assert(
+      liveDirect.get(name) === approvedVersion,
+      `package.json has ${name}@${liveDirect.get(name)}, approval requires ${approvedVersion}`,
+    );
+    assert(
+      lockfile.packages?.[`node_modules/${name}`]?.version === approvedVersion,
+      `package-lock.json resolution for ${name} differs from approved ${approvedVersion}`,
+    );
+  }
+}
+
 function validateProbe(evidence) {
   assert(typeof evidence.probe?.timestamp === 'string' && !Number.isNaN(Date.parse(evidence.probe.timestamp)), 'probe timestamp is missing');
   assert(typeof evidence.probe?.nodeVersion === 'string' && /^v?\d+\.\d+\.\d+$/.test(evidence.probe.nodeVersion), 'Node version is missing');
@@ -159,16 +249,25 @@ function validateProbe(evidence) {
 
 async function main() {
   let evidence;
+  let packageJson;
+  let lockfile;
   try {
-    evidence = JSON.parse(await readFile(evidenceUrl, 'utf8'));
+    [evidence, packageJson, lockfile] = await Promise.all(
+      [evidenceUrl, packageJsonUrl, packageLockUrl].map(async (url) =>
+        JSON.parse(await readFile(url, 'utf8')),
+      ),
+    );
   } catch (error) {
-    fail(`cannot read ${fileURLToPath(evidenceUrl)}: ${error.message}`);
+    fail(`cannot read live toolchain inputs: ${error.message}`);
   }
   assert(evidence.schemaVersion === 1, 'schemaVersion must be 1');
   validateApprovedPackages(evidence);
   validateDirectInventory(evidence);
+  validateLiveInventory(evidence, packageJson, lockfile);
   validateProbe(evidence);
-  console.log(`Validated exact ${approvedVersions.size}-package approval and clean Expo/Storybook probe.`);
+  console.log(
+    `Validated live manifest and lockfile against the exact ${approvedVersions.size}-package approval and clean Expo/Storybook probe.`,
+  );
 }
 
 main().catch((error) => {
