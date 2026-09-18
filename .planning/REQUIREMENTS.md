@@ -47,7 +47,7 @@
 - [ ] **FORM-03**: Developer can use Checkbox with every designed state.
 - [ ] **FORM-04**: Developer can use Day Time Selector with every designed type and state.
 - [x] **AUTH-01**: Developer can use Social Sign-In Button with every designed provider and state.
-- [ ] **AUTH-02**: Developer can use Auth Divider as designed.
+- [x] **AUTH-02**: Developer can use Auth Divider as designed.
 
 ### Navigation and Structure
 
@@ -165,7 +165,7 @@
 | FORM-03 | Phase 3 | Pending |
 | FORM-04 | Phase 3 | Pending |
 | AUTH-01 | Phase 3 | Complete |
-| AUTH-02 | Phase 3 | Pending |
+| AUTH-02 | Phase 3 | Complete |
 | NAVG-01 | Phase 3 | Pending |
 | NAVG-02 | Phase 3 | Pending |
 | NAVG-03 | Phase 3 | Complete |
