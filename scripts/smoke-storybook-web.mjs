@@ -174,18 +174,20 @@ async function main() {
   const npmExecutable = process.env.npm_execpath
     ? process.execPath
     : process.platform === "win32"
-      ? "npm.cmd"
+      ? (process.env.ComSpec ?? "cmd.exe")
       : "npm";
+  const npmCommandArguments = [
+    "run",
+    "storybook:web",
+    "--",
+    "--port",
+    String(port),
+  ];
   const npmArguments = process.env.npm_execpath
-    ? [
-        process.env.npm_execpath,
-        "run",
-        "storybook:web",
-        "--",
-        "--port",
-        String(port),
-      ]
-    : ["run", "storybook:web", "--", "--port", String(port)];
+    ? [process.env.npm_execpath, ...npmCommandArguments]
+    : process.platform === "win32"
+      ? ["/d", "/s", "/c", "npm.cmd", ...npmCommandArguments]
+      : npmCommandArguments;
   const output = [];
   const child = spawn(npmExecutable, npmArguments, {
     detached: process.platform !== "win32",
