@@ -173,7 +173,7 @@ This phase supplies developer-catalogue fixtures and customizable component cont
 | Element | Copy |
 |---------|------|
 | Primary CTA | `Create game` |
-| Secondary CTA | `See all` |
+| Secondary CTA | `See all ›` — exact retained revision-296 source copy |
 | Field empty/placeholder | `Enter game name` |
 | Field success | `Looks good` |
 | Field error | `Check this value` — state the problem and keep the field available for correction |
@@ -206,7 +206,7 @@ All source identities below refer to revision 296 on page `02 Components`. The P
 | Bottom Navigation | `... / Navigation / Bottom Navigation`; set `482a7222-5a3b-8086-8008-a61a5487bd61` | active destination `home | games | create | players | profile` |
 | Segmented Control | `... / Navigation / Segmented Control`; set `482a7222-5a3b-8086-8008-a60ede25d147` | exactly 2, 3, or 4 controlled options; disabled; focus derived |
 | App Header | `... / Headers / App Header`; set `482a7222-5a3b-8086-8008-a61da61c2e7f` | page `home | games | create | players | profile | notifications | gameDetails | playerDetails | settings` |
-| Section Header | `Padel Potato / Components / Content`; component `482a7222-5a3b-8086-8008-a608c3bde79a` | title plus optional `See all`-style action |
+| Section Header | `Padel Potato / Components / Content`; component `482a7222-5a3b-8086-8008-a608c3bde79a` | title plus optional action; canonical copy is the source-authored `See all ›` |
 
 Do not infer a Cartesian product from the sparse Penpot specimen matrix. The public discriminated union contains only combinations supported by the source and this contract. Canonical/Variants stories show every retained record; Interactive stories demonstrate valid controlled transitions.
 
