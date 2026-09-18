@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
@@ -39,7 +39,10 @@ import AvatarPickerStories, {
   States as AvatarPickerStates,
   Variants as AvatarPickerVariants,
 } from '../src/design-system/components/identity/AvatarPicker.stories';
-import { AvatarPicker } from '../src/design-system/components/identity/AvatarPicker';
+import {
+  AvatarPicker,
+  type AvatarPickerProps,
+} from '../src/design-system/components/identity/AvatarPicker';
 
 const flattenedStyle = (style: unknown) =>
   StyleSheet.flatten(
@@ -166,13 +169,14 @@ const groupPlayers = [
 ] as const satisfies readonly AvatarGroupIdentity[];
 
 describe('Avatar Group runtime and semantic contract', () => {
+  type PopulatedAvatarGroupProps = Exclude<Parameters<typeof AvatarGroup>[0], { variant: 'empty' }>;
   it.each([
-    ['2 players/default', { identities: groupPlayers.slice(0, 2), variant: '2-players' }],
-    ['3 players/default', { identities: groupPlayers.slice(0, 3), variant: '3-players' }],
+    ['2 players/default', { identities: [groupPlayers[0], groupPlayers[1]], variant: '2-players' }],
+    ['3 players/default', { identities: [groupPlayers[0], groupPlayers[1], groupPlayers[2]], variant: '3-players' }],
     ['4 players/default', { identities: groupPlayers, variant: '4-players' }],
     ['4 players/overflow', { identities: groupPlayers, overflow: 3, variant: 'overflow' }],
-  ] as const)('renders the authored %s branch in supplied order', async (_tuple, props) => {
-    const screen = await render(<AvatarGroup {...props as never} />);
+  ] as Array<[string, PopulatedAvatarGroupProps]>)('renders the authored %s branch in supplied order', async (_tuple, props) => {
+    const screen = await render(<AvatarGroup {...props} />);
     const group = screen.getByRole('summary');
     const expected = groupPlayers.slice(0, props.identities.length).map(({ name }) => name).join(', ');
 
@@ -219,21 +223,20 @@ describe('Avatar Picker runtime and semantic contract', () => {
     ['initials', 'Change profile photo', 136],
     ['photo', 'Change profile photo', 136],
     ['error', 'Add a profile photo', 160],
-  ] as const)('renders the controlled %s branch as one named button', async (variant, name, height) => {
+  ] as Array<['empty' | 'initials' | 'photo' | 'error', string, number]>)('renders the controlled %s branch as one named button', async (variant, name, height) => {
     const common = { onPress: jest.fn(), variant } as const;
     const props = variant === 'initials'
       ? { ...common, initials: 'AM' }
       : variant === 'photo'
-        ? { ...common, source: require('../design-spec/assets/phase-3/mascot-profile.webp') }
+        ? { ...common, source: { uri: 'file:///profile.webp' } }
         : common;
-    const screen = await render(<AvatarPicker {...props as never} />);
+    const screen = await render(<AvatarPicker {...props as AvatarPickerProps} />);
 
     expect(screen.getByRole('button', { name })).toHaveStyle({ height });
     if (variant === 'error') {
       expect(screen.getByText('Choose a JPG or PNG under 5 MB')).toBeTruthy();
-      expect(screen.getByRole('button', { name })).toHaveAccessibilityHint(
-        'Choose a JPG or PNG under 5 MB',
-      );
+      expect(screen.getByRole('button', { name }).props.accessibilityHint)
+        .toBe('Choose a JPG or PNG under 5 MB');
     }
   });
 
