@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 01
 current_phase_name: Foundations Storybook
 status: executing
-stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-09-18T09:24:57.355Z"
+stopped_at: Completed 01-06-PLAN.md
+last_updated: "2026-09-18T09:31:09.933Z"
 last_activity: 2026-09-17
 last_activity_desc: Phase 01 execution started
-state_head: bccd49b0475edaa4faf3057b40ba998f4240fce0
+state_head: fc6f421f38219fa748c0d67a71621a11f6339a30
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 01 (Foundations Storybook) — EXECUTING
-Plan: 6 of 7
+Plan: 7 of 7
 Status: Ready to execute
 Last activity: 2026-09-17 — Phase 01 execution started
 
@@ -62,6 +62,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P03 | 15min | 2 tasks | 5 files |
 | Phase 01 P04 | 1h 59m | 2 tasks | 11 files |
 | Phase 01 P05 | 12m | 3 tasks | 7 files |
+| Phase 01 P06 | 6m | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Recent decisions affecting current work:
 - [Phase 01]: Gate all Storybook stories on authoritative font readiness and fail visibly without fallback specimens.
 - [Phase 01]: Normalize Penpot scalar names to lower camel case by splitting only on non-alphanumeric runs while preserving numeric segments.
 - [Phase 01]: Keep the public foundation token boundary re-export-only so barrel imports preserve direct-module object identity.
+- [Phase 01]: Use one closed FoundationCategory union and one native gallery component for aggregate and category Storybook views.
+- [Phase 01]: Expose Penpot design names, revision, and source IDs beside specimens without introducing a runtime Penpot dependency.
+- [Phase 01]: Preserve the retained reference hierarchy while deriving every specimen style from the public token barrel.
 
 ### Pending Todos
 
@@ -108,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T09:24:57.329Z
-Stopped at: Completed 01-05-PLAN.md
+Last session: 2026-09-18T09:31:09.907Z
+Stopped at: Completed 01-06-PLAN.md
 Resume file: None

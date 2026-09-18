@@ -26,9 +26,9 @@
 - [x] **FNDT-01**: Developer can use all 15 Penpot colors through named design tokens.
 - [x] **FNDT-02**: Developer can use all 9 Penpot typography styles through reusable typed styles.
 - [x] **FNDT-03**: Developer can use all Penpot spacing, radius, dimension, border-width, and opacity values through named tokens.
-- [ ] **FNDT-04**: Components consume semantic tokens rather than embedding unexplained design literals.
+- [x] **FNDT-04**: Components consume semantic tokens rather than embedding unexplained design literals.
 - [x] **FNDT-05**: Fonts render with the intended families, weights, and metrics on iOS and Android.
-- [ ] **FNDT-06**: Storybook contains navigable foundation stories showing colors, typography, spacing, radii, dimensions, borders, and opacity.
+- [x] **FNDT-06**: Storybook contains navigable foundation stories showing colors, typography, spacing, radii, dimensions, borders, and opacity.
 
 ### Primitives and Assets
 
@@ -143,9 +143,9 @@
 | FNDT-01 | Phase 1 | Complete |
 | FNDT-02 | Phase 1 | Complete |
 | FNDT-03 | Phase 1 | Complete |
-| FNDT-04 | Phase 1 | Pending |
+| FNDT-04 | Phase 1 | Complete |
 | FNDT-05 | Phase 1 | Complete |
-| FNDT-06 | Phase 1 | Pending |
+| FNDT-06 | Phase 1 | Complete |
 | PRIM-01 | Phase 2 | Pending |
 | PRIM-03 | Phase 2 | Pending |
 | PRIM-04 | Phase 2 | Pending |
