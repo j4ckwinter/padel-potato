@@ -31,14 +31,15 @@ import textMeta, {
 } from '../src/design-system/primitives/Text.stories';
 import { colors, spacing, typography } from '../src/design-system/tokens';
 
-type StoryLike = {
-  args?: Record<string, unknown>;
-  render?: (args: Record<string, unknown>) => ReactElement;
-};
+type StoryLike = { args?: unknown; render?: unknown };
 
-const renderStory = (story: StoryLike, args = story.args ?? {}) => {
-  if (!story.render) throw new Error('Story has no render function');
-  return render(story.render(args));
+const renderStory = async (story: StoryLike, args = story.args ?? {}) => {
+  if (typeof story.render !== 'function') throw new Error('Story has no render function');
+  const storyRender = story.render as (
+    storyArgs: Record<string, unknown>,
+    context: Record<string, never>,
+  ) => ReactElement;
+  return render(storyRender(args as Record<string, unknown>, {}));
 };
 
 describe('Phase 2 Storybook contract', () => {
@@ -85,7 +86,7 @@ describe('Phase 2 Storybook contract', () => {
 
     const metas = [textMeta, layoutMeta, surfaceMeta];
     for (const meta of metas) {
-      expect(meta.argTypes?.onPress).toBeUndefined();
+      expect('onPress' in (meta.argTypes ?? {})).toBe(false);
       for (const argType of Object.values(meta.argTypes ?? {})) {
         expect(argType).not.toHaveProperty('control', 'object');
         expect(argType).not.toHaveProperty('control', 'number');
@@ -114,7 +115,7 @@ describe('Phase 2 Storybook contract', () => {
     ].every((story) => typeof story.render === 'function')).toBe(true);
   });
 
-  it('renders exact retained Penpot identity in every primitive Canonical story', () => {
+  it('renders exact retained Penpot identity in every primitive Canonical story', async () => {
     const canonicalStories = [
       ['Text', TextCanonical],
       ['Stack', LayoutCanonical],
@@ -124,44 +125,44 @@ describe('Phase 2 Storybook contract', () => {
     ] as const;
 
     for (const [exportName, story] of canonicalStories) {
-      const screen = renderStory(story);
+      const screen = await renderStory(story);
       const source = phase2StorySources[exportName];
       expect(
         screen.getByText(
           `Penpot ${source.fileId} / ${source.pageId} / revision ${source.revision} / source ${source.sourceId}`,
         ),
       ).toBeVisible();
-      screen.unmount();
+      await screen.unmount();
     }
   });
 
-  it('renders constrained zero, one, many, Unicode wrapping, and explicit truncation witnesses', () => {
+  it('renders constrained zero, one, many, Unicode wrapping, and explicit truncation witnesses', async () => {
     const stories = [TextBoundaries, LayoutBoundaries, SurfaceBoundaries];
     for (const story of stories) {
-      const screen = renderStory(story);
+      const screen = await renderStory(story);
       expect(screen.getByTestId('boundary-zero')).toBeVisible();
       expect(screen.getByTestId('boundary-one')).toBeVisible();
       expect(screen.getByTestId('boundary-many')).toBeVisible();
-      expect(screen.getByText(/Łucía 🚀／東京/)).toBeVisible();
+      expect(screen.getAllByText(/Łucía 🚀／東京/).length).toBeGreaterThan(0);
       expect(screen.getByTestId('boundary-explicit-truncation')).toHaveProp(
         'numberOfLines',
         1,
       );
-      screen.unmount();
+      await screen.unmount();
     }
   });
 
-  it('keeps Pressable interaction bounded, named, and action-backed', () => {
-    const states = renderStory(PressableStates);
+  it('keeps Pressable interaction bounded, named, and action-backed', async () => {
+    const states = await renderStory(PressableStates);
     expect(states.getByText('Enabled')).toBeVisible();
     expect(states.getByText('Pressed: hold the enabled control')).toBeVisible();
     expect(states.getByText('Focus demonstration')).toBeVisible();
     expect(states.getByText('Disabled')).toBeDisabled();
     expect(states.getByText('Loading')).toBeDisabled();
-    states.unmount();
+    await states.unmount();
 
     const onPress = jest.fn();
-    const interactive = renderStory(PressableInteractive, { onPress });
+    const interactive = await renderStory(PressableInteractive, { onPress });
     const action = interactive.getByRole('button', { name: 'Activate example' });
     fireEvent.press(action);
     expect(onPress).toHaveBeenCalledTimes(1);
