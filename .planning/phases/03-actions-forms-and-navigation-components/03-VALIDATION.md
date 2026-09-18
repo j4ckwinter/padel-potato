@@ -35,12 +35,12 @@ created: "2026-09-18"
 | ACTN-01 | Button exact sparse records, variants, blocked/loading activation, semantics, and geometry | component + source | `npm test -- --runInBand tests/action-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
 | ACTN-02 | IconButton authored sizes/icons/states, required accessible name, and target contract | component | `npm test -- --runInBand tests/action-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
 | ACTN-03 | Favourite controlled next-value callback and both authored states | component | `npm test -- --runInBand tests/action-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| FORM-01 | Field editable, trigger, and stepper branches plus validation/read-only states | component | `npm test -- --runInBand tests/form-auth-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| FORM-02 | ChoiceChip sparse option/filter/icon states with radio/checkbox semantics | component | `npm test -- --runInBand tests/form-auth-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| FORM-03 | Checkbox controlled checked state and blocked behavior | component | `npm test -- --runInBand tests/form-auth-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| FORM-04 | Day/time geometry, controlled radio selection, and disabled behavior | component | `npm test -- --runInBand tests/form-auth-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| AUTH-01 | Google/Apple source records, local artwork, states, and callback-only behavior | component + asset | `npm test -- --runInBand tests/form-auth-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| AUTH-02 | Auth Divider readable text and decorative rule semantics | component | `npm test -- --runInBand tests/form-auth-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
+| FORM-01 | Field editable, trigger, and stepper branches plus validation/read-only states | component | `npm test -- --runInBand tests/form-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
+| FORM-02 | ChoiceChip sparse option/filter/icon states with radio/checkbox semantics | component | `npm test -- --runInBand tests/form-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
+| FORM-03 | Checkbox controlled checked state and blocked behavior | component | `npm test -- --runInBand tests/form-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
+| FORM-04 | Day/time geometry, controlled radio selection, and disabled behavior | component | `npm test -- --runInBand tests/form-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
+| AUTH-01 | Google/Apple source records, local artwork, states, and callback-only behavior | component + asset | `npm test -- --runInBand tests/authentication-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
+| AUTH-02 | Auth Divider readable text and decorative rule semantics | component | `npm test -- --runInBand tests/authentication-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
 | NAVG-01 | Five ordered destinations, selected semantics, and destination callback | component | `npm test -- --runInBand tests/navigation-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
 | NAVG-02 | Exactly 2/3/4 controlled segments, selection, and blocked state | component | `npm test -- --runInBand tests/navigation-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
 | NAVG-03 | Nine AppHeader configurations with exact visible/absent actions and callbacks | component + source | `npm test -- --runInBand tests/navigation-components.test.tsx` | ❌ Wave 0 | ⬜ pending |
@@ -56,7 +56,8 @@ created: "2026-09-18"
 - [ ] `src/design-system/components/sourceRegistry.ts` — immutable family, record, normalization, and source mapping.
 - [ ] `tests/phase3-source-registry.test.ts` — exact identity/count/order/axis/normalization/asset proof.
 - [ ] `tests/action-components.test.tsx` — ACTN-01 through ACTN-03.
-- [ ] `tests/form-auth-components.test.tsx` — FORM-01 through FORM-04 and AUTH-01 through AUTH-02.
+- [ ] `tests/form-components.test.tsx` — FORM-01 through FORM-04.
+- [ ] `tests/authentication-components.test.tsx` — AUTH-01 through AUTH-02.
 - [ ] `tests/navigation-components.test.tsx` — NAVG-01 through NAVG-04.
 - [ ] `tests/phase3-story-contracts.test.tsx` — taxonomy, titles, bounded controls, provenance, and retained-record coverage.
 - [ ] Phase 3 verification record/validator and `verify:phase3` script analogous to Phase 2.

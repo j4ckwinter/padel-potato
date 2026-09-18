@@ -451,17 +451,17 @@ The exact title is required by UI-SPEC and Storybook's official CSF/Controls doc
 |---|-------|---------|---------------|
 | — | None. Recommendations are grounded in the approved context/UI contract, opened repository files, local revision-296 inspection, or cited official documentation. | — | — |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Profile App Header overflow discrepancy**
    - What we know: UI-SPEC generically mentions an overflow callback, but the active revision-296 Profile record's `Right action` parent is hidden.
    - What's unclear: whether a later design intent expected overflow despite the committed source visibility.
-   - Recommendation: implement the source-faithful no-action Profile configuration and record the observation; add overflow only through an approved deviation/source update.
+   - Resolution: implement the source-faithful no-action Profile configuration under revision 296 and record the observation; add overflow only through an approved deviation/source update.
 
 2. **Native evidence remains intentionally incomplete**
    - What we know: Windows can run Android/web locally; authoritative iOS/Android comparison and AT review are Phase 5.
    - What's unclear: the eventual iOS device/macOS runner route remains a project concern.
-   - Recommendation: make Phase 3 verification explicitly host/web-only and carry the native checkpoint forward without blocking implementation.
+   - Resolution: Phase 3 verification is explicitly host/web-only. Authoritative iOS/Android visual and assistive-technology evidence remains deferred to Phase 5 and does not block Phase 3 implementation.
 
 ## Environment Availability
 
