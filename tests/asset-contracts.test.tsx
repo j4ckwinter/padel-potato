@@ -59,6 +59,11 @@ describe('Penpot asset evidence', () => {
 
   test('retains both authored lockup ratios and local reference evidence', () => {
     const manifest = JSON.parse(fs.readFileSync(path.join(root, 'design-spec/assets/penpot-assets.json'), 'utf8'));
+    expect(manifest.observation).toEqual(expect.objectContaining({
+      observedAt: '2026-09-18T14:36:23+01:00',
+      path: 'design-spec/assets/penpot-live-observation.json',
+      sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+    }));
     expect(manifest.brands.map((brand: { name: string }) => brand.name)).toEqual(['brand-lockup', 'brand-lockup-stacked']);
     expect(manifest.brands.map((brand: { width: number; height: number }) => [brand.width, brand.height])).toEqual([[300, 72], [300, 56]]);
     for (const brand of manifest.brands) {
@@ -92,6 +97,7 @@ describe('Penpot asset evidence', () => {
     const profile = fs.readFileSync(path.join(root, 'scripts/penpot-svg-profile.mjs'), 'utf8');
 
     expect(exporter).toContain('normalizeRawSvg(raw.toString');
+    expect(exporter).toContain('loadValidatedObservation');
     expect(exporter).toContain('normalized bytes are not the deterministic paint-only transform');
     expect(profile).toContain('source-node attribute changed');
     expect(profile).toContain('unsupported authored paint');
@@ -103,6 +109,8 @@ describe('Penpot asset evidence', () => {
     expect(validator).toContain('PNG with corrupt compressed IDAT');
     expect(validator).toContain('indexed PNG without PLTE');
     expect(validator).toContain('indexed-colour PNG requires PLTE before IDAT');
+    expect(validator).toContain("expectObservationFailure('timestamp'");
+    expect(validator).toContain("expectObservationFailure('source identity'");
   });
 });
 

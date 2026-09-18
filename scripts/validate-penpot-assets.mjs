@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import zlib from 'node:zlib';
 import { BRAND_SOURCES, FILE_ID, ICON_SOURCES, PAGE_ID, REVISION, generateAssetOutputs } from './export-penpot-assets.mjs';
 import { normalizeRawSvg, parseSvgProfile } from './penpot-svg-profile.mjs';
+import { loadValidatedObservation, validateLiveObservation } from './penpot-live-observation.mjs';
 
 const SHA = /^[a-f0-9]{64}$/;
 const sha256 = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -205,6 +206,12 @@ export function validateAssetEvidence({ manifest, repoRoot }) {
   assert(manifest.fileId === FILE_ID, 'wrong file identity');
   assert(manifest.pageId === PAGE_ID, 'wrong page identity');
   assert(manifest.revision === REVISION, 'wrong source revision');
+  const expectedSources = [
+    ...ICON_SOURCES.map(([name, , sourceId, sourceNodeId]) => ({ kind: 'icon', name, sourceId, sourceNodeId })),
+    ...BRAND_SOURCES.map(([name, , sourceId, sourceNodeId]) => ({ kind: 'brand', name, sourceId, sourceNodeId })),
+  ];
+  const observation = loadValidatedObservation({ repoRoot, expectedSources });
+  assert(JSON.stringify(manifest.observation) === JSON.stringify(observation), 'manifest is not bound to retained live observation');
   assert(Array.isArray(manifest.icons) && manifest.icons.length === 18, 'icon inventory must contain exactly 18 records');
   assert(Array.isArray(manifest.brands) && manifest.brands.length === 2, 'brand inventory must contain exactly two records');
   assert(JSON.stringify(manifest.icons.map((x) => x.name)) === JSON.stringify(ICON_SOURCES.map((x) => x[0])), 'icon inventory order or names changed');
@@ -256,6 +263,21 @@ function main() {
   const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const manifest = JSON.parse(fs.readFileSync(path.join(repoRoot, 'design-spec/assets/penpot-assets.json'), 'utf8'));
   validateAssetEvidence({ manifest, repoRoot });
+  const observationPath = path.join(repoRoot, 'design-spec/assets/penpot-live-observation.json');
+  const observationBytes = fs.readFileSync(observationPath);
+  const observation = JSON.parse(observationBytes.toString('utf8'));
+  const expectedSources = [
+    ...ICON_SOURCES.map(([name, , sourceId, sourceNodeId]) => ({ kind: 'icon', name, sourceId, sourceNodeId })),
+    ...BRAND_SOURCES.map(([name, , sourceId, sourceNodeId]) => ({ kind: 'brand', name, sourceId, sourceNodeId })),
+  ];
+  const expectObservationFailure = (label, mutate) => {
+    const copy = structuredClone(observation); mutate(copy); let error;
+    try { validateLiveObservation({ observation: copy, observationBytes: Buffer.from(JSON.stringify(copy)), repoRoot, expectedSources }); } catch (caught) { error = caught; }
+    assert(error, `controlled live-observation rejection did not fail: ${label}`);
+  };
+  expectObservationFailure('timestamp', (copy) => { copy.observedAt = '2026-09-18T14:36:24+01:00'; });
+  expectObservationFailure('source identity', (copy) => { copy.sources[0].sourceId = 'spoofed'; });
+  expectObservationFailure('execution source', (copy) => { copy.timestampBasis.path = 'untrusted.md'; });
   expectFailure('revision', manifest, repoRoot, (copy) => { copy.revision = 291; });
   expectFailure('page', manifest, repoRoot, (copy) => { copy.pageId = '../outside'; });
   expectFailure('duplicate', manifest, repoRoot, (copy) => { copy.icons[1].name = copy.icons[0].name; });
@@ -332,7 +354,7 @@ function main() {
   const regenerated = generateAssetOutputs({ repoRoot, write: false });
   assert(regenerated.manifestText === `${JSON.stringify(manifest, null, 2)}\n`, 'manifest regeneration is not byte-identical');
   assert(regenerated.registryText === fs.readFileSync(path.join(repoRoot, 'src/design-system/assets/generated/iconRegistry.ts'), 'utf8'), 'registry regeneration is not byte-identical');
-  console.log('Penpot assets valid: 18 icons, 2 brand lockups; controlled rejections and deterministic regeneration passed');
+  console.log('Penpot assets valid: retained live observation, 18 icons, 2 brand lockups; controlled rejections and deterministic regeneration passed');
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeRawSvg } from './penpot-svg-profile.mjs';
+import { loadValidatedObservation } from './penpot-live-observation.mjs';
 
 export const FILE_ID = 'c514c1fb-1cda-8125-8008-a606253a77a3';
 export const PAGE_ID = '482a7222-5a3b-8086-8008-a6073072bbb1';
@@ -78,10 +79,15 @@ function registrySource(root, icons) {
 
 export function generateAssetOutputs({ repoRoot, write = true } = {}) {
   const root = repoRoot ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const expectedSources = [
+    ...ICON_SOURCES.map(([name, , sourceId, sourceNodeId]) => ({ kind: 'icon', name, sourceId, sourceNodeId })),
+    ...BRAND_SOURCES.map(([name, , sourceId, sourceNodeId]) => ({ kind: 'brand', name, sourceId, sourceNodeId })),
+  ];
+  const observation = loadValidatedObservation({ repoRoot: root, expectedSources });
   const icons = ICON_SOURCES.map((entry) => iconRecord(root, entry));
   const brands = BRAND_SOURCES.map((entry) => brandRecord(root, entry));
   const manifest = { schemaVersion: 1, generatorVersion: GENERATOR_VERSION, fileId: FILE_ID, pageId: PAGE_ID,
-    pageName: '02 Components', revision: REVISION, sourceTool: 'Penpot MCP Plugin API 2.18.0', icons, brands };
+    pageName: '02 Components', revision: REVISION, sourceTool: 'Penpot MCP Plugin API 2.18.0', observation, icons, brands };
   const manifestText = `${JSON.stringify(manifest, null, 2)}\n`;
   const registryText = registrySource(root, icons);
   if (write) {
