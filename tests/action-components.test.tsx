@@ -450,9 +450,9 @@ describe('Favourite source and controlled contract', () => {
     expect(onCheckedChange).toHaveBeenCalledTimes(1);
     expect(onCheckedChange).toHaveBeenCalledWith(true);
     expect(subject.props.accessibilityState).toEqual(expect.objectContaining({ checked: false }));
-    expect(screen.queryByTestId('favourite-selected-fill')).toBeNull();
+    expect(screen.queryByTestId('favourite-selected-fill', { includeHiddenElements: true })).toBeNull();
 
-    screen.rerender(
+    await screen.rerender(
       <Favourite
         accessibilityLabel="Add Alex to favourites"
         checked
@@ -463,8 +463,8 @@ describe('Favourite source and controlled contract', () => {
       checked: true,
       name: 'Add Alex to favourites',
     })).toBeTruthy();
-    expect(screen.getByTestId('favourite-selected-fill')).toBeTruthy();
-    expect(screen.getByTestId('phase3-artwork-heart')).toBeTruthy();
+    expect(screen.getByTestId('favourite-selected-fill', { includeHiddenElements: true })).toBeTruthy();
+    expect(screen.getByTestId('phase3-artwork-heart', { includeHiddenElements: true })).toBeTruthy();
     expect(screen.queryAllByRole('image')).toHaveLength(0);
   });
 
