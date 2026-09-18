@@ -5,6 +5,16 @@ import {
   FoundationGallery,
   type FoundationCategory,
 } from '../src/design-system/foundations/FoundationGallery';
+import galleryMeta, {
+  AllFoundations,
+  Borders,
+  Colors,
+  Dimensions,
+  Opacity,
+  Radii,
+  Spacing,
+  Typography,
+} from '../src/design-system/foundations/FoundationGallery.stories';
 import {
   borders,
   colors,
@@ -64,5 +74,48 @@ describe('FoundationGallery', () => {
     expect(() =>
       FoundationGallery({ category: '' as FoundationCategory }),
     ).toThrow('Unsupported foundation category: ""');
+  });
+});
+
+describe('Foundations/Overview stories', () => {
+  const stories = {
+    AllFoundations,
+    Colors,
+    Typography,
+    Spacing,
+    Radii,
+    Dimensions,
+    Borders,
+    Opacity,
+  };
+
+  it('publishes the stable taxonomy and all eight named stories', () => {
+    expect(galleryMeta.title).toBe('Foundations/Overview');
+    expect(Object.keys(stories)).toEqual([
+      'AllFoundations',
+      'Colors',
+      'Typography',
+      'Spacing',
+      'Radii',
+      'Dimensions',
+      'Borders',
+      'Opacity',
+    ]);
+  });
+
+  it.each(Object.entries(stories))(
+    'renders the non-empty %s story through bounded gallery args',
+    async (_name, story) => {
+      const screen = await render(<FoundationGallery {...story.args} />);
+
+      expect(screen.getByText('Padel Potato Foundations')).toBeVisible();
+      expect(screen.getAllByTestId(/^foundation-token-/).length).toBeGreaterThan(0);
+    },
+  );
+
+  it('accounts for all 45 authored manifest records in aggregate', async () => {
+    const screen = await render(<FoundationGallery {...AllFoundations.args} />);
+
+    expect(screen.getAllByTestId(/^foundation-token-/)).toHaveLength(45);
   });
 });
