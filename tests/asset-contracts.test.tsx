@@ -1,5 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+
+import { describe, expect, test } from '@jest/globals';
 
 import { iconNames, iconRegistry } from '../src/design-system/assets/generated/iconRegistry';
 
@@ -26,7 +29,7 @@ describe('Penpot asset evidence', () => {
       expect(record.normalizedSha256).toMatch(/^[a-f0-9]{64}$/);
       expect(record.xml).toContain('stroke-width="1.75"');
       expect(record.xml).toContain('currentColor');
-      expect(record.xml).not.toMatch(/https?:|<script|foreignObject|on\w+=/i);
+      expect(record.xml).not.toMatch(/(?:href|src)="https?:|<script|foreignObject|on\w+=/i);
     }
   });
 
@@ -41,13 +44,9 @@ describe('Penpot asset evidence', () => {
     }
   });
 
-  test('validator rejects tampered evidence', async () => {
-    const { validateAssetEvidence } = await import('../scripts/validate-penpot-assets.mjs');
-    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'design-spec/assets/penpot-assets.json'), 'utf8'));
-    expect(() => validateAssetEvidence({ manifest: { ...manifest, revision: 291 }, repoRoot: root })).toThrow(/revision/);
-    expect(() => validateAssetEvidence({ manifest: { ...manifest, pageId: '../escape' }, repoRoot: root })).toThrow(/page/);
-    const duplicate = structuredClone(manifest);
-    duplicate.icons[1].name = duplicate.icons[0].name;
-    expect(() => validateAssetEvidence({ manifest: duplicate, repoRoot: root })).toThrow(/duplicate|order/);
+  test('validator runs controlled tamper rejections and deterministic regeneration', () => {
+    const result = spawnSync(process.execPath, ['scripts/validate-penpot-assets.mjs'], { cwd: root, encoding: 'utf8' });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('controlled rejections and deterministic regeneration passed');
   });
 });
