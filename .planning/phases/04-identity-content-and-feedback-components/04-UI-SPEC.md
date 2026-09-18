@@ -157,9 +157,9 @@ Visible fixture copy comes from revision 296. Callers may replace content-bearin
 
 | Element | Copy |
 |---------|------|
-| No games Empty State | Heading `No games`; retain this tuple's revision-296 supporting line; authored next action `Get started`, exposed semantically as `Create game` |
-| No notifications Empty State | Heading `No notifications`; retain this tuple's revision-296 informational supporting line; no action is authored or rendered |
-| No players Empty State | Heading `No players`; retain this tuple's revision-296 supporting line; authored next action `Get started`, exposed semantically as `Invite players` |
+| No games Empty State | Heading `No games`; supporting sentence `There’s nothing here yet.`; authored next action `Get started`, exposed semantically as `Create game` |
+| No notifications Empty State | Heading `No notifications`; supporting sentence `There’s nothing here yet.`; no action is authored or rendered |
+| No players Empty State | Heading `No players`; supporting sentence `There’s nothing here yet.`; authored next action `Get started`, exposed semantically as `Invite players` |
 | Avatar Picker empty action | `Add a profile photo` |
 | Avatar Picker selected action | `Change profile photo` |
 | Avatar Picker error | `Choose a JPG or PNG under 5 MB` |
@@ -170,7 +170,7 @@ Visible fixture copy comes from revision 296. Callers may replace content-bearin
 | Unsupported tuple diagnostic | `Unsupported {family} configuration: {tuple}. Supported configurations: {list}.` |
 | Destructive action | `Sign out` — invoke the supplied destructive callback only; no confirmation dialog/copy is authored in this milestone, so do not invent one |
 
-Source-authored compact labels map to branch-specific action names and callbacks: Game Card `View` → `View game`, Game Card `Results` → `View results`, Illustrated Card `View` → `View game`, Illustrated Card `Results` → `View results`, Illustrated Card `Invite` → `Invite players`, and Illustrated Card `Share` → `Share game`. The compact visible word remains source-faithful where the 352-point layout requires it; the full verb+noun string is the accessible name, callback intent, story action label, and test expectation. Progress labels remain exactly `Step 1 of 3`, `Step 2 of 3`, `Step 3 of 3`, and `Setup complete`.
+Source-constrained compact CTA exception: the visible single-word labels `View`, `Results`, `Invite`, and `Share` remain exactly as authored because expanding them would violate revision-296 fidelity and the fixed 352-point layout. They map to branch-specific full names and callbacks: Game Card `View` → `View game`, Game Card `Results` → `View results`, Illustrated Card `View` → `View game`, Illustrated Card `Results` → `View results`, Illustrated Card `Invite` → `Invite players`, and Illustrated Card `Share` → `Share game`. The full verb+noun string is the accessible name, callback intent, story action label, and test expectation. Progress labels remain exactly `Step 1 of 3`, `Step 2 of 3`, `Step 3 of 3`, and `Setup complete`.
 
 ---
 
