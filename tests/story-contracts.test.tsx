@@ -182,6 +182,11 @@ describe('Phase 2 Storybook contract', () => {
     expect(states.getByText('Loading')).toBeDisabled();
     await states.unmount();
 
+    expect(Object.prototype.hasOwnProperty.call(PressableInteractive.args ?? {}, 'onPress')).toBe(false);
+    const defaults = await renderStory(PressableInteractive);
+    expect(defaults.getByRole('button', { name: 'Activate example' })).toBeVisible();
+    await defaults.unmount();
+
     const onPress = jest.fn();
     const interactive = await renderStory(PressableInteractive, { onPress });
     const action = interactive.getByRole('button', { name: 'Activate example' });

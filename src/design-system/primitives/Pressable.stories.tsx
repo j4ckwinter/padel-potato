@@ -91,7 +91,6 @@ export const Boundaries: Story = {
 };
 
 export const Interactive: Story = {
-  args: { onPress: () => undefined },
   render: (args) => (
     <Pressable
       accessibilityLabel="Activate example"
