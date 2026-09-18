@@ -27,7 +27,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Canonical: Story = {
   args: {
-    accessibilityLabel: 'Add Alex to favourites',
+    accessibilityLabel: 'Alex favourite',
     checked: false,
     onCheckedChange: () => undefined,
   },
@@ -43,7 +43,7 @@ export const Canonical: Story = {
 
 export const Variants: Story = {
   args: {
-    accessibilityLabel: 'Add Alex to favourites',
+    accessibilityLabel: 'Alex favourite',
     checked: false,
     onCheckedChange: () => undefined,
   },
@@ -52,7 +52,7 @@ export const Variants: Story = {
       {favouriteRecords.map((record) => (
         <Fragment key={record.id}>
           <Favourite
-            accessibilityLabel={`${record.normalizedTuple.checked ? 'Remove Alex from' : 'Add Alex to'} favourites`}
+            accessibilityLabel="Alex favourite"
             checked={record.normalizedTuple.checked}
             onCheckedChange={() => undefined}
           />
@@ -67,22 +67,22 @@ export const Variants: Story = {
 
 export const States: Story = {
   args: {
-    accessibilityLabel: 'Add Alex to favourites',
+    accessibilityLabel: 'Alex favourite',
     checked: false,
     onCheckedChange: () => undefined,
   },
   render: () => (
     <Inline gap="space8">
-      <Favourite accessibilityLabel="Add Alex to favourites" checked={false} onCheckedChange={() => undefined} />
-      <Favourite accessibilityLabel="Remove Alex from favourites" checked onCheckedChange={() => undefined} />
-      <Favourite accessibilityLabel="Favourite unavailable" checked={false} disabled onCheckedChange={() => undefined} />
+      <Favourite accessibilityLabel="Alex favourite" checked={false} onCheckedChange={() => undefined} />
+      <Favourite accessibilityLabel="Alex favourite" checked onCheckedChange={() => undefined} />
+      <Favourite accessibilityLabel="Alex favourite" checked={false} disabled onCheckedChange={() => undefined} />
     </Inline>
   ),
 };
 
 export const Boundaries: Story = {
   args: {
-    accessibilityLabel: 'Add Alex to favourites',
+    accessibilityLabel: 'Alex favourite',
     checked: false,
     onCheckedChange: () => undefined,
   },
@@ -112,7 +112,7 @@ function InteractiveHarness({ onCheckedChange }: Pick<FavouriteProps, 'onChecked
   return (
     <Stack gap="space8">
       <Favourite
-        accessibilityLabel="Add Alex to favourites"
+        accessibilityLabel="Alex favourite"
         checked={checked}
         onCheckedChange={(next) => {
           setChecked(next);
@@ -126,7 +126,7 @@ function InteractiveHarness({ onCheckedChange }: Pick<FavouriteProps, 'onChecked
 
 export const Interactive: Story = {
   args: {
-    accessibilityLabel: 'Add Alex to favourites',
+    accessibilityLabel: 'Alex favourite',
     checked: false,
     onCheckedChange: () => undefined,
   },

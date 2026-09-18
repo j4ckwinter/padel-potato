@@ -13,6 +13,7 @@ import IconButtonStories, {
 } from '../src/design-system/components/actions/IconButton.stories';
 import FavouriteStories, {
   Boundaries as FavouriteBoundaries,
+  Interactive as FavouriteInteractive,
   Variants as FavouriteVariants,
 } from '../src/design-system/components/actions/Favourite.stories';
 import {
@@ -577,5 +578,20 @@ describe('Favourite Storybook and action barrel contract', () => {
     const boundaries = FavouriteBoundaries.render?.({} as never, {} as never) as React.ReactElement;
     expect(JSON.stringify(boundaries)).toContain('200%');
     expect(JSON.stringify(boundaries)).toContain('44-point');
+  });
+
+  it('keeps the interactive story accessible name stable when checked changes', async () => {
+    const story = FavouriteInteractive.render?.({
+      accessibilityLabel: 'Alex favourite',
+      checked: false,
+      onCheckedChange: jest.fn(),
+    }, {} as never) as React.ReactElement;
+    const screen = await render(story);
+    const unchecked = screen.getByRole('checkbox', { checked: false, name: 'Alex favourite' });
+
+    await userEvent.setup().press(unchecked);
+
+    expect(screen.getByRole('checkbox', { checked: true, name: 'Alex favourite' })).toBeTruthy();
+    expect(screen.queryByRole('checkbox', { name: /add|remove/iu })).toBeNull();
   });
 });
