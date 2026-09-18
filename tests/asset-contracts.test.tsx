@@ -6,7 +6,9 @@ import { describe, expect, test } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { SvgXml } from 'react-native-svg';
 
+import { Icon } from '../src/design-system/assets/Icon';
 import { iconNames, iconRegistry } from '../src/design-system/assets/generated/iconRegistry';
+import { colors, dimensions } from '../src/design-system/tokens';
 
 const expectedIconNames = [
   'add', 'back', 'calendar', 'check', 'chevron', 'clock', 'close', 'court', 'eye',
@@ -59,5 +61,69 @@ describe('Penpot asset evidence', () => {
     const result = spawnSync(process.execPath, ['scripts/validate-penpot-assets.mjs'], { cwd: root, encoding: 'utf8' });
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('controlled rejections and deterministic regeneration passed');
+  });
+});
+
+describe('Icon asset contract', () => {
+  test.each(expectedIconNames)(
+    'renders %s from the source-ordered local registry with exact token paint',
+    async (name) => {
+      const { getByTestId, unmount } = await render(
+        <Icon testID={`${name}-icon`} name={name} color="accent" size="iconSize20" />,
+      );
+      const icon = getByTestId(`${name}-icon`);
+
+      expect(icon).toHaveProp('xml', iconRegistry[name].xml);
+      expect(icon).toHaveProp('color', colors.accent);
+      expect(icon).toHaveProp('width', dimensions.iconSize20);
+      expect(icon).toHaveProp('height', dimensions.iconSize20);
+      await unmount();
+    },
+  );
+
+  test('is decorative by default and becomes an image only with an explicit label', async () => {
+    const decorative = await render(<Icon testID="decorative-icon" name="home" />);
+    expect(decorative.queryByRole('image')).toBeNull();
+    expect(decorative.getByTestId('decorative-icon')).toHaveProp(
+      'importantForAccessibility',
+      'no-hide-descendants',
+    );
+    await decorative.unmount();
+
+    const label = 'Next court — 球場';
+    const labelled = await render(<Icon name="court" accessibilityLabel={label} />);
+    expect(labelled.getByRole('image', { name: label })).toBeTruthy();
+    await labelled.unmount();
+  });
+
+  test.each([
+    [{ name: 'missing' }, /Unsupported design-system value: missing\. Supported values:/u],
+    [{ name: null }, /Unsupported design-system value: null\. Supported values:/u],
+    [{ name: 'home', color: 'magenta' }, /Unsupported design-system value: magenta\. Supported values:/u],
+    [{ name: 'home', color: null }, /Unsupported design-system value: null\. Supported values:/u],
+    [{ name: 'home', size: 'controlHeight40' }, /Unsupported design-system value: controlHeight40\. Supported values: iconSize20/u],
+    [{ name: 'home', style: { width: 40 } }, /Unsupported design-system value: style\. Supported values:/u],
+    [{ name: 'home', width: 40 }, /Unsupported design-system value: width\. Supported values:/u],
+    [{ name: 'home', xml: '<svg />' }, /Unsupported design-system value: xml\. Supported values:/u],
+  ] as const)(
+    'rejects unsupported runtime input %# instead of falling back',
+    async (props, message) => {
+      await expect(render(<Icon {...(props as never)} />)).rejects.toThrow(message);
+    },
+  );
+
+  test('keeps every name bound to its own immutable registry record', () => {
+    expect(new Set(iconNames.map((name) => iconRegistry[name])).size).toBe(iconNames.length);
+    for (const name of iconNames) {
+      expect(iconRegistry[name].name).toBe(name);
+    }
+  });
+
+  test('has no Penpot, network, evidence-manifest, or remote asset runtime path', () => {
+    const source = fs.readFileSync(
+      path.join(root, 'src/design-system/assets/Icon.tsx'),
+      'utf8',
+    );
+    expect(source).not.toMatch(/https?:|fetch\(|XMLHttpRequest|penpot-assets\.json|design-spec/u);
   });
 });
