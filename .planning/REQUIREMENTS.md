@@ -34,8 +34,8 @@
 
 - [x] **PRIM-01**: Developer can build components from token-backed text, layout, surface, and icon primitives.
 - [ ] **PRIM-02**: Interactive primitives provide consistent press, disabled, loading, focus, and accessibility behavior.
-- [ ] **PRIM-03**: Developer can use both Penpot brand lockups as reusable assets.
-- [ ] **PRIM-04**: Developer can use the complete Penpot icon set through a consistent typed interface.
+- [x] **PRIM-03**: Developer can use both Penpot brand lockups as reusable assets.
+- [x] **PRIM-04**: Developer can use the complete Penpot icon set through a consistent typed interface.
 
 ### Actions and Forms
 
@@ -147,8 +147,8 @@
 | FNDT-05 | Phase 1 | Complete |
 | FNDT-06 | Phase 1 | Complete |
 | PRIM-01 | Phase 2 | Complete |
-| PRIM-03 | Phase 2 | Pending |
-| PRIM-04 | Phase 2 | Pending |
+| PRIM-03 | Phase 2 | Complete |
+| PRIM-04 | Phase 2 | Complete |
 | PRIM-02 | Phase 2 | Pending |
 | QUAL-01 | Phase 2 | Complete |
 | QUAL-02 | Phase 2 | Pending |

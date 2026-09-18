@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 02
 current_phase_name: Primitives, Assets, and Component Contracts
 status: executing
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-09-18T12:57:15.754Z"
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-09-18T13:37:17.152Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 02 execution started
-state_head: 2ed1abfa2fb811d65b8ff2d8c8d78905574d88fd
+state_head: 06fce1c8045d8d6a0da1ef4b6a6bc5c1f9e738a0
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 12
-  completed_plans: 8
+  completed_plans: 9
   percent: 20
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 02 (Primitives, Assets, and Component Contracts) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 02 execution started
 
@@ -65,6 +65,7 @@ Progress: [██░░░░░░░░] 20%
 | Phase 01 P06 | 6m | 2 tasks | 3 files |
 | Phase 01 P07 | 75m | 3 tasks | 7 files |
 | Phase 02 P02 | 8min | 3 tasks | 8 files |
+| Phase 02 P01 | 21min | 3 tasks | 47 files |
 
 ## Accumulated Context
 
@@ -97,6 +98,7 @@ Recent decisions affecting current work:
 - [Phase 02]: Phase 02-02: Primitive style escape hatches are Pick-based layout-only corrections with flattened runtime rejection in development and tests.
 - [Phase 02]: Phase 02-02: Stack and Inline default to space16 gap; Surface defaults to surface and space16 padding; all visual overrides remain closed tokens.
 - [Phase 02]: Phase 02-02: Presentational primitives pass native accessibility props and content through without inferred roles, normalization, or scaling caps.
+- [Phase 02]: Phase 2 assets serialize exact icon geometry from the live Penpot Plugin API and retain remote-image lockups as local authored PNG evidence.
 
 ### Pending Todos
 
@@ -120,6 +122,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-18T12:57:15.628Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-09-18T13:37:17.021Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
