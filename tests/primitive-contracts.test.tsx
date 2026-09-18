@@ -1,7 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text as NativeText } from 'react-native';
 
+import {
+  Inline,
+  type InlineProps,
+} from '../src/design-system/primitives/Inline';
+import { Stack, type StackProps } from '../src/design-system/primitives/Stack';
 import {
   Text as DesignText,
   type TextProps as DesignTextProps,
@@ -9,6 +14,8 @@ import {
 import {
   colors,
   type ColorToken,
+  spacing,
+  type SpacingToken,
   typography,
   type TypographyToken,
 } from '../src/design-system/tokens';
@@ -147,5 +154,152 @@ describe('Text primitive', () => {
     expect(subject.props.accessibilityRole).toBe('header');
     expect(subject.props.allowFontScaling).not.toBe(false);
     expect(subject.props.maxFontSizeMultiplier).toBeUndefined();
+  });
+});
+
+describe.each([
+  ['Stack', Stack, 'column'],
+  ['Inline', Inline, 'row'],
+] as const)('%s layout primitive', (_name, Component, direction) => {
+  it.each(Object.keys(spacing) as SpacingToken[])(
+    'resolves the complete %s spacing token exactly',
+    async (token) => {
+      const screen = await render(
+        <Component gap={token} padding={token} testID="subject" />,
+      );
+
+      expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+        expect.objectContaining({
+          flexDirection: direction,
+          gap: spacing[token],
+          padding: spacing[token],
+        }),
+      );
+    },
+  );
+
+  it('rejects unsupported and null spacing names', () => {
+    expect(() =>
+      Component({ gap: 'space48' as SpacingToken }),
+    ).toThrow(/Unsupported design-system value: space48\. Supported values:/u);
+    expect(() =>
+      Component({ padding: null as unknown as SpacingToken }),
+    ).toThrow(/Unsupported design-system value: null\. Supported values:/u);
+  });
+
+  it.each([
+    'alignItems',
+    'flexDirection',
+    'gap',
+    'justifyContent',
+    'padding',
+    'paddingBottom',
+    'paddingEnd',
+    'paddingHorizontal',
+    'paddingLeft',
+    'paddingRight',
+    'paddingStart',
+    'paddingTop',
+    'paddingVertical',
+  ] as const)('rejects the reserved %s layout style key', (reservedKey) => {
+    const registered = StyleSheet.create({
+      protected: { [reservedKey]: 999 },
+    });
+
+    expect(() =>
+      Component({
+        style: [{ width: 100 }, registered.protected] as StackProps['style'],
+      } as StackProps & InlineProps),
+    ).toThrow(
+      new RegExp(
+        `Unsupported design-system value: ${reservedKey}\\. Supported values:`,
+        'u',
+      ),
+    );
+  });
+
+  it('keeps owned layout invariant while preserving allowed caller layout', async () => {
+    const screen = await render(
+      <Component
+        align="center"
+        gap="space20"
+        justify="spaceBetween"
+        padding="space12"
+        style={{ marginTop: 8, width: 200 }}
+        testID="subject"
+      />,
+    );
+
+    expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+      expect.objectContaining({
+        alignItems: 'center',
+        flexDirection: direction,
+        gap: 20,
+        justifyContent: 'space-between',
+        marginTop: 8,
+        padding: 12,
+        width: 200,
+      }),
+    );
+  });
+
+  it('preserves zero, one, many, null, equal, and adjacent children in React order', async () => {
+    const empty = await render(<Component testID="empty" />);
+    expect(empty.getByTestId('empty').props.children).toBeUndefined();
+    empty.unmount();
+
+    const screen = await render(
+      <Component testID="subject">
+        <NativeText testID="first">Same</NativeText>
+        {null}
+        <NativeText testID="second">Same</NativeText>
+        <NativeText testID="third">Third</NativeText>
+      </Component>,
+    );
+
+    expect(screen.getAllByText('Same')).toHaveLength(2);
+    expect(
+      screen.getByTestId('subject').props.children.map(
+        (child: React.ReactElement | null) => child?.props.testID ?? null,
+      ),
+    ).toEqual(['first', null, 'second', 'third']);
+  });
+
+  it('passes caller accessibility props through without inventing a role', async () => {
+    const unlabelled = await render(<Component testID="unlabelled" />);
+    expect(unlabelled.getByTestId('unlabelled').props.accessibilityRole).toBeUndefined();
+    unlabelled.unmount();
+
+    const labelled = await render(
+      <Component
+        accessibilityLabel="Player summary"
+        accessibilityRole="summary"
+        testID="labelled"
+      />,
+    );
+    expect(labelled.getByTestId('labelled').props.accessibilityLabel).toBe(
+      'Player summary',
+    );
+    expect(labelled.getByTestId('labelled').props.accessibilityRole).toBe('summary');
+  });
+});
+
+describe('Inline wrap boundary', () => {
+  it.each([
+    [true, 'wrap'],
+    [false, 'nowrap'],
+  ] as const)('maps %s to %s without changing row direction', async (wrap, expected) => {
+    const screen = await render(
+      <Inline testID="subject" wrap={wrap} />,
+    );
+    expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+      expect.objectContaining({ flexDirection: 'row', flexWrap: expected }),
+    );
+  });
+
+  it('rejects a non-boolean runtime wrap value', () => {
+    expect(() => Inline({ wrap: 'wrap' as unknown as boolean })).toThrow(
+      /Unsupported design-system value: wrap\. Supported values: true, false/u,
+    );
   });
 });
