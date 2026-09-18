@@ -14,6 +14,16 @@ import {
   type SocialSignInButtonProps,
   type SocialSignInProvider,
 } from '../src/design-system/components/authentication/SocialSignInButton';
+import AuthDividerStories, {
+  Boundaries as AuthDividerBoundaries,
+  Variants as AuthDividerVariants,
+  authDividerStoryApplicability,
+} from '../src/design-system/components/authentication/AuthDivider.stories';
+import {
+  AuthDivider,
+  type AuthDividerProps,
+} from '../src/design-system/components/authentication/AuthDivider';
+import * as authentication from '../src/design-system/components/authentication';
 import { phase3Families } from '../src/design-system/components/sourceRegistry';
 import { colors } from '../src/design-system/tokens';
 
@@ -158,5 +168,101 @@ describe('SocialSignInButton Storybook contract', () => {
     expect(serialized).toContain('200%');
     expect(serialized).toContain('44-point');
     expect(serialized).toContain('fixed provider copy');
+  });
+});
+
+const authDividerRecords = phase3Families[8].records;
+
+describe('AuthDivider source and static contract', () => {
+  it('retains the exact singleton after all eight provider records', () => {
+    expect(phase3Families[8]).toEqual(expect.objectContaining({
+      key: 'authDivider',
+      recordCount: 1,
+      sourceId: '482a7222-5a3b-8086-8008-a61e93b191ff',
+    }));
+    expect(authDividerRecords).toHaveLength(1);
+    expect(authDividerRecords[0]).toEqual(expect.objectContaining({
+      id: '482a7222-5a3b-8086-8008-a61e93b191ff',
+      normalizedTuple: {},
+      originalTuple: {},
+    }));
+    expect([...socialRecords, ...authDividerRecords]).toHaveLength(9);
+  });
+
+  it('renders readable default or custom content at exact geometry with hidden rules', async () => {
+    const screen = await render(<AuthDivider />);
+    const label = screen.getByText('or');
+    const container = screen.getByTestId('auth-divider');
+    const rules = screen.getAllByTestId(/auth-divider-rule/u, { includeHiddenElements: true });
+
+    expect(label).toBeTruthy();
+    expect(flattenedStyle(container.props.style)).toEqual(expect.objectContaining({
+      height: 24,
+      width: 352,
+    }));
+    expect(rules).toHaveLength(2);
+    expect(rules.every((rule) =>
+      rule.props.accessible === false
+      && rule.props.accessibilityElementsHidden === true
+      && rule.props.importantForAccessibility === 'no-hide-descendants',
+    )).toBe(true);
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
+
+    await screen.rerender(<AuthDivider label="or continue with email" />);
+    expect(screen.getByText('or continue with email')).toBeTruthy();
+  });
+
+  it('rejects blank required content and all interaction or state props', () => {
+    expect(() => AuthDivider({ label: '' })).toThrow(
+      /Unsupported design-system value: .*Supported values: non-empty label/u,
+    );
+    expect(() => AuthDivider({ label: '   ' })).toThrow(
+      /Unsupported design-system value: .*Supported values: non-empty label/u,
+    );
+    expect(() => AuthDivider({ onPress: jest.fn() } as unknown as AuthDividerProps)).toThrow(
+      /Unsupported design-system value: onPress/u,
+    );
+    expect(() => AuthDivider({ disabled: true } as unknown as AuthDividerProps)).toThrow(
+      /Unsupported design-system value: disabled/u,
+    );
+  });
+});
+
+describe('Authentication publication and Storybook contract', () => {
+  it('publishes only the two bounded components', () => {
+    expect(Object.keys(authentication).sort()).toEqual([
+      'AuthDivider',
+      'SocialSignInButton',
+    ]);
+  });
+
+  it('publishes exact Auth Divider title, singleton variant, and provenance', () => {
+    expect(AuthDividerStories.title).toBe('Authentication/Auth Divider');
+    expect(AuthDividerStories.argTypes).toEqual({ label: { control: 'text' } });
+    const variants = AuthDividerVariants.render?.({} as never, {} as never) as React.ReactElement<{
+      children: React.ReactNode;
+    }>;
+    expect(Children.toArray(variants.props.children)).toHaveLength(authDividerRecords.length);
+    expect(JSON.stringify(variants)).toContain('482a7222-5a3b-8086-8008-a61e93b191ff');
+  });
+
+  it('marks transient states and interaction explicitly inapplicable with no callback control', () => {
+    expect(authDividerStoryApplicability.States).toEqual(expect.objectContaining({
+      status: 'inapplicable',
+      reason: expect.stringMatching(/static|no authored transient state/iu),
+    }));
+    expect(authDividerStoryApplicability.Interactive).toEqual(expect.objectContaining({
+      status: 'inapplicable',
+      reason: expect.stringMatching(/no callback|no product interaction/iu),
+    }));
+    expect(JSON.stringify(AuthDividerStories.argTypes)).not.toMatch(/action|callback|press/iu);
+  });
+
+  it('discloses empty-content rejection, long-copy, and 200% font-scale boundaries', () => {
+    const boundaries = AuthDividerBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const serialized = JSON.stringify(boundaries);
+    expect(serialized).toContain('blank');
+    expect(serialized).toContain('200%');
+    expect(serialized).toContain('static');
   });
 });
