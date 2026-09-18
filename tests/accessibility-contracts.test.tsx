@@ -4,6 +4,11 @@ import { StyleSheet, Text as NativeText, View } from 'react-native';
 
 import { Icon } from '../src/design-system/assets/Icon';
 import { Pressable } from '../src/design-system/primitives/Pressable';
+import type {
+  PressableLayoutStyle as PublicPressableLayoutStyle,
+  PressableProps as PublicPressableProps,
+  PressableSize as PublicPressableSize,
+} from '../src/design-system/primitives';
 import { Text } from '../src/design-system/primitives/Text';
 import {
   expectAccessibilityState,
@@ -163,6 +168,12 @@ describe('shared accessibility and interaction assertions', () => {
 
 describe('published interaction and long-content host contract', () => {
   it('publishes Pressable by identity while keeping test helpers on a dedicated boundary', () => {
+    const publicSize: PublicPressableSize = 'controlHeight44';
+    const publicStyle: PublicPressableLayoutStyle = { width: 120 };
+    const publicProps: PublicPressableProps = {
+      size: publicSize,
+      style: publicStyle,
+    };
     const primitives = jest.requireActual<
       typeof import('../src/design-system/primitives')
     >('../src/design-system/primitives');
@@ -178,6 +189,10 @@ describe('published interaction and long-content host contract', () => {
     expect(root).not.toHaveProperty('expectRoleAndName');
     expect(testing.expectRoleAndName).toBe(expectRoleAndName);
     expect(testing.expectTouchTargetContract).toBe(expectTouchTargetContract);
+    expect(publicProps).toEqual({
+      size: 'controlHeight44',
+      style: { width: 120 },
+    });
   });
 
   it('keeps long Unicode name, scaling, wrapping host props, and activation observable', async () => {

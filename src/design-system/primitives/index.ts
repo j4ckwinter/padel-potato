@@ -1,5 +1,11 @@
 export { Inline, type InlineProps } from './Inline';
 export {
+  Pressable,
+  type PressableLayoutStyle,
+  type PressableProps,
+  type PressableSize,
+} from './Pressable';
+export {
   Stack,
   type LayoutAlignment,
   type LayoutJustification,
