@@ -1,17 +1,16 @@
 ---
 phase: "02"
 slug: "primitives-assets-and-component-contracts"
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: validated
+nyquist_compliant: true
+wave_0_complete: true
 created: "2026-09-18"
+validated: "2026-09-18"
 ---
 
-# Phase 02 — Validation Strategy
+# Phase 02 — Validation Strategy and Audit Record
 
-> Per-phase validation contract for feedback sampling during execution.
-
----
+> Adversarial validation of every Phase 2 requirement, plan task, and automated verify block against executable behavior. Native visual and assistive-technology acceptance remains explicitly deferred to Phase 5.
 
 ## Test Infrastructure
 
@@ -19,65 +18,81 @@ created: "2026-09-18"
 |----------|-------|
 | **Framework** | `jest-expo 57.0.5` + `@testing-library/react-native 14.0.1` |
 | **Config file** | `package.json` (`preset: jest-expo`) |
-| **Quick run command** | `npm test -- --runInBand <affected-test-file>` |
-| **Full suite command** | `npm run typecheck && npm run lint && npm test -- --runInBand && node scripts/validate-penpot-assets.mjs && npm run storybook:web:smoke` |
-| **Estimated runtime** | ~30 seconds after asset extraction is available |
+| **Focused command** | `npm test -- --runInBand <affected-test-file>` |
+| **Full command** | `npm run typecheck && npm run lint && npm test -- --runInBand && node scripts/validate-penpot-evidence.mjs && node scripts/validate-penpot-assets.mjs && node scripts/validate-toolchain-compatibility.mjs && npm run storybook:web:smoke` |
+| **Observed result** | 10 suites, 294 tests, zero snapshots; all validators and Storybook web smoke green |
 
----
+## Requirement Coverage
 
-## Sampling Rate
-
-- **After every task commit:** Run TypeScript plus the affected test file; asset tasks also run `node scripts/validate-penpot-assets.mjs`.
-- **After every plan wave:** Run `npm run typecheck && npm run lint && npm test -- --runInBand`.
-- **Before `$gsd-verify-work`:** The full suite, asset validator, Storybook web smoke, and evidence reconciliation must be green.
-- **Max feedback latency:** 60 seconds for automated gates; native/manual checks are explicit checkpoints.
-
----
+| Requirement | Observable behavior | Automated evidence | Status |
+|-------------|---------------------|--------------------|--------|
+| PRIM-01 | Text, Stack, Inline, Surface, and Icon resolve exact token-backed values through narrow public APIs. | `tests/primitive-contracts.test.tsx`, `tests/asset-contracts.test.tsx` | green |
+| PRIM-02 | Enabled Pressable activates once; disabled/loading combinations activate zero times with matching semantics, opacity, focus, and target behavior. | `tests/pressable-contract.test.tsx` | green |
+| PRIM-03 | Both local brand lockups preserve exact retained media, accessible identity, and 25:6 / 75:14 ratios. | `tests/asset-contracts.test.tsx`, `tests/story-contracts.test.tsx` | green |
+| PRIM-04 | Exactly 18 source-ordered icons render through one typed local interface; missing, invalid, reordered, or unsafe evidence fails closed. | `node scripts/validate-penpot-assets.mjs`, `tests/asset-contracts.test.tsx` | green |
+| QUAL-01 | Public props are closed over authored token/asset/state unions and cast/runtime violations reject instead of falling back. | Primitive, asset, Pressable, and story contract suites plus `npm run typecheck` | green |
+| QUAL-02 | Every public export is covered by Canonical, Variants, States, Boundaries, and Interactive, or a non-empty inherent-inapplicability reason. | `tests/story-contracts.test.tsx` | green |
+| QUAL-03 | Controls derive from closed registries and only the real Pressable callback is action-enabled. | `tests/story-contracts.test.tsx` | green |
+| QUAL-04 | Interactive semantics, state combinations, activation counts, focus transitions, and blocked behavior are directly exercised. | `tests/pressable-contract.test.tsx`, `tests/accessibility-contracts.test.tsx` | green |
+| QUAL-05 | Roles, labels, values, states, decorative exclusion, and Unicode pass-through are observable in rendered host behavior. | Primitive, asset, Pressable, and accessibility contract suites | green |
+| QUAL-06 | 40/44/48 authored visual sizes declare an effective target of at least 44 points. | `tests/pressable-contract.test.tsx`, `tests/accessibility-contracts.test.tsx` | green (host contract) |
+| QUAL-07 | Long/Unicode text remains uncapped, named, wrappable, queryable, and actionable; native 200% and assistive output remain deferred. | `tests/accessibility-contracts.test.tsx`, `tests/story-contracts.test.tsx` | green host contract; native manual-only |
 
 ## Per-Task Verification Map
 
-| Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
-|---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 02-W0-01 | TBD | 0 | PRIM-03, PRIM-04 | T-02-01, T-02-02 | SVG input and output paths fail closed | evidence/schema | `node scripts/validate-penpot-assets.mjs` | ❌ W0 | ⬜ pending |
-| 02-W0-02 | TBD | 0 | PRIM-01, QUAL-01 | — | Unsupported values and reserved style keys reject | unit/component | `npm test -- --runInBand tests/primitive-contracts.test.tsx` | ❌ W0 | ⬜ pending |
-| 02-W0-03 | TBD | 0 | PRIM-02, QUAL-04, QUAL-06 | T-02-03 | Disabled/loading interaction cannot invoke actions | interaction | `npm test -- --runInBand tests/pressable-contract.test.tsx` | ❌ W0 | ⬜ pending |
-| 02-W0-04 | TBD | 0 | QUAL-02, QUAL-03 | — | Story controls cannot form unsupported combinations | story contract | `npm test -- --runInBand tests/story-contracts.test.tsx` | ❌ W0 | ⬜ pending |
-| 02-W0-05 | TBD | 0 | QUAL-05, QUAL-07 | — | Semantics and large-text behavior remain observable | component/accessibility | `npm test -- --runInBand tests/accessibility-contracts.test.tsx` | ❌ W0 | ⬜ pending |
-| 02-ASSET | TBD | 1+ | PRIM-03, PRIM-04 | T-02-01, T-02-02 | Only the exact 18 icons and two lockups are emitted locally | evidence/component | `node scripts/validate-penpot-assets.mjs && npm test -- --runInBand tests/asset-contracts.test.tsx` | ❌ W0 | ⬜ pending |
-| 02-CLOSE | TBD | final | All Phase 2 IDs | all | Full phase boundary remains source-traced and local | integration | `npm run typecheck && npm run lint && npm test -- --runInBand && node scripts/validate-penpot-assets.mjs && npm run storybook:web:smoke` | partial | ⬜ pending |
+| Task ID | Requirement | Behavioral witness | Automated command | Status |
+|---------|-------------|--------------------|-------------------|--------|
+| 02-01-01 | PRIM-03, PRIM-04, QUAL-01 | Exact Add source identity, authored geometry, paint normalization, local render, hashes, and controlled unsafe/stale rejections. | `node scripts/validate-penpot-assets.mjs && npm test -- --runInBand tests/asset-contracts.test.tsx && npm run typecheck` | green |
+| 02-01-02 | PRIM-03, PRIM-04, QUAL-01 | Exact 18-icon order and two lockups; missing, extra, duplicate, reordered, null/unknown, and ratio drift reject. | `node scripts/validate-penpot-assets.mjs && npm test -- --runInBand tests/asset-contracts.test.tsx && npm run typecheck` | green |
+| 02-01-03 | PRIM-03, PRIM-04, QUAL-01 | SVG/PNG tampering, traversal, altered bytes, malformed structure, palette errors, and nondeterministic generation fail closed. | `node scripts/validate-penpot-assets.mjs && npm test -- --runInBand tests/asset-contracts.test.tsx && npm run lint` | green |
+| 02-02-01 | PRIM-01, QUAL-01, QUAL-05, QUAL-07 | Every typography/color token resolves exactly; reserved styles and invalid tokens reject; empty/Unicode/scaling behavior passes through. | `npm test -- --runInBand tests/primitive-contracts.test.tsx && npm run typecheck` | green |
+| 02-02-02 | PRIM-01, QUAL-01, QUAL-05 | Stack/Inline resolve all spacing, preserve fixed direction and child order/cardinality, and reject owned-style bypasses. | `npm test -- --runInBand tests/primitive-contracts.test.tsx && npm run typecheck` | green |
+| 02-02-03 | PRIM-01, QUAL-01 | Surface resolves exact visual tokens, rejects unsupported semantics, and public barrels preserve identities without exposing guards. | `npm test -- --runInBand tests/primitive-contracts.test.tsx tests/scale-tokens.test.ts tests/color-typography-tokens.test.ts && npm run typecheck && npm run lint` | green |
+| 02-03-01 | PRIM-01, PRIM-04, QUAL-01, QUAL-05 | All 18 icon names render local geometry with exact token paint; decorative/labelled behavior and invalid input rejection are exercised. | `node scripts/validate-penpot-assets.mjs && npm test -- --runInBand tests/asset-contracts.test.tsx && npm run typecheck` | green |
+| 02-03-02 | PRIM-03, QUAL-01, QUAL-05 | Both lockups derive exact ratios, use fixed local artwork, preserve/override accessible names correctly, and reject unsupported overrides. | `node scripts/validate-penpot-assets.mjs && npm test -- --runInBand tests/asset-contracts.test.tsx && npm run typecheck && npm run lint` | green |
+| 02-04-01 | PRIM-02, QUAL-01, QUAL-04, QUAL-05, QUAL-06 | Enabled/disabled/loading combinations, alias precedence, caller state/value preservation, focus/blur, target geometry, and owned-style rejection are exercised. | `npm test -- --runInBand tests/pressable-contract.test.tsx && npm run typecheck` | green |
+| 02-04-02 | QUAL-04, QUAL-05, QUAL-06 | Shared helpers fail on wrong role/name/state, assert exact press counts and target/token behavior, and distinguish decorative from labelled icons. | `npm test -- --runInBand tests/pressable-contract.test.tsx tests/accessibility-contracts.test.tsx && npm run typecheck` | green |
+| 02-04-03 | PRIM-02, QUAL-05, QUAL-07 | Public interaction/testing boundaries and long Unicode constrained content retain scaling, name, state, and action reachability. | `npm test -- --runInBand tests/pressable-contract.test.tsx tests/accessibility-contracts.test.tsx tests/primitive-contracts.test.tsx && npm run typecheck && npm run lint` | green host contract |
+| 02-05-01 | QUAL-02, QUAL-03, QUAL-07 | Exact story taxonomy/grouping, primitive provenance, bounded controls/action, state specimens, and zero/one/many/long-content witnesses render. | `npm test -- --runInBand tests/story-contracts.test.tsx tests/accessibility-contracts.test.tsx && npm run typecheck && npm run lint` | green |
+| 02-05-02 | PRIM-03, PRIM-04, QUAL-02, QUAL-03 | Complete ordered icon gallery, both ratio-preserving lockups, exact provenance, decorative/labelled boundaries, and backstop markers render. | `node scripts/validate-penpot-assets.mjs && npm test -- --runInBand tests/story-contracts.test.tsx tests/asset-contracts.test.tsx tests/accessibility-contracts.test.tsx && npm run typecheck` | green |
+| 02-05-03 | All Phase 2 IDs | Full static, behavioral, evidence, compatibility, and browser catalogue discovery/render path passes without claiming native proof. | Full command above | green automated; native manual-only |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+## Sampling and Wave 0 Disposition
 
----
-
-## Wave 0 Requirements
-
-- [ ] `scripts/validate-penpot-assets.mjs` — failing schema, source, hash, path, and SVG-profile validator before generated assets exist.
-- [ ] `tests/asset-contracts.test.tsx` — icon/lockup inventory, geometry, hashes, ratios, labels, and render contract.
-- [ ] `tests/primitive-contracts.test.tsx` — token resolution, protected style properties, and explicit runtime rejection.
-- [ ] `tests/pressable-contract.test.tsx` — activation suppression, state merge, focus behavior, and 40/44/48 effective-target mapping.
-- [ ] `tests/story-contracts.test.tsx` — taxonomy, grouping, bounded controls/actions, coverage, and explicit inapplicability reasons.
-- [ ] `tests/accessibility-contracts.test.tsx` — reusable role, name, value, state, icon, and large-text assertions.
-- [ ] Active Penpot Components-tab checkpoint before any asset geometry is written.
-
----
+- All Wave 0 artifacts exist and execute: the asset validator plus asset, primitive, Pressable, accessibility, and story contract suites.
+- Every task has a focused automated command and no three-task sampling gap exists.
+- Commands are non-watch, deterministic, and completed well below the 60-second feedback budget in this audit.
+- The active Penpot source checkpoint was execution-time provenance evidence. Current retained bytes are independently hash-, schema-, source-, profile-, and determinism-validated.
 
 ## Manual-Only Verifications
 
-| Behavior | Requirement | Why Manual | Test Instructions |
-|----------|-------------|------------|-------------------|
-| Representative primitive composition at 200% native font scale | QUAL-07 | Jest cannot prove native text measurement, clipping, focus order, or assistive output | On an available physical/remote native route, open the Boundaries story, set 200% font scale, confirm text reflows with no clipped content or unreachable action, and record platform/device/conditions. If no route exists, record the explicit Phase 5 deferral without claiming native proof. |
-| Screen-reader reading order and labelled/decorative icon distinction | QUAL-05, QUAL-07 | Native assistive-technology behavior is not reproduced by the Jest host tree | Enable VoiceOver or TalkBack on the available route, traverse the representative stories, confirm decorative icons are skipped and labelled icons/Pressable expose the intended role, name, value, and states. Otherwise record the Phase 5 deferral. |
+| Behavior | Requirement | Disposition | Phase 5 instructions |
+|----------|-------------|-------------|----------------------|
+| Representative composition at 200% native OS font scale | QUAL-07 | `deferred-to-phase-5` — Jest/web cannot prove native measurement, reflow, clipping, focus order, or reachability. | On real iOS and Android routes, open Boundaries/Interactive stories at 200%, confirm required content reflows without clipping/overlap/loss, and confirm the action remains reachable. Record device, OS, font scale, and capture conditions. |
+| VoiceOver/TalkBack reading and focus order | QUAL-05, QUAL-07 | `deferred-to-phase-5` — host trees do not reproduce native assistive output. | Traverse representative stories with VoiceOver and TalkBack; verify order, names, roles, values, disabled/busy states, decorative icon omission, and labelled icon exposure. |
+| Parent-bound target clipping and overlapping siblings | QUAL-06 | `deferred-to-phase-5` — host props prove declared geometry, not native hit resolution. | Exercise 40/44/48 targets on device, including constrained parents and adjacent controls; verify reliable activation and no unintended overlap. |
 
----
+These items are not automated passes and do not constitute Phase 2 native acceptance.
+
+## Audit Trail
+
+| Date | Audit action | Result |
+|------|--------------|--------|
+| 2026-09-18 | Loaded all five Phase 2 PLANs and SUMMARYs, REQUIREMENTS.md, implementation modules, all ten test files, and the prior validation draft. | 15/15 plan tasks mapped to observable evidence. |
+| 2026-09-18 | Ran TypeScript, Expo lint, and the complete Jest suite. | Pass: 10/10 suites, 294/294 tests, zero snapshots. |
+| 2026-09-18 | Ran foundation evidence, asset evidence, and exact toolchain validators. | Pass: revision-292 foundations; 18 icons and two lockups; controlled rejections and deterministic regeneration; exact 23-package approval. |
+| 2026-09-18 | Ran bounded Expo-web Storybook smoke. | Pass: Storybook entry bundled, discovered, served, and cleaned up. |
+| 2026-09-18 | Adversarial gap review across PRIM-01..04, QUAL-01..07, all task behaviors, verify blocks, and fail conditions. | No automated coverage gaps found; no new tests required. Three native-only checks retained as explicit Phase 5 work. |
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies.
-- [ ] Sampling continuity: no three consecutive tasks without automated verification.
-- [ ] Wave 0 covers all MISSING references.
-- [ ] No watch-mode flags.
-- [ ] Feedback latency is under 60 seconds for automated gates.
-- [ ] `nyquist_compliant: true` is set in frontmatter after validation evidence exists.
+- [x] All 15 tasks have an executable automated verify command.
+- [x] All 11 Phase 2 requirements have behavioral automated evidence within the supported host boundary.
+- [x] Every generated test was executed; 294/294 tests pass.
+- [x] Asset and source-evidence validators fail closed under controlled mutations.
+- [x] Storybook browser discovery/render smoke passes.
+- [x] No watch-mode flags are used.
+- [x] Native 200% font-scale, hit-target clipping, VoiceOver, and TalkBack proof remains manual-only and explicitly deferred to Phase 5.
+- [x] `nyquist_compliant: true` accurately reflects automated Phase 2 coverage without overstating native acceptance.
 
-**Approval:** pending
+**Approval:** validated
