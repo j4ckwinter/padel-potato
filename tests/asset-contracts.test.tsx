@@ -101,6 +101,8 @@ describe('Penpot asset evidence', () => {
     expect(validator).toContain('PNG without IDAT');
     expect(validator).toContain('PNG with IDAT after IEND');
     expect(validator).toContain('PNG with corrupt compressed IDAT');
+    expect(validator).toContain('indexed PNG without PLTE');
+    expect(validator).toContain('indexed-colour PNG requires PLTE before IDAT');
   });
 });
 

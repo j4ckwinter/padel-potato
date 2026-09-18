@@ -32,6 +32,7 @@ export function readPngDimensions(bytes, name = 'PNG') {
   let chunkIndex = 0;
   let ended = false;
   let idatEnded = false;
+  let palette;
   const imageData = [];
   while (offset < bytes.length) {
     assert(bytes.length - offset >= 12, `${name} has a truncated PNG chunk`);
@@ -43,6 +44,8 @@ export function readPngDimensions(bytes, name = 'PNG') {
     const expectedCrc = bytes.readUInt32BE(offset + 8 + length);
     const actualCrc = crc32(bytes.subarray(offset + 4, offset + 8 + length));
     assert(actualCrc === expectedCrc, `${name} has a corrupt ${type} PNG chunk`);
+    const isCritical = type.charCodeAt(0) >= 65 && type.charCodeAt(0) <= 90;
+    assert(!isCritical || ['IHDR', 'PLTE', 'IDAT', 'IEND'].includes(type), `${name} has an unknown critical ${type} PNG chunk`);
     if (chunkIndex === 0) {
       assert(type === 'IHDR' && length === 13, `${name} must begin with a 13-byte IHDR chunk`);
       dimensions = { width: bytes.readUInt32BE(offset + 8), height: bytes.readUInt32BE(offset + 12) };
@@ -57,9 +60,21 @@ export function readPngDimensions(bytes, name = 'PNG') {
     } else {
       assert(type !== 'IHDR', `${name} has a duplicate IHDR chunk`);
     }
+    if (type === 'PLTE') {
+      assert(!palette, `${name} has a duplicate PLTE chunk`);
+      assert(imageData.length === 0, `${name} has a PLTE chunk after IDAT`);
+      assert([2, 3, 6].includes(imageProfile.colorType), `${name} has a forbidden PLTE chunk for its colour type`);
+      assert(length > 0 && length % 3 === 0 && length <= 768, `${name} has an invalid PLTE chunk length`);
+      const entries = length / 3;
+      if (imageProfile.colorType === 3) {
+        assert(entries <= 2 ** imageProfile.bitDepth, `${name} has too many PLTE entries for its indexed bit depth`);
+      }
+      palette = bytes.subarray(offset + 8, offset + 8 + length);
+    }
     if (type === 'IDAT') {
       assert(!idatEnded, `${name} has a non-consecutive IDAT sequence`);
       assert(length > 0, `${name} has an empty IDAT chunk`);
+      assert(imageProfile.colorType !== 3 || palette, `${name} indexed-colour PNG requires PLTE before IDAT`);
       imageData.push(bytes.subarray(offset + 8, offset + 8 + length));
     } else if (imageData.length > 0) {
       idatEnded = true;
@@ -94,8 +109,47 @@ export function readPngDimensions(bytes, name = 'PNG') {
   }
   const rowBytes = Math.ceil((dimensions.width * channels * imageProfile.bitDepth) / 8);
   assert(decoded.length === dimensions.height * (rowBytes + 1), `${name} has invalid decoded image-data length`);
+  const bytesPerPixel = Math.max(1, Math.ceil((channels * imageProfile.bitDepth) / 8));
+  const decodedRows = [];
   for (let row = 0; row < dimensions.height; row += 1) {
-    assert(decoded[row * (rowBytes + 1)] <= 4, `${name} has an invalid PNG row filter`);
+    const rowStart = row * (rowBytes + 1);
+    const filterType = decoded[rowStart];
+    assert(filterType <= 4, `${name} has an invalid PNG row filter`);
+    const reconstructed = Buffer.alloc(rowBytes);
+    const previous = decodedRows[row - 1];
+    for (let column = 0; column < rowBytes; column += 1) {
+      const raw = decoded[rowStart + 1 + column];
+      const left = column >= bytesPerPixel ? reconstructed[column - bytesPerPixel] : 0;
+      const above = previous?.[column] ?? 0;
+      const upperLeft = previous && column >= bytesPerPixel ? previous[column - bytesPerPixel] : 0;
+      let predictor = 0;
+      if (filterType === 1) predictor = left;
+      if (filterType === 2) predictor = above;
+      if (filterType === 3) predictor = Math.floor((left + above) / 2);
+      if (filterType === 4) {
+        const estimate = left + above - upperLeft;
+        const leftDistance = Math.abs(estimate - left);
+        const aboveDistance = Math.abs(estimate - above);
+        const upperLeftDistance = Math.abs(estimate - upperLeft);
+        predictor = leftDistance <= aboveDistance && leftDistance <= upperLeftDistance
+          ? left
+          : aboveDistance <= upperLeftDistance ? above : upperLeft;
+      }
+      reconstructed[column] = (raw + predictor) & 0xff;
+    }
+    decodedRows.push(reconstructed);
+  }
+  if (imageProfile.colorType === 3) {
+    const paletteEntries = palette.length / 3;
+    const mask = (1 << imageProfile.bitDepth) - 1;
+    for (const row of decodedRows) {
+      for (let pixel = 0; pixel < dimensions.width; pixel += 1) {
+        const bitOffset = pixel * imageProfile.bitDepth;
+        const shift = 8 - imageProfile.bitDepth - (bitOffset % 8);
+        const paletteIndex = (row[Math.floor(bitOffset / 8)] >> shift) & mask;
+        assert(paletteIndex < paletteEntries, `${name} has an indexed sample outside its PLTE palette`);
+      }
+    }
   }
   return dimensions;
 }
@@ -250,6 +304,20 @@ function main() {
       safePngChunks[0].bytes,
       encodePngChunk('IDAT', Buffer.from([0, 1, 2, 3])),
       safePngChunks.at(-1).bytes,
+    ]),
+  );
+  const indexedHeader = Buffer.alloc(13);
+  indexedHeader.writeUInt32BE(1, 0);
+  indexedHeader.writeUInt32BE(1, 4);
+  indexedHeader[8] = 8;
+  indexedHeader[9] = 3;
+  expectPngFailure(
+    'indexed PNG without PLTE',
+    Buffer.concat([
+      PNG_SIGNATURE,
+      encodePngChunk('IHDR', indexedHeader),
+      encodePngChunk('IDAT', zlib.deflateSync(Buffer.from([0, 0]))),
+      encodePngChunk('IEND'),
     ]),
   );
   const disposableRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'padel-assets-'));
