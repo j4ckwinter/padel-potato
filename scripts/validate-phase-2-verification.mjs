@@ -33,6 +33,9 @@ function validateEvidencePath(repoRoot, relativePath) {
 
 export function validatePhase2Verification({ markdown, repoRoot }) {
   assert(markdown.startsWith('# Phase 2 Verification\n'), 'verification title is missing');
+  assert(markdown.includes('- Preserved accessible name: `Long-content action`'), 'long-content accessible name is stale or missing');
+  assert(markdown.includes('that the `Long-content action` remains reachable'), 'native checklist long-content action is stale or missing');
+  assert(!markdown.includes('Preserved accessible name: `Activate example`'), 'interactive-only CTA leaked into boundary evidence');
   const status = markdown.match(/^- Native 200% text and assistive-technology spot-check: \*\*([^*]+)\*\*$/mu)?.[1];
   assert(status && ALLOWED_NATIVE_STATUSES.has(status), 'native verification status must be device-evidence or deferred-to-phase-5');
 

@@ -55,7 +55,7 @@ Every Canonical story visibly renders its retained Penpot file, page, revision, 
 - Status: `host-contract`
 - Exports: `Text`, `Pressable`
 - Marker: `requiresNative200PercentReview: true`
-- Preserved accessible name: `Activate example`
+- Preserved accessible name: `Long-content action`
 - Reachable-action witness: `boundary-long-text-action`
 - Native status: `deferred-to-phase-5`
 
@@ -68,7 +68,7 @@ Status: `deferred-to-phase-5`
 No physical Android/iOS device, Android Debug Bridge route, local iOS simulator, or configured remote EAS/native runner was available from this Windows execution environment. `adb` was unavailable and no `eas.json` route was configured. The following checks remain pending and must be performed on actual native routes in Phase 5:
 
 1. Open every `Boundaries` and `Interactive` story with the OS font scale set to 200%.
-2. Confirm required content reflows without clipping, overlap, or loss and that the `Activate example` action remains reachable.
+2. Confirm required content reflows without clipping, overlap, or loss and that the `Long-content action` remains reachable.
 3. Confirm reading and focus order with VoiceOver on iOS and TalkBack on Android.
 4. Confirm decorative icons are omitted from the accessibility tree.
 5. Confirm labelled icons expose the image role and unchanged accessible label.
