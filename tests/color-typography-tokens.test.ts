@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -32,9 +33,54 @@ type Manifest = {
   };
 };
 
+type FontProvenance = {
+  assets: Array<{
+    path: string;
+    postScriptName: string;
+    runtimeFamily: string;
+    sha256: string;
+    weight: number;
+  }>;
+};
+
 const manifest = JSON.parse(
   readFileSync(join(process.cwd(), 'design-spec/penpot-foundations.json'), 'utf8'),
 ) as Manifest;
+
+const retainedFontProvenance = JSON.parse(
+  readFileSync(join(process.cwd(), 'assets/fonts/inter-4.1.provenance.json'), 'utf8'),
+) as FontProvenance;
+
+const tableOffset = (font: Buffer, wantedTag: string) => {
+  const tableCount = font.readUInt16BE(4);
+  for (let index = 0; index < tableCount; index += 1) {
+    const recordOffset = 12 + index * 16;
+    if (font.toString('ascii', recordOffset, recordOffset + 4) === wantedTag) {
+      return font.readUInt32BE(recordOffset + 8);
+    }
+  }
+  throw new Error(`Missing ${wantedTag} table`);
+};
+
+const postScriptName = (font: Buffer) => {
+  const offset = tableOffset(font, 'name');
+  const recordCount = font.readUInt16BE(offset + 2);
+  const stringsOffset = offset + font.readUInt16BE(offset + 4);
+
+  for (let index = 0; index < recordCount; index += 1) {
+    const recordOffset = offset + 6 + index * 12;
+    const platformId = font.readUInt16BE(recordOffset);
+    const nameId = font.readUInt16BE(recordOffset + 6);
+    if (platformId !== 3 || nameId !== 6) continue;
+
+    const length = font.readUInt16BE(recordOffset + 8);
+    const valueOffset = stringsOffset + font.readUInt16BE(recordOffset + 10);
+    const bytes = font.subarray(valueOffset, valueOffset + length);
+    return bytes.swap16().toString('utf16le');
+  }
+
+  throw new Error('Missing Windows PostScript name record');
+};
 
 const expectedColors = {
   accent: '#ade533',
@@ -234,6 +280,22 @@ describe('Penpot typography contract', () => {
         archiveSha256:
           '9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e',
       }),
+    );
+  });
+
+  it('retains verified official binaries with the declared embedded weights', () => {
+    expect(retainedFontProvenance.assets).toHaveLength(3);
+
+    retainedFontProvenance.assets.forEach((asset) => {
+      const font = readFileSync(join(process.cwd(), asset.path));
+      expect(createHash('sha256').update(font).digest('hex')).toBe(asset.sha256);
+      expect(font.readUInt16BE(tableOffset(font, 'OS/2') + 4)).toBe(asset.weight);
+      expect(postScriptName(font)).toBe(asset.postScriptName);
+      expect(Object.keys(fontAssets)).toContain(asset.runtimeFamily);
+    });
+
+    expect(readFileSync(join(process.cwd(), 'assets/fonts/OFL.txt'), 'utf8')).toContain(
+      'SIL OPEN FONT LICENSE Version 1.1',
     );
   });
 

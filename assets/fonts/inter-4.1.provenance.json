@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "family": "Inter",
+  "version": "4.1",
+  "license": "SIL Open Font License 1.1",
+  "licenseFile": "assets/fonts/OFL.txt",
+  "officialRepository": "https://github.com/rsms/inter",
+  "officialRelease": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+  "googleFontsMetadata": "https://github.com/google/fonts/blob/main/ofl/inter/METADATA.pb",
+  "googleFontsSourceCommit": "66647c0bbbe41a850d79d9c76fb13add3378940f",
+  "archiveSha256": "9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e",
+  "assets": [
+    {
+      "path": "assets/fonts/Inter-Regular.ttf",
+      "sourcePath": "extras/ttf/Inter-Regular.ttf",
+      "runtimeFamily": "Inter_400Regular",
+      "postScriptName": "Inter-Regular",
+      "weight": 400,
+      "style": "normal",
+      "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+    },
+    {
+      "path": "assets/fonts/Inter-SemiBold.ttf",
+      "sourcePath": "extras/ttf/Inter-SemiBold.ttf",
+      "runtimeFamily": "Inter_600SemiBold",
+      "postScriptName": "Inter-SemiBold",
+      "weight": 600,
+      "style": "normal",
+      "sha256": "78a843fade9d4612a5567302fb595b56976eb5fcebf4fea5a5912d638bafcde3"
+    },
+    {
+      "path": "assets/fonts/Inter-Bold.ttf",
+      "sourcePath": "extras/ttf/Inter-Bold.ttf",
+      "runtimeFamily": "Inter_700Bold",
+      "postScriptName": "Inter-Bold",
+      "weight": 700,
+      "style": "normal",
+      "sha256": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+    }
+  ]
+}
