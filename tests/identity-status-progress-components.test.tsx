@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { render } from '@testing-library/react-native';
+import { render, userEvent } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
 import AvatarStories, {
@@ -21,6 +21,25 @@ import {
   avatarRecords,
   phase4SourceIdentity,
 } from '../src/design-system/components/phase4SourceRegistry';
+import AvatarGroupStories, {
+  Boundaries as AvatarGroupBoundaries,
+  Canonical as AvatarGroupCanonical,
+  Interactive as AvatarGroupInteractive,
+  States as AvatarGroupStates,
+  Variants as AvatarGroupVariants,
+} from '../src/design-system/components/identity/AvatarGroup.stories';
+import {
+  AvatarGroup,
+  type AvatarGroupIdentity,
+} from '../src/design-system/components/identity/AvatarGroup';
+import AvatarPickerStories, {
+  Boundaries as AvatarPickerBoundaries,
+  Canonical as AvatarPickerCanonical,
+  Interactive as AvatarPickerInteractive,
+  States as AvatarPickerStates,
+  Variants as AvatarPickerVariants,
+} from '../src/design-system/components/identity/AvatarPicker.stories';
+import { AvatarPicker } from '../src/design-system/components/identity/AvatarPicker';
 
 const flattenedStyle = (style: unknown) =>
   StyleSheet.flatten(
@@ -136,5 +155,124 @@ describe('Avatar Storybook contract', () => {
     expect(Interactive.parameters).toEqual(expect.objectContaining({
       applicability: expect.stringMatching(/presentational/u),
     }));
+  });
+});
+
+const groupPlayers = [
+  { name: 'Alex Morgan', initials: 'AM', presence: 'online' },
+  { name: 'Jamie Taylor', initials: 'JT', presence: 'online' },
+  { name: 'Sam Kim', initials: 'SK', presence: 'online' },
+  { name: 'Riley Brown', initials: 'RB', presence: 'online' },
+] as const satisfies readonly AvatarGroupIdentity[];
+
+describe('Avatar Group runtime and semantic contract', () => {
+  it.each([
+    ['2 players/default', { identities: groupPlayers.slice(0, 2), variant: '2-players' }],
+    ['3 players/default', { identities: groupPlayers.slice(0, 3), variant: '3-players' }],
+    ['4 players/default', { identities: groupPlayers, variant: '4-players' }],
+    ['4 players/overflow', { identities: groupPlayers, overflow: 3, variant: 'overflow' }],
+  ] as const)('renders the authored %s branch in supplied order', async (_tuple, props) => {
+    const screen = await render(<AvatarGroup {...props as never} />);
+    const group = screen.getByRole('summary');
+    const expected = groupPlayers.slice(0, props.identities.length).map(({ name }) => name).join(', ');
+
+    expect(group).toHaveAccessibilityValue({ text: 'overflow' in props ? `${expected}, plus 3 more` : expected });
+    expect(screen.queryAllByRole('image')).toHaveLength(0);
+    expect(screen.getAllByTestId('avatar-group-identity', { includeHiddenElements: true }))
+      .toHaveLength(props.identities.length);
+  });
+
+  it('keeps two empty-slot actions independent', async () => {
+    const onAddPlayer1 = jest.fn();
+    const onAddPlayer2 = jest.fn();
+    const screen = await render(
+      <AvatarGroup
+        onAddPlayer1={onAddPlayer1}
+        onAddPlayer2={onAddPlayer2}
+        variant="empty"
+      />,
+    );
+    const user = userEvent.setup();
+
+    await user.press(screen.getByRole('button', { name: 'Add player 1' }));
+    expect(onAddPlayer1).toHaveBeenCalledTimes(1);
+    expect(onAddPlayer2).not.toHaveBeenCalled();
+    await user.press(screen.getByRole('button', { name: 'Add player 2' }));
+    expect(onAddPlayer2).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    { identities: [], variant: '2-players' },
+    { identities: groupPlayers.slice(0, 1), variant: '2-players' },
+    { identities: [...groupPlayers, groupPlayers[0]], variant: '4-players' },
+    { identities: groupPlayers, overflow: 0, variant: 'overflow' },
+    { identities: groupPlayers, overflow: -1, variant: 'overflow' },
+    { identities: [groupPlayers[0], null], variant: '2-players' },
+  ])('rejects an unsupported collection %#', (props) => {
+    expect(() => AvatarGroup(props as never)).toThrow(/Unsupported Avatar Group/u);
+  });
+});
+
+describe('Avatar Picker runtime and semantic contract', () => {
+  it.each([
+    ['empty', 'Add a profile photo', 136],
+    ['initials', 'Change profile photo', 136],
+    ['photo', 'Change profile photo', 136],
+    ['error', 'Add a profile photo', 160],
+  ] as const)('renders the controlled %s branch as one named button', async (variant, name, height) => {
+    const common = { onPress: jest.fn(), variant } as const;
+    const props = variant === 'initials'
+      ? { ...common, initials: 'AM' }
+      : variant === 'photo'
+        ? { ...common, source: require('../design-spec/assets/phase-3/mascot-profile.webp') }
+        : common;
+    const screen = await render(<AvatarPicker {...props as never} />);
+
+    expect(screen.getByRole('button', { name })).toHaveStyle({ height });
+    if (variant === 'error') {
+      expect(screen.getByText('Choose a JPG or PNG under 5 MB')).toBeTruthy();
+      expect(screen.getByRole('button', { name })).toHaveAccessibilityHint(
+        'Choose a JPG or PNG under 5 MB',
+      );
+    }
+  });
+
+  it('emits intent without mutating its controlled content', async () => {
+    const onPress = jest.fn();
+    const screen = await render(<AvatarPicker onPress={onPress} variant="empty" />);
+
+    await userEvent.setup().press(screen.getByRole('button', { name: 'Add a profile photo' }));
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Add a profile photo' })).toBeTruthy();
+  });
+
+  it.each([
+    { initials: 'AM', onPress: jest.fn(), variant: 'empty' },
+    { onPress: jest.fn(), source: { uri: 'https://example.com/photo.jpg' }, variant: 'photo' },
+    { onPress: null, variant: 'empty' },
+    { onPress: jest.fn(), variant: 'selected' },
+  ])('rejects an unsupported picker configuration %#', (props) => {
+    expect(() => AvatarPicker(props as never)).toThrow(/Unsupported Avatar Picker/u);
+  });
+});
+
+describe('Avatar Group and Picker Storybook contracts', () => {
+  it('accounts for all five story categories under exact Identity titles', () => {
+    expect(AvatarGroupStories.title).toBe('Identity/Avatar Group');
+    expect([
+      AvatarGroupCanonical,
+      AvatarGroupVariants,
+      AvatarGroupStates,
+      AvatarGroupBoundaries,
+      AvatarGroupInteractive,
+    ]).toHaveLength(5);
+    expect(AvatarPickerStories.title).toBe('Identity/Avatar Picker');
+    expect([
+      AvatarPickerCanonical,
+      AvatarPickerVariants,
+      AvatarPickerStates,
+      AvatarPickerBoundaries,
+      AvatarPickerInteractive,
+    ]).toHaveLength(5);
   });
 });
