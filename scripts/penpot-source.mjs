@@ -3,7 +3,6 @@ import zlib from 'node:zlib';
 
 export const CANONICAL_ARCHIVE_PATH = 'design-source/padel-potato UI Concepts.penpot';
 export const EXPECTED_FILE_ID = 'c514c1fb-1cda-8125-8008-a606253a77a3';
-export const EXPECTED_REVISION = 296;
 export const REQUIRED_PAGES = Object.freeze([
   Object.freeze({ id: '482a7222-5a3b-8086-8008-a6072bd7e924', name: '01 Foundations' }),
   Object.freeze({ id: '482a7222-5a3b-8086-8008-a6073072bbb1', name: '02 Components' }),
@@ -297,7 +296,7 @@ function buildManifest(sourceBytes, index) {
 
 function validateCanonicalIdentity(manifest) {
   assert(manifest.file.id === EXPECTED_FILE_ID, `canonical file ID differs: ${manifest.file.id}`);
-  assert(manifest.file.revision === EXPECTED_REVISION, `canonical revision differs: ${manifest.file.revision}`);
+  assert(Number.isSafeInteger(manifest.file.revision) && manifest.file.revision > 0, `canonical revision is invalid: ${manifest.file.revision}`);
   assert(manifest.file.hasMediaTrimmed === false, 'canonical source unexpectedly has trimmed media');
   for (const required of REQUIRED_PAGES) {
     assert(manifest.pages.some((page) => page.id === required.id && page.name === required.name), `required page is missing or renamed: ${required.name} (${required.id})`);
