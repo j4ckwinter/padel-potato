@@ -1,6 +1,7 @@
+import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render, userEvent } from '@testing-library/react-native';
 import React from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import {
   Field,
@@ -70,7 +71,7 @@ describe('Field editable branches', () => {
         value=""
       />,
     );
-    const input = screen.UNSAFE_getByType(TextInput);
+    const input = screen.getByLabelText('Game name, required');
 
     expect(screen.getByText('Game name *')).toBeTruthy();
     expect(input.props.placeholder).toBe('Enter game name');
@@ -90,7 +91,7 @@ describe('Field editable branches', () => {
         value="Wednesday"
       />,
     );
-    expect(screen.UNSAFE_getByType(TextInput).props.value).toBe('Wednesday');
+    expect(screen.getByLabelText('Game name, required').props.value).toBe('Wednesday');
   });
 
   it('keeps read-only distinct from disabled and suppresses native edits', async () => {
@@ -104,7 +105,7 @@ describe('Field editable branches', () => {
         value="Wednesday Evening Padel"
       />,
     );
-    const readOnlyInput = readOnly.UNSAFE_getByType(TextInput);
+    const readOnlyInput = readOnly.getByLabelText('Generated game name');
     fireEvent.changeText(readOnlyInput, 'Changed');
 
     expect(readOnlyInput.props.editable).toBe(false);
@@ -123,7 +124,7 @@ describe('Field editable branches', () => {
         value="Wednesday Evening Padel"
       />,
     );
-    const disabledInput = disabled.UNSAFE_getByType(TextInput);
+    const disabledInput = disabled.getByLabelText('Game name');
     expect(disabledInput.props.editable).toBe(false);
     expect(disabledInput.props.accessibilityState).toEqual(
       expect.objectContaining({ disabled: true }),
@@ -141,10 +142,10 @@ describe('Field editable branches', () => {
         value="secret12"
       />,
     );
-    const passwordInput = password.UNSAFE_getByType(TextInput);
+    const passwordInput = password.getByLabelText('Password, required');
     expect(passwordInput.props.secureTextEntry).toBe(true);
     await userEvent.setup().press(password.getByRole('button', { name: 'Show password' }));
-    expect(password.UNSAFE_getByType(TextInput).props.secureTextEntry).toBe(false);
+    expect(password.getByLabelText('Password, required').props.secureTextEntry).toBe(false);
     expect(passwordChange).not.toHaveBeenCalled();
 
     const searchChange = jest.fn();
@@ -159,7 +160,7 @@ describe('Field editable branches', () => {
     await userEvent.setup().press(search.getByRole('button', { name: 'Clear search' }));
     expect(searchChange).toHaveBeenCalledTimes(1);
     expect(searchChange).toHaveBeenCalledWith('');
-    expect(search.UNSAFE_getByType(TextInput).props.value).toBe('clubs');
+    expect(search.getByLabelText('Search').props.value).toBe('clubs');
   });
 
   it('keeps helper, success, and error copy visible and announced', async () => {
@@ -173,7 +174,7 @@ describe('Field editable branches', () => {
       />,
     );
     expect(helper.getByText('Shown to invited players')).toBeTruthy();
-    expect(helper.UNSAFE_getByType(TextInput).props.accessibilityHint).toContain(
+    expect(helper.getByLabelText('Game name').props.accessibilityHint).toContain(
       'Shown to invited players',
     );
 
@@ -188,8 +189,8 @@ describe('Field editable branches', () => {
       />,
     );
     expect(error.getByText('Use at least 8 characters')).toBeTruthy();
-    expect(error.UNSAFE_getByType(TextInput).props.accessibilityHint).toContain('Error');
-    expect(flattenedStyle(error.getByTestId('field-control')).borderColor).toBe(colors.danger);
+    expect(error.getByLabelText('Password').props.accessibilityHint).toContain('Error');
+    expect(flattenedStyle(error.getByTestId('field-control').props.style).borderColor).toBe(colors.danger);
 
     const success = await render(
       <Field
@@ -202,8 +203,8 @@ describe('Field editable branches', () => {
       />,
     );
     expect(success.getByText('Looks good')).toBeTruthy();
-    expect(success.UNSAFE_getByType(TextInput).props.accessibilityHint).toContain('Success');
-    expect(flattenedStyle(success.getByTestId('field-control')).borderColor).toBe(colors.accent);
+    expect(success.getByLabelText('Players').props.accessibilityHint).toContain('Success');
+    expect(flattenedStyle(success.getByTestId('field-control').props.style).borderColor).toBe(colors.accent);
   });
 });
 
@@ -231,7 +232,7 @@ describe('Field trigger branches', () => {
       expect(trigger.props.accessibilityValue).toEqual({ text: value });
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(screen.getByText(value, { includeHiddenElements: true })).toBeTruthy();
-      expect(screen.UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
+      expect(screen.queryAllByPlaceholderText(placeholder)).toHaveLength(0);
       expect(screen.queryByTestId('field-picker-overlay')).toBeNull();
     },
   );
