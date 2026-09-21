@@ -166,15 +166,31 @@ function writeFixture(repoRoot, relative, contents = '') {
   const absolute = path.join(repoRoot, relative); fs.mkdirSync(path.dirname(absolute), { recursive: true }); fs.writeFileSync(absolute, contents);
 }
 
-function makeValidationFixture() {
-  return `---\nstatus: complete\nnyquist_compliant: true\nwave_0_complete: true\n---\n${FOCUSED_SUITES.join('\n')}\ntests/types/phase4-component-contracts.typecheck.tsx\nscripts/validate-phase-4-verification.mjs\n47/47 edge probes\nPhase 5 native acceptance deferral\n- [x] complete\n`;
+function makeJestResultFixture() {
+  return {
+    schemaVersion: 1,
+    command: 'npm test -- --runInBand',
+    success: true,
+    suites: { total: 24, passed: 24, failed: 0, pending: 0, runtimeError: 0 },
+    tests: { total: 21, passed: 21, failed: 0, pending: 0, todo: 0 },
+    snapshots: { total: 0, matched: 0, unmatched: 0, updated: 0, unchecked: 0 },
+    focusedSuites: FOCUSED_SUITES.map((suite, index) => ({
+      path: suite,
+      tests: { total: index + 1, passed: index + 1, failed: 0, pending: 0, todo: 0 },
+    })),
+  };
 }
 
-function makeVerificationFixture(repoRoot, packageJson) {
+function makeValidationFixture(jestResult) {
+  const suiteRows = jestResult.focusedSuites.map(({ path: suite, tests }) => `${suite} â€” ${tests.total} tests`).join('\n');
+  return `---\nstatus: complete\nnyquist_compliant: true\nwave_0_complete: true\n---\nFinal result | ${jestResult.suites.total} suites, ${jestResult.tests.total} tests, zero snapshots\n${suiteRows}\ntests/types/phase4-component-contracts.typecheck.tsx\nscripts/validate-phase-4-verification.mjs\n47/47 edge probes\nPhase 5 native acceptance deferral\n- [x] complete\n`;
+}
+
+function makeVerificationFixture(repoRoot, packageJson, jestResult) {
   const familyRows = FAMILY_COUNTS.map(([name, count]) => `| ${name} | ${count} | pass |`).join('\n');
   const titleRows = STORY_TITLES.map((title) => `- \`${title}\``).join('\n');
-  const commandRows = FINAL_COMMANDS.map((command) => `| \`${command}\` | pass | 1 non-zero result |`).join('\n');
-  const suiteRows = FOCUSED_SUITES.map((suite, index) => `| \`${suite}\` | pass | ${index + 1} tests |`).join('\n');
+  const commandRows = FINAL_COMMANDS.map((command) => `| \`${command}\` | pass | ${command === jestResult.command ? `${jestResult.suites.total} suites, ${jestResult.tests.total} tests, zero snapshots.` : '1 non-zero result'} |`).join('\n');
+  const suiteRows = jestResult.focusedSuites.map(({ path: suite, tests }) => `| \`${suite}\` | pass | ${tests.total} tests |`).join('\n');
   return `# Phase 4 Verification\nrevision 296; 15 families; 76 records; 47 edge probes; six Storybook groups; five-category taxonomy\n${familyRows}\n${titleRows}\n${TAXONOMY.map((category) => `\`${category}\``).join(' ')}\nUser reply \`approved all\` on 2026-09-21\n${APPROVED_COPY.join('\n')}\nArchive SHA-256: ${fileHash(repoRoot, ARCHIVE_PATH)}\nComponent evidence SHA-256: ${fileHash(repoRoot, COMPONENT_EVIDENCE_PATH)}\nArtwork manifest SHA-256: ${fileHash(repoRoot, ARTWORK_MANIFEST_PATH)}\nEdge ledger SHA-256: ${fileHash(repoRoot, EDGE_LEDGER_PATH)}\nStory contract SHA-256: ${fileHash(repoRoot, STORY_CONTRACT_PATH)}\nDependency fingerprint: ${dependencyFingerprint(packageJson)}\n| Command | Result | Evidence |\n|---|---|---|\n${commandRows}\n| Suite | Result | Evidence |\n|---|---|---|\n${suiteRows}\nStatus: \`deferred-to-phase-5\`\nThis record does not claim native acceptance. Phase 5 owns iOS, Android, 200% native layout, native focus rendering, VoiceOver, TalkBack, production exclusion, and final catalogue audit.\n`;
 }
 
@@ -187,20 +203,29 @@ function createSelfTestFixture(sourceRoot) {
     'validate:phase4-verification': 'node scripts/validate-phase-4-verification.mjs',
     'verify:phase4': 'npm run typecheck && npm run lint && npm test -- --runInBand && npm run validate:design-source && node scripts/validate-phase-4-components.mjs && node scripts/validate-phase-4-artwork.mjs && npm run validate:phase4-verification && npm run storybook:web:smoke',
   }, dependencies: { react: '19.2.3' }, devDependencies: { jest: '29.7.0' } };
-  return { packageJson, repoRoot, validation: makeValidationFixture(), verification: makeVerificationFixture(repoRoot, packageJson) };
+  const jestResult = makeJestResultFixture();
+  return {
+    jestResult,
+    packageJson,
+    repoRoot,
+    validation: makeValidationFixture(jestResult),
+    verification: makeVerificationFixture(repoRoot, packageJson, jestResult),
+  };
 }
 
 function runSelfTest(sourceRoot) {
   const fixture = createSelfTestFixture(sourceRoot);
   const mutations = [
     ['missing witness', (copy) => fs.rmSync(path.join(copy.repoRoot, FOCUSED_SUITES[0]))],
-    ['zero tests', (copy) => { copy.verification = copy.verification.replace('1 tests', '0 tests'); }],
+    ['zero tests', (copy) => { copy.verification = copy.verification.replace('`tests/phase4-source-registry.test.ts` | pass | 1 tests', '`tests/phase4-source-registry.test.ts` | pass | 0 tests'); }],
     ['failed command', (copy) => { copy.verification = copy.verification.replace('| pass | 1 non-zero result |', '| failed | command exited 1 |'); }],
     ['stale witness', (copy) => { copy.validation = copy.validation.replace(FOCUSED_SUITES[1], 'tests/phase4-artwork-old.test.tsx'); }],
     ['premature completion', (copy) => { copy.verification = copy.verification.replace('| pass | 1 non-zero result |', '| pending | not run |'); }],
     ['native overclaim', (copy) => { copy.verification += '\niOS native verified and passed.\n'; }],
     ['incomplete taxonomy', (copy) => { copy.verification = copy.verification.replace('`Interactive`', '`Interaction`'); }],
     ['pending copy approval', (copy) => { copy.verification = copy.verification.replace('User reply `approved all` on 2026-09-21', 'Copy approval pending'); }],
+    ['positive overall count drift', (copy) => { copy.verification = copy.verification.replace('24 suites, 21 tests', '24 suites, 22 tests'); }],
+    ['positive focused-suite count drift', (copy) => { copy.verification = copy.verification.replace('`tests/phase4-source-registry.test.ts` | pass | 1 tests', '`tests/phase4-source-registry.test.ts` | pass | 2 tests'); }],
   ];
   try {
     validatePhase4Verification(fixture);
