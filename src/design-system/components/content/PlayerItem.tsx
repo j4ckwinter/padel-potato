@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors, opacity } from '../../tokens';
+import { colors } from '../../tokens';
 import { Avatar } from '../identity/Avatar';
 
 type InitialsIdentity = Readonly<{
@@ -236,7 +236,6 @@ export function PlayerItem(props: PlayerItemProps) {
         style={[
           styles.content,
           selected ? styles.selected : undefined,
-          disabled ? styles.disabledContent : undefined,
         ]}
       >
         {props.variant === 'empty-game-slot'
@@ -282,7 +281,6 @@ const styles = StyleSheet.create({
     gap: 4,
     minWidth: 0,
   },
-  disabledContent: { opacity: opacity.opacityDisabled },
   emptyAvatar: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,

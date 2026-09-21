@@ -138,6 +138,7 @@ describe('Player Item runtime and semantic contract', () => {
     );
     const row = screen.getByRole('button', { name: 'Invite Alex Morgan, Intermediate · Rating 4.6' });
     expect(row).toBeDisabled();
+    expect(flattenedStyle(row.props.style)).toEqual(expect.objectContaining({ opacity: 0.4 }));
     await userEvent.setup().press(row);
     expect(malformedCallback).not.toHaveBeenCalled();
   });
