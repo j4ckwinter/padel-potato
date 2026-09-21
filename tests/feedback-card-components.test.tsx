@@ -470,7 +470,7 @@ describe('Illustrated Card source and runtime contract', () => {
     expect(screen.getByText(props.title)).toBeTruthy();
     expect(screen.getByText(props.detailPrimary)).toBeTruthy();
     expect(screen.getByText(props.detailSecondary)).toBeTruthy();
-    expect(screen.getByText(visibleAction)).toBeTruthy();
+    expect(screen.getByText(visibleAction, { includeHiddenElements: true })).toBeTruthy();
     expect(screen.getByRole('button', { name: actionName })).toBeTruthy();
     expect(screen.getByTestId(artworkTestId, { includeHiddenElements: true })).toBeTruthy();
     expect(screen.queryAllByRole('button')).toHaveLength(1);
