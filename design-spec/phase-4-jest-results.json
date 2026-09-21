@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "command": "npm test -- --runInBand",
+  "success": true,
+  "suites": {
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "pending": 0,
+    "runtimeError": 0
+  },
+  "tests": {
+    "total": 794,
+    "passed": 794,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0
+  },
+  "snapshots": {
+    "total": 0,
+    "matched": 0,
+    "unmatched": 0,
+    "updated": 0,
+    "unchecked": 0
+  },
+  "focusedSuites": [
+    {
+      "path": "tests/phase4-source-registry.test.ts",
+      "success": true,
+      "tests": {
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0
+      }
+    },
+    {
+      "path": "tests/phase4-artwork.test.tsx",
+      "success": true,
+      "tests": {
+        "total": 12,
+        "passed": 12,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0
+      }
+    },
+    {
+      "path": "tests/identity-status-progress-components.test.tsx",
+      "success": true,
+      "tests": {
+        "total": 78,
+        "passed": 78,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0
+      }
+    },
+    {
+      "path": "tests/content-components.test.tsx",
+      "success": true,
+      "tests": {
+        "total": 151,
+        "passed": 151,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0
+      }
+    },
+    {
+      "path": "tests/feedback-card-components.test.tsx",
+      "success": true,
+      "tests": {
+        "total": 76,
+        "passed": 76,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0
+      }
+    },
+    {
+      "path": "tests/phase4-story-contracts.test.tsx",
+      "success": true,
+      "tests": {
+        "total": 23,
+        "passed": 23,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0
+      }
+    }
+  ]
+}

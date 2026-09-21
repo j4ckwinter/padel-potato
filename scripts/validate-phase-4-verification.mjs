@@ -10,6 +10,8 @@ const ARTWORK_MANIFEST_PATH = 'design-spec/assets/phase-4/artwork-manifest.json'
 const EDGE_LEDGER_PATH = 'design-spec/phase-4-edge-coverage.json';
 const STORY_CONTRACT_PATH = 'src/design-system/stories/storyContract.ts';
 const COPY_APPROVAL_PATH = '.planning/phases/04-identity-content-and-feedback-components/04-08-SUMMARY.md';
+const JEST_RESULT_PATH = 'design-spec/phase-4-jest-results.json';
+const JEST_RUNNER_PATH = 'scripts/run-phase-4-jest.mjs';
 
 const FINAL_COMMANDS = Object.freeze([
   'npm run typecheck', 'npm run lint', 'npm test -- --runInBand',
@@ -64,17 +66,85 @@ const assertFile = (repoRoot, relative) => {
   assert(fs.existsSync(absolute) && fs.statSync(absolute).isFile(), `declared witness missing: ${relative}`);
 };
 
-export function validatePhase4Verification({ verification, validation, packageJson, repoRoot }) {
+const assertKeys = (value, expected, label) => {
+  assert(value && typeof value === 'object' && !Array.isArray(value), `${label} must be an object`);
+  assert(JSON.stringify(Object.keys(value).sort()) === JSON.stringify([...expected].sort()), `${label} contains missing or unsupported fields`);
+};
+
+const assertCount = (value, label, { positive = false } = {}) => {
+  assert(Number.isSafeInteger(value) && value >= (positive ? 1 : 0), `${label} must be a ${positive ? 'positive' : 'non-negative'} integer`);
+};
+
+function validateJestResult(result) {
+  assertKeys(result, ['schemaVersion', 'command', 'success', 'suites', 'tests', 'snapshots', 'focusedSuites'], 'Jest result');
+  assert(result.schemaVersion === 1, 'Jest result schema version is unsupported');
+  assert(result.command === 'npm test -- --runInBand', 'Jest result command is not canonical');
+  assert(result.success === true, 'Jest result is not successful');
+
+  assertKeys(result.suites, ['total', 'passed', 'failed', 'pending', 'runtimeError'], 'Jest suite totals');
+  for (const [key, value] of Object.entries(result.suites)) assertCount(value, `Jest suite ${key}`, { positive: key === 'total' });
+  assert(result.suites.passed === result.suites.total, 'Jest suite pass total is inconsistent');
+  assert(result.suites.failed === 0 && result.suites.pending === 0 && result.suites.runtimeError === 0, 'Jest result contains failed, pending, or runtime-error suites');
+  assert(result.suites.passed + result.suites.failed + result.suites.pending === result.suites.total, 'Jest suite totals do not add up');
+
+  assertKeys(result.tests, ['total', 'passed', 'failed', 'pending', 'todo'], 'Jest test totals');
+  for (const [key, value] of Object.entries(result.tests)) assertCount(value, `Jest test ${key}`, { positive: key === 'total' });
+  assert(result.tests.passed === result.tests.total, 'Jest test pass total is inconsistent');
+  assert(result.tests.failed === 0 && result.tests.pending === 0 && result.tests.todo === 0, 'Jest result contains failed, pending, or todo tests');
+  assert(result.tests.passed + result.tests.failed + result.tests.pending + result.tests.todo === result.tests.total, 'Jest test totals do not add up');
+
+  assertKeys(result.snapshots, ['total', 'matched', 'unmatched', 'updated', 'unchecked'], 'Jest snapshot totals');
+  for (const [key, value] of Object.entries(result.snapshots)) assertCount(value, `Jest snapshot ${key}`);
+  assert(result.snapshots.unmatched === 0 && result.snapshots.unchecked === 0, 'Jest result contains unmatched or unchecked snapshots');
+
+  assert(Array.isArray(result.focusedSuites) && result.focusedSuites.length === FOCUSED_SUITES.length, 'Jest result must contain all six focused suites');
+  const focusedCounts = new Map();
+  result.focusedSuites.forEach((suite, index) => {
+    assertKeys(suite, ['path', 'success', 'tests'], `focused suite ${index + 1}`);
+    assert(suite.path === FOCUSED_SUITES[index], `focused suite path or order drifted: ${suite.path}`);
+    assert(!path.isAbsolute(suite.path) && !suite.path.includes('\\'), `focused suite path is not repository-relative: ${suite.path}`);
+    assert(suite.success === true, `focused suite is not successful: ${suite.path}`);
+    assertKeys(suite.tests, ['total', 'passed', 'failed', 'pending', 'todo'], `focused suite counts: ${suite.path}`);
+    for (const [key, value] of Object.entries(suite.tests)) assertCount(value, `${suite.path} ${key}`, { positive: key === 'total' });
+    assert(suite.tests.passed === suite.tests.total, `focused suite pass total is inconsistent: ${suite.path}`);
+    assert(suite.tests.failed === 0 && suite.tests.pending === 0 && suite.tests.todo === 0, `focused suite contains non-passing tests: ${suite.path}`);
+    assert(suite.tests.passed + suite.tests.failed + suite.tests.pending + suite.tests.todo === suite.tests.total, `focused suite totals do not add up: ${suite.path}`);
+    focusedCounts.set(suite.path, suite.tests.total);
+  });
+  assert([...focusedCounts.values()].reduce((total, count) => total + count, 0) <= result.tests.total, 'focused suite totals exceed the overall test total');
+  return focusedCounts;
+}
+
+function assertRecordedCounts(verification, validation, jestResult, focusedCounts) {
+  const snapshotLabel = jestResult.snapshots.total === 0 ? 'zero' : String(jestResult.snapshots.total);
+  const verificationOverall = verification.match(/\| `npm test -- --runInBand` \| pass \| ([0-9]+) suites, ([0-9]+) tests, (zero|[0-9]+) snapshots\. \|/u);
+  assert(verificationOverall, 'verification is missing the exact overall Jest result row');
+  assert(Number(verificationOverall[1]) === jestResult.suites.total && Number(verificationOverall[2]) === jestResult.tests.total && verificationOverall[3] === snapshotLabel, 'verification overall Jest count is stale');
+  const validationOverall = validation.match(/(?:^|\|)\s*Final result\s*\|\s*([0-9]+) suites, ([0-9]+) tests, (zero|[0-9]+) snapshots/imu);
+  assert(validationOverall, 'validation is missing the exact overall Jest result');
+  assert(Number(validationOverall[1]) === jestResult.suites.total && Number(validationOverall[2]) === jestResult.tests.total && validationOverall[3] === snapshotLabel, 'validation overall Jest count is stale');
+
+  for (const [suite, expected] of focusedCounts) {
+    const verificationRow = verification.match(new RegExp('\\| `' + escapeRegExp(suite) + '` \\| pass \\| ([0-9]+) tests? \\|', 'u'));
+    assert(verificationRow && Number(verificationRow[1]) === expected, `verification focused-suite count is stale: ${suite}`);
+    const validationRow = validation.match(new RegExp('`' + escapeRegExp(suite) + '`[^\\n]*?—\\s*([0-9]+)\\s+tests?', 'u'));
+    assert(validationRow && Number(validationRow[1]) === expected, `validation focused-suite count is stale: ${suite}`);
+  }
+}
+
+export function validatePhase4Verification({ verification, validation, jestResult, packageJson, repoRoot }) {
   const resolvedVerification = verification ?? readText(repoRoot, 'design-spec/phase-4-verification.md');
   const resolvedValidation = validation ?? readText(repoRoot, '.planning/phases/04-identity-content-and-feedback-components/04-VALIDATION.md');
+  const resolvedJestResult = jestResult ?? parseJson(repoRoot, JEST_RESULT_PATH);
   const resolvedPackageJson = packageJson ?? parseJson(repoRoot, 'package.json');
   const requiredFiles = [
     ARCHIVE_PATH, COMPONENT_EVIDENCE_PATH, ARTWORK_MANIFEST_PATH, EDGE_LEDGER_PATH,
     STORY_CONTRACT_PATH, COPY_APPROVAL_PATH, 'tests/types/phase4-component-contracts.typecheck.tsx',
     'scripts/validate-phase-4-components.mjs', 'scripts/validate-phase-4-artwork.mjs',
-    'scripts/validate-phase-4-verification.mjs', ...FOCUSED_SUITES,
+    'scripts/validate-phase-4-verification.mjs', JEST_RUNNER_PATH, JEST_RESULT_PATH, ...FOCUSED_SUITES,
   ];
   for (const relative of requiredFiles) assertFile(repoRoot, relative);
+  const focusedCounts = validateJestResult(resolvedJestResult);
 
   const componentEvidence = parseJson(repoRoot, COMPONENT_EVIDENCE_PATH);
   const edgeLedger = parseJson(repoRoot, EDGE_LEDGER_PATH);
@@ -138,6 +208,7 @@ export function validatePhase4Verification({ verification, validation, packageJs
     const row = new RegExp('\\\\| `' + escapeRegExp(suite) + '` \\\\| pass \\\\| [1-9][0-9]* tests? \\\\|', 'u');
     assert(row.test(resolvedVerification), `focused suite is missing or reports zero tests: ${suite}`);
   }
+  assertRecordedCounts(resolvedVerification, resolvedValidation, resolvedJestResult, focusedCounts);
 
   for (const value of [
     'Status: `deferred-to-phase-5`', 'This record does not claim native acceptance',
@@ -156,7 +227,7 @@ export function validatePhase4Verification({ verification, validation, packageJs
 
   const scripts = resolvedPackageJson.scripts ?? {};
   assert(scripts['validate:phase4-verification'] === 'node scripts/validate-phase-4-verification.mjs', 'validate:phase4-verification script is missing or stale');
-  for (const fragment of ['typecheck', 'lint', 'test -- --runInBand', 'validate:design-source', 'validate-phase-4-components.mjs', 'validate-phase-4-artwork.mjs', 'validate:phase4-verification', 'storybook:web:smoke']) {
+  for (const fragment of ['typecheck', 'lint', JEST_RUNNER_PATH, 'validate:design-source', 'validate-phase-4-components.mjs', 'validate-phase-4-artwork.mjs', 'validate:phase4-verification', 'storybook:web:smoke']) {
     assert(scripts['verify:phase4']?.includes(fragment), `verify:phase4 omits ${fragment}`);
   }
   return { edgeCount: 47, familyCount: 15, nativeStatus: 'deferred-to-phase-5', recordCount: 76, witnessCount: FINAL_COMMANDS.length };
@@ -176,14 +247,15 @@ function makeJestResultFixture() {
     snapshots: { total: 0, matched: 0, unmatched: 0, updated: 0, unchecked: 0 },
     focusedSuites: FOCUSED_SUITES.map((suite, index) => ({
       path: suite,
+      success: true,
       tests: { total: index + 1, passed: index + 1, failed: 0, pending: 0, todo: 0 },
     })),
   };
 }
 
 function makeValidationFixture(jestResult) {
-  const suiteRows = jestResult.focusedSuites.map(({ path: suite, tests }) => `${suite} â€” ${tests.total} tests`).join('\n');
-  return `---\nstatus: complete\nnyquist_compliant: true\nwave_0_complete: true\n---\nFinal result | ${jestResult.suites.total} suites, ${jestResult.tests.total} tests, zero snapshots\n${suiteRows}\ntests/types/phase4-component-contracts.typecheck.tsx\nscripts/validate-phase-4-verification.mjs\n47/47 edge probes\nPhase 5 native acceptance deferral\n- [x] complete\n`;
+  const suiteRows = jestResult.focusedSuites.map(({ path: suite, tests }) => `\`${suite}\` — ${tests.total} tests`).join('\n');
+  return `---\nstatus: complete\nnyquist_compliant: true\nwave_0_complete: true\n---\n| Final result | ${jestResult.suites.total} suites, ${jestResult.tests.total} tests, zero snapshots |\n${suiteRows}\ntests/types/phase4-component-contracts.typecheck.tsx\nscripts/validate-phase-4-verification.mjs\n47/47 edge probes\nPhase 5 native acceptance deferral\n- [x] complete\n`;
 }
 
 function makeVerificationFixture(repoRoot, packageJson, jestResult) {
@@ -198,12 +270,13 @@ function createSelfTestFixture(sourceRoot) {
   const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'phase4-verification-'));
   for (const relative of [COMPONENT_EVIDENCE_PATH, ARTWORK_MANIFEST_PATH, EDGE_LEDGER_PATH, STORY_CONTRACT_PATH, COPY_APPROVAL_PATH]) writeFixture(repoRoot, relative, read(sourceRoot, relative));
   writeFixture(repoRoot, ARCHIVE_PATH, 'revision 296 isolated archive fixture');
-  for (const relative of ['tests/types/phase4-component-contracts.typecheck.tsx', 'scripts/validate-phase-4-components.mjs', 'scripts/validate-phase-4-artwork.mjs', 'scripts/validate-phase-4-verification.mjs', ...FOCUSED_SUITES]) writeFixture(repoRoot, relative, `fixture: ${relative}\n`);
+  for (const relative of ['tests/types/phase4-component-contracts.typecheck.tsx', 'scripts/validate-phase-4-components.mjs', 'scripts/validate-phase-4-artwork.mjs', 'scripts/validate-phase-4-verification.mjs', JEST_RUNNER_PATH, ...FOCUSED_SUITES]) writeFixture(repoRoot, relative, `fixture: ${relative}\n`);
   const packageJson = { scripts: {
     'validate:phase4-verification': 'node scripts/validate-phase-4-verification.mjs',
-    'verify:phase4': 'npm run typecheck && npm run lint && npm test -- --runInBand && npm run validate:design-source && node scripts/validate-phase-4-components.mjs && node scripts/validate-phase-4-artwork.mjs && npm run validate:phase4-verification && npm run storybook:web:smoke',
+    'verify:phase4': 'npm run typecheck && npm run lint && node scripts/run-phase-4-jest.mjs && npm run validate:design-source && node scripts/validate-phase-4-components.mjs && node scripts/validate-phase-4-artwork.mjs && npm run validate:phase4-verification && npm run storybook:web:smoke',
   }, dependencies: { react: '19.2.3' }, devDependencies: { jest: '29.7.0' } };
   const jestResult = makeJestResultFixture();
+  writeFixture(repoRoot, JEST_RESULT_PATH, `${JSON.stringify(jestResult, null, 2)}\n`);
   return {
     jestResult,
     packageJson,
