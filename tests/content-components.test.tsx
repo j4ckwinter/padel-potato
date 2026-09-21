@@ -25,6 +25,17 @@ import {
   NotificationRow,
   type NotificationRowProps,
 } from '../src/design-system/components/content/NotificationRow';
+import PlayerPreferencesCardStories, {
+  Boundaries as PlayerPreferencesCardBoundaries,
+  Canonical as PlayerPreferencesCardCanonical,
+  Interactive as PlayerPreferencesCardInteractive,
+  States as PlayerPreferencesCardStates,
+  Variants as PlayerPreferencesCardVariants,
+} from '../src/design-system/components/content/PlayerPreferencesCard.stories';
+import {
+  PlayerPreferencesCard,
+  type PlayerPreferencesCardProps,
+} from '../src/design-system/components/content/PlayerPreferencesCard';
 import SettingsRowStories, {
   Boundaries as SettingsRowBoundaries,
   Canonical as SettingsRowCanonical,
@@ -72,6 +83,7 @@ import {
   type PlayerItemProps,
 } from '../src/design-system/components/content/PlayerItem';
 import { phase4Families } from '../src/design-system/components/phase4SourceRegistry';
+import * as ContentComponents from '../src/design-system/components/content';
 
 const playerItemRecords = phase4Families[5].records;
 
@@ -875,5 +887,128 @@ describe('Score Result Block Storybook contract', () => {
     expect(ScoreResultBlockVariants.render).toBeDefined();
     expect(ScoreResultBlockBoundaries.render).toBeDefined();
     expect(ScoreResultBlockInteractive.parameters?.applicability).toMatch(/presentational|inapplicable/iu);
+  });
+});
+
+const preferenceRecords = phase4Families[11].records;
+const profilePreferences = {
+  content: 'profile',
+  days: 'Mon–Sat',
+  side: 'Either side',
+  timeOfDay: 'Afternoons',
+} as const satisfies PlayerPreferencesCardProps;
+const fullPreferences = {
+  ...profilePreferences,
+  content: 'full',
+  level: 'Intermediate',
+} as const satisfies PlayerPreferencesCardProps;
+
+describe('Player Preferences Card source contract', () => {
+  it('retains only the two approved metadata normalizations at 350x152 in source order', () => {
+    expect(preferenceRecords.map(({ originalTuple, normalizedTuple }) => ({
+      normalizedTuple,
+      originalTuple,
+    }))).toEqual([
+      {
+        normalizedTuple: { content: 'profile' },
+        originalTuple: { 'Property 1': 'Content=Profile' },
+      },
+      {
+        normalizedTuple: { content: 'full' },
+        originalTuple: { 'Property 1': 'Content=Full' },
+      },
+    ]);
+    expect(preferenceRecords.map(({ metrics }) => metrics.normalized)).toEqual([
+      { height: 152, width: 350 },
+      { height: 152, width: 350 },
+    ]);
+  });
+});
+
+describe('Player Preferences Card runtime and semantic contract', () => {
+  it.each([
+    ['profile', profilePreferences],
+    ['full', fullPreferences],
+  ] as Array<[string, PlayerPreferencesCardProps]>)('renders the authored %s content branch', async (_branch, props) => {
+    const screen = await render(<PlayerPreferencesCard {...props} />);
+    expect(flattenedStyle(screen.getByTestId('player-preferences-card').props.style)).toEqual(
+      expect.objectContaining({ height: 152, width: 350 }),
+    );
+  });
+
+  it('announces the full heading before its exact four static preferences', async () => {
+    const screen = await render(<PlayerPreferencesCard {...fullPreferences} />);
+    expect(screen.getByRole('summary', {
+      name: 'Your preferences, Intermediate, Either side, Mon–Sat, Afternoons',
+    })).toBeTruthy();
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
+  });
+
+  it('omits Intermediate from the profile branch and keeps the three values static', async () => {
+    const screen = await render(<PlayerPreferencesCard {...profilePreferences} />);
+    expect(screen.getByRole('summary', {
+      name: 'Playing preferences, Either side, Mon–Sat, Afternoons',
+    })).toBeTruthy();
+    expect(screen.queryByText('Intermediate')).toBeNull();
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+  });
+
+  it.each([
+    { ...profilePreferences, content: 'full' },
+    { ...profilePreferences, level: 'Intermediate' },
+    { ...fullPreferences, level: '' },
+    { ...fullPreferences, side: null },
+    { ...fullPreferences, preferences: ['Intermediate', 'Either side'] },
+    { ...fullPreferences, onSelectedChange: jest.fn() },
+    { ...profilePreferences, content: 'Content=Profile' },
+    { ...profilePreferences, content: 'unknown' },
+  ])('rejects partial, extra, interactive, or generic metadata branches %#', (props) => {
+    expect(() => PlayerPreferencesCard(props as never)).toThrow(/Unsupported Player Preferences Card/u);
+  });
+
+  it('retains long Unicode preference values in heading-first order', async () => {
+    const screen = await render(
+      <PlayerPreferencesCard
+        content="full"
+        days="Monday through Saturday across 東京 holidays"
+        level="International advanced level for Łucía Nguyễn"
+        side="Either side of the court with a long preference"
+        timeOfDay="Late afternoons and early evenings"
+      />,
+    );
+    expect(screen.getByRole('summary', {
+      name: 'Your preferences, International advanced level for Łucía Nguyễn, Either side of the court with a long preference, Monday through Saturday across 東京 holidays, Late afternoons and early evenings',
+    })).toBeTruthy();
+  });
+});
+
+describe('Player Preferences Card Storybook contract', () => {
+  it('accounts for all five categories under the exact Content title', () => {
+    expect(PlayerPreferencesCardStories.title).toBe('Content/Player Preferences Card');
+    expect([
+      PlayerPreferencesCardCanonical,
+      PlayerPreferencesCardVariants,
+      PlayerPreferencesCardStates,
+      PlayerPreferencesCardBoundaries,
+      PlayerPreferencesCardInteractive,
+    ]).toHaveLength(5);
+    expect(PlayerPreferencesCardVariants.render).toBeDefined();
+    expect(PlayerPreferencesCardBoundaries.render).toBeDefined();
+    expect(PlayerPreferencesCardInteractive.parameters?.applicability).toMatch(/presentational|inapplicable/iu);
+  });
+});
+
+describe('Content family public boundary', () => {
+  it('exports exactly the seven public component families and no evidence or helpers', () => {
+    expect(Object.keys(ContentComponents).sort()).toEqual([
+      'GameCard',
+      'NotificationRow',
+      'PlayerItem',
+      'PlayerPreferencesCard',
+      'ScoreResultBlock',
+      'SettingsRow',
+      'StatTile',
+    ]);
   });
 });
