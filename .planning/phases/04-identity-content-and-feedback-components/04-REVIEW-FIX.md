@@ -1,8 +1,8 @@
 ---
 phase: 04-identity-content-and-feedback-components
-fixed_at: 2026-09-21T20:01:06.0114629Z
+fixed_at: 2026-09-21T20:21:27.1511634Z
 review_path: .planning/phases/04-identity-content-and-feedback-components/04-REVIEW.md
-iteration: 2
+iteration: 3
 findings_in_scope: 1
 fixed: 1
 skipped: 0
@@ -11,9 +11,9 @@ status: all_fixed
 
 # Phase 04: Code Review Fix Report
 
-**Fixed at:** 2026-09-21T20:01:06.0114629Z
+**Fixed at:** 2026-09-21T20:21:27.1511634Z
 **Source review:** `.planning/phases/04-identity-content-and-feedback-components/04-REVIEW.md`
-**Iteration:** 2
+**Iteration:** 3
 
 **Summary:**
 
@@ -23,24 +23,25 @@ status: all_fixed
 
 ## Fixed Issues
 
-### CR-03: The replacement branch-action control is undeclared and dead in two Interactive stories
+### CR-03: No-op initial args suppress every live Storybook action logger
 
 **Files modified:** `src/design-system/components/content/PlayerItem.stories.tsx`, `src/design-system/components/content/GameCard.stories.tsx`, `src/design-system/components/content/SettingsRow.stories.tsx`, `tests/phase4-story-contracts.test.tsx`
-**Commit:** cae9d16
+**Commit:** d58ff20
 **Status:** fixed; requires human verification
-**Applied fix:** Removed the synthetic `onAction` contract, retained the registry-derived whole-record configuration selectors and fail-closed normalizers, and declared only real component callbacks as Storybook actions. Branch-specific interaction entries now expose exactly one compatible callback control and forward it through the component's discriminated callback contract. Rendered regression cases press all seven advertised Player Item, Game Card, and Settings Row action paths and assert the matching spy fires exactly once.
+**Applied fix:** Removed the callback no-op from all seven interaction stories while retaining each branch-valid callback name, authored configuration, and runtime render path. The regression now feeds each story's real initial args and configured action name through Storybook 10's installed `composeStory` API with core action enhancers, verifies the resolved callback is an `isAction` function that emits the named action event, then presses the rendered native component to verify that callback is forwarded through the correct branch.
 
 ## Verification
 
 Verification ran in the main checkout because `workflow.use_worktrees` is `false`.
 
-- Focused story contract suite: 1 suite, 23 tests passed.
+- Focused story-contract suite: 1 suite, 23 tests passed, including all seven enhanced interaction paths.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed.
-- `npm run verify:phase4`: passed end to end with 24 suites and 794 tests, design-source/component/artwork/evidence validation, and bounded Storybook web smoke.
+- `npm run verify:phase4`: passed end to end with 24 suites and 794 tests, canonical design-source validation, Phase 4 component/artwork/evidence validation, and Storybook web smoke.
+- Limitation: the Jest preset cannot directly import Storybook 10's ESM-only portable-story modules. The regression therefore runs the installed composition/enhancer API in a Node ESM subprocess and separately renders the same story branch under React Native Testing Library. On-device iOS/Android action-panel observation remains part of the already documented Phase 5 native review lane.
 
 ---
 
-_Fixed: 2026-09-21T20:01:06.0114629Z_
+_Fixed: 2026-09-21T20:21:27.1511634Z_
 _Fixer: the agent (gsd-code-fixer)_
-_Iteration: 2_
+_Iteration: 3_
