@@ -74,6 +74,16 @@ function validateText(value: unknown, field: string) {
   }
 }
 
+function validateInitials(value: unknown, field: string) {
+  if (
+    typeof value !== 'string'
+    || value.trim().length < 1
+    || Array.from(value.trim()).length > 3
+  ) {
+    unsupported(`${field} must contain one to three visible characters`);
+  }
+}
+
 function validateIllustratedCardProps(props: IllustratedCardProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
@@ -103,7 +113,7 @@ function validateIllustratedCardProps(props: IllustratedCardProps) {
     if (keys.length !== 3 || !['initials', 'name', 'slot'].every((key) => keys.includes(key))) {
       unsupported(`participant ${index + 1} must contain only initials, name, and slot`);
     }
-    validateText(participant.initials, `participant ${index + 1} initials`);
+    validateInitials(participant.initials, `participant ${index + 1} initials`);
     validateText(participant.name, `participant ${index + 1} name`);
     if (participant.slot !== expectedSlots[index]) {
       unsupported(`participant order must occupy slots ${expectedSlots.join(', ')}`);

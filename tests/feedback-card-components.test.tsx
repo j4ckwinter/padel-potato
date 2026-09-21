@@ -515,6 +515,27 @@ describe('Illustrated Card source and runtime contract', () => {
     { ...illustratedCardExamples.matchResult, onViewResults: undefined },
     { ...illustratedCardExamples.gameCreated, extra: true },
     { ...illustratedCardExamples.nextGame, type: 'unknown' },
+    {
+      ...illustratedCardExamples.nextGame,
+      participants: [
+        { ...illustratedParticipants[0], initials: '' },
+        ...illustratedParticipants.slice(1),
+      ],
+    },
+    {
+      ...illustratedCardExamples.nextGame,
+      participants: [
+        { ...illustratedParticipants[0], initials: '   ' },
+        ...illustratedParticipants.slice(1),
+      ],
+    },
+    {
+      ...illustratedCardExamples.nextGame,
+      participants: [
+        { ...illustratedParticipants[0], initials: 'ALEX' },
+        ...illustratedParticipants.slice(1),
+      ],
+    },
   ])('rejects unsupported content, callbacks, participant states, or tuples %#', (props) => {
     expect(() => IllustratedCard(props as never)).toThrow(/Unsupported Illustrated Card/u);
   });
