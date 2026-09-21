@@ -35,9 +35,35 @@ import {
   type StatusChipProps,
   type StepProgressProps,
 } from '../../src/design-system';
+import * as DesignSystem from '../../src/design-system';
 
 const noop = () => undefined;
 const noopBoolean = (_value: boolean) => undefined;
+
+const phase4PublicFamilies = [
+  'Avatar',
+  'AvatarGroup',
+  'AvatarPicker',
+  'StatusChip',
+  'StepProgress',
+  'PlayerItem',
+  'GameCard',
+  'NotificationRow',
+  'SettingsRow',
+  'StatTile',
+  'ScoreResultBlock',
+  'PlayerPreferencesCard',
+  'BannerToast',
+  'EmptyState',
+  'IllustratedCard',
+] as const satisfies readonly (keyof typeof DesignSystem)[];
+
+// @ts-expect-error Generated source evidence remains private.
+const privateSourceRegistry = DesignSystem.phase4SourceRegistry;
+// @ts-expect-error Generated artwork renderers remain private.
+const privateArtworkRenderer = DesignSystem.NextGameIllustratedCardArtwork;
+// @ts-expect-error Story-only fixture helpers remain private.
+const privateStoryFixture = DesignSystem.phase4StoryFixtures;
 
 const avatarIdentity = {
   initials: 'AP',
@@ -202,6 +228,8 @@ const invalidIllustratedCardCardinality: IllustratedCardProps = { detailPrimary:
 const invalidIllustratedCardCallback: IllustratedCardProps = { detailPrimary: 'Won', detailSecondary: '6-4, 6-3', eyebrow: 'Result', onViewGame: noop, participants: [illustrated1, illustrated2, illustrated3, illustrated4], title: 'Victory', type: 'matchResult' };
 
 void validContracts;
+void phase4PublicFamilies;
+void [privateSourceRegistry, privateArtworkRenderer, privateStoryFixture];
 void [
   invalidAvatarTuple,
   invalidAvatarSemantics,
