@@ -1,6 +1,6 @@
 ---
 phase: 04-identity-content-and-feedback-components
-reviewed: 2026-09-21T20:06:28.261Z
+reviewed: 2026-09-21T20:27:39.556Z
 depth: standard
 files_reviewed: 4
 files_reviewed_list:
@@ -9,54 +9,44 @@ files_reviewed_list:
   - src/design-system/components/content/SettingsRow.stories.tsx
   - tests/phase4-story-contracts.test.tsx
 findings:
-  critical: 1
+  critical: 0
   warning: 0
   info: 0
-  total: 1
-status: issues_found
+  total: 0
+status: clean
 ---
 
 # Phase 04: Code Review Report
 
-**Reviewed:** 2026-09-21T20:06:28.261Z
+**Reviewed:** 2026-09-21T20:27:39.556Z
 **Depth:** standard
 **Files Reviewed:** 4
-**Status:** issues_found
+**Status:** clean
 
 ## Summary
 
-The final re-review inspected all four files changed by fix commit `cae9d16`, re-ran the focused story-contract suite (23 tests), TypeScript typechecking, and Expo lint; all commands pass. The named Player Item, Game Card, and Settings Row callbacks are now forwarded through their correct component branches, but CR-03 remains open because each interaction story initializes that callback with a no-op. Storybook's action arg enhancer only supplies an action logger when the callback is absent from initial args, so the live on-device catalogue still cannot emit the advertised action events. The new regression test bypasses this runtime behavior by passing a Jest spy directly to the raw render function.
+The terminal re-review inspected all four files changed by fix commit `d58ff20`, traced the Storybook 10 action-enhancer path, and rechecked every original Phase 04 finding. All seven interaction stories now omit their callback from initial `args`, retain the exact real callback name in `argTypes`, and forward the enhanced callback through the corresponding component branch.
+
+The regression probe uses Storybook 10.5.0's `composeStory`, core annotations, preview channel, and `storybook/actions` event ID. For each interaction story it proves that the absent initial callback resolves to a function marked `isAction`, invoking it emits the configured action name, and pressing the rendered real component calls the forwarded callback. This matches the native runtime's use of `composeProjectAnnotationsWithCore`, which includes the same core action arg enhancer before Storybook prepares the story.
+
+The focused Phase 04 suites pass (4 suites, 328 tests), including all seven composed-action cases and the original local-image, Avatar Group, Illustrated Card, and catalogue-contract regressions. TypeScript typechecking and Expo lint also pass. All reviewed files meet quality standards. No issues found.
 
 ### Prior-finding verification
 
 | Finding | Status | Evidence |
 |---|---|---|
-| CR-01 | Resolved | The preceding full re-review verified the positive local-image allowlist and rejection coverage; `cae9d16` does not touch that implementation. |
-| CR-02 | Resolved | The preceding full re-review verified exact Avatar Group own-key validation and leakage tests; `cae9d16` does not touch that implementation. |
-| CR-03 | Still open | Real callback names and branch forwarding are restored, but all seven interaction stories seed the callback with `() => undefined`, preventing Storybook from generating an action logger. |
-| WR-01 | Resolved | The preceding full re-review verified bounded Illustrated Card initials and focused edge coverage; `cae9d16` does not touch that implementation. |
-| WR-02 | Resolved | The preceding full re-review verified the declared spacing scale and all-story regression scan; `cae9d16` does not touch those gaps. |
+| CR-01 | Resolved | The shared `isLocalImageSource` positive allowlist remains used by every public image consumer; focused tests reject network, blob, protocol-relative, unknown, bare, and malformed sources. |
+| CR-02 | Resolved | `AvatarGroup` still enforces exact own-key sets for every discriminated branch; focused runtime tests reject overflow leakage into `empty` and callback leakage into populated branches. |
+| CR-03 | Resolved | Every sparse story selector fails closed. The seven interaction stories have no callback in initial `args`; Storybook 10 composition supplies an `isAction` callback, emits the expected action event, and each real component branch forwards the callback on press. |
+| WR-01 | Resolved | Illustrated Card continues to enforce one-to-three-character trimmed initials, with empty, whitespace-only, and overlong regression cases. |
+| WR-02 | Resolved | Phase 04 story composition uses only the declared spacing scale, enforced by the all-story source scan. |
 
 ## Narrative Findings (AI reviewer)
 
-## Critical Issues
-
-### CR-03: No-op initial args suppress every live Storybook action logger
-
-**Classification:** BLOCKER
-**Files:**
-
-- `C:\Users\jackw\Documents\dev\padel\src\design-system\components\content\PlayerItem.stories.tsx:192,204,210`
-- `C:\Users\jackw\Documents\dev\padel\src\design-system\components\content\GameCard.stories.tsx:162,168`
-- `C:\Users\jackw\Documents\dev\padel\src\design-system\components\content\SettingsRow.stories.tsx:197,207`
-- `C:\Users\jackw\Documents\dev\padel\tests\phase4-story-contracts.test.tsx:289-293`
-
-**Issue:** Each interaction story correctly advertises and forwards a real component callback, but its `args` object also defines that callback as `() => undefined`. Storybook 10's `addActionsFromArgTypes` enhancer deliberately adds an action function only when the callback is not present in `initialArgs`; these no-ops therefore win and presses produce no action event in the on-device Actions panel. The regression test does not exercise composed Storybook args: it calls the raw `story.render` with a manually constructed Jest spy, so it passes while the catalogue remains broken.
-
-**Fix:** Remove the callback no-op from each interaction story's initial `args` and let the existing `argTypes.<callback>.action` enhancer supply it, while retaining the fixed `configuration`. Alternatively, initialize each callback with a named Storybook `fn()` spy following the installed Storybook 10 pattern. Extend the test to compose the stories through Storybook (including preview annotations/action enhancers) and assert the resolved callback is an action/mock before pressing it; do not validate only a manually injected spy against the raw renderer.
+No Critical, Warning, or Info findings remain after the capped third fix iteration.
 
 ---
 
-_Reviewed: 2026-09-21T20:06:28.261Z_
+_Reviewed: 2026-09-21T20:27:39.556Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: standard_
