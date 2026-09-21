@@ -2,6 +2,18 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
+import GameCardStories, {
+  Boundaries as GameCardBoundaries,
+  Canonical as GameCardCanonical,
+  Interactive as GameCardInteractive,
+  States as GameCardStates,
+  Variants as GameCardVariants,
+} from '../src/design-system/components/content/GameCard.stories';
+import {
+  GameCard,
+  type GameCardParticipant,
+  type GameCardProps,
+} from '../src/design-system/components/content/GameCard';
 import PlayerItemStories, {
   Boundaries as PlayerItemBoundaries,
   Canonical as PlayerItemCanonical,
@@ -176,5 +188,148 @@ describe('Player Item Storybook contract', () => {
     expect(PlayerItemVariants.render).toBeDefined();
     expect(PlayerItemBoundaries.render).toBeDefined();
     expect(PlayerItemInteractive.render).toBeDefined();
+  });
+});
+
+const gameCardRecords = phase4Families[6].records;
+const participants = [
+  { initials: 'AM', name: 'Alex Morgan', presence: 'online' },
+  { initials: 'JT', name: 'Jamie Taylor', presence: 'online' },
+  { initials: 'SK', name: 'Sam Kim', presence: 'online' },
+  { initials: 'RB', name: 'Riley Brown', presence: 'online' },
+] as const satisfies readonly GameCardParticipant[];
+
+const cardContent = {
+  time: '18:30 · 90 min',
+  title: 'Tuesday Social Padel',
+  venue: 'Padel United · Court 3',
+} as const;
+
+describe('Game Card source contract', () => {
+  it('retains all five authored records and exact frames in source order', () => {
+    expect(gameCardRecords.map(({ normalizedTuple }) => normalizedTuple)).toEqual([
+      { type: 'open', state: 'full' },
+      { type: 'completed', state: 'default' },
+      { type: 'compact', state: 'default' },
+      { type: 'open', state: 'default' },
+      { type: 'next', state: 'default' },
+    ]);
+    expect(gameCardRecords.map(({ metrics }) => metrics.normalized)).toEqual([
+      { height: 176, width: 352 },
+      { height: 176, width: 352 },
+      { height: 112, width: 352 },
+      { height: 176, width: 352 },
+      { height: 176, width: 352 },
+    ]);
+  });
+});
+
+describe('Game Card runtime and semantic contract', () => {
+  it.each([
+    ['next/default', { ...cardContent, onViewGame: jest.fn(), participants, variant: 'next' }],
+    ['open/default', { ...cardContent, full: false, onViewGame: jest.fn(), participants: participants.slice(0, 3), variant: 'open' }],
+    ['compact/default', { title: cardContent.title, venue: cardContent.venue, variant: 'compact' }],
+    ['completed/default', { ...cardContent, onViewResults: jest.fn(), participants, variant: 'completed' }],
+    ['open/full', { ...cardContent, full: true, onViewGame: jest.fn(), participants, variant: 'open' }],
+  ] as Array<[string, GameCardProps]>)('renders the authored %s structure', async (_tuple, props) => {
+    const screen = await render(<GameCard {...props} />);
+    expect(flattenedStyle(screen.getByTestId('game-card').props.style)).toEqual(
+      expect.objectContaining({
+        height: props.variant === 'compact' ? 112 : 176,
+        width: 352,
+      }),
+    );
+    expect(screen.getByText(cardContent.title)).toBeTruthy();
+    expect(screen.getByText(cardContent.venue)).toBeTruthy();
+  });
+
+  it.each([
+    ['next', 'View game'],
+    ['open', 'View game'],
+    ['completed', 'View results'],
+  ] as const)('exposes only the authored %s action named %s', async (variant, actionName) => {
+    const callback = jest.fn();
+    const props = variant === 'next'
+      ? { ...cardContent, onViewGame: callback, participants, variant }
+      : variant === 'open'
+        ? { ...cardContent, full: false as const, onViewGame: callback, participants: participants.slice(0, 3), variant }
+        : { ...cardContent, onViewResults: callback, participants, variant };
+    const screen = await render(<GameCard {...props as GameCardProps} />);
+    const action = screen.getByRole('button', { name: actionName });
+
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+    await userEvent.setup().press(action);
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps Compact static without a card or invented CTA activation boundary', async () => {
+    const screen = await render(
+      <GameCard title={cardContent.title} venue={cardContent.venue} variant="compact" />,
+    );
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
+    expect(screen.queryByRole('link')).toBeNull();
+  });
+
+  it.each([
+    [false, participants.slice(0, 3), 'Alex Morgan, Jamie Taylor, Sam Kim'],
+    [true, participants, 'Alex Morgan, Jamie Taylor, Sam Kim, Riley Brown'],
+  ] as Array<[boolean, GameCardProps extends never ? never : readonly GameCardParticipant[], string]>)('preserves Open participant order for full=%s', async (full, orderedParticipants, description) => {
+    const screen = await render(
+      <GameCard
+        {...cardContent}
+        full={full}
+        onViewGame={jest.fn()}
+        participants={orderedParticipants}
+        variant="open"
+      /> as never,
+    );
+    expect(screen.getByRole('summary')).toHaveAccessibilityValue({ text: description });
+    expect(screen.queryAllByRole('image')).toHaveLength(0);
+  });
+
+  it.each([
+    { ...cardContent, onViewGame: jest.fn(), participants: participants.slice(0, 3), variant: 'next' },
+    { ...cardContent, full: false, onViewGame: jest.fn(), participants, variant: 'open' },
+    { ...cardContent, full: true, onViewGame: jest.fn(), participants: participants.slice(0, 3), variant: 'open' },
+    { ...cardContent, onViewResults: jest.fn(), participants: participants.slice(0, 3), variant: 'completed' },
+    { ...cardContent, onViewGame: jest.fn(), participants: [...participants].reverse(), variant: 'next' },
+    { ...cardContent, onViewGame: null, participants, variant: 'next' },
+    { ...cardContent, onViewGame: jest.fn(), participants, route: '/games/1', variant: 'next' },
+    { title: cardContent.title, venue: null, variant: 'compact' },
+    { ...cardContent, onViewGame: jest.fn(), participants, variant: 'unknown' },
+  ])('rejects unsupported cardinality, order, content, or behavior %#', (props) => {
+    expect(() => GameCard(props as never)).toThrow(/Unsupported Game Card/u);
+  });
+
+  it('retains complete long title and venue semantics with its action reachable', async () => {
+    const screen = await render(
+      <GameCard
+        onViewGame={jest.fn()}
+        participants={participants}
+        time="18:30 · 90 min"
+        title="Tuesday Social Padel for Łucía, Nguyễn, and friends from 東京"
+        variant="next"
+        venue="Padel United International Centre · The exceptionally long Court 3 name"
+      />,
+    );
+    expect(screen.getByText('Tuesday Social Padel for Łucía, Nguyễn, and friends from 東京')).toBeTruthy();
+    expect(screen.getByText('Padel United International Centre · The exceptionally long Court 3 name')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'View game' })).toBeTruthy();
+  });
+});
+
+describe('Game Card Storybook contract', () => {
+  it('accounts for all five categories under the exact Content title', () => {
+    expect(GameCardStories.title).toBe('Content/Game Card');
+    expect([
+      GameCardCanonical,
+      GameCardVariants,
+      GameCardStates,
+      GameCardBoundaries,
+      GameCardInteractive,
+    ]).toHaveLength(5);
+    expect(GameCardVariants.render).toBeDefined();
+    expect(GameCardBoundaries.render).toBeDefined();
+    expect(GameCardInteractive.render).toBeDefined();
   });
 });
