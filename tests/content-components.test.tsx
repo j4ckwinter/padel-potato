@@ -115,10 +115,14 @@ describe('Player Item runtime and semantic contract', () => {
 
   it('suppresses disabled invite-result activation and exposes disabled state', async () => {
     const malformedCallback = jest.fn();
+    const disabledProps = {
+      disabled: true,
+      identity: player,
+      onInvite: malformedCallback,
+      variant: 'invite-result',
+    } as unknown as PlayerItemProps;
     const screen = await render(
-      <PlayerItem
-        {...({ disabled: true, identity: player, onInvite: malformedCallback, variant: 'invite-result' } as never)}
-      />,
+      <PlayerItem {...disabledProps} />,
     );
     const row = screen.getByRole('button', { name: 'Invite Alex Morgan, Intermediate · Rating 4.6' });
     expect(row).toBeDisabled();
@@ -132,7 +136,6 @@ describe('Player Item runtime and semantic contract', () => {
     { identity: null, onViewPlayer: jest.fn(), variant: 'game-slot' },
     { onInvite: null, variant: 'empty-game-slot' },
     { disabled: false, identity: player, variant: 'invite-result' },
-    { disabled: true, identity: player, onInvite: jest.fn(), variant: 'invite-result' },
     { identity: { ...player, extra: true }, onViewPlayer: jest.fn(), variant: 'game-slot' },
     { identity: player, onViewPlayer: jest.fn(), style: {}, variant: 'game-slot' },
     { identity: player, onViewPlayer: jest.fn(), variant: 'unknown' },
@@ -144,7 +147,7 @@ describe('Player Item runtime and semantic contract', () => {
     const longIdentity = {
       initials: 'ŁN',
       name: 'Łucía Nguyễn from 東京',
-      presence: 'online',
+      presence: 'away',
       supportingText: 'Intermediate player with a deliberately long supporting description',
     } as const satisfies PlayerItemIdentity;
     const screen = await render(
