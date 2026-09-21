@@ -815,7 +815,7 @@ describe('Score Result Block runtime and semantic contract', () => {
   });
 
   it('preserves live state and note without owning a timer', async () => {
-    jest.useFakeTimers();
+    const intervalSpy = jest.spyOn(global, 'setInterval');
     const screen = await render(
       <ScoreResultBlock
         liveNote="Set 2 in progress"
@@ -827,8 +827,8 @@ describe('Score Result Block runtime and semantic contract', () => {
     expect(screen.getByRole('summary', {
       name: 'LIVE, Alex & Jamie, set 1 6, set 2 6, Riley & Sam, set 1 4, set 2 3, Set 2 in progress',
     })).toBeTruthy();
-    expect(jest.getTimerCount()).toBe(0);
-    jest.useRealTimers();
+    expect(intervalSpy).not.toHaveBeenCalled();
+    intervalSpy.mockRestore();
   });
 
   it.each([
