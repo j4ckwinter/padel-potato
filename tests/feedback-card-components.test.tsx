@@ -81,7 +81,7 @@ describe('Banner Toast runtime and announcement contract', () => {
     ['success', examples.success, 'Close success message'],
     ['info', examples.info, 'View booking update'],
     ['warning', examples.warning, 'View game details'],
-  ] as const)('emits the %s branch intent once from a named 44-point target', async (
+  ] as Array<[string, BannerToastProps, string]>)('emits the %s branch intent once from a named 44-point target', async (
     _name,
     props,
     actionName,
@@ -147,7 +147,9 @@ describe('Banner Toast runtime and announcement contract', () => {
     );
     expect(screen.getByRole('alert', { name: `${title}. ${message}` })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'View booking update' })).toBeTruthy();
-    expect(screen.getByTestId('banner-toast-copy').props.style).toEqual(
+    expect(screen.getByTestId('banner-toast-copy', {
+      includeHiddenElements: true,
+    }).props.style).toEqual(
       expect.arrayContaining([expect.objectContaining({ flexShrink: 1 })]),
     );
   });
