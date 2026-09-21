@@ -17,7 +17,7 @@ Executed on 2026-09-21 on Windows with Node `v24.20.0` and npm `11.19.0`. Every 
 | Phase 4 component evidence | `9e5844409118a206fa51892c2d0db88a587a0d801da208d90221230aec95f437` |
 | Phase 4 artwork manifest | `6e7f54d6da90765d22efdde8e21afe6a188adfe80650da3119ac63c998ff3a56` |
 | Phase 4 edge ledger | `f6257381b180c6410f9571742ee71523a29e49d0cc65f3ddeb5677c4bf2eba9e` |
-| Phase 4 Storybook contract | `8ada802d8aad187c8f6b0ec6982fe5125a7f5f26eb0c4c5506cb682fe7961155` |
+| Phase 4 Storybook contract | `92c43f4b5ec0ecc8b14a5aca9ca4ac7eea033537692f80aaae070540d8b2f535` |
 | Dependency fingerprint | `d4b0f56dc923c4ce040d45fa07c16e060f279970bee377adfbb90685a9241630` |
 
 The dependency fingerprint is SHA-256 over the exact `dependencies` and `devDependencies` objects in `package.json`. Plan 04-11 changes scripts only.
@@ -62,7 +62,7 @@ Copy authority is the User reply `approved all` on 2026-09-21, recorded in `04-0
 |---|---|---|
 | `npm run typecheck` | pass | Strict public contracts and negative fixtures compile. |
 | `npm run lint` | pass | Expo ESLint completed without errors. |
-| `npm test -- --runInBand` | pass | 24 suites, 751 tests, zero snapshots. |
+| `npm test -- --runInBand` | pass | 24 suites, 787 tests, zero snapshots. |
 | `npm run validate:design-source` | pass | Canonical manifest and controlled malformed-archive rejections passed. |
 | `node scripts/validate-phase-4-components.mjs` | pass | Exact revision 296, 15 families, and 76 active records passed. |
 | `node scripts/validate-phase-4-artwork.mjs` | pass | Fixed local media identities, paths, hashes, placements, and renderers passed. |
@@ -75,10 +75,10 @@ Copy authority is the User reply `approved all` on 2026-09-21, recorded in `04-0
 |---|---|---|
 | `tests/phase4-source-registry.test.ts` | pass | 6 tests |
 | `tests/phase4-artwork.test.tsx` | pass | 12 tests |
-| `tests/identity-status-progress-components.test.tsx` | pass | 58 tests |
-| `tests/content-components.test.tsx` | pass | 141 tests |
-| `tests/feedback-card-components.test.tsx` | pass | 73 tests |
-| `tests/phase4-story-contracts.test.tsx` | pass | 13 tests |
+| `tests/identity-status-progress-components.test.tsx` | pass | 78 tests |
+| `tests/content-components.test.tsx` | pass | 151 tests |
+| `tests/feedback-card-components.test.tsx` | pass | 76 tests |
+| `tests/phase4-story-contracts.test.tsx` | pass | 16 tests |
 
 ## Native Acceptance Disposition
 
