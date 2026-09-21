@@ -159,13 +159,13 @@ export const Boundaries: Story = {
 };
 
 export const Interactive: Story = {
-  args: { ...content, configuration: 'next/default', onViewGame: () => undefined },
+  args: { ...content, configuration: 'next/default' },
   parameters: { controls: { include: ['onViewGame'] } },
   render: (args) => <GameCard {...normalizeGameCardStoryArgs(args)} />,
 };
 
 export const ViewResultsInteraction: Story = {
-  args: { ...content, configuration: 'completed/default', onViewResults: () => undefined },
+  args: { ...content, configuration: 'completed/default' },
   parameters: { controls: { include: ['onViewResults'] } },
   render: (args) => <GameCard {...normalizeGameCardStoryArgs(args)} />,
 };

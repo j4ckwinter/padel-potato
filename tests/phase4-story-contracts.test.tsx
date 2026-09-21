@@ -1,5 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { StyleSheet } from 'react-native';
@@ -27,6 +28,52 @@ import {
   phase4StorySources,
   storyTaxonomy,
 } from '../src/design-system/stories/storyContract';
+
+function verifyStorybookActionEnhancer(
+  callback: string,
+  actionName: string,
+  initialArgs: Readonly<Record<string, unknown>>,
+) {
+  const probe = String.raw`
+    import { composeStory, INTERNAL_DEFAULT_PROJECT_ANNOTATIONS } from '@storybook/react';
+    import { EVENT_ID } from 'storybook/actions';
+    import { getCoreAnnotations } from 'storybook/internal/csf';
+    import { addons, composeConfigs, mockChannel } from 'storybook/preview-api';
+
+    const { actionName, callback, initialArgs } = JSON.parse(process.env.PADEL_STORYBOOK_ACTION_CASE);
+    const channel = mockChannel();
+    const events = [];
+    addons.setChannel(channel);
+    channel.on(EVENT_ID, (event) => events.push(event));
+    const projectAnnotations = composeConfigs([
+      ...getCoreAnnotations(),
+      INTERNAL_DEFAULT_PROJECT_ANNOTATIONS,
+    ]);
+    const ComposedStory = composeStory(
+      { args: initialArgs, render: () => null },
+      { argTypes: { [callback]: { action: actionName } }, title: 'Interaction probe' },
+      projectAnnotations,
+      'Interactive',
+    );
+    ComposedStory.args[callback]();
+    process.stdout.write(JSON.stringify({
+      eventName: events[0]?.data.name,
+      isAction: ComposedStory.args[callback].isAction === true,
+      resolvedType: typeof ComposedStory.args[callback],
+    }));
+  `;
+  return JSON.parse(execFileSync(
+    process.execPath,
+    ['--input-type=module', '-e', probe],
+    {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        PADEL_STORYBOOK_ACTION_CASE: JSON.stringify({ actionName, callback, initialArgs }),
+      },
+    },
+  )) as Readonly<{ eventName: string; isAction: boolean; resolvedType: string }>;
+}
 
 const expectedDefinitions = [
   ['Avatar', 'avatar', 'Identity/Avatar'],
@@ -275,23 +322,32 @@ describe('Phase 4 Storybook catalogue contract', () => {
   });
 
   it.each([
-    { callback: 'onSelectedChange', configuration: 'list/default', name: 'Player Item list', role: 'checkbox', story: PlayerItemStories.Interactive },
-    { callback: 'onViewPlayer', configuration: 'gameSlot/default', name: 'Player Item game slot', role: 'button', story: PlayerItemStories.ViewPlayerInteraction },
-    { callback: 'onInvite', configuration: 'gameSlot/empty', name: 'Player Item empty slot', role: 'button', story: PlayerItemStories.InviteInteraction },
-    { callback: 'onViewGame', configuration: 'next/default', name: 'Game Card game', role: 'button', story: GameCardStories.Interactive },
-    { callback: 'onViewResults', configuration: 'completed/default', name: 'Game Card results', role: 'button', story: GameCardStories.ViewResultsInteraction },
-    { callback: 'onCheckedChange', configuration: 'toggle/notification/off', name: 'Settings Row toggle', role: 'switch', story: SettingsRowStories.Interactive },
-    { callback: 'onPress', configuration: 'navigation/profile/default', name: 'Settings Row press', role: 'button', story: SettingsRowStories.PressInteraction },
+    { actionName: 'selected changed', callback: 'onSelectedChange', name: 'Player Item list', role: 'checkbox', story: PlayerItemStories.Interactive },
+    { actionName: 'view player', callback: 'onViewPlayer', name: 'Player Item game slot', role: 'button', story: PlayerItemStories.ViewPlayerInteraction },
+    { actionName: 'invite player', callback: 'onInvite', name: 'Player Item empty slot', role: 'button', story: PlayerItemStories.InviteInteraction },
+    { actionName: 'view game', callback: 'onViewGame', name: 'Game Card game', role: 'button', story: GameCardStories.Interactive },
+    { actionName: 'view results', callback: 'onViewResults', name: 'Game Card results', role: 'button', story: GameCardStories.ViewResultsInteraction },
+    { actionName: 'checked changed', callback: 'onCheckedChange', name: 'Settings Row toggle', role: 'switch', story: SettingsRowStories.Interactive },
+    { actionName: 'settings row pressed', callback: 'onPress', name: 'Settings Row press', role: 'button', story: SettingsRowStories.PressInteraction },
   ])(
-    'forwards the $name Storybook action through the real component callback',
-    async ({ configuration, callback, role, story }) => {
-      const action = jest.fn();
-      const args = { configuration, [callback]: action };
+    'wires the $name action enhancer through the composed Storybook callback',
+    async ({ actionName, callback, role, story }) => {
       expect(story.parameters?.controls?.include).toEqual([callback]);
-      const element = story.render?.(args as never, {} as never);
+      expect(story.args).not.toHaveProperty(callback);
+      expect(verifyStorybookActionEnhancer(callback, actionName, story.args ?? {})).toEqual({
+        eventName: actionName,
+        isAction: true,
+        resolvedType: 'function',
+      });
+
+      const forwardedAction = jest.fn();
+      const element = story.render?.(
+        { ...story.args, [callback]: forwardedAction } as never,
+        {} as never,
+      );
       const screen = await render(element as React.ReactElement);
       fireEvent.press(screen.getByRole(role));
-      expect(action).toHaveBeenCalledTimes(1);
+      expect(forwardedAction).toHaveBeenCalledTimes(1);
     },
   );
 

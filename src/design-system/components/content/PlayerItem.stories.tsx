@@ -189,7 +189,7 @@ function InteractiveHarness(props: Readonly<{ onSelectedChange?: (selected: bool
 }
 
 export const Interactive: Story = {
-  args: { configuration: 'list/default', onSelectedChange: () => undefined },
+  args: { configuration: 'list/default' },
   parameters: { controls: { include: ['onSelectedChange'] } },
   render: (args) => (
     <InteractiveHarness
@@ -201,13 +201,13 @@ export const Interactive: Story = {
 };
 
 export const ViewPlayerInteraction: Story = {
-  args: { configuration: 'gameSlot/default', onViewPlayer: () => undefined },
+  args: { configuration: 'gameSlot/default' },
   parameters: { controls: { include: ['onViewPlayer'] } },
   render: (args) => <PlayerItem {...normalizePlayerItemStoryArgs(args)} />,
 };
 
 export const InviteInteraction: Story = {
-  args: { configuration: 'gameSlot/empty', onInvite: () => undefined },
+  args: { configuration: 'gameSlot/empty' },
   parameters: { controls: { include: ['onInvite'] } },
   render: (args) => <PlayerItem {...normalizePlayerItemStoryArgs(args)} />,
 };

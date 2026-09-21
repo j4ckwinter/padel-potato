@@ -194,7 +194,7 @@ function InteractiveHarness(props: Readonly<{
 }
 
 export const Interactive: Story = {
-  args: { configuration: 'toggle/notification/off', onCheckedChange: () => undefined },
+  args: { configuration: 'toggle/notification/off' },
   parameters: { controls: { include: ['onCheckedChange'] } },
   render: (args) => (
     <InteractiveHarness
@@ -204,7 +204,7 @@ export const Interactive: Story = {
 };
 
 export const PressInteraction: Story = {
-  args: { configuration: 'navigation/profile/default', onPress: () => undefined },
+  args: { configuration: 'navigation/profile/default' },
   parameters: { controls: { include: ['onPress'] } },
   render: (args) => <SettingsRow {...normalizeSettingsRowStoryArgs(args)} />,
 };
