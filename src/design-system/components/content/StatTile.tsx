@@ -4,10 +4,6 @@ import { Icon } from '../../assets/Icon';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 
-type StatTileContent = 'gamesPlayed' | 'winRate' | 'rating' | 'streak';
-type StatTileState = 'neutral' | 'positive';
-type StatTileType = 'compact' | 'featured';
-
 type StatTileCopy = Readonly<{
   label: string;
   supportingText: string;
