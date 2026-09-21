@@ -8,6 +8,7 @@ import {
   AvatarGroup,
   type AvatarGroupIdentity,
 } from '../identity/AvatarGroup';
+import { isLocalImageSource } from '../localImageSource';
 
 type ParticipantBase = Readonly<{
   name: string;
@@ -94,16 +95,6 @@ function unsupported(reason: string): never {
   );
 }
 
-function isLocalSource(value: unknown): value is ImageSourcePropType {
-  if (typeof value === 'number') return Number.isInteger(value) && value > 0;
-  if (Array.isArray(value)) return value.length > 0 && value.every(isLocalSource);
-  if (!value || typeof value !== 'object') return false;
-  const uri = (value as { uri?: unknown }).uri;
-  return typeof uri === 'string'
-    && uri.trim().length > 0
-    && !/^(?:https?:|data:)/iu.test(uri.trim());
-}
-
 function validateText(value: unknown, field: string) {
   if (typeof value !== 'string' || value.trim().length === 0) {
     unsupported(`${field} must be non-empty text`);
@@ -133,7 +124,7 @@ function validateParticipant(value: unknown, index: number): asserts value is Ga
     || participant.initials.trim().length < 1
     || participant.initials.trim().length > 3
   )) unsupported(`participant ${index + 1} initials must contain one to three characters`);
-  if (hasSource && !isLocalSource(participant.source)) {
+  if (hasSource && !isLocalImageSource(participant.source)) {
     unsupported(`participant ${index + 1} source must be bundled or local`);
   }
 }

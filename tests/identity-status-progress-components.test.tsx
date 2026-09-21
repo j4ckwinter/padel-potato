@@ -65,6 +65,14 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
+const rejectedImageSources = [
+  { uri: 'ftp://example.com/player.webp' },
+  { uri: 'blob:https://example.com/player-id' },
+  { uri: 'ws://example.com/player.webp' },
+  { uri: '//example.com/player.webp' },
+  { uri: 'player.webp' },
+] as const;
+
 describe('Avatar source contract', () => {
   it('retains the exact five authored tuples in revision-296 source order', () => {
     expect(phase4SourceIdentity).toEqual(expect.objectContaining({
@@ -145,6 +153,15 @@ describe('Avatar runtime and semantic contract', () => {
       presence: 'online',
       size: 32,
     } as never)).toThrow(/Unsupported Avatar identity content/u);
+  });
+
+  it.each(rejectedImageSources)('rejects non-local image source %#', (source) => {
+    expect(() => Avatar({
+      accessibilityLabel: 'Remote identity',
+      presence: 'online',
+      size: 40,
+      source,
+    } as never)).toThrow(/bundled or local React Native image source/u);
   });
 
   it('exposes one image semantic when labelled and none when decorative', async () => {
@@ -231,6 +248,16 @@ describe('Avatar Group runtime and semantic contract', () => {
   ])('rejects an unsupported collection %#', (props) => {
     expect(() => AvatarGroup(props as never)).toThrow(/Unsupported Avatar Group/u);
   });
+
+  it.each(rejectedImageSources)('rejects a non-local nested image source %#', (source) => {
+    expect(() => AvatarGroup({
+      identities: [
+        { name: 'Remote player', presence: 'online', source },
+        groupPlayers[1],
+      ],
+      variant: '2-players',
+    } as never)).toThrow(/source must be bundled or local/u);
+  });
 });
 
 describe('Avatar Picker runtime and semantic contract', () => {
@@ -272,6 +299,18 @@ describe('Avatar Picker runtime and semantic contract', () => {
     { onPress: jest.fn(), variant: 'selected' },
   ])('rejects an unsupported picker configuration %#', (props) => {
     expect(() => AvatarPicker(props as never)).toThrow(/Unsupported Avatar Picker/u);
+  });
+
+  it.each([
+    ...rejectedImageSources,
+    'ftp://example.com/player.webp',
+    'file:///bare-string.webp',
+  ])('rejects a non-local or malformed picker source %#', (source) => {
+    expect(() => AvatarPicker({
+      onPress: jest.fn(),
+      source,
+      variant: 'photo',
+    } as never)).toThrow(/bundled or local image source/u);
   });
 });
 

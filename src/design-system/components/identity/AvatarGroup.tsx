@@ -5,6 +5,7 @@ import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
+import { isLocalImageSource } from '../localImageSource';
 import { Avatar } from './Avatar';
 
 type InitialsIdentity = Readonly<{
@@ -64,16 +65,6 @@ function unsupported(reason: string): never {
   );
 }
 
-function isLocalSource(value: unknown): value is ImageSourcePropType {
-  if (typeof value === 'number') return Number.isInteger(value) && value > 0;
-  if (Array.isArray(value)) return value.length > 0 && value.every(isLocalSource);
-  if (!value || typeof value !== 'object') return false;
-  const uri = (value as { uri?: unknown }).uri;
-  return typeof uri === 'string'
-    && uri.trim().length > 0
-    && !/^(?:https?:|data:)/iu.test(uri.trim());
-}
-
 function validateIdentity(value: unknown, index: number): asserts value is AvatarGroupIdentity {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     unsupported(`identity ${index + 1} must be a player identity`);
@@ -97,7 +88,7 @@ function validateIdentity(value: unknown, index: number): asserts value is Avata
     || identity.initials.trim().length < 1
     || identity.initials.trim().length > 3
   )) unsupported(`identity ${index + 1} initials must contain one to three characters`);
-  if (hasSource && !isLocalSource(identity.source)) {
+  if (hasSource && !isLocalImageSource(identity.source)) {
     unsupported(`identity ${index + 1} source must be bundled or local`);
   }
 }

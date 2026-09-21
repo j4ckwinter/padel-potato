@@ -6,6 +6,7 @@ import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 import { Avatar } from '../identity/Avatar';
+import { isLocalImageSource } from '../localImageSource';
 
 type InitialsIdentity = Readonly<{
   initials: string;
@@ -79,16 +80,6 @@ function unsupported(reason: string): never {
   );
 }
 
-function isLocalSource(value: unknown): value is ImageSourcePropType {
-  if (typeof value === 'number') return Number.isInteger(value) && value > 0;
-  if (Array.isArray(value)) return value.length > 0 && value.every(isLocalSource);
-  if (!value || typeof value !== 'object') return false;
-  const uri = (value as { uri?: unknown }).uri;
-  return typeof uri === 'string'
-    && uri.trim().length > 0
-    && !/^(?:https?:|data:)/iu.test(uri.trim());
-}
-
 function validateIdentity(value: unknown): asserts value is PlayerItemIdentity {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     unsupported('identity must be a player identity');
@@ -115,7 +106,7 @@ function validateIdentity(value: unknown): asserts value is PlayerItemIdentity {
     || identity.initials.trim().length < 1
     || identity.initials.trim().length > 3
   )) unsupported('identity initials must contain one to three characters');
-  if (hasSource && !isLocalSource(identity.source)) {
+  if (hasSource && !isLocalImageSource(identity.source)) {
     unsupported('identity source must be bundled or local');
   }
 }

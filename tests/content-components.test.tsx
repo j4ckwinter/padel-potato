@@ -99,6 +99,14 @@ const flattenedStyle = (style: unknown) => StyleSheet.flatten(
   style as Parameters<typeof StyleSheet.flatten>[0],
 ) as Record<string, unknown>;
 
+const rejectedImageSources = [
+  { uri: 'ftp://example.com/player.webp' },
+  { uri: 'blob:https://example.com/player-id' },
+  { uri: 'ws://example.com/player.webp' },
+  { uri: '//example.com/player.webp' },
+  { uri: 'player.webp' },
+] as const;
+
 const notificationRecords = phase4Families[7].records;
 const notificationContent = {
   message: 'Your activity has a new update',
@@ -479,6 +487,19 @@ describe('Player Item runtime and semantic contract', () => {
     expect(() => PlayerItem(props as never)).toThrow(/Unsupported Player Item/u);
   });
 
+  it.each(rejectedImageSources)('rejects a non-local player image source %#', (source) => {
+    expect(() => PlayerItem({
+      identity: {
+        name: player.name,
+        presence: player.presence,
+        source,
+        supportingText: player.supportingText,
+      },
+      onViewPlayer: jest.fn(),
+      variant: 'game-slot',
+    } as never)).toThrow(/source must be bundled or local/u);
+  });
+
   it('retains complete long Unicode semantics inside the constrained row', async () => {
     const longIdentity = {
       initials: 'ŁN',
@@ -624,6 +645,25 @@ describe('Game Card runtime and semantic contract', () => {
     { ...cardContent, onViewGame: jest.fn(), participants, variant: 'unknown' },
   ])('rejects unsupported cardinality, order, content, or behavior %#', (props) => {
     expect(() => GameCard(props as never)).toThrow(/Unsupported Game Card/u);
+  });
+
+  it.each(rejectedImageSources)('rejects a non-local participant image source %#', (source) => {
+    expect(() => GameCard({
+      ...cardContent,
+      onViewGame: jest.fn(),
+      participants: [
+        {
+          name: participants[0].name,
+          presence: participants[0].presence,
+          slot: participants[0].slot,
+          source,
+        },
+        participants[1],
+        participants[2],
+        participants[3],
+      ],
+      variant: 'next',
+    } as never)).toThrow(/source must be bundled or local/u);
   });
 
   it('retains complete long title and venue semantics with its action reachable', async () => {

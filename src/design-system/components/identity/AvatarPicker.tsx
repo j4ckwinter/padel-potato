@@ -5,6 +5,7 @@ import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
+import { isLocalImageSource } from '../localImageSource';
 import { Avatar } from './Avatar';
 
 export type AvatarPickerProps =
@@ -21,19 +22,6 @@ function unsupported(reason: string): never {
   throw new Error(
     `Unsupported Avatar Picker configuration: ${reason}. Supported configurations: empty/default, initials/default, photo/selected, empty/error.`,
   );
-}
-
-function isLocalSource(value: unknown): value is ImageSourcePropType {
-  if (typeof value === 'string') {
-    return value.trim().length > 0 && !/^(?:https?:|data:)/iu.test(value.trim());
-  }
-  if (typeof value === 'number') return Number.isInteger(value) && value > 0;
-  if (Array.isArray(value)) return value.length > 0 && value.every(isLocalSource);
-  if (!value || typeof value !== 'object') return false;
-  const uri = (value as { uri?: unknown }).uri;
-  return typeof uri === 'string'
-    && uri.trim().length > 0
-    && !/^(?:https?:|data:)/iu.test(uri.trim());
 }
 
 function validateAvatarPickerProps(props: AvatarPickerProps) {
@@ -55,7 +43,7 @@ function validateAvatarPickerProps(props: AvatarPickerProps) {
       || Object.prototype.hasOwnProperty.call(runtime, 'source')
     ) unsupported('initials/default requires one to three initials only');
   } else if (runtime.variant === 'photo') {
-    if (!isLocalSource(runtime.source) || Object.prototype.hasOwnProperty.call(runtime, 'initials')) {
+    if (!isLocalImageSource(runtime.source) || Object.prototype.hasOwnProperty.call(runtime, 'initials')) {
       unsupported('photo/selected requires one bundled or local image source only');
     }
   } else if (

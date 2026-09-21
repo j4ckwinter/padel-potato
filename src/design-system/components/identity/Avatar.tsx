@@ -11,6 +11,7 @@ import {
   avatarRecords,
   avatarSizes,
 } from '../phase4SourceRegistry';
+import { isLocalImageSource } from '../localImageSource';
 
 export { avatarPresences, avatarSizes };
 
@@ -60,16 +61,6 @@ function unsupportedIdentity(reason: string): never {
   throw new Error(`Unsupported Avatar identity content: ${reason}.`);
 }
 
-function isLocalSource(value: unknown): value is ImageSourcePropType {
-  if (typeof value === 'number') return Number.isInteger(value) && value > 0;
-  if (Array.isArray(value)) return value.length > 0 && value.every(isLocalSource);
-  if (!value || typeof value !== 'object') return false;
-  const uri = (value as { uri?: unknown }).uri;
-  return typeof uri === 'string'
-    && uri.trim().length > 0
-    && !/^(?:https?:|data:)/iu.test(uri.trim());
-}
-
 function validateAvatarProps(props: AvatarProps) {
   const runtimeProps = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtimeProps)) {
@@ -96,7 +87,7 @@ function validateAvatarProps(props: AvatarProps) {
     ) {
       unsupportedIdentity('initials must contain one to three visible characters');
     }
-  } else if (!isLocalSource(runtimeProps.source)) {
+  } else if (!isLocalImageSource(runtimeProps.source)) {
     unsupportedIdentity('source must be a bundled or local React Native image source');
   }
 
