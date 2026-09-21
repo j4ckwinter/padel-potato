@@ -193,10 +193,10 @@ describe('Player Item Storybook contract', () => {
 
 const gameCardRecords = phase4Families[6].records;
 const participants = [
-  { initials: 'AM', name: 'Alex Morgan', presence: 'online' },
-  { initials: 'JT', name: 'Jamie Taylor', presence: 'online' },
-  { initials: 'SK', name: 'Sam Kim', presence: 'online' },
-  { initials: 'RB', name: 'Riley Brown', presence: 'online' },
+  { initials: 'AM', name: 'Alex Morgan', presence: 'online', slot: 1 },
+  { initials: 'JT', name: 'Jamie Taylor', presence: 'online', slot: 2 },
+  { initials: 'SK', name: 'Sam Kim', presence: 'online', slot: 3 },
+  { initials: 'RB', name: 'Riley Brown', presence: 'online', slot: 4 },
 ] as const satisfies readonly GameCardParticipant[];
 
 const cardContent = {
@@ -247,7 +247,7 @@ describe('Game Card runtime and semantic contract', () => {
     ['next', 'View game'],
     ['open', 'View game'],
     ['completed', 'View results'],
-  ] as const)('exposes only the authored %s action named %s', async (variant, actionName) => {
+  ] as Array<['next' | 'open' | 'completed', 'View game' | 'View results']>)('exposes only the authored %s action named %s', async (variant, actionName) => {
     const callback = jest.fn();
     const props = variant === 'next'
       ? { ...cardContent, onViewGame: callback, participants, variant }
@@ -273,15 +273,16 @@ describe('Game Card runtime and semantic contract', () => {
   it.each([
     [false, participants.slice(0, 3), 'Alex Morgan, Jamie Taylor, Sam Kim'],
     [true, participants, 'Alex Morgan, Jamie Taylor, Sam Kim, Riley Brown'],
-  ] as Array<[boolean, GameCardProps extends never ? never : readonly GameCardParticipant[], string]>)('preserves Open participant order for full=%s', async (full, orderedParticipants, description) => {
+  ] as Array<[boolean, readonly GameCardParticipant[], string]>)('preserves Open participant order for full=%s', async (full, orderedParticipants, description) => {
+    const props = {
+      ...cardContent,
+      full,
+      onViewGame: jest.fn(),
+      participants: orderedParticipants,
+      variant: 'open',
+    } as unknown as GameCardProps;
     const screen = await render(
-      <GameCard
-        {...cardContent}
-        full={full}
-        onViewGame={jest.fn()}
-        participants={orderedParticipants}
-        variant="open"
-      /> as never,
+      <GameCard {...props} />,
     );
     expect(screen.getByRole('summary')).toHaveAccessibilityValue({ text: description });
     expect(screen.queryAllByRole('image')).toHaveLength(0);
