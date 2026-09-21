@@ -280,7 +280,7 @@ describe('Empty State source and approved-copy contract', () => {
     ['noGames', emptyStateExamples.noGames, 'No games', 'You don\u2019t have any games scheduled yet.', 'Create game', 'phase4-artwork-empty-state-no-games'],
     ['noNotifications', emptyStateExamples.noNotifications, 'No notifications', 'You\u2019re all caught up. New updates will appear here.', null, 'phase4-artwork-empty-state-no-notifications'],
     ['noPlayers', emptyStateExamples.noPlayers, 'No players', 'Invite friends to start building your padel group.', 'Invite players', 'phase4-artwork-empty-state-no-players'],
-  ] as const)('renders exact approved %s copy, action, and decorative artwork', async (
+  ] as Array<[string, EmptyStateProps, string, string, string | null, string]>)('renders exact approved %s copy, action, and decorative artwork', async (
     _branch,
     props,
     heading,
@@ -306,7 +306,7 @@ describe('Empty State source and approved-copy contract', () => {
   it.each([
     [emptyStateExamples.noGames, 'Create game'],
     [emptyStateExamples.noPlayers, 'Invite players'],
-  ] as const)('emits only the exact branch action %s', async (props, actionName) => {
+  ] as Array<[Extract<EmptyStateProps, { content: 'noGames' | 'noPlayers' }>, string]>)('emits only the exact branch action %s', async (props, actionName) => {
     const screen = await render(<EmptyState {...props} />);
     await userEvent.setup().press(screen.getByRole('button', { name: actionName }));
     const callback = props.content === 'noGames' ? props.onCreateGame : props.onInvitePlayers;
