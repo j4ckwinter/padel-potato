@@ -96,9 +96,9 @@ export function PlayerPreferencesCard(props: PlayerPreferencesCardProps) {
           {props.content === 'full'
             ? <StaticPreference label={props.level} style="success" />
             : null}
-          <StaticPreference label={props.side} style="neutral" />
-          <StaticPreference label={props.days} style="info" />
-          <StaticPreference label={props.timeOfDay} style="warning" />
+          <StaticPreference label={props.side} style="info" />
+          <StaticPreference label={props.days} style="neutral" />
+          <StaticPreference label={props.timeOfDay} style="neutral" />
         </View>
       </View>
     </View>

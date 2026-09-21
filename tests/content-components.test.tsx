@@ -84,6 +84,7 @@ import {
 } from '../src/design-system/components/content/PlayerItem';
 import { phase4Families } from '../src/design-system/components/phase4SourceRegistry';
 import * as ContentComponents from '../src/design-system/components/content';
+import { colors } from '../src/design-system/tokens';
 
 const playerItemRecords = phase4Families[5].records;
 
@@ -943,6 +944,14 @@ describe('Player Preferences Card runtime and semantic contract', () => {
     })).toBeTruthy();
     expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
     expect(screen.queryAllByRole('button')).toHaveLength(0);
+    expect(screen.getAllByTestId('status-chip-content', { includeHiddenElements: true }).map(({ props }) => (
+      flattenedStyle(props.style).backgroundColor
+    ))).toEqual([
+      colors.surfaceAccent,
+      colors.info,
+      colors.surfaceMuted,
+      colors.surfaceMuted,
+    ]);
   });
 
   it('omits Intermediate from the profile branch and keeps the three values static', async () => {
