@@ -90,7 +90,7 @@ export const Canonical: Story = {
 export const Variants: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       {records.map((record) => (
         <Fragment key={record.id}>
           <StatusChip {...recordProps(record)} />
@@ -106,7 +106,7 @@ export const Variants: Story = {
 export const States: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       <StatusChip label="Confirmed" onSelectedChange={() => undefined} selected style="success" variant="selectable" />
       <StatusChip label="Unavailable" style="neutral" variant="disabled" />
       <Text color="textSecondary" variant="caption">

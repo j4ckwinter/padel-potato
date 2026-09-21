@@ -78,7 +78,7 @@ export const Canonical: Story = {
 export const Variants: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       {records.map((record) => (
         <Fragment key={record.id}>
           <NotificationRow {...recordProps(record)} />
@@ -94,7 +94,7 @@ export const Variants: Story = {
 export const States: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       <NotificationRow {...recordProps(records[5])} />
       <NotificationRow {...recordProps(records[1])} />
     </Stack>

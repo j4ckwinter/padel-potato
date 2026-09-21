@@ -84,7 +84,7 @@ export const Canonical: Story = {
 export const Variants: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       {records.map((record) => (
         <Fragment key={record.id}>
           <AvatarGroup {...recordProps(record)} />
@@ -100,7 +100,7 @@ export const Variants: Story = {
 export const States: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       <AvatarGroup identities={players} overflow={3} variant="overflow" />
       <AvatarGroup onAddPlayer1={() => undefined} onAddPlayer2={() => undefined} variant="empty" />
     </Stack>

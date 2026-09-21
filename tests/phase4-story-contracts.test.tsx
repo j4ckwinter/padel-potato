@@ -64,6 +64,24 @@ const storyModules = [
   IllustratedCardStories,
 ] as const;
 
+const phase4StoryFiles = [
+  'identity/Avatar.stories.tsx',
+  'identity/AvatarGroup.stories.tsx',
+  'identity/AvatarPicker.stories.tsx',
+  'status/StatusChip.stories.tsx',
+  'progress/StepProgress.stories.tsx',
+  'content/PlayerItem.stories.tsx',
+  'content/GameCard.stories.tsx',
+  'content/NotificationRow.stories.tsx',
+  'content/SettingsRow.stories.tsx',
+  'content/StatTile.stories.tsx',
+  'content/ScoreResultBlock.stories.tsx',
+  'content/PlayerPreferencesCard.stories.tsx',
+  'feedback/BannerToast.stories.tsx',
+  'feedback/EmptyState.stories.tsx',
+  'cards/IllustratedCard.stories.tsx',
+] as const;
+
 type EdgeProbe = Readonly<{
   id: string;
   requirement: string;
@@ -144,6 +162,16 @@ describe('Phase 4 Storybook catalogue contract', () => {
     expect(phase4StoryContracts.EmptyState.actions).toEqual(['onCreateGame', 'onInvitePlayers']);
     expect(phase4StoryContracts.StepProgress.actions).toEqual([]);
     expect(phase4StoryContracts.IllustratedCard.controls).toEqual(['type']);
+  });
+
+  it('uses only the declared Phase 4 spacing scale in catalogue composition', () => {
+    for (const storyFile of phase4StoryFiles) {
+      const source = fs.readFileSync(
+        path.resolve('src/design-system/components', storyFile),
+        'utf8',
+      );
+      expect(source).not.toMatch(/gap="space(?:12|20|40)"/u);
+    }
   });
 
   it('retains host backstops and explicitly defers every native acceptance lane', () => {

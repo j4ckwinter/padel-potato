@@ -91,7 +91,7 @@ export const Canonical: Story = {
 export const Variants: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       {avatarRecords.map((record) => (
         <Fragment key={record.id}>
           <Avatar {...recordProps(record)} />
@@ -107,7 +107,7 @@ export const Variants: Story = {
 export const States: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       <Avatar accessibilityLabel="Alex Morgan, online" initials="AM" presence="online" size={56} />
       <Avatar accessibilityLabel="Alex Morgan, away" initials="AM" presence="away" size={48} />
       <Avatar accessibilityLabel="Alex Morgan, offline" initials="AM" presence="offline" size={48} />

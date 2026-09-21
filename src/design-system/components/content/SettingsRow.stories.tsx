@@ -109,7 +109,7 @@ export const Canonical: Story = {
 export const Variants: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       {records.map((record) => (
         <Fragment key={record.id}>
           <SettingsRow {...recordProps(record)} />
@@ -125,7 +125,7 @@ export const Variants: Story = {
 export const States: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12">
+    <Stack gap="space16">
       <SettingsRow {...recordProps(records[8])} />
       <Text color="textSecondary" variant="caption">Hold Account to inspect the native-driven pressed state.</Text>
       <SettingsRow {...recordProps(records[6])} />
@@ -164,7 +164,7 @@ function InteractiveHarness(props: Readonly<{
     : undefined;
   const onPress = typeof props.onPress === 'function' ? props.onPress as () => void : undefined;
   return (
-    <Stack gap="space12">
+    <Stack gap="space16">
       <SettingsRow
         checked={checked}
         disabled={false}
