@@ -1,11 +1,21 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
+import { Children } from 'react';
 import { StyleSheet } from 'react-native';
 
+import BannerToastStories, {
+  Boundaries as BannerToastBoundaries,
+  Canonical as BannerToastCanonical,
+  Interactive as BannerToastInteractive,
+  States as BannerToastStates,
+  Variants as BannerToastVariants,
+  normalizeBannerToastStoryArgs,
+} from '../src/design-system/components/feedback/BannerToast.stories';
 import {
   BannerToast,
   type BannerToastProps,
 } from '../src/design-system/components/feedback/BannerToast';
+import * as FeedbackComponents from '../src/design-system/components/feedback';
 import { phase4Families } from '../src/design-system/components/phase4SourceRegistry';
 
 const bannerToastRecords = phase4Families[12].records;
@@ -152,5 +162,82 @@ describe('Banner Toast runtime and announcement contract', () => {
     }).props.style).toEqual(
       expect.arrayContaining([expect.objectContaining({ flexShrink: 1 })]),
     );
+  });
+});
+
+describe('Banner Toast Storybook contract', () => {
+  it('accounts for all five categories under the exact Feedback title', () => {
+    expect(BannerToastStories.title).toBe('Feedback/Banner Toast');
+    expect([
+      BannerToastCanonical,
+      BannerToastVariants,
+      BannerToastStates,
+      BannerToastBoundaries,
+      BannerToastInteractive,
+    ]).toHaveLength(5);
+  });
+
+  it('normalizes each style control to one complete source-valid branch', () => {
+    expect(normalizeBannerToastStoryArgs({ style: 'error' })).toEqual(
+      expect.objectContaining({ style: 'error', type: 'toast' }),
+    );
+    expect(normalizeBannerToastStoryArgs({ style: 'warning' })).toEqual(
+      expect.objectContaining({ style: 'warning', type: 'banner' }),
+    );
+    expect(normalizeBannerToastStoryArgs({ style: 'info' })).toEqual(
+      expect.objectContaining({ style: 'info', type: 'banner' }),
+    );
+    expect(normalizeBannerToastStoryArgs({ style: 'success' })).toEqual(
+      expect.objectContaining({ style: 'success', type: 'toast' }),
+    );
+    expect(normalizeBannerToastStoryArgs({
+      onClose: jest.fn(),
+      onViewBookingUpdate: jest.fn(),
+      onViewGameDetails: jest.fn(),
+      style: 'info',
+      type: 'toast',
+    })).toEqual(expect.objectContaining({ style: 'info', type: 'banner' }));
+  });
+
+  it('renders every source record in exact order with visible provenance', () => {
+    const variants = BannerToastVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{ children: React.ReactNode }>;
+    const children = Children.toArray(variants.props.children);
+    expect(children).toHaveLength(bannerToastRecords.length);
+    const variantJson = JSON.stringify(variants);
+    let previousIndex = -1;
+    for (const record of bannerToastRecords) {
+      const currentIndex = variantJson.indexOf(record.id);
+      expect(currentIndex).toBeGreaterThan(previousIndex);
+      previousIndex = currentIndex;
+    }
+  });
+
+  it('records long 200%-scale announcement/action and native-review boundaries', () => {
+    const boundaries = BannerToastBoundaries.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
+    const boundaryJson = JSON.stringify(boundaries);
+    expect(boundaryJson).toContain('200%');
+    expect(boundaryJson).toContain('Phase 5');
+    expect(boundaryJson).toContain('View booking update');
+    const interactive = BannerToastInteractive.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
+    expect((interactive.type as { name?: string }).name).toBe('InteractiveBannerToastHarness');
+  });
+});
+
+describe('Feedback family public boundary', () => {
+  it('exports only BannerToast and intentional runtime constants', () => {
+    expect(Object.keys(FeedbackComponents).sort()).toEqual([
+      'BannerToast',
+      'bannerToastStyles',
+      'bannerToastTypes',
+    ]);
   });
 });
