@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import fs from 'node:fs';
 import path from 'node:path';
 import { StyleSheet } from 'react-native';
@@ -262,14 +262,9 @@ describe('Phase 4 Storybook catalogue contract', () => {
       arg: 'configuration',
       eq: 'success/selected',
     });
-    expect(PlayerItemStories.default.argTypes?.onAction?.if).toEqual({
-      arg: 'configuration',
-      neq: 'inviteResult/disabled',
-    });
-    expect(GameCardStories.default.argTypes?.onAction?.if).toEqual({
-      arg: 'configuration',
-      neq: 'compact/default',
-    });
+    expect(PlayerItemStories.default.argTypes).not.toHaveProperty('onAction');
+    expect(GameCardStories.default.argTypes).not.toHaveProperty('onAction');
+    expect(SettingsRowStories.default.argTypes).not.toHaveProperty('onAction');
 
     expect(EmptyStateStories.default.argTypes?.onCreateGame?.if).toEqual({ arg: 'content', eq: 'noGames' });
     expect(EmptyStateStories.default.argTypes?.onInvitePlayers?.if).toEqual({ arg: 'content', eq: 'noPlayers' });
@@ -278,6 +273,27 @@ describe('Phase 4 Storybook catalogue contract', () => {
     expect(IllustratedCardStories.default.argTypes?.onInvitePlayers?.if).toEqual({ arg: 'type', eq: 'invitePlayers' });
     expect(IllustratedCardStories.default.argTypes?.onShareGame?.if).toEqual({ arg: 'type', eq: 'gameCreated' });
   });
+
+  it.each([
+    { callback: 'onSelectedChange', configuration: 'list/default', name: 'Player Item list', role: 'checkbox', story: PlayerItemStories.Interactive },
+    { callback: 'onViewPlayer', configuration: 'gameSlot/default', name: 'Player Item game slot', role: 'button', story: PlayerItemStories.ViewPlayerInteraction },
+    { callback: 'onInvite', configuration: 'gameSlot/empty', name: 'Player Item empty slot', role: 'button', story: PlayerItemStories.InviteInteraction },
+    { callback: 'onViewGame', configuration: 'next/default', name: 'Game Card game', role: 'button', story: GameCardStories.Interactive },
+    { callback: 'onViewResults', configuration: 'completed/default', name: 'Game Card results', role: 'button', story: GameCardStories.ViewResultsInteraction },
+    { callback: 'onCheckedChange', configuration: 'toggle/notification/off', name: 'Settings Row toggle', role: 'switch', story: SettingsRowStories.Interactive },
+    { callback: 'onPress', configuration: 'navigation/profile/default', name: 'Settings Row press', role: 'button', story: SettingsRowStories.PressInteraction },
+  ])(
+    'forwards the $name Storybook action through the real component callback',
+    async ({ configuration, callback, role, story }) => {
+      const action = jest.fn();
+      const args = { configuration, [callback]: action };
+      expect(story.parameters?.controls?.include).toEqual([callback]);
+      const element = story.render?.(args as never, {} as never);
+      const screen = await render(element as React.ReactElement);
+      fireEvent.press(screen.getByRole(role));
+      expect(action).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('uses only the declared Phase 4 spacing scale in catalogue composition', () => {
     for (const storyFile of phase4StoryFiles) {

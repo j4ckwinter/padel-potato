@@ -13,7 +13,6 @@ const sourceLabel = (recordId: string) =>
 type StoryArgs = Readonly<{
   configuration?: unknown;
   label?: unknown;
-  onAction?: unknown;
   onCheckedChange?: unknown;
   onPress?: unknown;
   value?: unknown;
@@ -31,9 +30,10 @@ const meta = {
   title: 'Content/Settings Row',
   argTypes: {
     configuration: { control: 'select', options: settingsRowStoryConfigurations },
-    onAction: { action: 'branch action' },
+    onCheckedChange: { action: 'checked changed' },
+    onPress: { action: 'settings row pressed' },
   },
-  parameters: { controls: { include: ['configuration', 'onAction'] } },
+  parameters: { controls: { include: ['configuration'] } },
 } satisfies Meta<StoryArgs>;
 
 export default meta;
@@ -45,15 +45,12 @@ export function normalizeSettingsRowStoryArgs(args: StoryArgs): SettingsRowProps
   )) {
     throw new Error(`Unsupported Settings Row story configuration: ${String(args.configuration)}.`);
   }
-  const branchAction = typeof args.onAction === 'function' ? args.onAction : undefined;
-  const onPress = branchAction
-    ? branchAction as () => void
-    : typeof args.onPress === 'function' ? args.onPress as () => void : () => undefined;
-  const onCheckedChange = branchAction
-    ? branchAction as (checked: boolean) => void
-    : typeof args.onCheckedChange === 'function'
-      ? args.onCheckedChange as (checked: boolean) => void
-      : () => undefined;
+  const onPress = typeof args.onPress === 'function'
+    ? args.onPress as () => void
+    : () => undefined;
+  const onCheckedChange = typeof args.onCheckedChange === 'function'
+    ? args.onCheckedChange as (checked: boolean) => void
+    : () => undefined;
   if (args.configuration === 'destructive/close/default') {
     return { icon: 'close', onPress, variant: 'destructive' };
   }
@@ -176,38 +173,38 @@ export const Boundaries: Story = {
 
 function InteractiveHarness(props: Readonly<{
   onCheckedChange?: unknown;
-  onPress?: unknown;
 }>) {
   const [checked, setChecked] = useState(false);
   const onCheckedChange = typeof props.onCheckedChange === 'function'
     ? props.onCheckedChange as (next: boolean) => void
     : undefined;
-  const onPress = typeof props.onPress === 'function' ? props.onPress as () => void : undefined;
   return (
-    <Stack gap="space16">
-      <SettingsRow
-        checked={checked}
-        disabled={false}
-        icon="notification"
-        label="Notifications"
-        onCheckedChange={(next) => {
-          setChecked(next);
-          onCheckedChange?.(next);
-        }}
-        variant="toggle"
-      />
-      <SettingsRow disabled={false} icon="profile" label="Account" onPress={() => onPress?.()} variant="navigation" />
-      <SettingsRow icon="close" onPress={() => onPress?.()} variant="destructive" />
-    </Stack>
+    <SettingsRow
+      checked={checked}
+      disabled={false}
+      icon="notification"
+      label="Notifications"
+      onCheckedChange={(next) => {
+        setChecked(next);
+        onCheckedChange?.(next);
+      }}
+      variant="toggle"
+    />
   );
 }
 
 export const Interactive: Story = {
-  args: Canonical.args,
+  args: { configuration: 'toggle/notification/off', onCheckedChange: () => undefined },
+  parameters: { controls: { include: ['onCheckedChange'] } },
   render: (args) => (
     <InteractiveHarness
       onCheckedChange={'onCheckedChange' in args ? args.onCheckedChange : undefined}
-      onPress={'onPress' in args ? args.onPress : undefined}
     />
   ),
+};
+
+export const PressInteraction: Story = {
+  args: { configuration: 'navigation/profile/default', onPress: () => undefined },
+  parameters: { controls: { include: ['onPress'] } },
+  render: (args) => <SettingsRow {...normalizeSettingsRowStoryArgs(args)} />,
 };

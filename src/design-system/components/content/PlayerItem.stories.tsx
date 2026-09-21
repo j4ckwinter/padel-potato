@@ -23,7 +23,6 @@ const sourceLabel = (recordId: string) =>
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
-  onAction?: unknown;
   onInvite?: unknown;
   onSelectedChange?: unknown;
   onViewPlayer?: unknown;
@@ -39,28 +38,26 @@ const meta = {
   title: 'Content/Player Item',
   argTypes: {
     configuration: { control: 'select', options: playerItemStoryConfigurations },
-    onAction: {
-      action: 'branch action',
-      if: { arg: 'configuration', neq: 'inviteResult/disabled' },
-    },
+    onInvite: { action: 'invite player' },
+    onSelectedChange: { action: 'selected changed' },
+    onViewPlayer: { action: 'view player' },
   },
-  parameters: { controls: { include: ['configuration', 'onAction'] } },
+  parameters: { controls: { include: ['configuration'] } },
 } satisfies Meta<StoryArgs>;
 
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
 export function normalizePlayerItemStoryArgs(args: StoryArgs): PlayerItemProps {
-  const branchAction = typeof args.onAction === 'function' ? args.onAction : undefined;
-  const onInvite = branchAction
-    ? branchAction as () => void
-    : typeof args.onInvite === 'function' ? args.onInvite as () => void : () => undefined;
+  const onInvite = typeof args.onInvite === 'function'
+    ? args.onInvite as () => void
+    : () => undefined;
   const onSelectedChange = typeof args.onSelectedChange === 'function'
     ? args.onSelectedChange as (selected: boolean) => void
-    : branchAction ? branchAction as (selected: boolean) => void : () => undefined;
-  const onViewPlayer = branchAction
-    ? branchAction as () => void
-    : typeof args.onViewPlayer === 'function' ? args.onViewPlayer as () => void : () => undefined;
+    : () => undefined;
+  const onViewPlayer = typeof args.onViewPlayer === 'function'
+    ? args.onViewPlayer as () => void
+    : () => undefined;
   switch (args.configuration) {
     case 'gameSlot/empty': return { onInvite, variant: 'empty-game-slot' };
     case 'gameSlot/default': return {
@@ -192,7 +189,8 @@ function InteractiveHarness(props: Readonly<{ onSelectedChange?: (selected: bool
 }
 
 export const Interactive: Story = {
-  args: Canonical.args,
+  args: { configuration: 'list/default', onSelectedChange: () => undefined },
+  parameters: { controls: { include: ['onSelectedChange'] } },
   render: (args) => (
     <InteractiveHarness
       onSelectedChange={typeof args.onSelectedChange === 'function'
@@ -200,4 +198,16 @@ export const Interactive: Story = {
         : undefined}
     />
   ),
+};
+
+export const ViewPlayerInteraction: Story = {
+  args: { configuration: 'gameSlot/default', onViewPlayer: () => undefined },
+  parameters: { controls: { include: ['onViewPlayer'] } },
+  render: (args) => <PlayerItem {...normalizePlayerItemStoryArgs(args)} />,
+};
+
+export const InviteInteraction: Story = {
+  args: { configuration: 'gameSlot/empty', onInvite: () => undefined },
+  parameters: { controls: { include: ['onInvite'] } },
+  render: (args) => <PlayerItem {...normalizePlayerItemStoryArgs(args)} />,
 };

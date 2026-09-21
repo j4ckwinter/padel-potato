@@ -28,7 +28,6 @@ const sourceLabel = (recordId: string) =>
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
-  onAction?: unknown;
   onViewGame?: unknown;
   onViewResults?: unknown;
   time?: unknown;
@@ -46,12 +45,10 @@ const meta = {
   title: 'Content/Game Card',
   argTypes: {
     configuration: { control: 'select', options: gameCardStoryConfigurations },
-    onAction: {
-      action: 'branch action',
-      if: { arg: 'configuration', neq: 'compact/default' },
-    },
+    onViewGame: { action: 'view game' },
+    onViewResults: { action: 'view results' },
   },
-  parameters: { controls: { include: ['configuration', 'onAction'] } },
+  parameters: { controls: { include: ['configuration'] } },
 } satisfies Meta<StoryArgs>;
 
 export default meta;
@@ -61,11 +58,12 @@ export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
   const title = typeof args.title === 'string' && args.title.trim() ? args.title : content.title;
   const venue = typeof args.venue === 'string' && args.venue.trim() ? args.venue : content.venue;
   const time = typeof args.time === 'string' && args.time.trim() ? args.time : content.time;
-  const branchAction = typeof args.onAction === 'function' ? args.onAction as () => void : undefined;
-  const onViewGame = branchAction
-    ?? (typeof args.onViewGame === 'function' ? args.onViewGame as () => void : () => undefined);
-  const onViewResults = branchAction
-    ?? (typeof args.onViewResults === 'function' ? args.onViewResults as () => void : () => undefined);
+  const onViewGame = typeof args.onViewGame === 'function'
+    ? args.onViewGame as () => void
+    : () => undefined;
+  const onViewResults = typeof args.onViewResults === 'function'
+    ? args.onViewResults as () => void
+    : () => undefined;
   switch (args.configuration) {
     case 'compact/default': return { title, venue, variant: 'compact' };
     case 'completed/default': return { onViewResults, participants, time, title, variant: 'completed', venue };
@@ -161,6 +159,13 @@ export const Boundaries: Story = {
 };
 
 export const Interactive: Story = {
-  args: Canonical.args,
+  args: { ...content, configuration: 'next/default', onViewGame: () => undefined },
+  parameters: { controls: { include: ['onViewGame'] } },
+  render: (args) => <GameCard {...normalizeGameCardStoryArgs(args)} />,
+};
+
+export const ViewResultsInteraction: Story = {
+  args: { ...content, configuration: 'completed/default', onViewResults: () => undefined },
+  parameters: { controls: { include: ['onViewResults'] } },
   render: (args) => <GameCard {...normalizeGameCardStoryArgs(args)} />,
 };
