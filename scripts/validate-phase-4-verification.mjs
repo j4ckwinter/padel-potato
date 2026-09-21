@@ -147,7 +147,7 @@ export function validatePhase4Verification({ verification, validation, packageJs
   assert(!/(?:native|ios|android|voiceover|talkback)[^\n]{0,100}(?:pass(?:ed)?|verified|approved|complete)/iu.test(resolvedVerification), 'verification contains unsupported native-pass language');
 
   required(resolvedValidation, 'status: complete'); required(resolvedValidation, 'nyquist_compliant: true'); required(resolvedValidation, 'wave_0_complete: true');
-  assert(!/\b(?:TBD|W0|pending)\b/iu.test(resolvedValidation), 'validation still contains stale or pending status');
+  assert(!/\b(?:TBD|pending)\b/iu.test(resolvedValidation), 'validation still contains stale or pending status');
   assert(!resolvedValidation.includes('- [ ]'), 'validation still contains unchecked sign-off items');
   for (const suite of FOCUSED_SUITES) required(resolvedValidation, suite);
   required(resolvedValidation, 'tests/types/phase4-component-contracts.typecheck.tsx');

@@ -2,12 +2,12 @@
 
 ## Disposition
 
-- Automated verification status: **pending final gate (Plan 04-11 Task 2)**
+- Automated verification status: **pass**
 - Source authority: revision 296, 15 families, 76 records
 - Coverage closure: 47 edge probes, six Storybook groups, five-category taxonomy
 - Native acceptance status: `deferred-to-phase-5`
 
-This draft binds the final verification record to the exact committed witnesses before any completion flag changes. It must not be marked passing until every command below has run successfully with a non-zero result.
+Executed on 2026-09-21 on Windows with Node `v24.20.0` and npm `11.19.0`. Every command below completed successfully with a non-zero result before `04-VALIDATION.md` was marked complete.
 
 ## Source Identity
 
@@ -60,25 +60,25 @@ Copy authority is the User reply `approved all` on 2026-09-21, recorded in `04-0
 
 | Command | Result | Evidence |
 |---|---|---|
-| `npm run typecheck` | pending | Task 2 has not run the final gate. |
-| `npm run lint` | pending | Task 2 has not run the final gate. |
-| `npm test -- --runInBand` | pending | Task 2 has not run the final gate. |
-| `npm run validate:design-source` | pending | Task 2 has not run the final gate. |
-| `node scripts/validate-phase-4-components.mjs` | pending | Task 2 has not run the final gate. |
-| `node scripts/validate-phase-4-artwork.mjs` | pending | Task 2 has not run the final gate. |
-| `node scripts/validate-phase-4-verification.mjs` | pending | Completion is intentionally fail-closed. |
-| `npm run storybook:web:smoke` | pending | Task 2 has not run the bounded web smoke. |
+| `npm run typecheck` | pass | Strict public contracts and negative fixtures compile. |
+| `npm run lint` | pass | Expo ESLint completed without errors. |
+| `npm test -- --runInBand` | pass | 24 suites, 751 tests, zero snapshots. |
+| `npm run validate:design-source` | pass | Canonical manifest and controlled malformed-archive rejections passed. |
+| `node scripts/validate-phase-4-components.mjs` | pass | Exact revision 296, 15 families, and 76 active records passed. |
+| `node scripts/validate-phase-4-artwork.mjs` | pass | Fixed local media identities, paths, hashes, placements, and renderers passed. |
+| `node scripts/validate-phase-4-verification.mjs` | pass | Eight final witnesses, source hashes, taxonomy, copy, edges, paths, status, and native deferral agreed. |
+| `npm run storybook:web:smoke` | pass | Bounded Expo web bundle and Storybook entry discovery passed with process cleanup. |
 
 ## Focused Suite Witnesses
 
 | Suite | Result | Evidence |
 |---|---|---|
-| `tests/phase4-source-registry.test.ts` | pending | Non-zero count will be recorded after the final run. |
-| `tests/phase4-artwork.test.tsx` | pending | Non-zero count will be recorded after the final run. |
-| `tests/identity-status-progress-components.test.tsx` | pending | Non-zero count will be recorded after the final run. |
-| `tests/content-components.test.tsx` | pending | Non-zero count will be recorded after the final run. |
-| `tests/feedback-card-components.test.tsx` | pending | Non-zero count will be recorded after the final run. |
-| `tests/phase4-story-contracts.test.tsx` | pending | Non-zero count will be recorded after the final run. |
+| `tests/phase4-source-registry.test.ts` | pass | 6 tests |
+| `tests/phase4-artwork.test.tsx` | pass | 12 tests |
+| `tests/identity-status-progress-components.test.tsx` | pass | 58 tests |
+| `tests/content-components.test.tsx` | pass | 141 tests |
+| `tests/feedback-card-components.test.tsx` | pass | 73 tests |
+| `tests/phase4-story-contracts.test.tsx` | pass | 13 tests |
 
 ## Native Acceptance Disposition
 
