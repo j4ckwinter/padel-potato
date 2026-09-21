@@ -59,24 +59,24 @@
 ### Identity, Status, and Progress
 
 - [x] **IDEN-01**: Developer can use Avatar with every designed size and presence state.
-- [ ] **IDEN-02**: Developer can use Avatar Group with every designed content and state combination.
-- [ ] **IDEN-03**: Developer can use Avatar Picker with every designed content and state.
-- [ ] **STAT-01**: Developer can use Status Chip with every designed style and state.
-- [ ] **PROG-01**: Developer can use Step Progress with every designed step and state.
+- [x] **IDEN-02**: Developer can use Avatar Group with every designed content and state combination.
+- [x] **IDEN-03**: Developer can use Avatar Picker with every designed content and state.
+- [x] **STAT-01**: Developer can use Status Chip with every designed style and state.
+- [x] **PROG-01**: Developer can use Step Progress with every designed step and state.
 
 ### Content Components
 
-- [ ] **CONT-01**: Developer can use Player Item with every designed type and state.
-- [ ] **CONT-02**: Developer can use Game Card with every designed type and state.
-- [ ] **CONT-03**: Developer can use Notification Row with every designed type and read state.
-- [ ] **CONT-04**: Developer can use Settings Row with every designed type, icon, and state.
-- [ ] **CONT-05**: Developer can use Stat Tile with every designed type, content, and state.
-- [ ] **CONT-06**: Developer can use Score Result Block with every designed type and result state.
-- [ ] **CONT-07**: Developer can use Player Preferences Card with every designed content state.
+- [x] **CONT-01**: Developer can use Player Item with every designed type and state.
+- [x] **CONT-02**: Developer can use Game Card with every designed type and state.
+- [x] **CONT-03**: Developer can use Notification Row with every designed type and read state.
+- [x] **CONT-04**: Developer can use Settings Row with every designed type, icon, and state.
+- [x] **CONT-05**: Developer can use Stat Tile with every designed type, content, and state.
+- [x] **CONT-06**: Developer can use Score Result Block with every designed type and result state.
+- [x] **CONT-07**: Developer can use Player Preferences Card with every designed content state.
 
 ### Feedback and Illustrated Content
 
-- [ ] **FDBK-01**: Developer can use Banner Toast with every designed style and type.
+- [x] **FDBK-01**: Developer can use Banner Toast with every designed style and type.
 - [x] **FDBK-02**: Developer can use Empty State with every designed content and action state.
 - [x] **CARD-01**: Developer can use Illustrated Card with every designed type and state.
 
@@ -171,18 +171,18 @@
 | NAVG-03 | Phase 3 | Complete |
 | NAVG-04 | Phase 3 | Complete |
 | IDEN-01 | Phase 4 | Complete |
-| IDEN-02 | Phase 4 | Pending |
-| IDEN-03 | Phase 4 | Pending |
-| STAT-01 | Phase 4 | Pending |
-| PROG-01 | Phase 4 | Pending |
-| CONT-01 | Phase 4 | Pending |
-| CONT-02 | Phase 4 | Pending |
-| CONT-03 | Phase 4 | Pending |
-| CONT-04 | Phase 4 | Pending |
-| CONT-05 | Phase 4 | Pending |
-| CONT-06 | Phase 4 | Pending |
-| CONT-07 | Phase 4 | Pending |
-| FDBK-01 | Phase 4 | Pending |
+| IDEN-02 | Phase 4 | Complete |
+| IDEN-03 | Phase 4 | Complete |
+| STAT-01 | Phase 4 | Complete |
+| PROG-01 | Phase 4 | Complete |
+| CONT-01 | Phase 4 | Complete |
+| CONT-02 | Phase 4 | Complete |
+| CONT-03 | Phase 4 | Complete |
+| CONT-04 | Phase 4 | Complete |
+| CONT-05 | Phase 4 | Complete |
+| CONT-06 | Phase 4 | Complete |
+| CONT-07 | Phase 4 | Complete |
+| FDBK-01 | Phase 4 | Complete |
 | FDBK-02 | Phase 4 | Complete |
 | CARD-01 | Phase 4 | Complete |
 | VRFY-01 | Phase 5 | Pending |
