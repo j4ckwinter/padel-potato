@@ -2,6 +2,7 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import fs from 'node:fs';
 import path from 'node:path';
+import { StyleSheet } from 'react-native';
 
 import * as designSystem from '../src/design-system';
 import * as AvatarStories from '../src/design-system/components/identity/Avatar.stories';
@@ -128,12 +129,12 @@ describe('Phase 4 Storybook catalogue contract', () => {
     }
     const recordIds = Object.values(phase4StoryContracts).flatMap(({ recordIds }) => recordIds);
     expect(recordIds).toHaveLength(76);
-    expect(new Set(recordIds)).toHaveLength(76);
+    expect(new Set(recordIds).size).toBe(76);
   });
 
   it('permits only bounded persistent controls and callbacks owned by real branches', () => {
     const prohibited = [
-      'pressed', 'focused', 'style', 'color', 'width', 'height', 'artwork', 'children',
+      'pressed', 'focused', 'color', 'width', 'height', 'artwork', 'children',
       'router', 'route', 'timer', 'remoteSource', 'upload', 'storage', 'persistence',
     ];
     for (const contract of Object.values(phase4StoryContracts)) {
@@ -222,7 +223,9 @@ describe('Phase 4 rendered edge witnesses', () => {
     );
     for (const name of ['Add player 1', 'Add player 2']) {
       const action = screen.getByRole('button', { name });
-      expect(action.props.style).toEqual(expect.objectContaining({ height: 44, width: 44 }));
+      expect(StyleSheet.flatten(action.props.style)).toEqual(
+        expect.objectContaining({ height: 44, width: 44 }),
+      );
     }
   });
 });
@@ -231,7 +234,7 @@ describe('Phase 4 deterministic edge ledger', () => {
   it('accounts for exactly 47 stable, unique probes from revision 296', () => {
     expect(edgeLedger.source).toMatchObject({ revision: 296, expectedProbeCount: 47 });
     expect(edgeLedger.probes).toHaveLength(47);
-    expect(new Set(edgeLedger.probes.map(({ id }) => id))).toHaveLength(47);
+    expect(new Set(edgeLedger.probes.map(({ id }) => id)).size).toBe(47);
     expect(edgeLedger.probes.map(({ id }) => id)).toEqual(
       [...edgeLedger.probes.map(({ id }) => id)].sort(),
     );

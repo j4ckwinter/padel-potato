@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "fileId": "c514c1fb-1cda-8125-8008-a606253a77a3",
+    "pageId": "482a7222-5a3b-8086-8008-a6073072bbb1",
+    "revision": 296,
+    "expectedProbeCount": 47
+  },
+  "probes": [
+    {
+      "id": "E001",
+      "requirement": "IDEN-01",
+      "probeClass": "null",
+      "statement": "Avatar rejects null identity content.",
+      "disposition": "resolved",
+      "checkPath": "tests/identity-status-progress-components.test.tsx",
+      "rationale": "The runtime identity validator requires exactly one valid initials or local-source branch."
+    },
+    {
+      "id": "E002",
+      "requirement": "IDEN-01",
+      "probeClass": "adjacency",
+      "statement": "Avatar rejects unauthored adjacent size and presence tuples.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "The public union and runtime tuple list contain only the five authored combinations."
+    },
+    {
+      "id": "E003",
+      "requirement": "IDEN-01",
+      "probeClass": "stable-order",
+      "statement": "Avatar source evidence cannot be reordered to select a nearby branch.",
+      "disposition": "resolved",
+      "checkPath": "tests/phase4-source-registry.test.ts",
+      "rationale": "Registry verification preserves variant-container child order and exact record identity."
+    },
+    {
+      "id": "E004",
+      "requirement": "IDEN-02",
+      "probeClass": "empty",
+      "statement": "Avatar Group rejects zero direct identities outside the authored empty-slot branch.",
+      "disposition": "resolved",
+      "checkPath": "tests/identity-status-progress-components.test.tsx",
+      "rationale": "Populated group branches require fixed non-zero tuples."
+    },
+    {
+      "id": "E005",
+      "requirement": "IDEN-02",
+      "probeClass": "singleton",
+      "statement": "Avatar Group rejects a singleton identity collection.",
+      "disposition": "resolved",
+      "checkPath": "tests/phase4-story-contracts.test.tsx",
+      "rationale": "The smallest authored populated group contains exactly two identities."
+    },
+    {
+      "id": "E006",
+      "requirement": "IDEN-02",
+      "probeClass": "null",
+      "statement": "Avatar Group rejects null identities.",
+      "disposition": "resolved",
+      "checkPath": "tests/identity-status-progress-components.test.tsx",
+      "rationale": "Every tuple position is validated as a complete player identity."
+    },
+    {
+      "id": "E007",
+      "requirement": "IDEN-02",
+      "probeClass": "boundary",
+      "statement": "Avatar Group rejects more than four direct identities.",
+      "disposition": "resolved",
+      "checkPath": "tests/identity-status-progress-components.test.tsx",
+      "rationale": "Overflow retains exactly four direct identities and represents the remainder as a positive count."
+    },
+    {
+      "id": "E008",
+      "requirement": "IDEN-02",
+      "probeClass": "boundary",
+      "statement": "Avatar Group rejects zero and negative overflow counts.",
+      "disposition": "resolved",
+      "checkPath": "tests/identity-status-progress-components.test.tsx",
+      "rationale": "The overflow branch requires a positive integer."
+    },
+    {
+      "id": "E009",
+      "requirement": "PROG-01",
+      "probeClass": "boundary",
+      "statement": "Step Progress rejects arbitrary values outside 1, 2, 3, and complete.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "The closed value union and runtime guard share the same four authored states."
+    },
+    {
+      "id": "E010",
+      "requirement": "IDEN-02",
+      "probeClass": "stable-order",
+      "statement": "Avatar Group source record order stays stable.",
+      "disposition": "resolved",
+      "checkPath": "tests/phase4-source-registry.test.ts",
+      "rationale": "The immutable registry retains source index and variant-container ordering."
+    },
+    {
+      "id": "E011",
+      "requirement": "IDEN-02",
+      "probeClass": "stable-order",
+      "statement": "Avatar Group visible identity order remains caller order, including overflow meaning.",
+      "disposition": "backstop",
+      "checkPath": "tests/phase4-story-contracts.test.tsx",
+      "rationale": "A rendered aggregate semantic witness preserves the four names followed by the overflow count."
+    },
+    {
+      "id": "E012",
+      "requirement": "CONT-01",
+      "probeClass": "empty",
+      "statement": "Player Item rejects missing required branch content.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Each populated branch requires complete identity and branch-specific action data."
+    },
+    {
+      "id": "E013",
+      "requirement": "CONT-01",
+      "probeClass": "null",
+      "statement": "Player Item rejects null required content.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "Null identity data is outside the discriminated public contract and runtime validator."
+    },
+    {
+      "id": "E014",
+      "requirement": "CONT-02",
+      "probeClass": "singleton",
+      "statement": "Game Card rejects singleton participants and full-state cardinality mismatches.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Open/default requires three participants and full action cards require four."
+    },
+    {
+      "id": "E015",
+      "requirement": "CONT-02",
+      "probeClass": "adjacency",
+      "statement": "Game Card rejects arbitrary participant records.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Participant objects use a closed identity shape and exact ascending slots."
+    },
+    {
+      "id": "E016",
+      "requirement": "CONT-02",
+      "probeClass": "boundary",
+      "statement": "Game Card rejects unsupported partial participant collections.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "Fixed tuples prevent silently padding or dropping partial collections."
+    },
+    {
+      "id": "E017",
+      "requirement": "CONT-02",
+      "probeClass": "stable-order",
+      "statement": "Game Card rejects reordered participant slots.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Runtime validation binds each array position to its authored slot."
+    },
+    {
+      "id": "E018",
+      "requirement": "CONT-02",
+      "probeClass": "boundary",
+      "statement": "Long Game Card content retains complete semantics and a reachable action.",
+      "disposition": "backstop",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "The constrained host render preserves long title and venue content; 200 percent native measurement remains Phase 5."
+    },
+    {
+      "id": "E019",
+      "requirement": "CONT-03",
+      "probeClass": "null",
+      "statement": "Notification Row rejects null branch content.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Title, message, timestamp, read state, and action are explicitly validated."
+    },
+    {
+      "id": "E020",
+      "requirement": "CONT-04",
+      "probeClass": "empty",
+      "statement": "Settings Row rejects missing branch content.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "Each row branch requires its authored label, value/state, icon, and callback shape."
+    },
+    {
+      "id": "E021",
+      "requirement": "CONT-04",
+      "probeClass": "adjacency",
+      "statement": "Settings Row rejects unsupported icon, type, and state combinations.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "The discriminated branches prevent independent controls from manufacturing source-invalid rows."
+    },
+    {
+      "id": "E022",
+      "requirement": "CONT-03",
+      "probeClass": "stable-order",
+      "statement": "Notification Row retains deterministic title, message, timestamp, and read-state order.",
+      "disposition": "backstop",
+      "checkPath": "tests/phase4-story-contracts.test.tsx",
+      "rationale": "The rendered accessible name fixes a coherent visible-order announcement."
+    },
+    {
+      "id": "E023",
+      "requirement": "CONT-04",
+      "probeClass": "boundary",
+      "statement": "Long row content does not lose its semantic value or action.",
+      "disposition": "backstop",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Host boundary tests preserve complete names and values; native enlarged-text measurement remains Phase 5."
+    },
+    {
+      "id": "E024",
+      "requirement": "CONT-06",
+      "probeClass": "boundary",
+      "statement": "A numeric minimum score is not inferred by the display component.",
+      "disposition": "flagged-assumption",
+      "rationale": "Revision 296 supplies display strings but no scoring-domain minimum, so the component deliberately does not calculate one."
+    },
+    {
+      "id": "E025",
+      "requirement": "CONT-06",
+      "probeClass": "boundary",
+      "statement": "A numeric maximum score is not inferred by the display component.",
+      "disposition": "flagged-assumption",
+      "rationale": "The source does not define a maximum scoring rule and this milestone owns presentation only."
+    },
+    {
+      "id": "E026",
+      "requirement": "CONT-06",
+      "probeClass": "boundary",
+      "statement": "A result threshold is not inferred from score text.",
+      "disposition": "flagged-assumption",
+      "rationale": "Explicit won, lost, or live state is authoritative because no threshold rule is present in the design evidence."
+    },
+    {
+      "id": "E027",
+      "requirement": "CONT-06",
+      "probeClass": "precision",
+      "statement": "Caller-formatted score precision is preserved verbatim.",
+      "disposition": "resolved",
+      "checkPath": "tests/phase4-story-contracts.test.tsx",
+      "rationale": "Rendered semantic output preserves 6.000, 0006, 04, and 3.0 without numeric coercion."
+    },
+    {
+      "id": "E028",
+      "requirement": "CONT-06",
+      "probeClass": "precision",
+      "statement": "Score rounding is not performed by the display component.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Scores remain validated finite display strings and no arithmetic path exists."
+    },
+    {
+      "id": "E029",
+      "requirement": "CONT-06",
+      "probeClass": "ties",
+      "statement": "Tie-breaking policy is not inferred from displayed sets.",
+      "disposition": "flagged-assumption",
+      "rationale": "Revision 296 has no tie-breaking rule; consumers must supply an authored explicit result state."
+    },
+    {
+      "id": "E030",
+      "requirement": "CONT-06",
+      "probeClass": "boundary",
+      "statement": "Score Result Block rejects non-finite score text.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "NaN and positive or negative infinity spellings are rejected before rendering."
+    },
+    {
+      "id": "E031",
+      "requirement": "CONT-06",
+      "probeClass": "boundary",
+      "statement": "Score Result Block rejects arbitrary set counts.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Each team owns exactly two score strings, matching the authored columns."
+    },
+    {
+      "id": "E032",
+      "requirement": "CONT-06",
+      "probeClass": "empty",
+      "statement": "Score Result Block rejects missing teams.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "The public contract requires exactly two ordered team records."
+    },
+    {
+      "id": "E033",
+      "requirement": "CONT-06",
+      "probeClass": "ties",
+      "statement": "Scores that could imply a tie do not create an unauthored result branch.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Result state remains explicit and is never inferred from score equality."
+    },
+    {
+      "id": "E034",
+      "requirement": "CONT-05",
+      "probeClass": "null",
+      "statement": "Statistic and preference content rejects null display values.",
+      "disposition": "resolved",
+      "checkPath": "tests/content-components.test.tsx",
+      "rationale": "Presentational branches require non-empty textual content."
+    },
+    {
+      "id": "E035",
+      "requirement": "CONT-06",
+      "probeClass": "stable-order",
+      "statement": "Score Result Block preserves team and set order.",
+      "disposition": "resolved",
+      "checkPath": "tests/phase4-story-contracts.test.tsx",
+      "rationale": "The aggregate summary follows team one then team two, with set one then set two."
+    },
+    {
+      "id": "E036",
+      "requirement": "FDBK-01",
+      "probeClass": "null",
+      "statement": "Banner Toast rejects null message content.",
+      "disposition": "resolved",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "Title and message are required non-empty announcement strings."
+    },
+    {
+      "id": "E037",
+      "requirement": "FDBK-01",
+      "probeClass": "empty",
+      "statement": "Banner Toast rejects empty message content.",
+      "disposition": "resolved",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "Whitespace-only title or message values fail runtime validation."
+    },
+    {
+      "id": "E038",
+      "requirement": "FDBK-01",
+      "probeClass": "adjacency",
+      "statement": "Banner Toast rejects unsupported action and type pairs.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "Each semantic tuple owns exactly its authored close or view callback."
+    },
+    {
+      "id": "E039",
+      "requirement": "FDBK-01",
+      "probeClass": "boundary",
+      "statement": "Repeated live-announcement churn remains a native-review backstop.",
+      "disposition": "backstop",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "Host tests prove stable announcement content and no timer; repeated native announcements require VoiceOver and TalkBack review."
+    },
+    {
+      "id": "E040",
+      "requirement": "FDBK-01",
+      "probeClass": "boundary",
+      "statement": "Long Banner Toast messages retain the action and complete announcement.",
+      "disposition": "backstop",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "The constrained host render preserves semantics while native clipping measurement remains Phase 5."
+    },
+    {
+      "id": "E041",
+      "requirement": "FDBK-02",
+      "probeClass": "boundary",
+      "statement": "Generic or invented Empty State copy cannot replace the human-approved strings.",
+      "disposition": "resolved",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "The exact five strings approved in Plan 04-08 are embedded and asserted."
+    },
+    {
+      "id": "E042",
+      "requirement": "CARD-01",
+      "probeClass": "null",
+      "statement": "Illustrated Card rejects null content and participant records.",
+      "disposition": "resolved",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "All copy and participant records are validated before render."
+    },
+    {
+      "id": "E043",
+      "requirement": "CARD-01",
+      "probeClass": "boundary",
+      "statement": "Illustrated Card rejects unsupported partial participant collections.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "Each branch requires exactly its authored two- or four-participant tuple."
+    },
+    {
+      "id": "E044",
+      "requirement": "CARD-01",
+      "probeClass": "empty",
+      "statement": "Illustrated Card rejects missing callbacks on action branches.",
+      "disposition": "resolved",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "Every card type requires its single specifically named callback."
+    },
+    {
+      "id": "E045",
+      "requirement": "FDBK-02",
+      "probeClass": "adjacency",
+      "statement": "Empty State rejects callbacks on its no-action branch.",
+      "disposition": "resolved",
+      "checkPath": "tests/types/phase4-component-contracts.typecheck.tsx",
+      "rationale": "No notifications exposes neither Create game nor Invite players."
+    },
+    {
+      "id": "E046",
+      "requirement": "CARD-01",
+      "probeClass": "stable-order",
+      "statement": "Illustrated Card rejects unstable participant slot order.",
+      "disposition": "resolved",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "Participant positions must match exact ascending source slots."
+    },
+    {
+      "id": "E047",
+      "requirement": "CARD-01",
+      "probeClass": "boundary",
+      "statement": "Long Empty State and Illustrated Card copy keeps the authored action reachable without overlap.",
+      "disposition": "backstop",
+      "checkPath": "tests/feedback-card-components.test.tsx",
+      "rationale": "Host boundary stories and tests retain semantics and actions; 200 percent native measurement remains Phase 5."
+    }
+  ]
+}

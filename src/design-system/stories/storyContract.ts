@@ -1,4 +1,5 @@
 import { phase3SourceEvidence } from '../components/sourceRegistry';
+import { phase4SourceEvidence } from '../components/phase4SourceRegistry';
 
 export const storyTaxonomy = Object.freeze([
   'Canonical',
@@ -318,6 +319,147 @@ export const phase3Backstops = Object.freeze({
   targetClearance: Object.freeze({
     minimumEffectiveTarget: 44,
     witness: 'boundary-adjacent-targets',
+    status: 'host-contract',
+  }),
+  nativeReview: Object.freeze({
+    ios: 'deferred-to-phase-5',
+    android: 'deferred-to-phase-5',
+    fontScale200: 'deferred-to-phase-5',
+    voiceOver: 'deferred-to-phase-5',
+    talkBack: 'deferred-to-phase-5',
+  }),
+} as const);
+
+export type Phase4PublicExport =
+  | 'Avatar'
+  | 'AvatarGroup'
+  | 'AvatarPicker'
+  | 'StatusChip'
+  | 'StepProgress'
+  | 'PlayerItem'
+  | 'GameCard'
+  | 'NotificationRow'
+  | 'SettingsRow'
+  | 'StatTile'
+  | 'ScoreResultBlock'
+  | 'PlayerPreferencesCard'
+  | 'BannerToast'
+  | 'EmptyState'
+  | 'IllustratedCard';
+
+export type Phase4StorySourceIdentity = Readonly<{
+  fileId: string;
+  pageId: string;
+  revision: 296;
+  sourceId: string;
+}>;
+
+const phase4Definitions = Object.freeze([
+  ['Avatar', 'avatar', 'Identity/Avatar', ['size', 'presence', 'accessibilityLabel'], []],
+  ['AvatarGroup', 'avatarGroup', 'Identity/Avatar Group', ['variant'], ['onAddPlayer1', 'onAddPlayer2']],
+  ['AvatarPicker', 'avatarPicker', 'Identity/Avatar Picker', ['variant'], ['onPress']],
+  ['StatusChip', 'statusChip', 'Status/Status Chip', ['style', 'variant', 'selected'], ['onSelectedChange']],
+  ['StepProgress', 'stepProgress', 'Progress/Step Progress', ['value'], []],
+  ['PlayerItem', 'playerItem', 'Content/Player Item', ['variant', 'selected', 'disabled'], ['onSelectedChange', 'onViewPlayer', 'onInvite']],
+  ['GameCard', 'gameCard', 'Content/Game Card', ['variant', 'full'], ['onViewGame', 'onViewResults']],
+  ['NotificationRow', 'notificationRow', 'Content/Notification Row', ['type', 'read'], ['onPress']],
+  ['SettingsRow', 'settingsRow', 'Content/Settings Row', ['variant', 'icon', 'checked', 'disabled'], ['onPress', 'onCheckedChange']],
+  ['StatTile', 'statTile', 'Content/Stat Tile', ['type', 'content', 'state'], []],
+  ['ScoreResultBlock', 'scoreResultBlock', 'Content/Score Result Block', ['type', 'state'], []],
+  ['PlayerPreferencesCard', 'playerPreferencesCard', 'Content/Player Preferences Card', ['content'], []],
+  ['BannerToast', 'bannerToast', 'Feedback/Banner Toast', ['style'], ['onClose', 'onViewBookingUpdate', 'onViewGameDetails']],
+  ['EmptyState', 'emptyState', 'Feedback/Empty State', ['content'], ['onCreateGame', 'onInvitePlayers']],
+  ['IllustratedCard', 'illustratedCard', 'Cards/Illustrated Card', ['type'], ['onViewGame', 'onViewResults', 'onInvitePlayers', 'onShareGame']],
+] as const);
+
+const phase4Family = (familyKey: string) => {
+  const family = phase4SourceEvidence.families.find(({ key }) => key === familyKey);
+  if (!family) throw new Error(`Missing Phase 4 source family: ${familyKey}`);
+  return family;
+};
+
+const phase4Categories = (exportName: Phase4PublicExport) => {
+  if (
+    exportName === 'Avatar'
+    || exportName === 'StepProgress'
+    || exportName === 'StatTile'
+    || exportName === 'ScoreResultBlock'
+    || exportName === 'PlayerPreferencesCard'
+  ) {
+    return categories(
+      story('Canonical'),
+      story('Variants'),
+      story('States'),
+      story('Boundaries'),
+      inapplicable(`${exportName} is presentational and exposes no callback or product interaction.`),
+    );
+  }
+  return allStories;
+};
+
+export const phase4StoryContracts = Object.freeze(
+  Object.fromEntries(
+    phase4Definitions.map(([exportName, familyKey, title, controls, actions]) => {
+      const family = phase4Family(familyKey);
+      return [exportName, Object.freeze({
+        exportName,
+        familyKey,
+        title,
+        categories: phase4Categories(exportName),
+        controls: Object.freeze([...controls]),
+        actions: Object.freeze([...actions]),
+        recordIds: Object.freeze(family.records.map(({ id }) => id)),
+      })];
+    }),
+  ),
+) as Readonly<Record<Phase4PublicExport, Readonly<{
+  exportName: Phase4PublicExport;
+  familyKey: string;
+  title: string;
+  categories: Readonly<Record<StoryCategory, StoryApplicability>>;
+  controls: readonly string[];
+  actions: readonly string[];
+  recordIds: readonly string[];
+}>>>;
+
+export const phase4StorySources = Object.freeze(
+  Object.fromEntries(phase4Definitions.map(([exportName, familyKey]) => {
+    const family = phase4Family(familyKey);
+    return [exportName, Object.freeze({
+      fileId: phase4SourceEvidence.source.fileId,
+      pageId: phase4SourceEvidence.source.pageId,
+      revision: 296 as const,
+      sourceId: family.sourceId,
+    })];
+  })),
+) as Readonly<Record<Phase4PublicExport, Phase4StorySourceIdentity>>;
+
+export const phase4Backstops = Object.freeze({
+  longContent: Object.freeze({
+    witnesses: Object.freeze([
+      'tests/identity-status-progress-components.test.tsx',
+      'tests/content-components.test.tsx',
+      'tests/feedback-card-components.test.tsx',
+      'tests/phase4-story-contracts.test.tsx',
+    ]),
+    nativeStatus: 'deferred-to-phase-5',
+    status: 'host-contract',
+  }),
+  overflow: Object.freeze({
+    witness: 'tests/phase4-story-contracts.test.tsx#preserves overflow meaning and stable identity order',
+    status: 'host-contract',
+  }),
+  cardinality: Object.freeze({
+    witness: 'tests/phase4-story-contracts.test.tsx#rejects unauthored singleton cardinality rather than filling a slot',
+    status: 'host-contract',
+  }),
+  targetClearance: Object.freeze({
+    minimumEffectiveTarget: 44,
+    witness: 'tests/phase4-story-contracts.test.tsx#retains separate 44-point empty-slot targets',
+    status: 'host-contract',
+  }),
+  readOrder: Object.freeze({
+    witness: 'tests/phase4-story-contracts.test.tsx#preserves caller-formatted score precision and deterministic team/set order',
     status: 'host-contract',
   }),
   nativeReview: Object.freeze({
