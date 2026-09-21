@@ -103,10 +103,16 @@ function validateAvatarGroupProps(props: AvatarGroupProps) {
   if (!supportedVariants.includes(runtime.variant as (typeof supportedVariants)[number])) {
     unsupported(`unknown variant ${String(runtime.variant)}`);
   }
+  const keys = Object.keys(runtime).sort();
+  const expectedKeys = runtime.variant === 'empty'
+    ? ['onAddPlayer1', 'onAddPlayer2', 'variant']
+    : runtime.variant === 'overflow'
+      ? ['identities', 'overflow', 'variant']
+      : ['identities', 'variant'];
+  if (keys.join('|') !== expectedKeys.join('|')) {
+    unsupported(`${String(runtime.variant)} contains branch-incompatible properties`);
+  }
   if (runtime.variant === 'empty') {
-    if (Object.prototype.hasOwnProperty.call(runtime, 'identities')) {
-      unsupported('empty slots cannot contain identities');
-    }
     if (typeof runtime.onAddPlayer1 !== 'function' || typeof runtime.onAddPlayer2 !== 'function') {
       unsupported('empty slots require two independently named callbacks');
     }
@@ -121,8 +127,6 @@ function validateAvatarGroupProps(props: AvatarGroupProps) {
     if (!Number.isInteger(runtime.overflow) || (runtime.overflow as number) <= 0) {
       unsupported('overflow must be a positive integer');
     }
-  } else if (Object.prototype.hasOwnProperty.call(runtime, 'overflow')) {
-    unsupported('overflow is only supported by the authored overflow branch');
   }
 }
 

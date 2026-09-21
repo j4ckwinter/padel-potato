@@ -245,6 +245,23 @@ describe('Avatar Group runtime and semantic contract', () => {
     { identities: groupPlayers, overflow: 0, variant: 'overflow' },
     { identities: groupPlayers, overflow: -1, variant: 'overflow' },
     { identities: [groupPlayers[0], null], variant: '2-players' },
+    {
+      onAddPlayer1: jest.fn(),
+      onAddPlayer2: jest.fn(),
+      overflow: 2,
+      variant: 'empty',
+    },
+    {
+      identities: [groupPlayers[0], groupPlayers[1]],
+      onAddPlayer1: jest.fn(),
+      variant: '2-players',
+    },
+    {
+      identities: groupPlayers,
+      onAddPlayer2: jest.fn(),
+      overflow: 2,
+      variant: 'overflow',
+    },
   ])('rejects an unsupported collection %#', (props) => {
     expect(() => AvatarGroup(props as never)).toThrow(/Unsupported Avatar Group/u);
   });
