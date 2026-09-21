@@ -62,11 +62,11 @@ Copy authority is the User reply `approved all` on 2026-09-21, recorded in `04-0
 |---|---|---|
 | `npm run typecheck` | pass | Strict public contracts and negative fixtures compile. |
 | `npm run lint` | pass | Expo ESLint completed without errors. |
-| `npm test -- --runInBand` | pass | 24 suites, 787 tests, zero snapshots. |
+| `npm test -- --runInBand` | pass | 24 suites, 794 tests, zero snapshots. |
 | `npm run validate:design-source` | pass | Canonical manifest and controlled malformed-archive rejections passed. |
 | `node scripts/validate-phase-4-components.mjs` | pass | Exact revision 296, 15 families, and 76 active records passed. |
 | `node scripts/validate-phase-4-artwork.mjs` | pass | Fixed local media identities, paths, hashes, placements, and renderers passed. |
-| `node scripts/validate-phase-4-verification.mjs` | pass | Eight final witnesses, source hashes, taxonomy, copy, edges, paths, status, and native deferral agreed. |
+| `node scripts/validate-phase-4-verification.mjs` | pass | The executed Jest result, eight final witnesses, source hashes, taxonomy, copy, edges, paths, status, and native deferral agreed. |
 | `npm run storybook:web:smoke` | pass | Bounded Expo web bundle and Storybook entry discovery passed with process cleanup. |
 
 ## Focused Suite Witnesses
@@ -78,7 +78,7 @@ Copy authority is the User reply `approved all` on 2026-09-21, recorded in `04-0
 | `tests/identity-status-progress-components.test.tsx` | pass | 78 tests |
 | `tests/content-components.test.tsx` | pass | 151 tests |
 | `tests/feedback-card-components.test.tsx` | pass | 76 tests |
-| `tests/phase4-story-contracts.test.tsx` | pass | 16 tests |
+| `tests/phase4-story-contracts.test.tsx` | pass | 23 tests |
 
 ## Native Acceptance Disposition
 

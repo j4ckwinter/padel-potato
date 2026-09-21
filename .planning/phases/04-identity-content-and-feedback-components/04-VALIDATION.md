@@ -19,7 +19,7 @@ completed: "2026-09-21"
 | Framework | Jest `29.7.0` + `jest-expo` `57.0.5` + React Native Testing Library `14.0.1` |
 | Config file | `package.json` (`jest.preset = "jest-expo"`) |
 | Full suite command | `npm run verify:phase4` |
-| Final result | 24 suites, 751 tests, zero snapshots; all source/artwork/verification/web gates passed |
+| Final result | 24 suites, 794 tests, zero snapshots; all source/artwork/verification/web gates passed |
 
 ## Per-Task Verification Map
 
@@ -27,10 +27,10 @@ completed: "2026-09-21"
 |---|---|---|---|---|---|
 | 04-W0-01 | All Phase 4 IDs | T-04-01 / T-04-02 / T-04-05 | `npm test -- --runInBand tests/phase4-source-registry.test.ts` | `tests/phase4-source-registry.test.ts` — 6 tests | ✅ green |
 | 04-W0-02 | FDBK-01, FDBK-02, CARD-01 | T-04-02 / T-04-03 | `npm test -- --runInBand tests/phase4-artwork.test.tsx` | `tests/phase4-artwork.test.tsx` — 12 tests | ✅ green |
-| 04-ISP-01 | IDEN-01, IDEN-02, IDEN-03, STAT-01, PROG-01 | T-04-04 | `npm test -- --runInBand tests/identity-status-progress-components.test.tsx` | `tests/identity-status-progress-components.test.tsx` — 58 tests | ✅ green |
-| 04-CONT-01 | CONT-01 through CONT-07 | T-04-04 | `npm test -- --runInBand tests/content-components.test.tsx` | `tests/content-components.test.tsx` — 141 tests | ✅ green |
-| 04-FDBK-01 | FDBK-01, FDBK-02, CARD-01 | T-04-03 / T-04-04 | `npm test -- --runInBand tests/feedback-card-components.test.tsx` | `tests/feedback-card-components.test.tsx` — 73 tests | ✅ green |
-| 04-STORY-01 | All Phase 4 IDs | T-04-05 | `npm test -- --runInBand tests/phase4-story-contracts.test.tsx` | `tests/phase4-story-contracts.test.tsx` — 13 tests | ✅ green |
+| 04-ISP-01 | IDEN-01, IDEN-02, IDEN-03, STAT-01, PROG-01 | T-04-04 | `npm test -- --runInBand tests/identity-status-progress-components.test.tsx` | `tests/identity-status-progress-components.test.tsx` — 78 tests | ✅ green |
+| 04-CONT-01 | CONT-01 through CONT-07 | T-04-04 | `npm test -- --runInBand tests/content-components.test.tsx` | `tests/content-components.test.tsx` — 151 tests | ✅ green |
+| 04-FDBK-01 | FDBK-01, FDBK-02, CARD-01 | T-04-03 / T-04-04 | `npm test -- --runInBand tests/feedback-card-components.test.tsx` | `tests/feedback-card-components.test.tsx` — 76 tests | ✅ green |
+| 04-STORY-01 | All Phase 4 IDs | T-04-05 | `npm test -- --runInBand tests/phase4-story-contracts.test.tsx` | `tests/phase4-story-contracts.test.tsx` — 23 tests | ✅ green |
 | 04-TYPE-01 | All Phase 4 IDs | T-04-04 | `npm run typecheck` | `tests/types/phase4-component-contracts.typecheck.tsx` | ✅ green |
 | 04-VERIFY-01 | All Phase 4 IDs | T-04-01 / T-04-03 / T-04-04 / T-04-05 / T-04-SC | `npm run validate:phase4-verification` | `scripts/validate-phase-4-verification.mjs` and `design-spec/phase-4-verification.md` | ✅ green |
 
@@ -43,7 +43,7 @@ completed: "2026-09-21"
 - [x] `tests/identity-status-progress-components.test.tsx`, `tests/content-components.test.tsx`, and `tests/feedback-card-components.test.tsx` prove family behavior, semantics, controlled interactions, and callback suppression.
 - [x] `tests/types/phase4-component-contracts.typecheck.tsx` proves compile-time rejection of impossible tuples and private imports.
 - [x] `tests/phase4-story-contracts.test.tsx` proves the exact six groups, five-category taxonomy, 15 titles, 76 records, and 47/47 edge probes.
-- [x] `scripts/validate-phase-4-verification.mjs --self-test` rejects missing, zero, failed, stale, premature-complete, native-overclaim, taxonomy, and copy-approval mutations without changing committed evidence.
+- [x] `scripts/validate-phase-4-verification.mjs --self-test` rejects missing, zero, failed, stale-witness, premature-complete, native-overclaim, taxonomy, copy-approval, positive-overall-drift, and positive-focused-drift mutations without changing committed evidence.
 - [x] `validate:phase4-verification` and `verify:phase4` are present in `package.json` with no dependency-version changes.
 - [x] `design-spec/phase-4-verification.md` binds exact commands, non-zero results, source hashes, copy provenance, edge dispositions, and Phase 5 deferral.
 
@@ -61,7 +61,7 @@ The Empty State copy conflict is resolved by the user’s explicit `approved all
 
 1. `npm run typecheck`
 2. `npm run lint`
-3. `npm test -- --runInBand`
+3. `node scripts/run-phase-4-jest.mjs` (executes `npm test -- --runInBand` and publishes the normalized result)
 4. `npm run validate:design-source`
 5. `node scripts/validate-phase-4-components.mjs`
 6. `node scripts/validate-phase-4-artwork.mjs`
