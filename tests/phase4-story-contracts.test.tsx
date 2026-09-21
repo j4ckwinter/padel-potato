@@ -162,6 +162,121 @@ describe('Phase 4 Storybook catalogue contract', () => {
     expect(phase4StoryContracts.EmptyState.actions).toEqual(['onCreateGame', 'onInvitePlayers']);
     expect(phase4StoryContracts.StepProgress.actions).toEqual([]);
     expect(phase4StoryContracts.IllustratedCard.controls).toEqual(['type']);
+    for (const name of [
+      'Avatar',
+      'StatusChip',
+      'PlayerItem',
+      'GameCard',
+      'NotificationRow',
+      'SettingsRow',
+      'StatTile',
+    ] as const) {
+      expect(phase4StoryContracts[name].controls).toEqual(['configuration']);
+    }
+  });
+
+  it('maps every selectable sparse-family configuration to the same authored tuple', () => {
+    const expectConfigurationControl = (
+      storyModule: Readonly<{ default: Readonly<{ argTypes?: Record<string, unknown> }> }>,
+      configurations: readonly string[],
+    ) => {
+      const argTypes = storyModule.default.argTypes ?? {};
+      expect((argTypes.configuration as { control: string }).control).toBe('select');
+      expect((argTypes.configuration as { options: readonly string[] }).options)
+        .toEqual(configurations);
+      for (const [name, argType] of Object.entries(argTypes)) {
+        if (name !== 'configuration') expect(argType).toEqual(expect.objectContaining({ action: expect.any(String) }));
+      }
+    };
+
+    expectConfigurationControl(AvatarStories, AvatarStories.avatarStoryConfigurations);
+    for (const configuration of AvatarStories.avatarStoryConfigurations) {
+      const props = AvatarStories.normalizeAvatarStoryArgs({ configuration });
+      expect(`${props.size}/${props.presence}`).toBe(configuration);
+    }
+
+    expectConfigurationControl(StatusChipStories, StatusChipStories.statusChipStoryConfigurations);
+    for (const configuration of StatusChipStories.statusChipStoryConfigurations) {
+      const props = StatusChipStories.normalizeStatusChipStoryArgs({ configuration });
+      const state = props.variant === 'selectable'
+        ? 'selected'
+        : props.variant === 'disabled' ? 'disabled' : 'default';
+      expect(`${props.style}/${state}`).toBe(configuration);
+    }
+
+    expectConfigurationControl(PlayerItemStories, PlayerItemStories.playerItemStoryConfigurations);
+    for (const configuration of PlayerItemStories.playerItemStoryConfigurations) {
+      const props = PlayerItemStories.normalizePlayerItemStoryArgs({ configuration });
+      const tuple = props.variant === 'list'
+        ? `list/${props.selected ? 'selected' : 'default'}`
+        : props.variant === 'game-slot'
+          ? 'gameSlot/default'
+          : props.variant === 'empty-game-slot'
+            ? 'gameSlot/empty'
+            : `inviteResult/${props.disabled ? 'disabled' : 'default'}`;
+      expect(tuple).toBe(configuration);
+    }
+
+    expectConfigurationControl(GameCardStories, GameCardStories.gameCardStoryConfigurations);
+    for (const configuration of GameCardStories.gameCardStoryConfigurations) {
+      const props = GameCardStories.normalizeGameCardStoryArgs({ configuration });
+      expect(`${props.variant}/${props.variant === 'open' && props.full ? 'full' : 'default'}`)
+        .toBe(configuration);
+    }
+
+    expectConfigurationControl(
+      NotificationRowStories,
+      NotificationRowStories.notificationRowStoryConfigurations,
+    );
+    for (const configuration of NotificationRowStories.notificationRowStoryConfigurations) {
+      const props = NotificationRowStories.normalizeNotificationRowStoryArgs({ configuration });
+      expect(`${props.type}/${props.read ? 'read' : 'unread'}`).toBe(configuration);
+    }
+
+    expectConfigurationControl(SettingsRowStories, SettingsRowStories.settingsRowStoryConfigurations);
+    for (const configuration of SettingsRowStories.settingsRowStoryConfigurations) {
+      const props = SettingsRowStories.normalizeSettingsRowStoryArgs({ configuration });
+      const state = props.variant === 'toggle'
+        ? props.disabled ? 'disabled' : props.checked ? 'on' : 'off'
+        : props.variant === 'navigation' && props.disabled ? 'disabled' : 'default';
+      expect(`${props.variant}/${props.icon}/${state}`).toBe(configuration);
+    }
+
+    expectConfigurationControl(StatTileStories, StatTileStories.statTileStoryConfigurations);
+    for (const configuration of StatTileStories.statTileStoryConfigurations) {
+      const props = StatTileStories.normalizeStatTileStoryArgs({ configuration });
+      expect(`${props.type}/${props.content}/${props.state}`).toBe(configuration);
+    }
+  });
+
+  it('fails closed for non-selectable story configurations and scopes branch actions', () => {
+    expect(() => AvatarStories.normalizeAvatarStoryArgs({ configuration: '32/away' })).toThrow();
+    expect(() => StatusChipStories.normalizeStatusChipStoryArgs({ configuration: 'warning/selected' })).toThrow();
+    expect(() => PlayerItemStories.normalizePlayerItemStoryArgs({ configuration: 'list/disabled' })).toThrow();
+    expect(() => GameCardStories.normalizeGameCardStoryArgs({ configuration: 'compact/full' })).toThrow();
+    expect(() => NotificationRowStories.normalizeNotificationRowStoryArgs({ configuration: 'booking/read' })).toThrow();
+    expect(() => SettingsRowStories.normalizeSettingsRowStoryArgs({ configuration: 'value/profile/default' })).toThrow();
+    expect(() => StatTileStories.normalizeStatTileStoryArgs({ configuration: 'featured/gamesPlayed/neutral' })).toThrow();
+
+    expect(StatusChipStories.default.argTypes?.onSelectedChange?.if).toEqual({
+      arg: 'configuration',
+      eq: 'success/selected',
+    });
+    expect(PlayerItemStories.default.argTypes?.onAction?.if).toEqual({
+      arg: 'configuration',
+      neq: 'inviteResult/disabled',
+    });
+    expect(GameCardStories.default.argTypes?.onAction?.if).toEqual({
+      arg: 'configuration',
+      neq: 'compact/default',
+    });
+
+    expect(EmptyStateStories.default.argTypes?.onCreateGame?.if).toEqual({ arg: 'content', eq: 'noGames' });
+    expect(EmptyStateStories.default.argTypes?.onInvitePlayers?.if).toEqual({ arg: 'content', eq: 'noPlayers' });
+    expect(IllustratedCardStories.default.argTypes?.onViewGame?.if).toEqual({ arg: 'type', eq: 'nextGame' });
+    expect(IllustratedCardStories.default.argTypes?.onViewResults?.if).toEqual({ arg: 'type', eq: 'matchResult' });
+    expect(IllustratedCardStories.default.argTypes?.onInvitePlayers?.if).toEqual({ arg: 'type', eq: 'invitePlayers' });
+    expect(IllustratedCardStories.default.argTypes?.onShareGame?.if).toEqual({ arg: 'type', eq: 'gameCreated' });
   });
 
   it('uses only the declared Phase 4 spacing scale in catalogue composition', () => {

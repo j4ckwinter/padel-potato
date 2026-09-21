@@ -15,8 +15,8 @@ const meta = {
   component: EmptyState,
   argTypes: {
     content: { control: 'select', options: ['noGames', 'noNotifications', 'noPlayers'] },
-    onCreateGame: { action: 'create game' },
-    onInvitePlayers: { action: 'invite players' },
+    onCreateGame: { action: 'create game', if: { arg: 'content', eq: 'noGames' } },
+    onInvitePlayers: { action: 'invite players', if: { arg: 'content', eq: 'noPlayers' } },
   },
 } satisfies Meta<typeof EmptyState>;
 

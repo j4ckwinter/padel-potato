@@ -355,16 +355,16 @@ export type Phase4StorySourceIdentity = Readonly<{
 }>;
 
 const phase4Definitions = Object.freeze([
-  ['Avatar', 'avatar', 'Identity/Avatar', ['size', 'presence', 'accessibilityLabel'], []],
+  ['Avatar', 'avatar', 'Identity/Avatar', ['configuration'], []],
   ['AvatarGroup', 'avatarGroup', 'Identity/Avatar Group', ['variant'], ['onAddPlayer1', 'onAddPlayer2']],
   ['AvatarPicker', 'avatarPicker', 'Identity/Avatar Picker', ['variant'], ['onPress']],
-  ['StatusChip', 'statusChip', 'Status/Status Chip', ['style', 'variant', 'selected'], ['onSelectedChange']],
+  ['StatusChip', 'statusChip', 'Status/Status Chip', ['configuration'], ['onSelectedChange']],
   ['StepProgress', 'stepProgress', 'Progress/Step Progress', ['value'], []],
-  ['PlayerItem', 'playerItem', 'Content/Player Item', ['variant', 'selected', 'disabled'], ['onSelectedChange', 'onViewPlayer', 'onInvite']],
-  ['GameCard', 'gameCard', 'Content/Game Card', ['variant', 'full'], ['onViewGame', 'onViewResults']],
-  ['NotificationRow', 'notificationRow', 'Content/Notification Row', ['type', 'read'], ['onPress']],
-  ['SettingsRow', 'settingsRow', 'Content/Settings Row', ['variant', 'icon', 'checked', 'disabled'], ['onPress', 'onCheckedChange']],
-  ['StatTile', 'statTile', 'Content/Stat Tile', ['type', 'content', 'state'], []],
+  ['PlayerItem', 'playerItem', 'Content/Player Item', ['configuration'], ['onSelectedChange', 'onViewPlayer', 'onInvite']],
+  ['GameCard', 'gameCard', 'Content/Game Card', ['configuration'], ['onViewGame', 'onViewResults']],
+  ['NotificationRow', 'notificationRow', 'Content/Notification Row', ['configuration'], ['onPress']],
+  ['SettingsRow', 'settingsRow', 'Content/Settings Row', ['configuration'], ['onPress', 'onCheckedChange']],
+  ['StatTile', 'statTile', 'Content/Stat Tile', ['configuration'], []],
   ['ScoreResultBlock', 'scoreResultBlock', 'Content/Score Result Block', ['type', 'state'], []],
   ['PlayerPreferencesCard', 'playerPreferencesCard', 'Content/Player Preferences Card', ['content'], []],
   ['BannerToast', 'bannerToast', 'Feedback/Banner Toast', ['style'], ['onClose', 'onViewBookingUpdate', 'onViewGameDetails']],

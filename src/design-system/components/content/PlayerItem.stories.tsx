@@ -21,58 +21,72 @@ const player = {
 const sourceLabel = (recordId: string) =>
   `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a60fd2e43204 / record ${recordId}`;
 
-const meta = {
-  title: 'Content/Player Item',
-  component: PlayerItem,
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['list', 'game-slot', 'empty-game-slot', 'invite-result'],
-    },
-    selected: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    onSelectedChange: { action: 'selection changed' },
-    onViewPlayer: { action: 'view player' },
-    onInvite: { action: 'invite player' },
-  },
-} satisfies Meta<typeof PlayerItem>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 type StoryArgs = Readonly<{
-  disabled?: unknown;
+  configuration?: unknown;
+  onAction?: unknown;
   onInvite?: unknown;
   onSelectedChange?: unknown;
   onViewPlayer?: unknown;
-  selected?: unknown;
-  variant?: unknown;
 }>;
 
+export const playerItemStoryConfigurations = Object.freeze(
+  records.map(({ normalizedTuple }) => (
+    `${normalizedTuple.type}/${normalizedTuple.state}`
+  )),
+);
+
+const meta = {
+  title: 'Content/Player Item',
+  argTypes: {
+    configuration: { control: 'select', options: playerItemStoryConfigurations },
+    onAction: {
+      action: 'branch action',
+      if: { arg: 'configuration', neq: 'inviteResult/disabled' },
+    },
+  },
+  parameters: { controls: { include: ['configuration', 'onAction'] } },
+} satisfies Meta<StoryArgs>;
+
+export default meta;
+type Story = StoryObj<StoryArgs>;
+
 export function normalizePlayerItemStoryArgs(args: StoryArgs): PlayerItemProps {
-  const onInvite = typeof args.onInvite === 'function' ? args.onInvite as () => void : () => undefined;
+  const branchAction = typeof args.onAction === 'function' ? args.onAction : undefined;
+  const onInvite = branchAction
+    ? branchAction as () => void
+    : typeof args.onInvite === 'function' ? args.onInvite as () => void : () => undefined;
   const onSelectedChange = typeof args.onSelectedChange === 'function'
     ? args.onSelectedChange as (selected: boolean) => void
-    : () => undefined;
-  const onViewPlayer = typeof args.onViewPlayer === 'function'
-    ? args.onViewPlayer as () => void
-    : () => undefined;
-  switch (args.variant) {
-    case 'empty-game-slot': return { onInvite, variant: 'empty-game-slot' };
-    case 'game-slot': return {
+    : branchAction ? branchAction as (selected: boolean) => void : () => undefined;
+  const onViewPlayer = branchAction
+    ? branchAction as () => void
+    : typeof args.onViewPlayer === 'function' ? args.onViewPlayer as () => void : () => undefined;
+  switch (args.configuration) {
+    case 'gameSlot/empty': return { onInvite, variant: 'empty-game-slot' };
+    case 'gameSlot/default': return {
       identity: { ...player, supportingText: 'Confirmed · Intermediate' },
       onViewPlayer,
       variant: 'game-slot',
     };
-    case 'invite-result': return args.disabled === true
-      ? { disabled: true, identity: player, onInvite, variant: 'invite-result' }
-      : { disabled: false, identity: player, onInvite, variant: 'invite-result' };
-    default: return {
+    case 'inviteResult/default': return {
+      disabled: false,
+      identity: player,
+      onInvite,
+      variant: 'invite-result',
+    };
+    case 'inviteResult/disabled': return {
+      disabled: true,
+      identity: player,
+      variant: 'invite-result',
+    };
+    case 'list/default':
+    case 'list/selected': return {
       identity: player,
       onSelectedChange,
-      selected: args.selected === true,
+      selected: args.configuration === 'list/selected',
       variant: 'list',
     };
+    default: throw new Error(`Unsupported Player Item story configuration: ${String(args.configuration)}.`);
   }
 }
 
@@ -103,10 +117,8 @@ function recordProps(record: (typeof records)[number]): PlayerItemProps {
 
 export const Canonical: Story = {
   args: {
-    identity: player,
+    configuration: 'list/default',
     onSelectedChange: () => undefined,
-    selected: false,
-    variant: 'list',
   },
   render: (args) => (
     <Stack gap="space8">
@@ -183,7 +195,9 @@ export const Interactive: Story = {
   args: Canonical.args,
   render: (args) => (
     <InteractiveHarness
-      onSelectedChange={'onSelectedChange' in args ? args.onSelectedChange : undefined}
+      onSelectedChange={typeof args.onSelectedChange === 'function'
+        ? args.onSelectedChange as (selected: boolean) => void
+        : undefined}
     />
   ),
 };

@@ -16,33 +16,42 @@ const content = {
 const sourceLabel = (recordId: string) =>
   `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a6101117dfd4 / record ${recordId}`;
 
-const meta = {
-  title: 'Content/Notification Row',
-  component: NotificationRow,
-  argTypes: {
-    type: { control: 'select', options: ['game', 'booking', 'social', 'warning'] },
-    read: { control: 'boolean' },
-    onPress: { action: 'notification pressed' },
-  },
-} satisfies Meta<typeof NotificationRow>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 type StoryArgs = Readonly<{
+  configuration?: unknown;
   message?: unknown;
   onPress?: unknown;
-  read?: unknown;
   timestamp?: unknown;
   title?: unknown;
-  type?: unknown;
 }>;
 
+export const notificationRowStoryConfigurations = Object.freeze(
+  records.map(({ normalizedTuple }) => (
+    `${normalizedTuple.type}/${normalizedTuple.state}`
+  )),
+);
+
+const meta = {
+  title: 'Content/Notification Row',
+  argTypes: {
+    configuration: { control: 'select', options: notificationRowStoryConfigurations },
+    onPress: { action: 'notification pressed' },
+  },
+  parameters: { controls: { include: ['configuration', 'onPress'] } },
+} satisfies Meta<StoryArgs>;
+
+export default meta;
+type Story = StoryObj<StoryArgs>;
+
 export function normalizeNotificationRowStoryArgs(args: StoryArgs): NotificationRowProps {
-  const type = ['game', 'booking', 'social', 'warning'].includes(String(args.type))
-    ? args.type as NotificationRowProps['type']
-    : 'game';
-  const read = args.read === true && (type === 'game' || type === 'social');
+  if (!notificationRowStoryConfigurations.includes(
+    args.configuration as (typeof notificationRowStoryConfigurations)[number],
+  )) {
+    throw new Error(`Unsupported Notification Row story configuration: ${String(args.configuration)}.`);
+  }
+  const [type, state] = (args.configuration as (typeof notificationRowStoryConfigurations)[number]).split('/') as [
+    NotificationRowProps['type'],
+    'read' | 'unread',
+  ];
   const onPress = typeof args.onPress === 'function' ? args.onPress as () => void : () => undefined;
   const nextContent = {
     message: typeof args.message === 'string' && args.message.trim() ? args.message : content.message,
@@ -50,23 +59,20 @@ export function normalizeNotificationRowStoryArgs(args: StoryArgs): Notification
     timestamp: typeof args.timestamp === 'string' && args.timestamp.trim() ? args.timestamp : content.timestamp,
     title: typeof args.title === 'string' && args.title.trim() ? args.title : `${type[0].toUpperCase()}${type.slice(1)} update`,
   };
-  return type === 'booking' || type === 'warning'
-    ? { ...nextContent, read: false, type }
-    : { ...nextContent, read, type };
+  return { ...nextContent, read: state === 'read', type } as NotificationRowProps;
 }
 
 function recordProps(record: (typeof records)[number]): NotificationRowProps {
   const { state, type } = record.normalizedTuple;
   return normalizeNotificationRowStoryArgs({
+    configuration: `${type}/${state}`,
     ...content,
-    read: state === 'read',
     title: `${type[0].toUpperCase()}${type.slice(1)} update`,
-    type,
   });
 }
 
 export const Canonical: Story = {
-  args: { ...content, onPress: () => undefined, read: false, type: 'game' },
+  args: { ...content, configuration: 'game/unread', onPress: () => undefined },
   render: (args) => (
     <Stack gap="space8">
       <NotificationRow {...normalizeNotificationRowStoryArgs(args)} />

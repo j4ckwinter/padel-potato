@@ -11,27 +11,29 @@ const records = phase4Families[9].records;
 const sourceLabel = (recordId: string) =>
   `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a61bebc50714 / record ${recordId}`;
 
-const meta = {
-  title: 'Content/Stat Tile',
-  component: StatTile,
-  argTypes: {
-    type: { control: 'select', options: ['compact', 'featured'] },
-    content: { control: 'select', options: ['gamesPlayed', 'winRate', 'rating', 'streak'] },
-    state: { control: 'select', options: ['neutral', 'positive'] },
-  },
-} satisfies Meta<typeof StatTile>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 type StoryArgs = Readonly<{
-  content?: unknown;
+  configuration?: unknown;
   label?: unknown;
-  state?: unknown;
   supportingText?: unknown;
-  type?: unknown;
   value?: unknown;
 }>;
+
+export const statTileStoryConfigurations = Object.freeze(
+  records.map(({ normalizedTuple }) => (
+    `${normalizedTuple.type}/${normalizedTuple.content}/${normalizedTuple.state}`
+  )),
+);
+
+const meta = {
+  title: 'Content/Stat Tile',
+  argTypes: {
+    configuration: { control: 'select', options: statTileStoryConfigurations },
+  },
+  parameters: { controls: { include: ['configuration'] } },
+} satisfies Meta<StoryArgs>;
+
+export default meta;
+type Story = StoryObj<StoryArgs>;
 
 const copy = (args: StoryArgs) => ({
   label: typeof args.label === 'string' && args.label.trim() ? args.label : 'Win rate',
@@ -43,21 +45,21 @@ const copy = (args: StoryArgs) => ({
 
 export function normalizeStatTileStoryArgs(args: StoryArgs): StatTileProps {
   const nextCopy = copy(args);
-  const tuple = `${String(args.type)}/${String(args.content)}/${String(args.state)}`;
-  switch (tuple) {
+  switch (args.configuration) {
     case 'compact/gamesPlayed/neutral': return { ...nextCopy, content: 'gamesPlayed', state: 'neutral', type: 'compact' };
     case 'compact/rating/neutral': return { ...nextCopy, content: 'rating', state: 'neutral', type: 'compact' };
     case 'compact/streak/positive': return { ...nextCopy, content: 'streak', state: 'positive', type: 'compact' };
     case 'featured/rating/positive': return { ...nextCopy, content: 'rating', state: 'positive', type: 'featured' };
     case 'featured/streak/positive': return { ...nextCopy, content: 'streak', state: 'positive', type: 'featured' };
-    default: return { ...nextCopy, content: 'winRate', state: 'positive', type: 'compact' };
+    case 'compact/winRate/positive': return { ...nextCopy, content: 'winRate', state: 'positive', type: 'compact' };
+    default: throw new Error(`Unsupported Stat Tile story configuration: ${String(args.configuration)}.`);
   }
 }
 
 function recordProps(record: (typeof records)[number]): StatTileProps {
   const [label, value, supportingText] = record.metrics.typography.map(({ text }) => text);
   return normalizeStatTileStoryArgs({
-    ...record.normalizedTuple,
+    configuration: `${record.normalizedTuple.type}/${record.normalizedTuple.content}/${record.normalizedTuple.state}`,
     label,
     supportingText,
     value,
@@ -65,7 +67,12 @@ function recordProps(record: (typeof records)[number]): StatTileProps {
 }
 
 export const Canonical: Story = {
-  args: recordProps(records[4]),
+  args: {
+    configuration: 'compact/winRate/positive',
+    label: 'Win rate',
+    supportingText: '+8% this month',
+    value: '68%',
+  },
   render: (args) => (
     <Stack gap="space8">
       <StatTile {...normalizeStatTileStoryArgs(args)} />

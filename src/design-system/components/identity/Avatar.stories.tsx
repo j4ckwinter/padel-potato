@@ -4,42 +4,38 @@ import { Fragment } from 'react';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
 import {
-  avatarPresences,
   avatarRecords,
-  avatarSizes,
   phase4SourceIdentity,
 } from '../phase4SourceRegistry';
-import {
-  Avatar,
-  type AvatarPresence,
-  type AvatarProps,
-  type AvatarSize,
-} from './Avatar';
+import { Avatar, type AvatarProps } from './Avatar';
 
 const storyPhoto = require('../../../../design-spec/assets/phase-3/mascot-profile.webp');
 
 const sourceLabel = (recordId: string) =>
   `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a60fcc2bf6a2 / record ${recordId}`;
 
-const meta = {
-  title: 'Identity/Avatar',
-  component: Avatar,
-  argTypes: {
-    size: { control: 'select', options: avatarSizes },
-    presence: { control: 'select', options: avatarPresences },
-    accessibilityLabel: { control: 'text' },
-  },
-} satisfies Meta<typeof Avatar>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 type AvatarStoryArgs = Readonly<{
   accessibilityLabel?: unknown;
+  configuration?: unknown;
   initials?: unknown;
-  presence?: unknown;
-  size?: unknown;
 }>;
+
+export const avatarStoryConfigurations = Object.freeze(
+  avatarRecords.map(({ normalizedTuple }) => (
+    `${normalizedTuple.size}/${normalizedTuple.presence}`
+  )),
+);
+
+const meta = {
+  title: 'Identity/Avatar',
+  argTypes: {
+    configuration: { control: 'select', options: avatarStoryConfigurations },
+  },
+  parameters: { controls: { include: ['configuration'] } },
+} satisfies Meta<AvatarStoryArgs>;
+
+export default meta;
+type Story = StoryObj<AvatarStoryArgs>;
 
 export const normalizeAvatarStoryArgs = (args: AvatarStoryArgs): AvatarProps => {
   const accessibilityLabel = typeof args.accessibilityLabel === 'string'
@@ -49,34 +45,30 @@ export const normalizeAvatarStoryArgs = (args: AvatarStoryArgs): AvatarProps => 
   const initials = typeof args.initials === 'string' && args.initials.trim().length > 0
     ? args.initials.slice(0, 3)
     : 'AM';
-  const tuple = `${String(args.size)}/${String(args.presence)}`;
-  switch (tuple) {
+  switch (args.configuration) {
     case '32/online': return { accessibilityLabel, initials, presence: 'online', size: 32 };
     case '40/online': return { accessibilityLabel, initials, presence: 'online', size: 40 };
     case '48/away': return { accessibilityLabel, initials, presence: 'away', size: 48 };
     case '48/offline': return { accessibilityLabel, initials, presence: 'offline', size: 48 };
     case '56/online': return { accessibilityLabel, initials, presence: 'online', size: 56 };
-    default: return { accessibilityLabel, initials, presence: 'online', size: 40 };
+    default: throw new Error(`Unsupported Avatar story configuration: ${String(args.configuration)}.`);
   }
 };
 
 const recordProps = (record: (typeof avatarRecords)[number]): AvatarProps => {
-  const size = record.normalizedTuple.size as AvatarSize;
-  const presence = record.normalizedTuple.presence as AvatarPresence;
+  const { presence, size } = record.normalizedTuple;
   return normalizeAvatarStoryArgs({
     accessibilityLabel: `Alex Morgan, ${presence}`,
+    configuration: `${size}/${presence}`,
     initials: 'AM',
-    presence,
-    size,
   });
 };
 
 export const Canonical: Story = {
   args: {
     accessibilityLabel: 'Alex Morgan, online',
+    configuration: '40/online',
     initials: 'AM',
-    presence: 'online',
-    size: 40,
   },
   render: (args) => (
     <Stack gap="space8">

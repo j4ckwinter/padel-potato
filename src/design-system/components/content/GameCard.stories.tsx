@@ -26,51 +26,61 @@ const content = {
 const sourceLabel = (recordId: string) =>
   `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a6100d35e8ef / record ${recordId}`;
 
-const meta = {
-  title: 'Content/Game Card',
-  component: GameCard,
-  argTypes: {
-    variant: { control: 'select', options: ['next', 'open', 'compact', 'completed'] },
-    full: { control: 'boolean' },
-    onViewGame: { action: 'view game' },
-    onViewResults: { action: 'view results' },
-  },
-} satisfies Meta<typeof GameCard>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 type StoryArgs = Readonly<{
-  full?: unknown;
+  configuration?: unknown;
+  onAction?: unknown;
   onViewGame?: unknown;
   onViewResults?: unknown;
   time?: unknown;
   title?: unknown;
-  variant?: unknown;
   venue?: unknown;
 }>;
+
+export const gameCardStoryConfigurations = Object.freeze(
+  records.map(({ normalizedTuple }) => (
+    `${normalizedTuple.type}/${normalizedTuple.state}`
+  )),
+);
+
+const meta = {
+  title: 'Content/Game Card',
+  argTypes: {
+    configuration: { control: 'select', options: gameCardStoryConfigurations },
+    onAction: {
+      action: 'branch action',
+      if: { arg: 'configuration', neq: 'compact/default' },
+    },
+  },
+  parameters: { controls: { include: ['configuration', 'onAction'] } },
+} satisfies Meta<StoryArgs>;
+
+export default meta;
+type Story = StoryObj<StoryArgs>;
 
 export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
   const title = typeof args.title === 'string' && args.title.trim() ? args.title : content.title;
   const venue = typeof args.venue === 'string' && args.venue.trim() ? args.venue : content.venue;
   const time = typeof args.time === 'string' && args.time.trim() ? args.time : content.time;
-  const onViewGame = typeof args.onViewGame === 'function' ? args.onViewGame as () => void : () => undefined;
-  const onViewResults = typeof args.onViewResults === 'function' ? args.onViewResults as () => void : () => undefined;
-  switch (args.variant) {
-    case 'compact': return { title, venue, variant: 'compact' };
-    case 'completed': return { onViewResults, participants, time, title, variant: 'completed', venue };
-    case 'open': return args.full === true
-      ? { full: true, onViewGame, participants, time, title, variant: 'open', venue }
-      : {
-          full: false,
-          onViewGame,
-          participants: [participants[0], participants[1], participants[2]],
-          time,
-          title,
-          variant: 'open',
-          venue,
-        };
-    default: return { onViewGame, participants, time, title, variant: 'next', venue };
+  const branchAction = typeof args.onAction === 'function' ? args.onAction as () => void : undefined;
+  const onViewGame = branchAction
+    ?? (typeof args.onViewGame === 'function' ? args.onViewGame as () => void : () => undefined);
+  const onViewResults = branchAction
+    ?? (typeof args.onViewResults === 'function' ? args.onViewResults as () => void : () => undefined);
+  switch (args.configuration) {
+    case 'compact/default': return { title, venue, variant: 'compact' };
+    case 'completed/default': return { onViewResults, participants, time, title, variant: 'completed', venue };
+    case 'open/full': return { full: true, onViewGame, participants, time, title, variant: 'open', venue };
+    case 'open/default': return {
+      full: false,
+      onViewGame,
+      participants: [participants[0], participants[1], participants[2]],
+      time,
+      title,
+      variant: 'open',
+      venue,
+    };
+    case 'next/default': return { onViewGame, participants, time, title, variant: 'next', venue };
+    default: throw new Error(`Unsupported Game Card story configuration: ${String(args.configuration)}.`);
   }
 }
 
@@ -95,7 +105,7 @@ function recordProps(record: (typeof records)[number]): GameCardProps {
 }
 
 export const Canonical: Story = {
-  args: { ...content, onViewGame: () => undefined, participants, variant: 'next' },
+  args: { ...content, configuration: 'next/default', onViewGame: () => undefined },
   render: (args) => (
     <Stack gap="space8">
       <GameCard {...normalizeGameCardStoryArgs(args)} />

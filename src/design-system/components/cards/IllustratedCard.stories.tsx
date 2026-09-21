@@ -25,10 +25,10 @@ const meta = {
   component: IllustratedCard,
   argTypes: {
     type: { control: 'select', options: ['gameCreated', 'invitePlayers', 'matchResult', 'nextGame'] },
-    onInvitePlayers: { action: 'invite players' },
-    onShareGame: { action: 'share game' },
-    onViewGame: { action: 'view game' },
-    onViewResults: { action: 'view results' },
+    onInvitePlayers: { action: 'invite players', if: { arg: 'type', eq: 'invitePlayers' } },
+    onShareGame: { action: 'share game', if: { arg: 'type', eq: 'gameCreated' } },
+    onViewGame: { action: 'view game', if: { arg: 'type', eq: 'nextGame' } },
+    onViewResults: { action: 'view results', if: { arg: 'type', eq: 'matchResult' } },
   },
 } satisfies Meta<typeof IllustratedCard>;
 
