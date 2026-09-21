@@ -1,0 +1,145 @@
+import type { Meta, StoryObj } from '@storybook/react-native';
+import { Fragment, useState } from 'react';
+
+import { Stack } from '../../primitives/Stack';
+import { Text } from '../../primitives/Text';
+import { phase4Families, phase4SourceIdentity } from '../phase4SourceRegistry';
+import { NotificationRow, type NotificationRowProps } from './NotificationRow';
+
+const records = phase4Families[7].records;
+const content = {
+  message: 'Your activity has a new update',
+  timestamp: '2m',
+  title: 'Game update',
+} as const;
+
+const sourceLabel = (recordId: string) =>
+  `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a6101117dfd4 / record ${recordId}`;
+
+const meta = {
+  title: 'Content/Notification Row',
+  component: NotificationRow,
+  argTypes: {
+    type: { control: 'select', options: ['game', 'booking', 'social', 'warning'] },
+    read: { control: 'boolean' },
+    onPress: { action: 'notification pressed' },
+  },
+} satisfies Meta<typeof NotificationRow>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+type StoryArgs = Readonly<{
+  message?: unknown;
+  onPress?: unknown;
+  read?: unknown;
+  timestamp?: unknown;
+  title?: unknown;
+  type?: unknown;
+}>;
+
+export function normalizeNotificationRowStoryArgs(args: StoryArgs): NotificationRowProps {
+  const type = ['game', 'booking', 'social', 'warning'].includes(String(args.type))
+    ? args.type as NotificationRowProps['type']
+    : 'game';
+  const read = args.read === true && (type === 'game' || type === 'social');
+  const onPress = typeof args.onPress === 'function' ? args.onPress as () => void : () => undefined;
+  const nextContent = {
+    message: typeof args.message === 'string' && args.message.trim() ? args.message : content.message,
+    onPress,
+    timestamp: typeof args.timestamp === 'string' && args.timestamp.trim() ? args.timestamp : content.timestamp,
+    title: typeof args.title === 'string' && args.title.trim() ? args.title : `${type[0].toUpperCase()}${type.slice(1)} update`,
+  };
+  return type === 'booking' || type === 'warning'
+    ? { ...nextContent, read: false, type }
+    : { ...nextContent, read, type };
+}
+
+function recordProps(record: (typeof records)[number]): NotificationRowProps {
+  const { state, type } = record.normalizedTuple;
+  return normalizeNotificationRowStoryArgs({
+    ...content,
+    read: state === 'read',
+    title: `${type[0].toUpperCase()}${type.slice(1)} update`,
+    type,
+  });
+}
+
+export const Canonical: Story = {
+  args: { ...content, onPress: () => undefined, read: false, type: 'game' },
+  render: (args) => (
+    <Stack gap="space8">
+      <NotificationRow {...normalizeNotificationRowStoryArgs(args)} />
+      <Text color="textSecondary" variant="caption">{sourceLabel(records[5].id)}</Text>
+    </Stack>
+  ),
+};
+
+export const Variants: Story = {
+  args: Canonical.args,
+  render: () => (
+    <Stack gap="space12">
+      {records.map((record) => (
+        <Fragment key={record.id}>
+          <NotificationRow {...recordProps(record)} />
+          <Text color="textSecondary" variant="caption">
+            {`${Object.values(record.originalTuple).join(' / ')} Â· ${record.id}`}
+          </Text>
+        </Fragment>
+      ))}
+    </Stack>
+  ),
+};
+
+export const States: Story = {
+  args: Canonical.args,
+  render: () => (
+    <Stack gap="space12">
+      <NotificationRow {...recordProps(records[5])} />
+      <NotificationRow {...recordProps(records[1])} />
+    </Stack>
+  ),
+};
+
+export const Boundaries: Story = {
+  args: Canonical.args,
+  render: () => (
+    <Stack gap="space8" style={{ width: 352 }}>
+      <NotificationRow
+        message="ÅucÃ­a Nguyá»…n from æ±äº¬ has joined an exceptionally long Tuesday social padel game"
+        onPress={() => undefined}
+        read={false}
+        timestamp="2 minutes ago"
+        title="A very long social update"
+        type="social"
+      />
+      <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
+        Full message semantics remain available. Native 200% font-scale review remains a Phase 5 backstop.
+      </Text>
+    </Stack>
+  ),
+};
+
+function InteractiveHarness({ onPress }: Readonly<{ onPress?: unknown }>) {
+  const [read, setRead] = useState(false);
+  const callback = typeof onPress === 'function' ? onPress as () => void : undefined;
+  return (
+    <Stack gap="space8">
+      <NotificationRow
+        {...content}
+        onPress={() => {
+          callback?.();
+          setRead(true);
+        }}
+        read={read}
+        type="game"
+      />
+      <Text variant="body">{read ? 'Read' : 'Unread'}</Text>
+    </Stack>
+  );
+}
+
+export const Interactive: Story = {
+  args: Canonical.args,
+  render: (args) => <InteractiveHarness onPress={args.onPress} />,
+};

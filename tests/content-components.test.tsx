@@ -105,7 +105,7 @@ describe('Notification Row runtime and semantic contract', () => {
       name: 'Game update, Your activity has a new update, 2m, unread',
     })).toBeTruthy();
 
-    screen.rerender(
+    await screen.rerender(
       <NotificationRow {...notificationContent} onPress={onPress} read type="game" />,
     );
     expect(screen.getByRole('button', {
