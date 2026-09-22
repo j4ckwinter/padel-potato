@@ -24,10 +24,6 @@ const configuredExpo = expoConfig.map((config) => {
 module.exports = defineConfig([
   configuredExpo,
   {
-    ignores: [
-      'dist/*',
-      '.rnstorybook/storybook.requires.ts',
-      'tests/types/**',
-    ],
+    ignores: ['dist/*', '.rnstorybook/storybook.requires.ts', 'tests/types/**'],
   },
 ]);
