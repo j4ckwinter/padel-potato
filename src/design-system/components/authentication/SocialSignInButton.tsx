@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
+import { assertOnlyKeys, isCallback, unsupportedValue } from '../../internal/validation';
 import {
   AppleProviderMark,
   GoogleProviderMark,
@@ -45,26 +46,16 @@ const providerContent = Object.freeze({
   textColor: 'ink' | 'surface';
 }>>);
 
-function unsupported(value: unknown, supported: readonly unknown[]): never {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-}
-
 function validateProps(props: SocialSignInButtonProps) {
-  for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
-      unsupported(key, supportedRuntimeProps);
-    }
-  }
+  assertOnlyKeys(props, supportedRuntimeProps);
   if (!socialSignInProviders.includes(props.provider)) {
-    unsupported(props.provider, socialSignInProviders);
+    unsupportedValue(props.provider, socialSignInProviders);
   }
   if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
-    unsupported(props.disabled, [true, false]);
+    unsupportedValue(props.disabled, [true, false]);
   }
-  if (typeof props.onPress !== 'undefined' && typeof props.onPress !== 'function') {
-    unsupported(props.onPress, ['function']);
+  if (typeof props.onPress !== 'undefined' && !isCallback(props.onPress)) {
+    unsupportedValue(props.onPress, ['function']);
   }
 }
 

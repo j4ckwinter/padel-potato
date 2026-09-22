@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
+import { assertOnlyKeys, isNonEmptyString, unsupportedValue } from '../../internal/validation';
 
 export type AuthDividerProps = Readonly<{
   label?: string;
@@ -9,21 +10,11 @@ export type AuthDividerProps = Readonly<{
 
 const supportedRuntimeProps = Object.freeze(['label'] as const);
 
-function unsupported(value: unknown, supported: readonly unknown[]): never {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-}
-
 export function AuthDivider(props: AuthDividerProps = {}) {
-  for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
-      unsupported(key, supportedRuntimeProps);
-    }
-  }
+  assertOnlyKeys(props, supportedRuntimeProps);
   const { label = 'or' } = props;
-  if (typeof label !== 'string' || label.trim().length === 0) {
-    unsupported(label, ['non-empty label']);
+  if (!isNonEmptyString(label)) {
+    unsupportedValue(label, ['non-empty label']);
   }
 
   return (

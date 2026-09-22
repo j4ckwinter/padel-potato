@@ -7,7 +7,7 @@ import {
 
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
-import { isLocalImageSource } from '../localImageSource';
+import { isLocalImageSource } from '../../internal/validation';
 
 export const avatarSizes = Object.freeze([32, 40, 48, 56] as const);
 export const avatarPresences = Object.freeze(['online', 'away', 'offline'] as const);

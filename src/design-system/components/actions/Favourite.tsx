@@ -4,6 +4,7 @@ import { Path, Svg } from 'react-native-svg';
 import { Pressable } from '../../primitives/Pressable';
 import { colors } from '../../tokens';
 import { FavouriteHeartArtwork } from '../../assets/artwork/actionProviderArtwork';
+import { assertOnlyKeys, isCallback, isNonEmptyString, unsupportedValue } from '../../internal/validation';
 
 export type FavouriteProps = Readonly<{
   accessibilityLabel: string;
@@ -22,30 +23,17 @@ const supportedRuntimeProps = Object.freeze([
 const heartPath =
   'M1062.0,1119.25L1055.199951171875,1112.699951171875C1053.4603271484375,1110.9603271484375,1053.4603271484375,1108.1396484375,1055.199951171875,1106.4000244140625C1056.939697265625,1104.6602783203125,1059.76025390625,1104.6602783203125,1061.5,1106.4000244140625L1062.0,1106.949951171875L1062.5,1106.4000244140625C1064.23974609375,1104.6602783203125,1067.060302734375,1104.6602783203125,1068.800048828125,1106.4000244140625C1070.5396728515625,1108.1396484375,1070.5396728515625,1110.9603271484375,1068.800048828125,1112.699951171875L1062.0,1119.25L1062.0,1119.25';
 
-const unsupported = (value: unknown, supported: readonly unknown[]): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-};
-
 function validateFavouriteProps(props: FavouriteProps) {
-  for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
-      unsupported(key, supportedRuntimeProps);
-    }
+  assertOnlyKeys(props, supportedRuntimeProps);
+  if (!isNonEmptyString(props.accessibilityLabel)) {
+    unsupportedValue(props.accessibilityLabel, ['non-empty accessibility label']);
   }
-  if (
-    typeof props.accessibilityLabel !== 'string' ||
-    props.accessibilityLabel.trim().length === 0
-  ) {
-    unsupported(props.accessibilityLabel, ['non-empty accessibility label']);
-  }
-  if (typeof props.checked !== 'boolean') unsupported(props.checked, [true, false]);
+  if (typeof props.checked !== 'boolean') unsupportedValue(props.checked, [true, false]);
   if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
-    unsupported(props.disabled, [true, false]);
+    unsupportedValue(props.disabled, [true, false]);
   }
-  if (typeof props.onCheckedChange !== 'function') {
-    unsupported(props.onCheckedChange, ['function']);
+  if (!isCallback(props.onCheckedChange)) {
+    unsupportedValue(props.onCheckedChange, ['function']);
   }
 }
 

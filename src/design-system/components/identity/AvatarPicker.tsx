@@ -5,7 +5,7 @@ import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
-import { isLocalImageSource } from '../localImageSource';
+import { isLocalImageSource } from '../../internal/validation';
 import { Avatar } from './Avatar';
 
 export type AvatarPickerProps =

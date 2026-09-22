@@ -5,6 +5,7 @@ import { Icon, type IconName } from '../../assets/Icon';
 import { iconNames } from '../../assets/iconDefinitions';
 import { Pressable } from '../../primitives/Pressable';
 import { colors } from '../../tokens';
+import { assertOnlyKeys, isCallback, isNonEmptyString, unsupportedValue } from '../../internal/validation';
 
 export const iconButtonSizes = Object.freeze([40, 44] as const);
 
@@ -26,33 +27,20 @@ const supportedRuntimeProps = Object.freeze([
   'size',
 ] as const);
 
-const unsupported = (value: unknown, supported: readonly unknown[]): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-};
-
 function validateIconButtonProps(props: IconButtonProps) {
-  for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
-      unsupported(key, supportedRuntimeProps);
-    }
+  assertOnlyKeys(props, supportedRuntimeProps);
+  if (!isNonEmptyString(props.accessibilityLabel)) {
+    unsupportedValue(props.accessibilityLabel, ['non-empty accessibility label']);
   }
-  if (
-    typeof props.accessibilityLabel !== 'string' ||
-    props.accessibilityLabel.trim().length === 0
-  ) {
-    unsupported(props.accessibilityLabel, ['non-empty accessibility label']);
-  }
-  if (!iconNames.includes(props.icon)) unsupported(props.icon, iconNames);
+  if (!iconNames.includes(props.icon)) unsupportedValue(props.icon, iconNames);
   if (!iconButtonSizes.includes(props.size ?? 40)) {
-    unsupported(props.size, iconButtonSizes);
+    unsupportedValue(props.size, iconButtonSizes);
   }
   if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
-    unsupported(props.disabled, [true, false]);
+    unsupportedValue(props.disabled, [true, false]);
   }
-  if (typeof props.onPress !== 'undefined' && typeof props.onPress !== 'function') {
-    unsupported(props.onPress, ['function']);
+  if (typeof props.onPress !== 'undefined' && !isCallback(props.onPress)) {
+    unsupportedValue(props.onPress, ['function']);
   }
 }
 

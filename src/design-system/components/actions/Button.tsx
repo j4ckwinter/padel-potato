@@ -4,6 +4,12 @@ import { StyleSheet, View } from 'react-native';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
+import {
+  assertOnlyKeys,
+  isCallback,
+  isNonEmptyString,
+  unsupportedValue,
+} from '../../internal/validation';
 
 const buttonStyles = Object.freeze([
   'primary',
@@ -71,35 +77,25 @@ const backgroundByStyle = Object.freeze({
   ghost: colors.canvas,
 } as const);
 
-function unsupported(value: unknown, supported: readonly unknown[]): never {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-}
-
 function validateButtonProps(props: ButtonProps) {
-  for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
-      unsupported(key, supportedRuntimeProps);
-    }
-  }
+  assertOnlyKeys(props, supportedRuntimeProps);
 
-  if (typeof props.label !== 'string' || props.label.trim().length === 0) {
-    unsupported(props.label, ['non-empty label']);
+  if (!isNonEmptyString(props.label)) {
+    unsupportedValue(props.label, ['non-empty label']);
   }
   if (!buttonStyles.includes(props.style)) {
-    unsupported(props.style, buttonStyles);
+    unsupportedValue(props.style, buttonStyles);
   }
   const size = props.size ?? 48;
-  if (!buttonSizes.includes(size)) unsupported(size, buttonSizes);
+  if (!buttonSizes.includes(size)) unsupportedValue(size, buttonSizes);
   if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
-    unsupported(props.disabled, [true, false]);
+    unsupportedValue(props.disabled, [true, false]);
   }
   if (typeof props.loading !== 'undefined' && typeof props.loading !== 'boolean') {
-    unsupported(props.loading, [true, false]);
+    unsupportedValue(props.loading, [true, false]);
   }
-  if (typeof props.onPress !== 'undefined' && typeof props.onPress !== 'function') {
-    unsupported(props.onPress, ['function']);
+  if (typeof props.onPress !== 'undefined' && !isCallback(props.onPress)) {
+    unsupportedValue(props.onPress, ['function']);
   }
   if (props.disabled && props.loading) {
     throw new Error('Unsupported Button state: disabled and loading cannot both be true.');

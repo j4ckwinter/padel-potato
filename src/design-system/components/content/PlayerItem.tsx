@@ -6,7 +6,7 @@ import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 import { Avatar } from '../identity/Avatar';
-import { isLocalImageSource } from '../localImageSource';
+import { isLocalImageSource } from '../../internal/validation';
 
 type InitialsIdentity = Readonly<{
   initials: string;

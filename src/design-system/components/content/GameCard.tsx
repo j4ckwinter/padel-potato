@@ -8,7 +8,7 @@ import {
   AvatarGroup,
   type AvatarGroupIdentity,
 } from '../identity/AvatarGroup';
-import { isLocalImageSource } from '../localImageSource';
+import { isLocalImageSource } from '../../internal/validation';
 
 type ParticipantBase = Readonly<{
   name: string;
