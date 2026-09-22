@@ -23,6 +23,7 @@ const optionsByCount = Object.freeze({
 
 const meta = {
   title: 'Navigation/Segmented Control',
+  excludeStories: /(?:^normalize|^Interactive.*Harness$)/u,
   component: SegmentedControl,
   argTypes: {
     disabled: { control: 'boolean' },

@@ -13,6 +13,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Identity/Avatar Picker',
+  excludeStories: /^normalize/u,
   component: AvatarPicker,
   argTypes: {
     variant: { control: 'select', options: ['empty', 'initials', 'photo', 'error'] },

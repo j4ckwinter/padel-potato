@@ -17,6 +17,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Progress/Step Progress',
+  excludeStories: /^normalize/u,
   component: StepProgress,
   argTypes: { value: { control: 'select', options: values } },
 } satisfies Meta<typeof StepProgress>;

@@ -28,6 +28,7 @@ export const settingsRowStoryConfigurations = Object.freeze(
 
 const meta = {
   title: 'Content/Settings Row',
+  excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: settingsRowStoryConfigurations },
     onCheckedChange: { action: 'checked changed' },

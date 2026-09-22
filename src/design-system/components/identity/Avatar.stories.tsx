@@ -28,6 +28,7 @@ export const avatarStoryConfigurations = Object.freeze(
 
 const meta = {
   title: 'Identity/Avatar',
+  excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: avatarStoryConfigurations },
   },

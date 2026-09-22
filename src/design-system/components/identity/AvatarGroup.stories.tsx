@@ -23,6 +23,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Identity/Avatar Group',
+  excludeStories: /^normalize/u,
   component: AvatarGroup,
   argTypes: {
     variant: {

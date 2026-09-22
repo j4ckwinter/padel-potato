@@ -12,6 +12,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Feedback/Empty State',
+  excludeStories: /^normalize/u,
   component: EmptyState,
   argTypes: {
     content: { control: 'select', options: ['noGames', 'noNotifications', 'noPlayers'] },

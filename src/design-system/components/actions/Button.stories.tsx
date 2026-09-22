@@ -16,6 +16,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Actions/Button',
+  excludeStories: /^normalize/u,
   component: Button,
   argTypes: {
     style: { control: 'select', options: buttonStyles },

@@ -27,6 +27,7 @@ export const authDividerStoryApplicability = Object.freeze({
 
 const meta = {
   title: 'Authentication/Auth Divider',
+  excludeStories: /^authDividerStoryApplicability$/u,
   component: AuthDivider,
   argTypes: {
     label: { control: 'text' },

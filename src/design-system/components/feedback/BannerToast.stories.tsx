@@ -18,6 +18,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Feedback/Banner Toast',
+  excludeStories: /(?:^normalize|^Interactive.*Harness$)/u,
   component: BannerToast,
   argTypes: {
     style: { control: 'select', options: bannerToastStyles },

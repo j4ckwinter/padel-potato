@@ -15,6 +15,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Forms/Checkbox',
+  excludeStories: /^Interactive.*Harness$/u,
   component: Checkbox,
   argTypes: {
     checked: { control: 'boolean' },

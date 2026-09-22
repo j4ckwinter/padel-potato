@@ -18,6 +18,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Navigation/Bottom Navigation',
+  excludeStories: /^Interactive.*Harness$/u,
   component: BottomNavigation,
   argTypes: {
     activeDestination: {

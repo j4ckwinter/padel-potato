@@ -14,6 +14,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Navigation/Section Header',
+  excludeStories: /^Interactive.*Harness$/u,
   component: SectionHeader,
   argTypes: {
     actionLabel: { control: 'text' },

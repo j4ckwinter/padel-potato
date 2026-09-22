@@ -27,6 +27,7 @@ export const statusChipStoryConfigurations = Object.freeze(
 
 const meta = {
   title: 'Status/Status Chip',
+  excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: statusChipStoryConfigurations },
     onSelectedChange: {

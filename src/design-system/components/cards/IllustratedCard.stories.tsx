@@ -22,6 +22,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Cards/Illustrated Card',
+  excludeStories: /^normalize/u,
   component: IllustratedCard,
   argTypes: {
     type: { control: 'select', options: ['gameCreated', 'invitePlayers', 'matchResult', 'nextGame'] },

@@ -22,6 +22,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Content/Player Preferences Card',
+  excludeStories: /^normalize/u,
   component: PlayerPreferencesCard,
   argTypes: {
     content: { control: 'select', options: ['full', 'profile'] },

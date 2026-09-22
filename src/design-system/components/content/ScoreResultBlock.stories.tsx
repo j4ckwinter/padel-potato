@@ -25,6 +25,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Content/Score Result Block',
+  excludeStories: /^normalize/u,
   component: ScoreResultBlock,
   argTypes: {
     type: { control: 'select', options: ['compact', 'full'] },

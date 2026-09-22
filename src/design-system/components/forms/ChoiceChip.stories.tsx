@@ -20,6 +20,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Forms/Choice Chip',
+  excludeStories: /(?:^normalize|^Interactive.*Harness$)/u,
   component: ChoiceChip,
   argTypes: {
     disabled: { control: 'boolean' },

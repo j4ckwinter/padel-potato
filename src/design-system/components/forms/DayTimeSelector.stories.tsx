@@ -19,6 +19,7 @@ const sourceLabel = (recordId: string) =>
 
 const meta = {
   title: 'Forms/Day Time Selector',
+  excludeStories: /(?:^normalize|^Interactive.*Harness$)/u,
   component: DayTimeSelector,
   argTypes: {
     disabled: { control: 'boolean' },

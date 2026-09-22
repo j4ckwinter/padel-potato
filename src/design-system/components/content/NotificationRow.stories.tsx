@@ -32,6 +32,7 @@ export const notificationRowStoryConfigurations = Object.freeze(
 
 const meta = {
   title: 'Content/Notification Row',
+  excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: notificationRowStoryConfigurations },
     onPress: { action: 'notification pressed' },

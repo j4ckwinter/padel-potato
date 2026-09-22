@@ -35,6 +35,7 @@ const storyProps = (page: AppHeaderPage): AppHeaderProps => {
 
 const meta = {
   title: 'Navigation/App Header',
+  excludeStories: /(?:^normalize|^Interactive.*Harness$)/u,
   component: AppHeader,
   argTypes: {
     favouriteChecked: { control: 'boolean' },

@@ -43,6 +43,7 @@ export const gameCardStoryConfigurations = Object.freeze(
 
 const meta = {
   title: 'Content/Game Card',
+  excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: gameCardStoryConfigurations },
     onViewGame: { action: 'view game' },

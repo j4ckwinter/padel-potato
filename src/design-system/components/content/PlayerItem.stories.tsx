@@ -36,6 +36,7 @@ export const playerItemStoryConfigurations = Object.freeze(
 
 const meta = {
   title: 'Content/Player Item',
+  excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: playerItemStoryConfigurations },
     onInvite: { action: 'invite player' },

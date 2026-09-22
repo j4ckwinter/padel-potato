@@ -26,6 +26,7 @@ export const statTileStoryConfigurations = Object.freeze(
 
 const meta = {
   title: 'Content/Stat Tile',
+  excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: statTileStoryConfigurations },
   },
