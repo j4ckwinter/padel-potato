@@ -55,29 +55,37 @@ The catalogue also includes the `Foundations/Overview` and `Foundations/Smoke` s
 
 ## Spacing Scale
 
-Phase 5 inherits the complete Penpot-derived scale; it must not replace it with a generic spacing system.
+Any validation-only UI introduced by Phase 5 must use this constrained layout scale. These values govern validation summaries or catalogue framing only; they do not replace or extend the public Penpot token API.
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `space4` | 4px | Tight inline and specimen detail gaps |
-| `space8` | 8px | Compact control/content spacing |
-| `space12` | 12px | Small component padding and gaps |
-| `space16` | 16px | Default component and catalogue horizontal padding |
-| `space20` | 20px | Intermediate component spacing |
-| `space24` | 24px | Catalogue vertical padding and section gaps |
-| `space32` | 32px | Foundation gallery and major content separation |
-| `space40` | 40px | Largest authored spacing token |
+| Validation 1 | 4px | Tight inline and audit-status gaps |
+| Validation 2 | 8px | Compact related-item spacing |
+| Validation 3 | 16px | Default validation content and catalogue horizontal padding |
+| Validation 4 | 24px | Catalogue vertical padding and section gaps |
+| Validation 5 | 32px | Major validation-section separation |
+| Validation 6 | 48px | Optional large report-section break |
+| Validation 7 | 64px | Optional top-level report separation |
 
-Exceptions: effective interactive targets may use the established 44-point minimum dimension. That is a dimension/accessibility rule, not a new spacing token. No 48px or 64px spacing values may be invented for Phase 5.
+The inherited Penpot values 12px (`space12`), 20px (`space20`), and 40px (`space40`) remain visible in foundation specimens and inside existing source-backed components for audit. They are not permitted as new Phase 5 validation-surface layout spacing. Effective interactive targets may use the established 44-point minimum dimension; that is a dimension/accessibility rule, not spacing.
 
 ---
 
 ## Typography
 
-Phase 5 introduces no reduced validation-only type ramp. All nine existing styles remain visible and auditable because FNDT-02 requires the complete Penpot typography set.
+Any UI newly introduced for Phase 5 validation is limited to the following four sizes and two weights. It should normally remain technical output rather than adding chrome to Storybook.
 
-| Role | Size | Weight | Line Height |
-|------|------|--------|-------------|
+| Validation role | Size | Weight | Line Height |
+|-----------------|------|--------|-------------|
+| Metadata | 11px | 400 | 13.2px |
+| Status label | 12px | 600 | 14.4px |
+| Body | 14px | 400 | 16.8px |
+| Validation heading | 15px | 600 | 18px |
+
+The nine rows below are inherited Penpot typography specimens, not the Phase 5 validation-surface ramp. They remain visible and auditable because FNDT-02 requires the complete source type system; Phase 5 must not remove or restyle them to match the narrower validation ramp.
+
+| Inherited Penpot specimen | Size | Weight | Line Height |
+|---------------------------|------|--------|-------------|
 | Micro | 10px | 600 | 12px |
 | Caption | 11px | 400 | 13.2px |
 | Label | 12px | 600 | 14.4px |
@@ -116,7 +124,7 @@ Phase 5 adds no review dashboard, sign-off form, or issue-entry UI. Existing com
 | Primary CTA | Not applicable — the user opens and browses native Storybook using the existing launch commands |
 | Empty state heading | Not applicable to the catalogue shell; the existing `Feedback/Empty State` stories retain their authored copy |
 | Empty state body | No new catalogue empty state; a coverage report with zero audited records is a technical failure, not a friendly empty state |
-| Error state | Font gate: `Foundation fonts failed to load.` Audit output: identify the missing source/story mapping and the command to rerun |
+| Error state | Font gate alert: `Foundation fonts failed to load. Restart Expo, then reload Storybook.` Audit output: identify the missing source/story mapping and the command to rerun |
 | Destructive confirmation | Not applicable — Phase 5 introduces no destructive user action |
 | Coverage statuses | `covered`, `dispositioned`, `missing`; every disposition includes a reason, while any unexplained `missing` status fails the audit |
 
@@ -129,6 +137,7 @@ Do not require the user to adopt these audit status terms when reporting visual 
 ### Catalogue presentation
 
 - Preserve the existing Storybook hierarchy and titles: Foundations, Assets, Primitives, Actions, Forms, Authentication, Navigation, Identity, Status, Progress, Content, Feedback, and Cards.
+- The currently selected story specimen is the primary visual anchor and receives the available content viewport. Storybook navigation, controls, actions, and backgrounds remain subordinate inspection tools and must not compete with or visually obscure the specimen.
 - Preserve the shared token-backed catalogue frame: canvas background, `space16` horizontal padding, and `space24` vertical padding/gap.
 - Keep `Canonical`, `Variants`, `States`, `Boundaries`, and `Interactive` as the shared story taxonomy. A category may be absent only when the existing story contract records a non-empty inapplicability reason.
 - Every Penpot foundation, public reusable component, variant record, and designed state must resolve to an implementation and Storybook witness or an explicit disposition. Unexplained omissions are failures.
@@ -160,7 +169,7 @@ Applicable state considerations resolved: 7 covered, 0 backstop, 0 unresolved; 1
 |----------|------------|--------|---------------------|
 | Empty / no data | Catalogue shell | Dismissed | Story discovery is a static local catalogue. Zero discovered/audited stories is an automated failure; component-level empty content remains covered by its existing stories. |
 | Loading / in-flight | Story render root | Covered | `FoundationFontGate` exposes a labelled busy progress state with `Loading foundation fonts…` until bundled fonts are ready. |
-| Error / failure | Story render root and audit output | Covered | Font load failure renders an accessible alert. Audit failures identify missing mappings and exit unsuccessfully rather than rendering a false completed state. |
+| Error / failure | Story render root and audit output | Covered | Font load failure renders the accessible alert `Foundation fonts failed to load. Restart Expo, then reload Storybook.` Audit failures identify missing mappings and exit unsuccessfully rather than rendering a false completed state. |
 | Populated / happy path | Catalogue and coverage report | Covered | The Storybook glob discovers all story files; the audit summary reports deterministic totals and links each audited item to its witness or disposition. |
 | Partial / incomplete | Coverage report | Covered | Covered and dispositioned records remain visible while any unexplained missing record makes the audit fail. Partial results are never presented as complete. |
 | Overflow / truncation | Boundary stories and catalogue viewport | Covered | Existing `Boundaries` stories provide constrained-width witnesses; the native catalogue remains scrollable and must not hide controls or required content. |
