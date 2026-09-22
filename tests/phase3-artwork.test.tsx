@@ -129,6 +129,17 @@ describe('closed Phase 3 runtime artwork', () => {
     expect(source.match(/require\('\.\.\/\.\.\/\.\.\/\.\.\/design-spec\/assets\/phase-3\/mascot-[a-z]+\.webp'\)/gu))
       .toHaveLength(5);
   });
+
+  it('uses DOM-safe accessibility props for vector artwork on web', () => {
+    const source = fs.readFileSync(
+      path.join(root, 'src/design-system/components/generated/phase3Artwork.tsx'),
+      'utf8',
+    );
+    expect(source).toContain("'aria-hidden': true");
+    expect(source).toContain('focusable: false');
+    expect(source.match(/<Svg \{\.\.\.decorativeVector\}/gu)).toHaveLength(3);
+    expect(source).not.toMatch(/<Svg \{\.\.\.decorative\}/u);
+  });
 });
 
 describe('Phase 3 artwork integrity validator', () => {
