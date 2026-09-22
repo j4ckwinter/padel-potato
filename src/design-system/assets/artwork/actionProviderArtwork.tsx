@@ -16,7 +16,7 @@ export function FavouriteHeartArtwork() {
     <Svg
       {...decorativeVector}
       height={20}
-      testID="phase3-artwork-heart"
+      testID="artwork-favourite-heart"
       viewBox="1052 1102 20 20"
       width={20}
     >
@@ -36,7 +36,7 @@ export function GoogleProviderMark() {
     <Svg
       {...decorativeVector}
       height={20}
-      testID="phase3-artwork-google"
+      testID="artwork-provider-google"
       viewBox="57 4865 20 20"
       width={20}
     >
@@ -65,7 +65,7 @@ export function AppleProviderMark() {
     <Svg
       {...decorativeVector}
       height={20}
-      testID="phase3-artwork-apple"
+      testID="artwork-provider-apple"
       viewBox="57 4993 20 20"
       width={20}
     >

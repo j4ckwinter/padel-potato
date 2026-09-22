@@ -10,6 +10,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { unsupportedValue as unsupported } from '../internal/validation';
 import { borders, colors, dimensions, opacity } from '../tokens';
 import {
   guardStyle,
@@ -112,15 +113,6 @@ const supportedRuntimeProps = [
   'style',
   'testID',
 ] as const;
-
-const unsupported = (
-  value: unknown,
-  supportedValues: readonly string[],
-): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
-  );
-};
 
 export type PressableSize = keyof typeof pressableSizes;
 export type PressableLayoutStyle = Pick<

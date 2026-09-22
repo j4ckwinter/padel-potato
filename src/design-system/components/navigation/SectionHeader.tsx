@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
+import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 
@@ -23,12 +24,6 @@ const supportedRuntimeProps = Object.freeze([
   'onActionPress',
   'title',
 ] as const);
-
-const unsupported = (value: unknown, supported: readonly unknown[]): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-};
 
 function validateSectionHeaderProps(props: SectionHeaderProps) {
   const runtimeProps = props as Readonly<Record<string, unknown>>;

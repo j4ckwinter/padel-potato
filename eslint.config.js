@@ -1,11 +1,13 @@
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 
-module.exports = defineConfig([
-  expoConfig,
-  {
-    ignores: ['dist/*'],
+const configuredExpo = expoConfig.map((config) => {
+  if (!config.plugins?.['@typescript-eslint']) return config;
+
+  return {
+    ...config,
     rules: {
+      ...config.rules,
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -16,5 +18,16 @@ module.exports = defineConfig([
         },
       ],
     },
+  };
+});
+
+module.exports = defineConfig([
+  configuredExpo,
+  {
+    ignores: [
+      'dist/*',
+      '.rnstorybook/storybook.requires.ts',
+      'tests/types/**',
+    ],
   },
 ]);

@@ -19,7 +19,7 @@ export function HeaderMascot({ name }: Readonly<{ name: HeaderMascotName }>) {
       resizeMode="contain"
       source={mascots[name]}
       style={{ height: 64, width: 64 }}
-      testID={`phase3-artwork-${name}`}
+      testID={`artwork-header-mascot-${name}`}
     />
   );
 }

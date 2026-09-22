@@ -32,7 +32,7 @@ describe('feedback and card artwork', () => {
     async (name, size, Artwork) => {
       const screen = await render(<Artwork />);
       expect(screen.queryByRole('image')).toBeNull();
-      const hidden = screen.getByTestId(`phase4-artwork-${name}`, {
+      const hidden = screen.getByTestId(`artwork-${name}`, {
         includeHiddenElements: true,
       });
       expect(hidden).toHaveProp('accessible', false);

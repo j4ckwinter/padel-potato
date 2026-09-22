@@ -1,15 +1,8 @@
 import { Image } from 'react-native';
 
-const supportedProps = ['width', 'accessibilityLabel', 'testID'] as const;
+import { unsupportedValue as unsupported } from '../internal/validation';
 
-const unsupported = (
-  value: unknown,
-  supportedValues: readonly string[],
-): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
-  );
-};
+const supportedProps = ['width', 'accessibilityLabel', 'testID'] as const;
 
 export type BrandLockupProps = {
   accessibilityLabel?: string;

@@ -169,7 +169,7 @@ export const Boundaries: Story = {
       <Text color="textSecondary" variant="caption">
         The full accessible long label remains available at 200%; four points of
         parent spacing preserves target clearance between expanded 40-point
-        visuals. Native measurement remains Phase 5.
+        visuals. Native measurement requires native Storybook review.
       </Text>
     </Stack>
   ),

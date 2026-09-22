@@ -166,7 +166,8 @@ export const Boundaries: Story = {
       <Text color="textSecondary" variant="caption">
         long title and subtitle copy retains semantic order at 200% while
         44-point actions keep overlap clearance. Profile intentionally has no
-        overflow under revision 296. Native measurement remains Phase 5.
+        overflow by its supported configuration. Native measurement requires
+        native Storybook review.
       </Text>
     </Stack>
   ),

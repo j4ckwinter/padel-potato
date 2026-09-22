@@ -1,20 +1,12 @@
 import type { AccessibilityProps } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
+import { unsupportedValue as unsupported } from '../internal/validation';
 import { colors, dimensions, type ColorToken } from '../tokens';
 import { iconDefinitions, iconNames, type IconName } from './iconDefinitions';
 
 const own = (record: object, key: PropertyKey) =>
   Object.prototype.hasOwnProperty.call(record, key);
-
-const unsupported = (
-  value: unknown,
-  supportedValues: readonly string[],
-): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
-  );
-};
 
 const forbiddenRuntimeProps = [
   'height',

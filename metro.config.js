@@ -3,4 +3,6 @@ const { withStorybook } = require('@storybook/react-native/withStorybook');
 
 const config = getDefaultConfig(__dirname);
 
-module.exports = withStorybook(config);
+module.exports = withStorybook(config, {
+  enabled: process.env.STORYBOOK_ENABLED === 'true',
+});

@@ -9,12 +9,10 @@ import {
 } from '../src/design-system/stories/storyContract';
 import brandMeta, {
   Boundaries as BrandBoundaries,
-  Canonical as BrandCanonical,
   Variants as BrandVariants,
 } from '../src/design-system/assets/Brand.stories';
 import iconsMeta, {
   Boundaries as IconBoundaries,
-  Canonical as IconCanonical,
   Variants as IconVariants,
 } from '../src/design-system/assets/Icon.stories';
 import { iconNames } from '../src/design-system/assets/iconDefinitions';

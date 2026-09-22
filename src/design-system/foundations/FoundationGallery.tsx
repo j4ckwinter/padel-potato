@@ -8,6 +8,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { unsupportedValue } from '../internal/validation';
 import {
   borders,
   colors,
@@ -241,7 +242,7 @@ function FoundationSection({ category }: { category: FoundationCategory }) {
 
 export function FoundationGallery({ category }: FoundationGalleryProps = {}) {
   if (category !== undefined && !foundationCategories.includes(category)) {
-    throw new Error(`Unsupported foundation category: "${String(category)}"`);
+    unsupportedValue(category, foundationCategories);
   }
 
   const visibleCategories = category ? [category] : foundationCategories;

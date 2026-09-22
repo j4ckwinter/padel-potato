@@ -110,7 +110,8 @@ export const Boundaries: Story = {
       </Inline>
       <Text color="textSecondary" variant="caption">
         Full names remain available at 200%; adjacent controls each retain a
-        44-point target. Native assistive review remains Phase 5.
+        44-point target. Native assistive review requires native Storybook
+        review.
       </Text>
     </Stack>
   ),

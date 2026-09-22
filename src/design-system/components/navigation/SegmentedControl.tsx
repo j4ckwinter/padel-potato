@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
+import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
@@ -22,12 +23,6 @@ const supportedRuntimeProps = Object.freeze([
   'options',
   'value',
 ] as const);
-
-const unsupported = (value: unknown, supported: readonly unknown[]): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-};
 
 function validOptions(options: unknown): options is SegmentOptions {
   return (

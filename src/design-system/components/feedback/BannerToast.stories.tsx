@@ -184,7 +184,7 @@ export const Boundaries: Story = {
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         Full announcement and View booking update remain reachable at 200% host
         scaling. Native announcement, target measurement, VoiceOver, and
-        TalkBack review remain Phase 5.
+        TalkBack review require native Storybook review.
       </Text>
     </Stack>
   ),

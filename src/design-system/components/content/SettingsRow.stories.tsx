@@ -207,7 +207,7 @@ export const Boundaries: Story = {
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         Full label and value semantics remain available. Native 200% font-scale
-        review remains a Phase 5 backstop.
+        review requires native Storybook review.
       </Text>
     </Stack>
   ),

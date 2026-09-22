@@ -215,7 +215,7 @@ export const Boundaries: Story = {
       <Text color="textSecondary" variant="caption">
         Full long content remains in each individual radio name at 200%; eight
         points preserve target clearance with no hit-area overlap. Native
-        measurement remains Phase 5.
+        measurement requires native Storybook review.
       </Text>
     </Stack>
   ),

@@ -6,8 +6,6 @@ import { render, userEvent } from '@testing-library/react-native';
 
 import { Children } from 'react';
 
-import { StyleSheet } from 'react-native';
-
 import BannerToastStories, {
   Boundaries as BannerToastBoundaries,
   Canonical as BannerToastCanonical,
@@ -22,44 +20,7 @@ import {
   type BannerToastProps,
 } from '../src/design-system/components/feedback/BannerToast';
 
-import EmptyStateStories, {
-  Boundaries as EmptyStateBoundaries,
-  Canonical as EmptyStateCanonical,
-  Interactive as EmptyStateInteractive,
-  States as EmptyStateStates,
-  Variants as EmptyStateVariants,
-  normalizeEmptyStateStoryArgs,
-} from '../src/design-system/components/feedback/EmptyState.stories';
-
-import {
-  EmptyState,
-  type EmptyStateProps,
-} from '../src/design-system/components/feedback/EmptyState';
-
-import * as FeedbackComponents from '../src/design-system/components/feedback';
-
-import {
-  bannerToastFixtures,
-  emptyStateFixtures,
-  illustratedCardFixtures,
-} from '../src/design-system/stories/fixtures';
-
-import IllustratedCardStories, {
-  Boundaries as IllustratedCardBoundaries,
-  Canonical as IllustratedCardCanonical,
-  Interactive as IllustratedCardInteractive,
-  States as IllustratedCardStates,
-  Variants as IllustratedCardVariants,
-  normalizeIllustratedCardStoryArgs,
-} from '../src/design-system/components/cards/IllustratedCard.stories';
-
-import {
-  IllustratedCard,
-  type IllustratedCardParticipant,
-  type IllustratedCardProps,
-} from '../src/design-system/components/cards/IllustratedCard';
-
-import * as CardComponents from '../src/design-system/components/cards';
+import { bannerToastFixtures } from '../src/design-system/stories/fixtures';
 
 const examples = {
   error: {
@@ -122,7 +83,7 @@ describe('Banner Toast runtime and announcement contract', () => {
     ['success', examples.success, 'Close success message'],
     ['info', examples.info, 'View booking update'],
     ['warning', examples.warning, 'View game details'],
-  ] as Array<[string, BannerToastProps, string]>)(
+  ] as [string, BannerToastProps, string][])(
     'emits the %s branch intent once from a named 44-point target',
     async (_name, props, actionName) => {
       const screen = await render(<BannerToast {...props} />);
@@ -275,7 +236,7 @@ describe('Banner Toast Storybook contract', () => {
     ) as React.ReactElement;
     const boundaryJson = JSON.stringify(boundaries);
     expect(boundaryJson).toContain('200%');
-    expect(boundaryJson).toContain('Phase 5');
+    expect(boundaryJson).toContain('native Storybook review');
     expect(boundaryJson).toContain('View booking update');
     const interactive = BannerToastInteractive.render?.(
       {} as never,

@@ -69,7 +69,8 @@ export const Boundaries: Story = {
       <AuthDivider label="or continue with a deliberately long static alternative" />
       <Text color="textSecondary" variant="caption">
         A blank label is rejected. Long static content and 200% font-scale
-        intent are host witnesses; native measurement remains Phase 5.
+        intent are host witnesses; native measurement requires native Storybook
+        review.
       </Text>
     </Stack>
   ),

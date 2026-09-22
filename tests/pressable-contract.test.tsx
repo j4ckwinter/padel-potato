@@ -28,7 +28,7 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-const stateCases: Array<[string, boolean, boolean, 0 | 1]> = [
+const stateCases: [string, boolean, boolean, 0 | 1][] = [
   ['enabled', false, false, 1],
   ['disabled', true, false, 0],
   ['loading', false, true, 0],
@@ -208,7 +208,7 @@ describe('Pressable interaction contract', () => {
     ['controlHeight40', 40, 2],
     ['controlHeight44', 44, 0],
     ['controlHeight48', 48, 0],
-  ] as Array<[PressableSize, number, number]>)(
+  ] as [PressableSize, number, number][])(
     '%s retains a %i visual frame and declares a minimum 44-point target',
     async (size, visualSize, expansion) => {
       const screen = await render(<Pressable size={size} testID="subject" />);

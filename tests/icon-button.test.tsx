@@ -1,40 +1,14 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
-import {
-  act,
-  fireEvent,
-  render,
-  userEvent,
-} from '@testing-library/react-native';
+import { render, userEvent } from '@testing-library/react-native';
 
 import { Children } from 'react';
-
-import { StyleSheet } from 'react-native';
-
-import ButtonStories, {
-  Boundaries as ButtonBoundaries,
-  normalizeButtonStoryArgs,
-  Variants as ButtonVariants,
-} from '../src/design-system/components/actions/Button.stories';
 
 import IconButtonStories, {
   Variants as IconButtonVariants,
 } from '../src/design-system/components/actions/IconButton.stories';
-
-import FavouriteStories, {
-  Boundaries as FavouriteBoundaries,
-  Interactive as FavouriteInteractive,
-  Variants as FavouriteVariants,
-} from '../src/design-system/components/actions/Favourite.stories';
-
-import {
-  Button,
-  type ButtonProps,
-  type ButtonSize,
-  type ButtonStyle,
-} from '../src/design-system/components/actions/Button';
 
 import {
   IconButton,
@@ -42,20 +16,7 @@ import {
   type IconButtonSize,
 } from '../src/design-system/components/actions/IconButton';
 
-import {
-  Favourite,
-  type FavouriteProps,
-} from '../src/design-system/components/actions/Favourite';
-
-import * as actions from '../src/design-system/components/actions';
-
-import {
-  buttonFixtures,
-  iconButtonFixtures,
-  favouriteFixtures,
-  buttonStyles,
-  buttonSizes,
-} from '../src/design-system/stories/fixtures';
+import { iconButtonFixtures } from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
@@ -63,7 +24,7 @@ describe('IconButton public contract', () => {
   it.each([
     ['enabled', false, 1],
     ['disabled', true, 0],
-  ] as Array<[string, boolean, 0 | 1]>)(
+  ] as [string, boolean, 0 | 1][])(
     '%s activation follows the shared blocked contract',
     async (_name, disabled, expectedCalls) => {
       const onPress = jest.fn();
@@ -92,7 +53,7 @@ describe('IconButton public contract', () => {
   it.each([
     [40, 2],
     [44, 0],
-  ] as Array<[IconButtonSize, number]>)(
+  ] as [IconButtonSize, number][])(
     'keeps the %s visual and declares the effective 44-point target',
     async (size, expansion) => {
       const screen = await render(

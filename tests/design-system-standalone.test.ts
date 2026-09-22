@@ -20,7 +20,7 @@ const sourceFiles = (directory: string): string[] =>
 describe('standalone design-system boundary', () => {
   it('contains no design-tool, evidence, source-record, or phase-registry coupling', () => {
     const forbidden =
-      /design-source|design-spec|penpot|sourceRegistry|componentFixtures|phase\d+(?:Families|StoryContracts|Backstops|Definitions|Categories|SourceRegistry)|originalTuple|normalizedTuple|source record|generated evidence|visible provenance|\w+Families\s*\[\d+\]/iu;
+      /design-source|design-spec|penpot|sourceRegistry|componentFixtures|phase\d+(?:Families|StoryContracts|Backstops|Definitions|Categories|SourceRegistry)|phase[34]-artwork|revision 296|source-faithful|Phase 5|originalTuple|normalizedTuple|source record|generated evidence|visible provenance|\w+Families\s*\[\d+\]/iu;
     const violations = sourceFiles(designSystemRoot)
       .filter((file) => forbidden.test(readFileSync(file, 'utf8')))
       .map((file) => relative(root, file));
@@ -34,7 +34,7 @@ describe('standalone design-system boundary', () => {
       scripts: Record<string, string>;
     };
     expect(packageJson.scripts.verify).toBe(
-      'npm run typecheck && npm run lint && npm test -- --runInBand && npm run storybook:web:smoke',
+      'npm run format:check && npm run typecheck && npm run lint && npm test -- --runInBand && npm run storybook:web:smoke',
     );
     expect(Object.keys(packageJson.scripts)).not.toEqual(
       expect.arrayContaining([
@@ -42,6 +42,16 @@ describe('standalone design-system boundary', () => {
         'design:refresh',
         'validate:design-source',
       ]),
+    );
+  });
+
+  it('excludes Storybook from normal Metro bundles', () => {
+    const metroConfig = readFileSync(join(root, 'metro.config.js'), 'utf8');
+    expect(metroConfig).toContain(
+      "require('@storybook/react-native/withStorybook')",
+    );
+    expect(metroConfig).toContain(
+      "enabled: process.env.STORYBOOK_ENABLED === 'true'",
     );
   });
 });

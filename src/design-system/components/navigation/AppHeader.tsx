@@ -4,6 +4,7 @@ import {
   HeaderMascot,
   type HeaderMascotName,
 } from '../../assets/artwork/headerMascots';
+import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 import { Favourite } from '../actions/Favourite';
@@ -121,12 +122,6 @@ const actionKeys = Object.freeze({
 
 const notificationPages = ['home', 'games', 'create', 'players'] as const;
 const backPages = ['notifications', 'gameDetails', 'settings'] as const;
-
-const unsupported = (value: unknown, supported: readonly unknown[]): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-};
 
 function validateNonEmptyCopy(value: unknown, name: 'title' | 'subtitle') {
   if (

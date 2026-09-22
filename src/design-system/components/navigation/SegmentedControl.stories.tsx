@@ -140,7 +140,8 @@ export const Boundaries: Story = {
       <Text color="textSecondary" variant="caption">
         long labels share the exact 350-point native width through one
         deterministic equal-allocation row. Adjacent 48-point targets do not
-        overlap; 200% text and native clipping proof remains Phase 5.
+        overlap; 200% text and native clipping proof requires native Storybook
+        review.
       </Text>
     </Stack>
   ),

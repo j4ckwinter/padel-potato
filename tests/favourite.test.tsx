@@ -1,27 +1,10 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
-import {
-  act,
-  fireEvent,
-  render,
-  userEvent,
-} from '@testing-library/react-native';
+import { render, userEvent } from '@testing-library/react-native';
 
 import { Children } from 'react';
-
-import { StyleSheet } from 'react-native';
-
-import ButtonStories, {
-  Boundaries as ButtonBoundaries,
-  normalizeButtonStoryArgs,
-  Variants as ButtonVariants,
-} from '../src/design-system/components/actions/Button.stories';
-
-import IconButtonStories, {
-  Variants as IconButtonVariants,
-} from '../src/design-system/components/actions/IconButton.stories';
 
 import FavouriteStories, {
   Boundaries as FavouriteBoundaries,
@@ -30,34 +13,13 @@ import FavouriteStories, {
 } from '../src/design-system/components/actions/Favourite.stories';
 
 import {
-  Button,
-  type ButtonProps,
-  type ButtonSize,
-  type ButtonStyle,
-} from '../src/design-system/components/actions/Button';
-
-import {
-  IconButton,
-  type IconButtonProps,
-  type IconButtonSize,
-} from '../src/design-system/components/actions/IconButton';
-
-import {
   Favourite,
   type FavouriteProps,
 } from '../src/design-system/components/actions/Favourite';
 
 import * as actions from '../src/design-system/components/actions';
 
-import {
-  buttonFixtures,
-  iconButtonFixtures,
-  favouriteFixtures,
-  buttonStyles,
-  buttonSizes,
-} from '../src/design-system/stories/fixtures';
-
-import { colors } from '../src/design-system/tokens';
+import { favouriteFixtures } from '../src/design-system/stories/fixtures';
 
 describe('Favourite controlled public contract', () => {
   it('emits the opposite checked value once and remains controlled until rerender', async () => {
@@ -106,7 +68,7 @@ describe('Favourite controlled public contract', () => {
       }),
     ).toBeTruthy();
     expect(
-      screen.getByTestId('phase3-artwork-heart', {
+      screen.getByTestId('artwork-favourite-heart', {
         includeHiddenElements: true,
       }),
     ).toBeTruthy();

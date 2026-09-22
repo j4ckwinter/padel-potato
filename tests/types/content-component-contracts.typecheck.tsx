@@ -227,21 +227,21 @@ const invalidAvatarSemantics: AvatarProps = {
 };
 
 // Avatar Group: reject invalid cardinality and callbacks on populated groups.
-// @ts-expect-error Two-player branch requires exactly two identities.
 const invalidAvatarGroupCardinality: AvatarGroupProps = {
+  // @ts-expect-error Two-player branch requires exactly two identities.
   identities: [avatarIdentity],
   variant: '2-players',
 };
-// @ts-expect-error Populated branches do not expose empty-slot callbacks.
 const invalidAvatarGroupCallback: AvatarGroupProps = {
   identities: [avatarIdentity, avatarIdentity],
+  // @ts-expect-error Populated branches do not expose empty-slot callbacks.
   onAddPlayer1: noop,
   variant: '2-players',
 };
 
 // Avatar Picker: reject branch-incompatible content and missing action.
-// @ts-expect-error Empty branch cannot contain initials.
 const invalidAvatarPickerContent: AvatarPickerProps = {
+  // @ts-expect-error Empty branch cannot contain initials.
   initials: 'AP',
   onPress: noop,
   variant: 'empty',
@@ -250,17 +250,17 @@ const invalidAvatarPickerContent: AvatarPickerProps = {
 const invalidAvatarPickerCallback: AvatarPickerProps = { variant: 'error' };
 
 // Status Chip: reject unsupported persistent state and callback placement.
-// @ts-expect-error Only success/selectable owns selected state.
 const invalidStatusTuple: StatusChipProps = {
   label: 'Warning',
+  // @ts-expect-error Only success/selectable owns selected state.
   onSelectedChange: noopBoolean,
   selected: true,
   style: 'warning',
   variant: 'selectable',
 };
-// @ts-expect-error Static chips cannot expose selection callbacks.
 const invalidStatusCallback: StatusChipProps = {
   label: 'Ready',
+  // @ts-expect-error Static chips cannot expose selection callbacks.
   onSelectedChange: noopBoolean,
   style: 'success',
   variant: 'default',
@@ -273,32 +273,32 @@ const invalidProgressTuple: StepProgressProps = { value: 4 };
 const invalidProgressMissing: StepProgressProps = {};
 
 // Player Item: reject branch-incompatible callbacks and null identity.
-// @ts-expect-error List branch owns selection, not player navigation.
 const invalidPlayerItemCallback: PlayerItemProps = {
   identity: playerIdentity,
+  // @ts-expect-error List branch owns selection, not player navigation.
   onViewPlayer: noop,
   selected: false,
   variant: 'list',
 };
-// @ts-expect-error Populated branches require a non-null identity.
 const invalidPlayerItemNull: PlayerItemProps = {
+  // @ts-expect-error Populated branches require a non-null identity.
   identity: null,
   onViewPlayer: noop,
   variant: 'game-slot',
 };
 
 // Game Card: reject fixed-cardinality and compact-action expansion.
-// @ts-expect-error Next card requires exactly four ordered participants.
 const invalidGameCardCardinality: GameCardProps = {
   onViewGame: noop,
+  // @ts-expect-error Next card requires exactly four ordered participants.
   participants: [participant1, participant2, participant3],
   time: '18:30',
   title: 'Game',
   variant: 'next',
   venue: 'Court',
 };
-// @ts-expect-error Compact card has no authored callback or time content.
 const invalidGameCardContent: GameCardProps = {
+  // @ts-expect-error Compact card has no authored callback or time content.
   onViewGame: noop,
   time: '18:30',
   title: 'Game',
@@ -326,20 +326,20 @@ const invalidNotificationCallback: NotificationRowProps = {
 };
 
 // Settings Row: reject invalid icon/branch combinations and callbacks.
-// @ts-expect-error Value branch is source-authored only with location.
 const invalidSettingsTuple: SettingsRowProps = {
   icon: 'profile',
   label: 'Location',
   onPress: noop,
+  // @ts-expect-error Value branch is source-authored only with location.
   value: 'London',
   variant: 'value',
 };
-// @ts-expect-error Toggle branch owns onCheckedChange rather than onPress.
 const invalidSettingsCallback: SettingsRowProps = {
   checked: false,
   disabled: false,
   icon: 'notification',
   label: 'Notifications',
+  // @ts-expect-error Toggle branch owns onCheckedChange rather than onPress.
   onPress: noop,
   variant: 'toggle',
 };
@@ -364,9 +364,9 @@ const invalidStatMissing: StatTileProps = {
 };
 
 // Score Result Block: reject invalid cardinality and state-only content.
-// @ts-expect-error Scores require exactly two ordered teams.
 const invalidScoreCardinality: ScoreResultBlockProps = {
   state: 'won',
+  // @ts-expect-error Scores require exactly two ordered teams.
   teams: [team1],
   type: 'compact',
 };
@@ -396,17 +396,17 @@ const invalidPreferencesMissing: PlayerPreferencesCardProps = {
 };
 
 // Banner Toast: reject unsupported tuple and callback leakage.
-// @ts-expect-error Info is authored as a banner, not a toast.
 const invalidBannerTuple: BannerToastProps = {
   message: 'Updated',
+  // @ts-expect-error Info is authored as a banner, not a toast.
   onClose: noop,
   style: 'info',
   title: 'Booking',
   type: 'toast',
 };
-// @ts-expect-error Info banner requires its branch-specific booking callback.
 const invalidBannerCallback: BannerToastProps = {
   message: 'Updated',
+  // @ts-expect-error Info banner requires its branch-specific booking callback.
   onViewGameDetails: noop,
   style: 'info',
   title: 'Booking',
@@ -414,9 +414,9 @@ const invalidBannerCallback: BannerToastProps = {
 };
 
 // Empty State: reject action leakage and missing actions.
-// @ts-expect-error No-notifications branch cannot expose an action.
 const invalidEmptyStateCallback: EmptyStateProps = {
   content: 'noNotifications',
+  // @ts-expect-error No-notifications branch cannot expose an action.
   onCreateGame: noop,
 };
 // @ts-expect-error No-games branch requires its authored action.
@@ -433,11 +433,11 @@ const invalidIllustratedCardCardinality: IllustratedCardProps = {
   title: 'Game',
   type: 'nextGame',
 };
-// @ts-expect-error Match-result branch owns onViewResults only.
 const invalidIllustratedCardCallback: IllustratedCardProps = {
   detailPrimary: 'Won',
   detailSecondary: '6-4, 6-3',
   eyebrow: 'Result',
+  // @ts-expect-error Match-result branch owns onViewResults only.
   onViewGame: noop,
   participants: [illustrated1, illustrated2, illustrated3, illustrated4],
   title: 'Victory',

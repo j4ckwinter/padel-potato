@@ -2,15 +2,15 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
+import { FoundationFontGate } from '../src/design-system/fonts/FoundationFontGate';
+import { colors, spacing } from '../src/design-system/tokens';
+import preview from '../.rnstorybook/preview';
+
 const mockUseFonts = jest.fn<() => [boolean, Error | null]>();
 
 jest.mock('expo-font', () => ({
   useFonts: () => mockUseFonts(),
 }));
-
-import { FoundationFontGate } from '../src/design-system/fonts/FoundationFontGate';
-import { colors, spacing } from '../src/design-system/tokens';
-import preview from '../.rnstorybook/preview';
 
 const content = <Text>Authoritative typography specimen</Text>;
 
@@ -30,9 +30,9 @@ describe('FoundationFontGate', () => {
 
   it('is applied once at the shared Storybook preview boundary', async () => {
     mockUseFonts.mockReturnValue([false, null]);
-    const decorators = preview.decorators as unknown as Array<
-      (Story: () => React.JSX.Element) => React.JSX.Element
-    >;
+    const decorators = preview.decorators as unknown as ((
+      Story: () => React.JSX.Element,
+    ) => React.JSX.Element)[];
     const decorator = decorators[0];
 
     expect(decorators).toHaveLength(1);
@@ -46,9 +46,9 @@ describe('FoundationFontGate', () => {
 
   it('composes the token-backed mobile catalogue frame inside the font gate', async () => {
     mockUseFonts.mockReturnValue([true, null]);
-    const decorators = preview.decorators as unknown as Array<
-      (Story: () => React.JSX.Element) => React.JSX.Element
-    >;
+    const decorators = preview.decorators as unknown as ((
+      Story: () => React.JSX.Element,
+    ) => React.JSX.Element)[];
 
     const { getByTestId, getByText } = await render(
       decorators[0](() => <Text>Framed Storybook specimen</Text>),

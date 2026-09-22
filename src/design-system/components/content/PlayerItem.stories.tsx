@@ -193,7 +193,7 @@ export const Boundaries: Story = {
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         Full Unicode semantics remain available. Native 200% font-scale review
-        remains a Phase 5 backstop.
+        requires native Storybook review.
       </Text>
     </Stack>
   ),

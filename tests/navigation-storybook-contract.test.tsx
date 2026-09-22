@@ -1,24 +1,13 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
-
-import { render, userEvent } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 
 import { Children } from 'react';
-
-import { StyleSheet } from 'react-native';
 
 import BottomNavigationStories, {
   Boundaries as BottomNavigationBoundaries,
   Variants as BottomNavigationVariants,
 } from '../src/design-system/components/navigation/BottomNavigation.stories';
-
-import {
-  BottomNavigation,
-  bottomNavigationDestinations,
-  type BottomNavigationDestination,
-  type BottomNavigationProps,
-} from '../src/design-system/components/navigation/BottomNavigation';
 
 import SegmentedControlStories, {
   Boundaries as SegmentedControlBoundaries,
@@ -26,40 +15,12 @@ import SegmentedControlStories, {
   Variants as SegmentedControlVariants,
 } from '../src/design-system/components/navigation/SegmentedControl.stories';
 
-import {
-  SegmentedControl,
-  type SegmentedControlProps,
-  type SegmentOptions,
-} from '../src/design-system/components/navigation/SegmentedControl';
+import { SegmentedControl } from '../src/design-system/components/navigation/SegmentedControl';
 
 import {
   bottomNavigationFixtures,
   segmentedControlFixtures,
-  appHeaderFixtures,
-  sectionHeaderFixtures,
 } from '../src/design-system/stories/fixtures';
-
-import AppHeaderStories, {
-  Boundaries as AppHeaderBoundaries,
-  normalizeAppHeaderStoryArgs,
-  Variants as AppHeaderVariants,
-} from '../src/design-system/components/navigation/AppHeader.stories';
-
-import {
-  AppHeader,
-  appHeaderPages,
-  type AppHeaderProps,
-} from '../src/design-system/components/navigation/AppHeader';
-
-import SectionHeaderStories, {
-  Boundaries as SectionHeaderBoundaries,
-  Variants as SectionHeaderVariants,
-} from '../src/design-system/components/navigation/SectionHeader.stories';
-
-import {
-  SectionHeader,
-  type SectionHeaderProps,
-} from '../src/design-system/components/navigation/SectionHeader';
 
 describe('Navigation composite Storybook contract', () => {
   it('publishes exact groups, bounded controls, and fixture variant counts', () => {
@@ -124,6 +85,6 @@ describe('Navigation composite Storybook contract', () => {
     expect(serialized).toContain('long');
     expect(serialized).toContain('200%');
     expect(serialized).toMatch(/adjacent|overlap/u);
-    expect(serialized).toContain('Phase 5');
+    expect(serialized).toContain('native Storybook review');
   });
 });

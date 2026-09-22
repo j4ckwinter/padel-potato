@@ -152,7 +152,7 @@ export const Boundaries: Story = {
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         Full accessible identity is retained. Native 200% font-scale and
-        composite review remain Phase 5 backstops.
+        composite review require native Storybook review.
       </Text>
     </Stack>
   ),

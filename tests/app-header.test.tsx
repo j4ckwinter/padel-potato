@@ -1,65 +1,13 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
 import { render, userEvent } from '@testing-library/react-native';
 
-import { Children } from 'react';
-
-import { StyleSheet } from 'react-native';
-
-import BottomNavigationStories, {
-  Boundaries as BottomNavigationBoundaries,
-  Variants as BottomNavigationVariants,
-} from '../src/design-system/components/navigation/BottomNavigation.stories';
-
-import {
-  BottomNavigation,
-  bottomNavigationDestinations,
-  type BottomNavigationDestination,
-  type BottomNavigationProps,
-} from '../src/design-system/components/navigation/BottomNavigation';
-
-import SegmentedControlStories, {
-  Boundaries as SegmentedControlBoundaries,
-  normalizeSegmentedControlStoryArgs,
-  Variants as SegmentedControlVariants,
-} from '../src/design-system/components/navigation/SegmentedControl.stories';
-
-import {
-  SegmentedControl,
-  type SegmentedControlProps,
-  type SegmentOptions,
-} from '../src/design-system/components/navigation/SegmentedControl';
-
-import {
-  bottomNavigationFixtures,
-  segmentedControlFixtures,
-  appHeaderFixtures,
-  sectionHeaderFixtures,
-} from '../src/design-system/stories/fixtures';
-
-import AppHeaderStories, {
-  Boundaries as AppHeaderBoundaries,
-  normalizeAppHeaderStoryArgs,
-  Variants as AppHeaderVariants,
-} from '../src/design-system/components/navigation/AppHeader.stories';
-
 import {
   AppHeader,
-  appHeaderPages,
   type AppHeaderProps,
 } from '../src/design-system/components/navigation/AppHeader';
-
-import SectionHeaderStories, {
-  Boundaries as SectionHeaderBoundaries,
-  Variants as SectionHeaderVariants,
-} from '../src/design-system/components/navigation/SectionHeader.stories';
-
-import {
-  SectionHeader,
-  type SectionHeaderProps,
-} from '../src/design-system/components/navigation/SectionHeader';
 
 describe('AppHeader closed page configurations', () => {
   it.each([
@@ -67,9 +15,7 @@ describe('AppHeader closed page configurations', () => {
     ['games', 'Games', 'Find your next match', 'search'],
     ['create', 'Create game', 'Set up your next match', 'create'],
     ['players', 'Players', 'Find your next partner', 'players'],
-  ] as Array<
-    ['home' | 'games' | 'create' | 'players', string, string, string]
-  >)(
+  ] as ['home' | 'games' | 'create' | 'players', string, string, string][])(
     'renders %s with decorative mascot and notification-only intent',
     async (page, title, subtitle, mascot) => {
       const onNotificationPress = jest.fn();
@@ -81,7 +27,7 @@ describe('AppHeader closed page configurations', () => {
       expect(screen.getByRole('header', { name: title })).toBeTruthy();
       expect(screen.getByText(subtitle)).toBeTruthy();
       expect(
-        screen.getByTestId(`phase3-artwork-${mascot}`, {
+        screen.getByTestId(`artwork-header-mascot-${mascot}`, {
           includeHiddenElements: true,
         }),
       ).toBeTruthy();
@@ -104,7 +50,7 @@ describe('AppHeader closed page configurations', () => {
 
     expect(screen.getByRole('header', { name: 'Profile' })).toBeTruthy();
     expect(
-      screen.getByTestId('phase3-artwork-profile', {
+      screen.getByTestId('artwork-header-mascot-profile', {
         includeHiddenElements: true,
       }),
     ).toBeTruthy();
@@ -116,7 +62,7 @@ describe('AppHeader closed page configurations', () => {
     ['notifications', 'Notifications', 'Updates and activity'],
     ['gameDetails', 'Game details', 'Open game · 1 spot left'],
     ['settings', 'Settings', 'Manage your account'],
-  ] as Array<['notifications' | 'gameDetails' | 'settings', string, string]>)(
+  ] as ['notifications' | 'gameDetails' | 'settings', string, string][])(
     'renders %s with only a 40-point back visual and effective 44 target',
     async (page, title, subtitle) => {
       const onBackPress = jest.fn();

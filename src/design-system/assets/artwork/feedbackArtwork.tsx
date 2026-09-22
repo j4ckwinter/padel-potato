@@ -9,7 +9,7 @@ export function NoGamesEmptyStateArtwork() {
       resizeMode="contain"
       source={require('../media/mascot-no-games.webp')}
       style={{ height: 96, width: 96 }}
-      testID="phase4-artwork-empty-state-no-games"
+      testID="artwork-empty-state-no-games"
     />
   );
 }
@@ -21,7 +21,7 @@ export function NoNotificationsEmptyStateArtwork() {
       resizeMode="contain"
       source={require('../media/mascot-wave.webp')}
       style={{ height: 96, width: 96 }}
-      testID="phase4-artwork-empty-state-no-notifications"
+      testID="artwork-empty-state-no-notifications"
     />
   );
 }
@@ -33,7 +33,7 @@ export function NoPlayersEmptyStateArtwork() {
       resizeMode="contain"
       source={require('../media/mascot-search.webp')}
       style={{ height: 96, width: 96 }}
-      testID="phase4-artwork-empty-state-no-players"
+      testID="artwork-empty-state-no-players"
     />
   );
 }
@@ -45,7 +45,7 @@ export function NextGameIllustratedCardArtwork() {
       resizeMode="contain"
       source={require('../media/mascot-wave.webp')}
       style={{ height: 80, width: 80 }}
-      testID="phase4-artwork-illustrated-card-next-game"
+      testID="artwork-illustrated-card-next-game"
     />
   );
 }
@@ -57,7 +57,7 @@ export function MatchResultIllustratedCardArtwork() {
       resizeMode="contain"
       source={require('../media/mascot-match-result.webp')}
       style={{ height: 80, width: 80 }}
-      testID="phase4-artwork-illustrated-card-match-result"
+      testID="artwork-illustrated-card-match-result"
     />
   );
 }
@@ -69,7 +69,7 @@ export function InvitePlayersIllustratedCardArtwork() {
       resizeMode="contain"
       source={require('../media/mascot-profile.webp')}
       style={{ height: 80, width: 80 }}
-      testID="phase4-artwork-illustrated-card-invite-players"
+      testID="artwork-illustrated-card-invite-players"
     />
   );
 }
@@ -81,7 +81,7 @@ export function GameCreatedIllustratedCardArtwork() {
       resizeMode="contain"
       source={require('../media/mascot-game-created.webp')}
       style={{ height: 80, width: 80 }}
-      testID="phase4-artwork-illustrated-card-game-created"
+      testID="artwork-illustrated-card-game-created"
     />
   );
 }

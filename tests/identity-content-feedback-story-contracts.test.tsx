@@ -147,7 +147,7 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
       Object.values(componentStoryContracts).map(({ title }) => title),
     ).toEqual(expectedDefinitions.map(([, , title]) => title));
     for (const name of expectedExports) {
-      expect(designSystem[name]).toEqual(expect.any(Function));
+      expect({ ...designSystem }[name]).toEqual(expect.any(Function));
     }
   });
 

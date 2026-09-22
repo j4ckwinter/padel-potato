@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
 import {
   act,
@@ -11,23 +11,11 @@ import {
 
 import { Children } from 'react';
 
-import { StyleSheet } from 'react-native';
-
 import ButtonStories, {
   Boundaries as ButtonBoundaries,
   normalizeButtonStoryArgs,
   Variants as ButtonVariants,
 } from '../src/design-system/components/actions/Button.stories';
-
-import IconButtonStories, {
-  Variants as IconButtonVariants,
-} from '../src/design-system/components/actions/IconButton.stories';
-
-import FavouriteStories, {
-  Boundaries as FavouriteBoundaries,
-  Interactive as FavouriteInteractive,
-  Variants as FavouriteVariants,
-} from '../src/design-system/components/actions/Favourite.stories';
 
 import {
   Button,
@@ -37,22 +25,7 @@ import {
 } from '../src/design-system/components/actions/Button';
 
 import {
-  IconButton,
-  type IconButtonProps,
-  type IconButtonSize,
-} from '../src/design-system/components/actions/IconButton';
-
-import {
-  Favourite,
-  type FavouriteProps,
-} from '../src/design-system/components/actions/Favourite';
-
-import * as actions from '../src/design-system/components/actions';
-
-import {
   buttonFixtures,
-  iconButtonFixtures,
-  favouriteFixtures,
   buttonStyles,
   buttonSizes,
 } from '../src/design-system/stories/fixtures';
@@ -85,7 +58,7 @@ describe('Button interaction and visual contract', () => {
     ['enabled', false, false, 1],
     ['disabled', true, false, 0],
     ['loading', false, true, 0],
-  ] as Array<[string, boolean, boolean, 0 | 1]>)(
+  ] as [string, boolean, boolean, 0 | 1][])(
     '%s activation invokes the callback the expected number of times',
     async (_case, disabled, loading, expectedCalls) => {
       const onPress = jest.fn();
@@ -222,7 +195,7 @@ describe('Button interaction and visual contract', () => {
     ['secondary', colors.surface],
     ['destructive', colors.danger],
     ['ghost', colors.canvas],
-  ] as Array<[ButtonStyle, string]>)(
+  ] as [ButtonStyle, string][])(
     'renders the %s authored treatment',
     async (style, backgroundColor) => {
       const screen = await render(

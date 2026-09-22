@@ -103,7 +103,8 @@ export const Boundaries: Story = {
       </Inline>
       <Text color="textSecondary" variant="caption">
         Two-point clearance preserves each 44-point target. Full names remain
-        available at 200%; native clipping review remains Phase 5.
+        available at 200%; native clipping review requires native Storybook
+        review.
       </Text>
     </Stack>
   ),

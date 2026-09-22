@@ -86,7 +86,7 @@ export const Boundaries: Story = {
       <Text color="textSecondary" variant="caption">
         Exact 390-point native width keeps five adjacent targets separate. Fixed
         labels remain complete at 200% font scale; native clipping and overlap
-        proof remains Phase 5.
+        proof requires native Storybook review.
       </Text>
     </Stack>
   ),

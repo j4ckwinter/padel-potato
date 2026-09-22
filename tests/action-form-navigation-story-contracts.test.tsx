@@ -42,11 +42,12 @@ const expectedTitles = [
 const componentStoryContracts = Object.fromEntries(
   expectedExports.map((name) => [name, storyContracts[name]]),
 );
+const publicDesignSystem = { ...designSystem };
 
 describe('action, form, and navigation Storybook catalogue contract', () => {
   it('publishes exactly the 13 component families from the root boundary', () => {
     for (const name of expectedExports)
-      expect(designSystem[name]).toEqual(expect.any(Function));
+      expect(publicDesignSystem[name]).toEqual(expect.any(Function));
     expect(Object.keys(componentStoryContracts)).toEqual(expectedExports);
     expect(
       Object.values(componentStoryContracts).map(({ title }) => title),

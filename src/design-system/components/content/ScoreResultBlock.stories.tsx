@@ -142,7 +142,8 @@ export const Boundaries: Story = {
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         Caller-formatted score text and aggregate reading order remain
-        unchanged. Native 200% font-scale review remains Phase 5.
+        unchanged. Native 200% font-scale review requires native Storybook
+        review.
       </Text>
     </Stack>
   ),

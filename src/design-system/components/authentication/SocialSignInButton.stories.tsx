@@ -80,8 +80,8 @@ export const Boundaries: Story = {
       <SocialSignInButton provider="apple" />
       <Text color="textSecondary" variant="caption">
         The fixed provider copy preserves its full accessible name. Native 200%
-        font-scale, long-copy resilience, and 44-point target review remain
-        Phase 5; provider copy is not caller-customizable.
+        font-scale, long-copy resilience, and 44-point target review require
+        native Storybook review; provider copy is not caller-customizable.
       </Text>
     </Stack>
   ),

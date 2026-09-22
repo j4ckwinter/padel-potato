@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
 import {
   act,
@@ -10,14 +10,6 @@ import {
 } from '@testing-library/react-native';
 
 import React from 'react';
-
-import { StyleSheet } from 'react-native';
-
-import FieldStories, {
-  Boundaries as FieldBoundaries,
-  Interactive as FieldInteractive,
-  Variants as FieldVariants,
-} from '../src/design-system/components/forms/Field.stories';
 
 import ChoiceChipStories, {
   Boundaries as ChoiceChipBoundaries,
@@ -31,45 +23,7 @@ import {
   type ChoiceChipProps,
 } from '../src/design-system/components/forms/ChoiceChip';
 
-import CheckboxStories, {
-  Boundaries as CheckboxBoundaries,
-  Interactive as CheckboxInteractive,
-  Variants as CheckboxVariants,
-} from '../src/design-system/components/forms/Checkbox.stories';
-
-import {
-  Checkbox,
-  type CheckboxProps,
-} from '../src/design-system/components/forms/Checkbox';
-
-import DayTimeSelectorStories, {
-  Boundaries as DayTimeSelectorBoundaries,
-  Interactive as DayTimeSelectorInteractive,
-  normalizeDayTimeSelectorStoryArgs,
-  Variants as DayTimeSelectorVariants,
-} from '../src/design-system/components/forms/DayTimeSelector.stories';
-
-import {
-  DayTimeSelector,
-  type DayTimeSelectorProps,
-} from '../src/design-system/components/forms/DayTimeSelector';
-
-import * as forms from '../src/design-system/components/forms';
-
-import {
-  Field,
-  type EditableFieldProps,
-  type FieldProps,
-  type StepperFieldProps,
-  type TriggerFieldProps,
-} from '../src/design-system/components/forms/Field';
-
-import {
-  fieldFixtures,
-  choiceChipFixtures,
-  checkboxFixtures,
-  dayTimeSelectorFixtures,
-} from '../src/design-system/stories/fixtures';
+import { choiceChipFixtures } from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
@@ -79,14 +33,12 @@ describe('ChoiceChip controlled public contract', () => {
     ['option', 'leading', true, 'radio'],
     ['filter', 'leading', true, 'checkbox'],
     ['filter', 'trailing', false, 'checkbox'],
-  ] as Array<
-    [
-      ChoiceChipProps['type'],
-      ChoiceChipProps['icon'],
-      boolean,
-      'checkbox' | 'radio',
-    ]
-  >)(
+  ] as [
+    ChoiceChipProps['type'],
+    ChoiceChipProps['icon'],
+    boolean,
+    'checkbox' | 'radio',
+  ][])(
     '%s/%s selected=%s emits the next controlled value once with %s semantics',
     async (type, icon, selected, role) => {
       const onSelectedChange = jest.fn();
@@ -318,7 +270,7 @@ describe('ChoiceChip Storybook contract', () => {
     expect(boundaryJson).toContain('200%');
     expect(boundaryJson).toContain('long label');
     expect(boundaryJson).toContain('target clearance');
-    expect(boundaryJson).toContain('Phase 5');
+    expect(boundaryJson).toContain('native Storybook review');
     const interactive = ChoiceChipInteractive.render?.(
       {} as never,
       {} as never,

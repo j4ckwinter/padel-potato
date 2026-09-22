@@ -83,11 +83,12 @@ export const Boundaries: Story = {
         title="A complete long section heading for nearby tournament games"
       />
       <Text color="textSecondary" variant="caption">
-        The source-faithful visual row remains 350 by 28 inside a 354 by 44
+        The fixed visual row remains 350 by 28 inside a 354 by 44
         interaction-clearance wrapper. Long title and action copy preserve a
         separately named effective 44-point target and 200% text intent without
-        overlap. Native wrapping, hit testing, and measurement remain Phase 5;
-        Profile no overflow is demonstrated in App Header boundaries.
+        overlap. Native wrapping, hit testing, and measurement require native
+        Storybook review; Profile no overflow is demonstrated in App Header
+        boundaries.
       </Text>
     </Stack>
   ),

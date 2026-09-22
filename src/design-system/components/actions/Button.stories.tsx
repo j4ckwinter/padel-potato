@@ -142,7 +142,7 @@ export const Boundaries: Story = {
       />
       <Text color="textSecondary" variant="caption">
         Full accessible name retained. Native 200% font-scale and hit-area
-        clipping review remain Phase 5.
+        clipping review require native Storybook review.
       </Text>
     </Stack>
   ),

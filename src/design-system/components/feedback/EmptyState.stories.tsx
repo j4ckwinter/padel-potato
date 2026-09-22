@@ -114,7 +114,7 @@ export const Boundaries: Story = {
       <EmptyState content="noGames" onCreateGame={() => undefined} />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         You don’t have any games scheduled yet. Create game remains reachable at
-        200% host scaling. Native measurement remains a Phase 5 backstop.
+        200% host scaling. Native measurement requires native Storybook review.
       </Text>
     </Stack>
   ),

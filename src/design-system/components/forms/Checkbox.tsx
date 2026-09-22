@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Icon } from '../../assets/Icon';
+import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { colors } from '../../tokens';
 
@@ -17,12 +18,6 @@ const supportedRuntimeProps = Object.freeze([
   'disabled',
   'onCheckedChange',
 ] as const);
-
-function unsupported(value: unknown, supported: readonly unknown[]): never {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-}
 
 function validateCheckboxProps(props: CheckboxProps) {
   const runtimeProps = props as unknown as Record<string, unknown>;

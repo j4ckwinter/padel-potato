@@ -37,21 +37,23 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-const invalidTextTokenCases: Array<[string, Record<string, unknown>]> = [
+const invalidTextTokenCases: [string, Record<string, unknown>][] = [
   ['missing typography token', { variant: 'missing' }],
   ['null typography token', { variant: null }],
   ['missing color token', { color: 'missing', variant: 'body' }],
   ['null color token', { color: null, variant: 'body' }],
 ];
 
-const layoutPrimitiveCases: Array<
-  [string, (props: StackProps) => ReactElement, 'column' | 'row']
-> = [
+const layoutPrimitiveCases: [
+  string,
+  (props: StackProps) => ReactElement,
+  'column' | 'row',
+][] = [
   ['Stack', Stack, 'column'],
   ['Inline', Inline, 'row'],
 ];
 
-const inlineWrapCases: Array<[boolean, 'wrap' | 'nowrap']> = [
+const inlineWrapCases: [boolean, 'wrap' | 'nowrap'][] = [
   [true, 'wrap'],
   [false, 'nowrap'],
 ];
@@ -399,7 +401,7 @@ describe('Surface primitive', () => {
     ['borderWidth', { borderWidth: 'borderHeavy' }],
     ['padding', { padding: 'space48' }],
     ['radius', { radius: 'radius24' }],
-  ] as Array<[string, Record<string, unknown>]>)(
+  ] as [string, Record<string, unknown>][])(
     'rejects unsupported %s tokens',
     (_name, props) => {
       expect(() => Surface(props as unknown as SurfaceProps)).toThrow(

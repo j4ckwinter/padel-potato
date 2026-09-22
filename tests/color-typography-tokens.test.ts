@@ -13,13 +13,13 @@ import {
 } from '../src/design-system/tokens/typography';
 
 type FontProvenance = {
-  assets: Array<{
+  assets: {
     path: string;
     postScriptName: string;
     runtimeFamily: string;
     sha256: string;
     weight: number;
-  }>;
+  }[];
 };
 const retainedFontProvenance = JSON.parse(
   readFileSync(

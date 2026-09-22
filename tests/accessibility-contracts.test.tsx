@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
-import { StyleSheet, Text as NativeText, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Icon } from '../src/design-system/assets/Icon';
 import { Pressable } from '../src/design-system/primitives/Pressable';

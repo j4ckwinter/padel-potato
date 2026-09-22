@@ -1,18 +1,11 @@
 import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 
+import { unsupportedValue as unsupported } from '../internal/validation';
+
 type NamedValues = Readonly<Record<string, unknown>>;
 
 const own = (record: NamedValues, key: PropertyKey) =>
   Object.prototype.hasOwnProperty.call(record, key);
-
-const unsupported = (
-  value: unknown,
-  supportedValues: readonly string[],
-): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
-  );
-};
 
 export const containerLayoutStyleKeys = [
   'alignSelf',

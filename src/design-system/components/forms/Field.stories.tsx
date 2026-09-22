@@ -254,7 +254,7 @@ export const Boundaries: Story = {
       <Text color="textSecondary" variant="caption">
         Empty content, constrained width, long value/helper/error vertical
         growth, 200% font-scale intent, and nested target clearance are host
-        witnesses only. Native measurement remains Phase 5.
+        witnesses only. Native measurement requires native Storybook review.
       </Text>
     </Stack>
   ),

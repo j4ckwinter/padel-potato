@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
 import {
   act,
@@ -10,26 +10,6 @@ import {
 } from '@testing-library/react-native';
 
 import React from 'react';
-
-import { StyleSheet } from 'react-native';
-
-import FieldStories, {
-  Boundaries as FieldBoundaries,
-  Interactive as FieldInteractive,
-  Variants as FieldVariants,
-} from '../src/design-system/components/forms/Field.stories';
-
-import ChoiceChipStories, {
-  Boundaries as ChoiceChipBoundaries,
-  Interactive as ChoiceChipInteractive,
-  normalizeChoiceChipStoryArgs,
-  Variants as ChoiceChipVariants,
-} from '../src/design-system/components/forms/ChoiceChip.stories';
-
-import {
-  ChoiceChip,
-  type ChoiceChipProps,
-} from '../src/design-system/components/forms/ChoiceChip';
 
 import CheckboxStories, {
   Boundaries as CheckboxBoundaries,
@@ -42,34 +22,7 @@ import {
   type CheckboxProps,
 } from '../src/design-system/components/forms/Checkbox';
 
-import DayTimeSelectorStories, {
-  Boundaries as DayTimeSelectorBoundaries,
-  Interactive as DayTimeSelectorInteractive,
-  normalizeDayTimeSelectorStoryArgs,
-  Variants as DayTimeSelectorVariants,
-} from '../src/design-system/components/forms/DayTimeSelector.stories';
-
-import {
-  DayTimeSelector,
-  type DayTimeSelectorProps,
-} from '../src/design-system/components/forms/DayTimeSelector';
-
-import * as forms from '../src/design-system/components/forms';
-
-import {
-  Field,
-  type EditableFieldProps,
-  type FieldProps,
-  type StepperFieldProps,
-  type TriggerFieldProps,
-} from '../src/design-system/components/forms/Field';
-
-import {
-  fieldFixtures,
-  choiceChipFixtures,
-  checkboxFixtures,
-  dayTimeSelectorFixtures,
-} from '../src/design-system/stories/fixtures';
+import { checkboxFixtures } from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
@@ -245,7 +198,7 @@ describe('Checkbox Storybook contract', () => {
     const boundaryJson = JSON.stringify(boundaries);
     expect(boundaryJson).toContain('200%');
     expect(boundaryJson).toContain('target clearance');
-    expect(boundaryJson).toContain('Phase 5');
+    expect(boundaryJson).toContain('native Storybook review');
     const interactive = CheckboxInteractive.render?.(
       {} as never,
       {} as never,

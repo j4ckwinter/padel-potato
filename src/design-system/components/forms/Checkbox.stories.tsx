@@ -99,7 +99,7 @@ export const Boundaries: Story = {
       <Text color="textSecondary" variant="caption">
         The complete accessible name remains available at 200%; four points
         preserve target clearance between adjacent expanded controls. Native
-        measurement remains Phase 5.
+        measurement requires native Storybook review.
       </Text>
     </Stack>
   ),

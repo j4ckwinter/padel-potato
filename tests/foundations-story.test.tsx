@@ -25,7 +25,7 @@ import {
   typography,
 } from '../src/design-system/tokens';
 
-const categoryCases: Array<[FoundationCategory, string, string[]]> = [
+const categoryCases: [FoundationCategory, string, string[]][] = [
   ['colors', 'Semantic colors', Object.keys(colors)],
   ['typography', 'Typography', Object.keys(typography)],
   ['spacing', 'Spacing', Object.keys(spacing)],
@@ -72,7 +72,9 @@ describe('FoundationGallery', () => {
   it('fails explicitly for unsupported runtime input', () => {
     expect(() =>
       FoundationGallery({ category: '' as FoundationCategory }),
-    ).toThrow('Unsupported foundation category: ""');
+    ).toThrow(
+      'Unsupported design-system value: . Supported values: colors, typography, spacing, radii, dimensions, borders, opacity',
+    );
   });
 });
 

@@ -4,24 +4,6 @@ import { flattenedStyle, invalidProps } from './helpers/componentTest';
 
 import { render, userEvent } from '@testing-library/react-native';
 
-import { Children } from 'react';
-
-import { StyleSheet } from 'react-native';
-
-import BannerToastStories, {
-  Boundaries as BannerToastBoundaries,
-  Canonical as BannerToastCanonical,
-  Interactive as BannerToastInteractive,
-  States as BannerToastStates,
-  Variants as BannerToastVariants,
-  normalizeBannerToastStoryArgs,
-} from '../src/design-system/components/feedback/BannerToast.stories';
-
-import {
-  BannerToast,
-  type BannerToastProps,
-} from '../src/design-system/components/feedback/BannerToast';
-
 import EmptyStateStories, {
   Boundaries as EmptyStateBoundaries,
   Canonical as EmptyStateCanonical,
@@ -36,30 +18,7 @@ import {
   type EmptyStateProps,
 } from '../src/design-system/components/feedback/EmptyState';
 
-import * as FeedbackComponents from '../src/design-system/components/feedback';
-
-import {
-  bannerToastFixtures,
-  emptyStateFixtures,
-  illustratedCardFixtures,
-} from '../src/design-system/stories/fixtures';
-
-import IllustratedCardStories, {
-  Boundaries as IllustratedCardBoundaries,
-  Canonical as IllustratedCardCanonical,
-  Interactive as IllustratedCardInteractive,
-  States as IllustratedCardStates,
-  Variants as IllustratedCardVariants,
-  normalizeIllustratedCardStoryArgs,
-} from '../src/design-system/components/cards/IllustratedCard.stories';
-
-import {
-  IllustratedCard,
-  type IllustratedCardParticipant,
-  type IllustratedCardProps,
-} from '../src/design-system/components/cards/IllustratedCard';
-
-import * as CardComponents from '../src/design-system/components/cards';
+import { emptyStateFixtures } from '../src/design-system/stories/fixtures';
 
 const emptyStateExamples = {
   noGames: { content: 'noGames', onCreateGame: jest.fn() },
@@ -75,7 +34,7 @@ describe('Empty State approved-copy contract', () => {
       'No games',
       'You don\u2019t have any games scheduled yet.',
       'Create game',
-      'phase4-artwork-empty-state-no-games',
+      'artwork-empty-state-no-games',
     ],
     [
       'noNotifications',
@@ -83,7 +42,7 @@ describe('Empty State approved-copy contract', () => {
       'No notifications',
       'You\u2019re all caught up. New updates will appear here.',
       null,
-      'phase4-artwork-empty-state-no-notifications',
+      'artwork-empty-state-no-notifications',
     ],
     [
       'noPlayers',
@@ -91,9 +50,9 @@ describe('Empty State approved-copy contract', () => {
       'No players',
       'Invite friends to start building your padel group.',
       'Invite players',
-      'phase4-artwork-empty-state-no-players',
+      'artwork-empty-state-no-players',
     ],
-  ] as Array<[string, EmptyStateProps, string, string, string | null, string]>)(
+  ] as [string, EmptyStateProps, string, string, string | null, string][])(
     'renders exact approved %s copy, action, and decorative artwork',
     async (_branch, props, heading, body, actionName, artworkTestId) => {
       const screen = await render(<EmptyState {...props} />);
@@ -117,9 +76,10 @@ describe('Empty State approved-copy contract', () => {
   it.each([
     [emptyStateExamples.noGames, 'Create game'],
     [emptyStateExamples.noPlayers, 'Invite players'],
-  ] as Array<
-    [Extract<EmptyStateProps, { content: 'noGames' | 'noPlayers' }>, string]
-  >)('emits only the exact branch action %s', async (props, actionName) => {
+  ] as [
+    Extract<EmptyStateProps, { content: 'noGames' | 'noPlayers' }>,
+    string,
+  ][])('emits only the exact branch action %s', async (props, actionName) => {
     const screen = await render(<EmptyState {...props} />);
     await userEvent
       .setup()
@@ -206,7 +166,7 @@ describe('Empty State Storybook contract', () => {
       'You don\u2019t have any games scheduled yet.',
     );
     expect(boundaryJson).toContain('200%');
-    expect(boundaryJson).toContain('Phase 5');
+    expect(boundaryJson).toContain('native Storybook review');
     expect(boundaryJson).toContain('Create game');
   });
 });

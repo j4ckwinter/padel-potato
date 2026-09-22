@@ -4,8 +4,6 @@ import { flattenedStyle, invalidProps } from './helpers/componentTest';
 
 import { render, userEvent } from '@testing-library/react-native';
 
-import { StyleSheet } from 'react-native';
-
 import GameCardStories, {
   Boundaries as GameCardBoundaries,
   Canonical as GameCardCanonical,
@@ -19,100 +17,6 @@ import {
   type GameCardParticipant,
   type GameCardProps,
 } from '../src/design-system/components/content/GameCard';
-
-import NotificationRowStories, {
-  Boundaries as NotificationRowBoundaries,
-  Canonical as NotificationRowCanonical,
-  Interactive as NotificationRowInteractive,
-  States as NotificationRowStates,
-  Variants as NotificationRowVariants,
-} from '../src/design-system/components/content/NotificationRow.stories';
-
-import {
-  NotificationRow,
-  type NotificationRowProps,
-} from '../src/design-system/components/content/NotificationRow';
-
-import PlayerPreferencesCardStories, {
-  Boundaries as PlayerPreferencesCardBoundaries,
-  Canonical as PlayerPreferencesCardCanonical,
-  Interactive as PlayerPreferencesCardInteractive,
-  States as PlayerPreferencesCardStates,
-  Variants as PlayerPreferencesCardVariants,
-} from '../src/design-system/components/content/PlayerPreferencesCard.stories';
-
-import {
-  PlayerPreferencesCard,
-  type PlayerPreferencesCardProps,
-} from '../src/design-system/components/content/PlayerPreferencesCard';
-
-import SettingsRowStories, {
-  Boundaries as SettingsRowBoundaries,
-  Canonical as SettingsRowCanonical,
-  Interactive as SettingsRowInteractive,
-  States as SettingsRowStates,
-  Variants as SettingsRowVariants,
-} from '../src/design-system/components/content/SettingsRow.stories';
-
-import {
-  SettingsRow,
-  type SettingsRowProps,
-} from '../src/design-system/components/content/SettingsRow';
-
-import ScoreResultBlockStories, {
-  Boundaries as ScoreResultBlockBoundaries,
-  Canonical as ScoreResultBlockCanonical,
-  Interactive as ScoreResultBlockInteractive,
-  States as ScoreResultBlockStates,
-  Variants as ScoreResultBlockVariants,
-} from '../src/design-system/components/content/ScoreResultBlock.stories';
-
-import {
-  ScoreResultBlock,
-  type ScoreResultBlockProps,
-  type ScoreResultTeam,
-} from '../src/design-system/components/content/ScoreResultBlock';
-
-import StatTileStories, {
-  Boundaries as StatTileBoundaries,
-  Canonical as StatTileCanonical,
-  Interactive as StatTileInteractive,
-  States as StatTileStates,
-  Variants as StatTileVariants,
-} from '../src/design-system/components/content/StatTile.stories';
-
-import {
-  StatTile,
-  type StatTileProps,
-} from '../src/design-system/components/content/StatTile';
-
-import PlayerItemStories, {
-  Boundaries as PlayerItemBoundaries,
-  Canonical as PlayerItemCanonical,
-  Interactive as PlayerItemInteractive,
-  States as PlayerItemStates,
-  Variants as PlayerItemVariants,
-} from '../src/design-system/components/content/PlayerItem.stories';
-
-import {
-  PlayerItem,
-  type PlayerItemIdentity,
-  type PlayerItemProps,
-} from '../src/design-system/components/content/PlayerItem';
-
-import {
-  playerItemFixtures,
-  gameCardFixtures,
-  notificationRowFixtures,
-  settingsRowFixtures,
-  statTileFixtures,
-  scoreResultBlockFixtures,
-  playerPreferencesCardFixtures,
-} from '../src/design-system/stories/fixtures';
-
-import * as ContentComponents from '../src/design-system/components/content';
-
-import { colors } from '../src/design-system/tokens';
 
 const rejectedImageSources = [
   { uri: 'ftp://example.com/player.webp' },
@@ -180,7 +84,7 @@ describe('Game Card runtime and semantic contract', () => {
         variant: 'open',
       },
     ],
-  ] as Array<[string, GameCardProps]>)(
+  ] as [string, GameCardProps][])(
     'renders the authored %s structure',
     async (_tuple, props) => {
       const screen = await render(<GameCard {...props} />);
@@ -201,7 +105,7 @@ describe('Game Card runtime and semantic contract', () => {
     ['next', 'View game'],
     ['open', 'View game'],
     ['completed', 'View results'],
-  ] as Array<['next' | 'open' | 'completed', 'View game' | 'View results']>)(
+  ] as ['next' | 'open' | 'completed', 'View game' | 'View results'][])(
     'exposes only the authored %s action named %s',
     async (variant, actionName) => {
       const callback = jest.fn();
@@ -246,7 +150,7 @@ describe('Game Card runtime and semantic contract', () => {
   it.each([
     [false, participants.slice(0, 3), 'Alex Morgan, Jamie Taylor, Sam Kim'],
     [true, participants, 'Alex Morgan, Jamie Taylor, Sam Kim, Riley Brown'],
-  ] as Array<[boolean, readonly GameCardParticipant[], string]>)(
+  ] as [boolean, readonly GameCardParticipant[], string][])(
     'preserves Open participant order for full=%s',
     async (full, orderedParticipants, description) => {
       const props = {

@@ -1,10 +1,8 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
-import { render, userEvent } from '@testing-library/react-native';
-
-import { StyleSheet } from 'react-native';
+import { render } from '@testing-library/react-native';
 
 import AvatarStories, {
   Boundaries,
@@ -16,60 +14,12 @@ import AvatarStories, {
 
 import {
   Avatar,
-  avatarPresences,
-  avatarSizes,
   type AvatarPresence,
   type AvatarProps,
   type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
 
 import {} from '../src/design-system/stories/fixtures';
-
-import AvatarGroupStories, {
-  Boundaries as AvatarGroupBoundaries,
-  Canonical as AvatarGroupCanonical,
-  Interactive as AvatarGroupInteractive,
-  States as AvatarGroupStates,
-  Variants as AvatarGroupVariants,
-} from '../src/design-system/components/identity/AvatarGroup.stories';
-
-import {
-  AvatarGroup,
-  type AvatarGroupIdentity,
-} from '../src/design-system/components/identity/AvatarGroup';
-
-import AvatarPickerStories, {
-  Boundaries as AvatarPickerBoundaries,
-  Canonical as AvatarPickerCanonical,
-  Interactive as AvatarPickerInteractive,
-  States as AvatarPickerStates,
-  Variants as AvatarPickerVariants,
-} from '../src/design-system/components/identity/AvatarPicker.stories';
-
-import {
-  AvatarPicker,
-  type AvatarPickerProps,
-} from '../src/design-system/components/identity/AvatarPicker';
-
-import StatusChipStories, {
-  Boundaries as StatusChipBoundaries,
-  Canonical as StatusChipCanonical,
-  Interactive as StatusChipInteractive,
-  States as StatusChipStates,
-  Variants as StatusChipVariants,
-} from '../src/design-system/components/status/StatusChip.stories';
-
-import { StatusChip } from '../src/design-system/components/status/StatusChip';
-
-import StepProgressStories, {
-  Boundaries as StepProgressBoundaries,
-  Canonical as StepProgressCanonical,
-  Interactive as StepProgressInteractive,
-  States as StepProgressStates,
-  Variants as StepProgressVariants,
-} from '../src/design-system/components/progress/StepProgress.stories';
-
-import { StepProgress } from '../src/design-system/components/progress/StepProgress';
 
 const rejectedImageSources = [
   { uri: 'ftp://example.com/player.webp' },
@@ -88,7 +38,7 @@ describe('Avatar runtime and semantic contract', () => {
     [48, 'away'],
     [48, 'offline'],
     [56, 'online'],
-  ] as Array<[AvatarSize, AvatarPresence]>)(
+  ] as [AvatarSize, AvatarPresence][])(
     'renders the authored %i/%s tuple at its named-child diameter',
     async (size, presence) => {
       const screen = await render(
@@ -125,7 +75,7 @@ describe('Avatar runtime and semantic contract', () => {
     [40, 'offline'],
     [56, 'away'],
     [56, 'offline'],
-  ] as Array<[32 | 40 | 56, 'away' | 'offline']>)(
+  ] as [32 | 40 | 56, 'away' | 'offline'][])(
     'rejects the unauthored %i/%s tuple',
     (size, presence) => {
       expect(() =>

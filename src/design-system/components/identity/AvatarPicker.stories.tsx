@@ -113,7 +113,7 @@ export const Boundaries: Story = {
       <AvatarPicker onPress={() => undefined} variant="error" />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         The full action and error remain readable. Native 200% font-scale
-        reachability review remains Phase 5.
+        reachability review requires native Storybook review.
       </Text>
     </Stack>
   ),

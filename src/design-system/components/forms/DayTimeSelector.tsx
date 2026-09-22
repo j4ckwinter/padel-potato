@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pressable as NativePressable, StyleSheet, View } from 'react-native';
 
+import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 
@@ -48,12 +49,6 @@ const timeRuntimeProps = Object.freeze([
   'availability',
   'time',
 ] as const);
-
-function unsupported(value: unknown, supported: readonly unknown[]): never {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-}
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && value.trim().length > 0;

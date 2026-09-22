@@ -84,7 +84,7 @@ export const Boundaries: Story = {
       <StepProgress value="complete" />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         Exact progress copy and values stay available. Native 200% font-scale
-        review remains Phase 5.
+        review requires native Storybook review.
       </Text>
     </Stack>
   ),

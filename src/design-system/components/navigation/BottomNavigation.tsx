@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Icon, type IconName } from '../../assets/Icon';
+import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
@@ -32,12 +33,6 @@ const supportedRuntimeProps = Object.freeze([
   'activeDestination',
   'onDestinationPress',
 ] as const);
-
-const unsupported = (value: unknown, supported: readonly unknown[]): never => {
-  throw new Error(
-    `Unsupported design-system value: ${String(value)}. Supported values: ${supported.join(', ')}`,
-  );
-};
 
 function validateBottomNavigationProps(props: BottomNavigationProps) {
   for (const key of Object.keys(props)) {

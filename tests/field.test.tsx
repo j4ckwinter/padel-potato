@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
 import {
   act,
@@ -11,65 +11,20 @@ import {
 
 import React from 'react';
 
-import { StyleSheet } from 'react-native';
-
 import FieldStories, {
   Boundaries as FieldBoundaries,
   Interactive as FieldInteractive,
   Variants as FieldVariants,
 } from '../src/design-system/components/forms/Field.stories';
 
-import ChoiceChipStories, {
-  Boundaries as ChoiceChipBoundaries,
-  Interactive as ChoiceChipInteractive,
-  normalizeChoiceChipStoryArgs,
-  Variants as ChoiceChipVariants,
-} from '../src/design-system/components/forms/ChoiceChip.stories';
-
-import {
-  ChoiceChip,
-  type ChoiceChipProps,
-} from '../src/design-system/components/forms/ChoiceChip';
-
-import CheckboxStories, {
-  Boundaries as CheckboxBoundaries,
-  Interactive as CheckboxInteractive,
-  Variants as CheckboxVariants,
-} from '../src/design-system/components/forms/Checkbox.stories';
-
-import {
-  Checkbox,
-  type CheckboxProps,
-} from '../src/design-system/components/forms/Checkbox';
-
-import DayTimeSelectorStories, {
-  Boundaries as DayTimeSelectorBoundaries,
-  Interactive as DayTimeSelectorInteractive,
-  normalizeDayTimeSelectorStoryArgs,
-  Variants as DayTimeSelectorVariants,
-} from '../src/design-system/components/forms/DayTimeSelector.stories';
-
-import {
-  DayTimeSelector,
-  type DayTimeSelectorProps,
-} from '../src/design-system/components/forms/DayTimeSelector';
-
-import * as forms from '../src/design-system/components/forms';
-
 import {
   Field,
-  type EditableFieldProps,
   type FieldProps,
   type StepperFieldProps,
   type TriggerFieldProps,
 } from '../src/design-system/components/forms/Field';
 
-import {
-  fieldFixtures,
-  choiceChipFixtures,
-  checkboxFixtures,
-  dayTimeSelectorFixtures,
-} from '../src/design-system/stories/fixtures';
+import { fieldFixtures } from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
@@ -249,7 +204,7 @@ describe('Field trigger branches', () => {
     ['select', 'Choose level', 'Intermediate'],
     ['date', 'Choose date', '12 Sep 2026'],
     ['time', 'Choose time', '18:30'],
-  ] as Array<[TriggerFieldProps['type'], string, string]>)(
+  ] as [TriggerFieldProps['type'], string, string][])(
     '%s is a controlled trigger-only button',
     async (type, placeholder, value) => {
       const onPress = jest.fn();
@@ -600,7 +555,7 @@ describe('Field Storybook contract', () => {
     expect(boundaryJson).toContain('empty');
     expect(boundaryJson).toContain('vertical growth');
     expect(boundaryJson).toContain('nested target clearance');
-    expect(boundaryJson).toContain('Phase 5');
+    expect(boundaryJson).toContain('native Storybook review');
 
     const interactive = FieldInteractive.render?.(
       {} as never,

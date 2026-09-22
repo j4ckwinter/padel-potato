@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { flattenedStyle, invalidProps } from './helpers/componentTest';
+import { flattenedStyle } from './helpers/componentTest';
 
 import {
   act,
@@ -15,8 +15,6 @@ import path from 'node:path';
 
 import React, { Children } from 'react';
 
-import { StyleSheet } from 'react-native';
-
 import SocialSignInButtonStories, {
   Boundaries as SocialSignInButtonBoundaries,
   Variants as SocialSignInButtonVariants,
@@ -28,23 +26,7 @@ import {
   type SocialSignInProvider,
 } from '../src/design-system/components/authentication/SocialSignInButton';
 
-import AuthDividerStories, {
-  Boundaries as AuthDividerBoundaries,
-  Variants as AuthDividerVariants,
-  authDividerStoryApplicability,
-} from '../src/design-system/components/authentication/AuthDivider.stories';
-
-import {
-  AuthDivider,
-  type AuthDividerProps,
-} from '../src/design-system/components/authentication/AuthDivider';
-
-import * as authentication from '../src/design-system/components/authentication';
-
-import {
-  socialSignInButtonFixtures,
-  authDividerFixtures,
-} from '../src/design-system/stories/fixtures';
+import { socialSignInButtonFixtures } from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
@@ -68,7 +50,7 @@ describe('SocialSignInButton callback, semantics, and visual contract', () => {
   it.each([
     ['google', 'Continue with Google'],
     ['apple', 'Continue with Apple'],
-  ] as Array<[SocialSignInProvider, string]>)(
+  ] as [SocialSignInProvider, string][])(
     'renders fixed %s copy and exact local decorative artwork',
     async (provider, label) => {
       const screen = await render(<SocialSignInButton provider={provider} />);
@@ -79,7 +61,7 @@ describe('SocialSignInButton callback, semantics, and visual contract', () => {
         screen.getByText(label, { includeHiddenElements: true }),
       ).toBeTruthy();
       expect(
-        screen.getByTestId(`phase3-artwork-${provider}`, {
+        screen.getByTestId(`artwork-provider-${provider}`, {
           includeHiddenElements: true,
         }),
       ).toBeTruthy();
@@ -98,7 +80,7 @@ describe('SocialSignInButton callback, semantics, and visual contract', () => {
   it.each([
     ['enabled', false, 1],
     ['disabled', true, 0],
-  ] as Array<[string, boolean, 0 | 1]>)(
+  ] as [string, boolean, 0 | 1][])(
     '%s activation emits only the consumer callback',
     async (_case, disabled, count) => {
       const onPress = jest.fn();

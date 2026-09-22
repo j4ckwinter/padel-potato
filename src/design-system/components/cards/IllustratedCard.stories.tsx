@@ -167,7 +167,7 @@ export const Boundaries: Story = {
         View game remains reachable at 200% host scaling. Invite and Game
         created preserve the authored two-player partial participant state;
         arbitrary partial participant arrays are rejected. Native measurement
-        remains a Phase 5 backstop.
+        requires native Storybook review.
       </Text>
     </Stack>
   ),

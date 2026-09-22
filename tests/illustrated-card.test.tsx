@@ -4,45 +4,7 @@ import { flattenedStyle, invalidProps } from './helpers/componentTest';
 
 import { render, userEvent } from '@testing-library/react-native';
 
-import { Children } from 'react';
-
-import { StyleSheet } from 'react-native';
-
-import BannerToastStories, {
-  Boundaries as BannerToastBoundaries,
-  Canonical as BannerToastCanonical,
-  Interactive as BannerToastInteractive,
-  States as BannerToastStates,
-  Variants as BannerToastVariants,
-  normalizeBannerToastStoryArgs,
-} from '../src/design-system/components/feedback/BannerToast.stories';
-
-import {
-  BannerToast,
-  type BannerToastProps,
-} from '../src/design-system/components/feedback/BannerToast';
-
-import EmptyStateStories, {
-  Boundaries as EmptyStateBoundaries,
-  Canonical as EmptyStateCanonical,
-  Interactive as EmptyStateInteractive,
-  States as EmptyStateStates,
-  Variants as EmptyStateVariants,
-  normalizeEmptyStateStoryArgs,
-} from '../src/design-system/components/feedback/EmptyState.stories';
-
-import {
-  EmptyState,
-  type EmptyStateProps,
-} from '../src/design-system/components/feedback/EmptyState';
-
-import * as FeedbackComponents from '../src/design-system/components/feedback';
-
-import {
-  bannerToastFixtures,
-  emptyStateFixtures,
-  illustratedCardFixtures,
-} from '../src/design-system/stories/fixtures';
+import { illustratedCardFixtures } from '../src/design-system/stories/fixtures';
 
 import IllustratedCardStories, {
   Boundaries as IllustratedCardBoundaries,
@@ -114,30 +76,30 @@ describe('Illustrated Card runtime contract', () => {
       illustratedCardExamples.nextGame,
       'View',
       'View game',
-      'phase4-artwork-illustrated-card-next-game',
+      'artwork-illustrated-card-next-game',
     ],
     [
       'matchResult',
       illustratedCardExamples.matchResult,
       'Results',
       'View results',
-      'phase4-artwork-illustrated-card-match-result',
+      'artwork-illustrated-card-match-result',
     ],
     [
       'invitePlayers',
       illustratedCardExamples.invitePlayers,
       'Invite',
       'Invite players',
-      'phase4-artwork-illustrated-card-invite-players',
+      'artwork-illustrated-card-invite-players',
     ],
     [
       'gameCreated',
       illustratedCardExamples.gameCreated,
       'Share',
       'Share game',
-      'phase4-artwork-illustrated-card-game-created',
+      'artwork-illustrated-card-game-created',
     ],
-  ] as Array<[string, IllustratedCardProps, string, string, string]>)(
+  ] as [string, IllustratedCardProps, string, string, string][])(
     'renders exact %s content, one CTA, and mapped decorative mascot',
     async (_branch, props, visibleAction, actionName, artworkTestId) => {
       const screen = await render(<IllustratedCard {...props} />);
@@ -165,7 +127,7 @@ describe('Illustrated Card runtime contract', () => {
     [illustratedCardExamples.matchResult, 'View results'],
     [illustratedCardExamples.invitePlayers, 'Invite players'],
     [illustratedCardExamples.gameCreated, 'Share game'],
-  ] as Array<[IllustratedCardProps, string]>)(
+  ] as [IllustratedCardProps, string][])(
     'emits only the %s CTA intent',
     async (props, actionName) => {
       const screen = await render(<IllustratedCard {...props} />);
@@ -303,7 +265,7 @@ describe('Illustrated Card Storybook and public contract', () => {
     );
     expect(boundaryJson).toContain('200%');
     expect(boundaryJson).toContain('partial participant');
-    expect(boundaryJson).toContain('Phase 5');
+    expect(boundaryJson).toContain('native Storybook review');
     expect(boundaryJson).toContain('View game');
   });
 });
