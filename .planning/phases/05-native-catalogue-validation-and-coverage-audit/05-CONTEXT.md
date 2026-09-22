@@ -19,7 +19,7 @@ Prepare the standalone React Native Storybook catalogue for user-led review, ver
 ## Existing Code
 
 - Stories exist beside foundations, primitives, assets, and all public component families.
-- `src/design-system/stories/componentFixtures.ts` contains explicit Storybook-only configuration fixtures.
+- `src/design-system/stories/fixtures/` contains typed, component-focused Storybook configuration fixtures.
 - `npm run verify` is the unified automated verification entry point.
 - Storybook entry swapping remains controlled by `STORYBOOK_ENABLED`.
 

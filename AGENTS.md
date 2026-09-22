@@ -32,23 +32,23 @@ The first milestone is the product's standalone React Native design system rathe
 | Technology | Version | Purpose | Why |
 |---|---:|---|---|
 | Node.js | `22.13.x` or later LTS | Local toolchain | Expo SDK 57 documents Node `22.13.x` as its minimum. Use a current Node 22 LTS patch and record it in `.nvmrc`/Volta rather than relying on a globally drifting Node version. |
-| Expo | `~57.0.23` | Managed React Native runtime, Metro, native/web development | This is the current stable SDK patch in npm. Expo owns the React Native compatibility matrix, cross-platform Metro configuration, and local web target; do not compose an arbitrary React Native toolchain. |
+| Expo | `57.0.24` | Managed React Native runtime, Metro, native/web development | Expo owns the React Native compatibility matrix, cross-platform Metro configuration, and local web target; do not compose an arbitrary React Native toolchain. |
 | React Native | `0.86.3` | Native component runtime | SDK 57’s bundled-native-modules manifest pins this patch; it remains within the official SDK 57 line (`0.86`). Install through `npx expo install`, not a manual `npm install react-native@latest`. |
 | React | `19.2.3` | Component model | Expo SDK 57’s supported React version. |
-| TypeScript | `~5.9` (resolved by `expo install`) | Strict token, prop, variant, and story contracts | Expo has first-class TypeScript support. Extend `expo/tsconfig.base`; turn on `strict`; do not maintain a custom Babel TypeScript pipeline. |
+| TypeScript | `6.0.3` | Strict token, prop, variant, and story contracts | Extend `expo/tsconfig.base`; keep strict checking enabled; do not maintain a custom Babel TypeScript pipeline. |
 | Metro via `expo/metro-config` | SDK-owned | Native + Expo web bundling | A single Expo Metro configuration is required so Storybook can wrap it and Expo web remains available. |
 
 ### Storybook and Catalogue
 
 | Technology | Version | Purpose | Why |
 |---|---:|---|---|
-| `@storybook/react-native` | `10.6.0` | Authoritative on-device Storybook UI for iOS and Android | Current stable React Native Storybook. It runs as a React Native component through Metro, so stories exercise actual native layout, fonts, gestures, and interaction rather than an iframe approximation. |
-| `storybook` | `10.6.0` | Shared Storybook core/tooling | Keep exactly the same major and preferably the same patch as the React Native package; Storybook explicitly warns against mixed majors. |
-| `@storybook/addon-ondevice-controls` | `10.6.0` | Editable story args on device | Makes variants/states reviewable without product screens. |
-| `@storybook/addon-ondevice-actions` | `10.6.0` | Event/action inspection on device | Demonstrates press and input behaviour in the catalogue. |
-| `@storybook/addon-ondevice-backgrounds` | `10.6.0` | Light/dark or surface-context checking | Useful for validating tokens and component surfaces. |
-| `@storybook/react-native-web-vite` | `10.6.0`, optional/deferred | Full browser-native Storybook framework | Do **not** add for this milestone. Native Storybook itself supports basic web and Expo must expose it locally. This Vite framework creates a second preview/build configuration and is only warranted if later requirements demand hosted docs or full web-addon parity. |
-| `withStorybook` from `@storybook/react-native/withStorybook` | bundled with above | Metro wrapper and conditional Storybook entry | Use the current v10 entry-point swapping setup. Gate it with `STORYBOOK_ENABLED`; normal app bundles then exclude Storybook code. Use `cross-env@10.1.0` in npm scripts so the flag works in Windows PowerShell and POSIX shells. |
+| `@storybook/react-native` | `10.5.0` | Authoritative on-device Storybook UI for iOS and Android | The installed Storybook family is pinned to one patch and exercises native layout, fonts, gestures, and interaction. |
+| `storybook` | `10.5.0` | Shared Storybook core/tooling | Keep every Storybook package on the same exact patch. |
+| `@storybook/addon-ondevice-controls` | `10.5.0` | Editable story args on device | Makes variants/states reviewable without product screens. |
+| `@storybook/addon-ondevice-actions` | `10.5.0` | Event/action inspection on device | Demonstrates press and input behaviour in the catalogue. |
+| `@storybook/addon-ondevice-backgrounds` | `10.5.0` | Light/dark or surface-context checking | Useful for validating tokens and component surfaces. |
+| `@storybook/react-native-web-vite` | deferred | Full browser-native Storybook framework | Do **not** add for this milestone. Expo web provides the required secondary review surface without a second preview configuration. |
+| `withStorybook` from `@storybook/react-native/withStorybook` | bundled with above | Metro wrapper and conditional Storybook entry | This project uses the entry-swapping wrapper. Gate it with `STORYBOOK_ENABLED`; normal app bundles must exclude Storybook code. Use `cross-env@10.1.0` in npm scripts so the flag works in Windows PowerShell and POSIX shells. |
 
 ### Database
 
@@ -63,7 +63,7 @@ The first milestone is the product's standalone React Native design system rathe
 | Expo Go / Expo development build | SDK 57-compatible | Android device/emulator and physical iPhone review | Supports the acceptance target without committing native project directories. Add a development build only if a later component requires a native dependency unsupported by Expo Go. |
 | Expo web | SDK 57 | Local desktop-browser catalogue | Install Expo-aligned `react-dom@19.2.3`, `react-native-web~0.21.0`, and `@expo/metro-runtime~57.0.15`; launch with `npx expo start --web`. It is a convenience review target, not visual authority. |
 | Component-local assets | repository-owned | Runtime brand, icon, mascot, and font media | Keep runtime media under `src/design-system/assets` or the established licensed font directory. |
-| Screenshot evidence directory | repository convention | Reviewable native visual verification | Store versioned, named evidence and a short comparison record; compare local-snapshot-grounded references with captured iOS and Android Storybook renders and log intentional platform deviations. |
+| Manual native Storybook review | user-led workflow | Visual and interaction verification | Review the standalone catalogue on iOS and Android and report observed issues directly; web remains a secondary convenience surface. |
 
 ### Testing and Quality
 

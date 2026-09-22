@@ -22,17 +22,17 @@ progress:
 
 See: .planning/PROJECT.md (updated 2026-09-18)
 
-**Core value:** Create a faithful, reusable mobile component system from the Penpot source of truth so future product screens can be assembled consistently and confidently.
-**Current focus:** Phase 04 — Identity, Content, and Feedback Components
+**Core value:** Maintain a dependable, reusable mobile component system so future product screens can be assembled consistently and confidently.
+**Current focus:** Phase 5 — Native Catalogue Validation and Coverage Audit
 
 ## Current Position
 
 Phase: 5 — Native Catalogue Validation and Coverage Audit
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-09-21 — Phase 04 complete, transitioned to Phase 5
+Last activity: 2026-09-22 — Standalone design-system cleanup and manual catalogue preparation
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -100,6 +100,7 @@ Progress: [██████░░░░] 60%
 
 Recent decisions affecting current work:
 
+- Active runtime code, tests, and Storybook guidance use standalone component-owned assets and contracts; completed design-source decisions below remain historical only.
 - Phase 1: Native iOS and Android Storybook are authoritative; Expo web is a secondary local review lane.
 - Phase 2: Penpot manifests, reference renders, and deviation records are source evidence, not runtime dependencies.
 - Quick task 260918-noz: The committed local `.penpot` snapshot is the routine design authority; live Penpot MCP is optional for freshness checks only.
