@@ -14,8 +14,8 @@ const sourceFiles = (directory: string): string[] => readdirSync(directory, { wi
   });
 
 describe('standalone design-system boundary', () => {
-  it('contains no design-tool archive, evidence directory, or deleted registry references', () => {
-    const forbidden = /design-source|design-spec|penpot|sourceRegistry|phase4SourceRegistry/iu;
+  it('contains no design-tool, evidence, source-record, or phase-registry coupling', () => {
+    const forbidden = /design-source|design-spec|penpot|sourceRegistry|componentFixtures|phase\d+(?:Families|StoryContracts|Backstops|Definitions|Categories|SourceRegistry)|originalTuple|normalizedTuple|source record|generated evidence|visible provenance|\w+Families\s*\[\d+\]/iu;
     const violations = sourceFiles(designSystemRoot)
       .filter((file) => forbidden.test(readFileSync(file, 'utf8')))
       .map((file) => relative(root, file));

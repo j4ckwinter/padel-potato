@@ -41,26 +41,7 @@ import textMeta, {
   Variants as TextVariants,
 } from '../src/design-system/primitives/Text.stories';
 import { colors, spacing, typography } from '../src/design-system/tokens';
-
-type StoryLike = { args?: unknown; render?: unknown };
-
-const renderStory = async (
-  story: StoryLike,
-  args: Record<string, unknown> = {},
-) => {
-  if (typeof story.render !== 'function')
-    throw new Error('Story has no render function');
-  const storyRender = story.render as (
-    storyArgs: Record<string, unknown>,
-    context: Record<string, never>,
-  ) => ReactElement;
-  return render(
-    storyRender(
-      { ...((story.args as Record<string, unknown>) ?? {}), ...args },
-      {},
-    ),
-  );
-};
+import { renderStory } from './helpers/componentTest';
 
 describe('foundation Storybook contract', () => {
   it('fixes the exact taxonomy and accounts for every primitive category', () => {
