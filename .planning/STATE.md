@@ -182,6 +182,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260918-noz | Adopt the local Penpot export as the canonical design source and replace routine MCP-dependent workflow checks with deterministic local validation | 2026-09-18 | 42bf053 | [260918-noz-adopt-the-local-penpot-export-as-the-can](./quick/260918-noz-adopt-the-local-penpot-export-as-the-can/) |
+| 260922-qrl | Remove design-tool coupling and make components standalone | 2026-09-22 | 07b930f | [260922-qrl-remove-penpot-coupling-and-make-componen](./quick/260922-qrl-remove-penpot-coupling-and-make-componen/) |
 
 ### Roadmap Evolution
 
@@ -196,6 +197,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-21T21:18:24.364Z
-Stopped at: Phase 04 complete, ready to plan Phase 5
+Last session: 2026-09-22
+Stopped at: Standalone conversion complete; awaiting user-led native Storybook review
 Resume file: None

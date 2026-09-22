@@ -1,7 +1,7 @@
 # Requirements: Padel Potato
 
 **Defined:** 2026-09-17
-**Core Value:** Create a faithful, reusable mobile component system from the Penpot source of truth so future product screens can be assembled consistently and confidently.
+**Core Value:** Maintain a dependable, standalone mobile component system so future product screens can be assembled consistently and confidently.
 
 ## v1 Requirements
 
@@ -92,11 +92,11 @@
 
 ### Verification and Completion
 
-- [ ] **VRFY-01**: Every component family is visually compared with Penpot references on iOS.
-- [ ] **VRFY-02**: Every component family is visually compared with Penpot references on Android.
+- [ ] **VRFY-01**: Every component family is manually reviewed in native Storybook on iOS as available.
+- [ ] **VRFY-02**: Every component family is manually reviewed in native Storybook on Android as available.
 - [ ] **VRFY-03**: Shared stories pass a local Expo-web discovery and render smoke check.
-- [ ] **VRFY-04**: A coverage audit proves every Penpot foundation, reusable component, variant, and designed state is implemented or explicitly dispositioned.
-- [ ] **VRFY-05**: The final evidence pack records platforms, devices, capture conditions, results, and approved deviations.
+- [ ] **VRFY-04**: Automated coverage proves every public foundation, component, supported configuration, and story contract is represented.
+- [ ] **VRFY-05**: Active code and tooling remain standalone from design-tool archives and extraction evidence.
 
 ## v2 Requirements
 
@@ -124,7 +124,7 @@
 | Hosted Storybook | Local native and browser review is sufficient for the first milestone. |
 | Pixel-perfect web parity | iOS and Android are the authoritative product platforms; web is a secondary smoke-review lane. |
 | Automated visual-diff CI from day one | Deterministic stories, fonts, devices, and approved references must exist before reliable automation. |
-| Unspecified themes or component variants | Penpot is the source of truth; v1 will not invent unsupported design language. |
+| Unspecified themes or component variants | The component-owned public contracts define v1; unsupported design language is not invented. |
 
 ## Traceability
 

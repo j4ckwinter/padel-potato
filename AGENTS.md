@@ -6,17 +6,17 @@
 
 Padel Potato is a mobile app for organizing padel games among groups of friends and keeping a trustworthy record of the matches they play. The broader product will let players create games, choose a date, time, and venue, invite friends, track responses until four players are confirmed, record scores, confirm results, and receive relevant notifications.
 
-The first milestone is the product's React Native design system rather than the working game flow. It will translate the existing Penpot foundations and reusable components into an Expo-based component library, surfaced and verified through React Native Storybook on iOS and Android. Product screens, navigation, backend behavior, and persistent game data follow in later milestones.
+The first milestone is the product's standalone React Native design system rather than the working game flow. It is an Expo-based component library surfaced and verified through React Native Storybook on iOS and Android. Product screens, navigation, backend behavior, and persistent game data follow in later milestones.
 
-**Core Value:** Create a faithful, reusable mobile component system from the Penpot source of truth so future product screens can be assembled consistently and confidently.
+**Core Value:** Maintain a dependable, reusable mobile component system so future product screens can be assembled consistently and confidently.
 
 ### Constraints
 
 - **Platform**: Mobile only, targeting iOS and Android — the product experience is intentionally native-first.
 - **Application stack**: React Native with Expo — chosen as the likely implementation platform for the eventual app and its component system.
 - **Component workbench**: React Native Storybook — the first milestone must be independently reviewable without product screens.
-- **Design authority**: The committed `design-source/padel-potato UI Concepts.penpot` export is the default authority for foundations, components, and product-screen context — implementation must not invent or silently substitute design values. Use `npm run design:inspect` for routine local queries; live Penpot MCP is optional for freshness checks only.
-- **Verification**: Run `npm run validate:design-source`, then compare retained design references with native Storybook output — source inspection alone cannot prove runtime rendering fidelity. Preserve completed Phase 1/2 MCP evidence as historical provenance.
+- **Runtime ownership**: Tokens, icons, fonts, artwork, supported configurations, and validation rules live within `src/design-system`; active code must not depend on design-tool files or extraction evidence.
+- **Verification**: Run `npm run verify`, then use native Storybook for user-led visual and interaction review.
 - **Web support**: Provide a locally browser-accessible Storybook catalogue through Expo's web target, but do not add cost or compromise native behavior to achieve pixel-perfect browser parity.
 
 <!-- GSD:project-end -->
@@ -62,7 +62,7 @@ The first milestone is the product's React Native design system rather than the 
 |---|---:|---|---|
 | Expo Go / Expo development build | SDK 57-compatible | Android device/emulator and physical iPhone review | Supports the acceptance target without committing native project directories. Add a development build only if a later component requires a native dependency unsupported by Expo Go. |
 | Expo web | SDK 57 | Local desktop-browser catalogue | Install Expo-aligned `react-dom@19.2.3`, `react-native-web~0.21.0`, and `@expo/metro-runtime~57.0.15`; launch with `npx expo start --web`. It is a convenience review target, not visual authority. |
-| Local Penpot snapshot | revision 296, Git LFS | Canonical design extraction, properties, variants, and reference data | Inspect `design-source/padel-potato UI Concepts.penpot` through the dependency-free local reader. Its deterministic manifest pins the exact bytes and inventory; live Penpot MCP is optional for freshness checks only. |
+| Component-local assets | repository-owned | Runtime brand, icon, mascot, and font media | Keep runtime media under `src/design-system/assets` or the established licensed font directory. |
 | Screenshot evidence directory | repository convention | Reviewable native visual verification | Store versioned, named evidence and a short comparison record; compare local-snapshot-grounded references with captured iOS and Android Storybook renders and log intentional platform deviations. |
 
 ### Testing and Quality
@@ -83,8 +83,8 @@ The first milestone is the product's React Native design system rather than the 
 | Native component workbench | `@storybook/react-native` v10 | Web-only Storybook with `@storybook/addon-react-native-web` | Browser rendering cannot be the authority for native iOS/Android layout and interaction. The addon is an older web adapter, whereas the v10 native Storybook offers an Expo-aware Metro workflow. |
 | Browser catalogue | Expo web running native Storybook | Separate Vite Storybook from day one | Creates two configurations and a larger parity surface; requirements explicitly make browser review secondary. |
 | Test renderer | React Native Testing Library | `react-test-renderer` | Expo documents the latter as deprecated because it does not support React 19+. |
-| Native visual acceptance | Local-Penpot-reference-to-native Storybook comparison | Browser snapshot tests or source inspection as the sole gate | They can complement validation but cannot prove iOS/Android rendering fidelity. |
-| Styling system | Typed React Native `StyleSheet`/style objects consuming local tokens | NativeWind/Tailwind, UI kit, or CSS-in-JS framework | The milestone must faithfully translate an existing Penpot system. A new abstraction/library would impose its own tokens, state conventions, and web constraints before the baseline exists. |
+| Native visual acceptance | User-led native Storybook review | Browser snapshot tests or source inspection as the sole gate | Automated checks complement review but cannot prove iOS/Android visual fidelity. |
+| Styling system | Typed React Native `StyleSheet`/style objects consuming local tokens | NativeWind/Tailwind, UI kit, or CSS-in-JS framework | The standalone system already owns its tokens and state conventions; an additional styling abstraction is unnecessary. |
 | iOS simulator on Windows | Physical iPhone plus Expo development server; macOS CI/reviewer for simulator checks | Attempting local iOS Simulator/Xcode on Windows | Expo documents that iOS Simulator is macOS-only. Windows can develop Android/web locally and use a physical iOS device or cloud build/distribution. |
 
 ## Installation

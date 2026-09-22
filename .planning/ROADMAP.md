@@ -2,7 +2,7 @@
 
 ## Overview
 
-This milestone establishes Padel Potato's React Native design system as a dependable future screen-building kit. Work starts with the Penpot Foundations screen in Storybook, then builds reusable primitives and components in dependency order, and closes with native catalogue validation and a coverage audit. Product screens, app navigation, and game flows remain deferred.
+This milestone establishes Padel Potato's standalone React Native design system as a dependable future screen-building kit. Completed phases built the foundations and reusable components; Phase 5 closes with native catalogue validation and a public-contract coverage audit. Product screens, app navigation, and game flows remain deferred.
 
 ## Phases
 
@@ -145,16 +145,16 @@ Plans:
 
 ### Phase 5: Native Catalogue Validation and Coverage Audit
 
-**Goal**: Reviewers can establish that the completed Storybook catalogue is complete, native-ready, comparable to Penpot, and safe to integrate into future product screens.
+**Goal**: Reviewers can establish that the standalone Storybook catalogue is complete, native-ready, and safe to integrate into future product screens.
 **Depends on**: Phase 4
 **Requirements**: WORK-02, WORK-03, WORK-05, VRFY-01, VRFY-02, VRFY-03, VRFY-04, VRFY-05
 **Success Criteria** (what must be TRUE):
 
   1. The completed catalogue launches on iOS and Android without being integrated into product navigation or flows.
   2. Production-mode app builds exclude Storybook code.
-  3. Every component family has iOS and Android Penpot comparison evidence, with corrections or approved deviations recorded.
-  4. A coverage audit accounts for every Penpot foundation, component, variant, and designed state.
-  5. Shared stories pass the local browser smoke review and the final evidence pack records platforms, conditions, results, and approved deviations.
+  3. Every public component family and supported configuration is represented by behavior tests and Storybook stories.
+  4. Active design-system code has no dependency on design-tool archives, evidence manifests, or extraction registries.
+  5. Shared stories pass local browser smoke review; the user performs native visual review and reports any issues they observe.
 
 **Plans**: TBD
 **UI hint**: yes
