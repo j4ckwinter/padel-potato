@@ -23,7 +23,7 @@ import {
   type SegmentedControlProps,
   type SegmentOptions,
 } from '../src/design-system/components/navigation/SegmentedControl';
-import { phase3Families } from '../src/design-system/stories/componentFixtures';
+import { bottomNavigationFixtures, segmentedControlFixtures, appHeaderFixtures, sectionHeaderFixtures } from '../src/design-system/stories/fixtures';
 import AppHeaderStories, {
   Boundaries as AppHeaderBoundaries,
   normalizeAppHeaderStoryArgs,
@@ -48,10 +48,8 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-const bottomNavigationRecords = phase3Families[9].records;
-const segmentedControlRecords = phase3Families[10].records;
 
-describe('BottomNavigation source, order, and controlled intent', () => {  it('renders five individually named tabs in source-defined visual order', async () => {
+describe('BottomNavigation source, order, and controlled intent', () => {  it('renders five individually named tabs in component-defined visual order', async () => {
     const screen = await render(
       <BottomNavigation activeDestination="games" onDestinationPress={jest.fn()} />,
     );
@@ -185,7 +183,7 @@ describe('SegmentedControl tuple boundary and controlled selection', () => {
 });
 
 describe('Navigation composite Storybook contract', () => {
-  it('publishes exact groups, bounded controls, and source-record variant counts', () => {
+  it('publishes exact groups, bounded controls, and fixture variant counts', () => {
     expect(BottomNavigationStories.title).toBe('Navigation/Bottom Navigation');
     expect(BottomNavigationStories.argTypes).toEqual(expect.objectContaining({
       activeDestination: { control: 'select', options: ['home', 'games', 'create', 'players', 'profile'] },
@@ -200,8 +198,8 @@ describe('Navigation composite Storybook contract', () => {
 
     const bottomVariants = BottomNavigationVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
     const segmentVariants = SegmentedControlVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
-    expect(Children.toArray(bottomVariants.props.children)).toHaveLength(bottomNavigationRecords.length);
-    expect(Children.toArray(segmentVariants.props.children)).toHaveLength(segmentedControlRecords.length);
+    expect(Children.toArray(bottomVariants.props.children)).toHaveLength(bottomNavigationFixtures.length);
+    expect(Children.toArray(segmentVariants.props.children)).toHaveLength(segmentedControlFixtures.length);
   });
 
   it('keeps every SegmentedControl value transition inside the controlled options', async () => {
@@ -234,8 +232,6 @@ describe('Navigation composite Storybook contract', () => {
   });
 });
 
-const appHeaderRecords = phase3Families[11].records;
-const sectionHeaderRecords = phase3Families[12].records;
 
 describe('AppHeader closed page configurations', () => {  it.each([
     ['home', 'Hi, Alex', 'Ready for your next match?', 'wave'],
@@ -408,8 +404,8 @@ describe('Header Storybook contract', () => {
 
     const appVariants = AppHeaderVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
     const sectionVariants = SectionHeaderVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
-    expect(Children.toArray(appVariants.props.children)).toHaveLength(appHeaderRecords.length);
-    expect(Children.toArray(sectionVariants.props.children)).toHaveLength(sectionHeaderRecords.length);
+    expect(Children.toArray(appVariants.props.children)).toHaveLength(appHeaderFixtures.length);
+    expect(Children.toArray(sectionVariants.props.children)).toHaveLength(sectionHeaderFixtures.length);
   });
 
   it('rebuilds a valid action contract for every AppHeader page transition', async () => {

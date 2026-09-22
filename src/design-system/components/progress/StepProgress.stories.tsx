@@ -3,16 +3,15 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { stepProgressFixtures } from '../../stories/fixtures';
 import {
   StepProgress,
   type StepProgressProps,
   type StepProgressValue,
 } from './StepProgress';
 
-const records = phase4Families[4].records;
+const fixtures = stepProgressFixtures;
 const values = Object.freeze([1, 2, 3, 'complete'] as const);
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Progress/Step Progress',
@@ -32,8 +31,8 @@ export function normalizeStepProgressStoryArgs(args: Readonly<{ value?: unknown 
   };
 }
 
-function recordValue(record: (typeof records)[number]): StepProgressValue {
-  return record.normalizedTuple.content;
+function recordValue(fixture: (typeof fixtures)[number]): StepProgressValue {
+  return fixture.configuration.content;
 }
 
 export const Canonical: Story = {
@@ -41,7 +40,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <StepProgress {...normalizeStepProgressStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[3].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[3].label}</Text>
     </Stack>
   ),
 };
@@ -50,11 +49,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <StepProgress value={recordValue(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <StepProgress value={recordValue(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

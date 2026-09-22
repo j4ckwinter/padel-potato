@@ -32,12 +32,7 @@ import {
   type FavouriteProps,
 } from '../src/design-system/components/actions/Favourite';
 import * as actions from '../src/design-system/components/actions';
-import {
-  buttonRecords,
-  buttonSizes,
-  buttonStyles,
-  phase3Families,
-} from '../src/design-system/stories/componentFixtures';
+import { buttonFixtures, iconButtonFixtures, favouriteFixtures, buttonStyles, buttonSizes } from '../src/design-system/stories/fixtures';
 import { colors } from '../src/design-system/tokens';
 
 const flattenedStyle = (style: unknown) =>
@@ -45,7 +40,7 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-describe('Button source contract', () => {  it('exposes only closed authored style and size values', () => {
+describe('Button public contract', () => {  it('exposes only closed authored style and size values', () => {
     const stylesAreClosed: ButtonStyle[] = [
       'primary',
       'secondary',
@@ -257,7 +252,7 @@ describe('Button Storybook contract', () => {
       children: readonly React.ReactElement[];
     }>;
     const variantChildren = Children.toArray(variants.props.children);
-    expect(variantChildren).toHaveLength(buttonRecords.length);
+    expect(variantChildren).toHaveLength(buttonFixtures.length);
     expect(variantChildren.every((entry) =>
       Children.count((entry as React.ReactElement<{ children: React.ReactNode }>).props.children) === 2,
     )).toBe(true);
@@ -268,9 +263,8 @@ describe('Button Storybook contract', () => {
   });
 });
 
-const iconButtonRecords = phase3Families[1].records;
 
-describe('IconButton source and public contract', () => {  it.each([
+describe('IconButton public contract', () => {  it.each([
     ['enabled', false, 1],
     ['disabled', true, 0],
   ] as Array<[string, boolean, 0 | 1]>)('%s activation follows the shared blocked contract', async (_name, disabled, expectedCalls) => {
@@ -354,7 +348,7 @@ describe('IconButton source and public contract', () => {  it.each([
 });
 
 describe('IconButton Storybook contract', () => {
-  it('publishes the exact group, bounded controls, and six source-ordered records', () => {
+  it('publishes the exact group, bounded controls, and six declared configurations', () => {
     expect(IconButtonStories.title).toBe('Actions/Icon Button');
     expect(IconButtonStories.argTypes).toEqual(expect.objectContaining({
       disabled: { control: 'boolean' },
@@ -365,13 +359,12 @@ describe('IconButton Storybook contract', () => {
     const variants = IconButtonVariants.render?.({} as never, {} as never) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(Children.toArray(variants.props.children)).toHaveLength(iconButtonRecords.length);
+    expect(Children.toArray(variants.props.children)).toHaveLength(iconButtonFixtures.length);
   });
 });
 
-const favouriteRecords = phase3Families[2].records;
 
-describe('Favourite source and controlled contract', () => {  it('emits the opposite checked value once and remains controlled until rerender', async () => {
+describe('Favourite controlled public contract', () => {  it('emits the opposite checked value once and remains controlled until rerender', async () => {
     const onCheckedChange = jest.fn();
     const user = userEvent.setup();
     const screen = await render(
@@ -466,7 +459,7 @@ describe('Favourite Storybook and action barrel contract', () => {
     ]);
   });
 
-  it('publishes the exact group, source-ordered records, and long-name target boundary', () => {
+  it('publishes the exact group, declared configurations, and long-name target boundary', () => {
     expect(FavouriteStories.title).toBe('Actions/Favourite');
     expect(FavouriteStories.argTypes).toEqual(expect.objectContaining({
       checked: { control: 'boolean' },
@@ -476,7 +469,7 @@ describe('Favourite Storybook and action barrel contract', () => {
     const variants = FavouriteVariants.render?.({} as never, {} as never) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(Children.toArray(variants.props.children)).toHaveLength(favouriteRecords.length);
+    expect(Children.toArray(variants.props.children)).toHaveLength(favouriteFixtures.length);
 
     const boundaries = FavouriteBoundaries.render?.({} as never, {} as never) as React.ReactElement;
     expect(JSON.stringify(boundaries)).toContain('200%');

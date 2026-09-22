@@ -3,14 +3,14 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { gameCardFixtures } from '../../stories/fixtures';
 import {
   GameCard,
   type GameCardParticipant,
   type GameCardProps,
 } from './GameCard';
 
-const records = phase4Families[6].records;
+const fixtures = gameCardFixtures;
 const participants = [
   { initials: 'AM', name: 'Alex Morgan', presence: 'online', slot: 1 },
   { initials: 'JT', name: 'Jamie Taylor', presence: 'online', slot: 2 },
@@ -23,7 +23,6 @@ const content = {
   venue: 'Padel United · Court 3',
 } as const;
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
@@ -35,8 +34,8 @@ type StoryArgs = Readonly<{
 }>;
 
 export const gameCardStoryConfigurations = Object.freeze(
-  records.map(({ normalizedTuple }) => (
-    `${normalizedTuple.type}/${normalizedTuple.state}`
+  fixtures.map(({ configuration }) => (
+    `${configuration.type}/${configuration.state}`
   )),
 );
 
@@ -82,8 +81,8 @@ export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
   }
 }
 
-function recordProps(record: (typeof records)[number]): GameCardProps {
-  const { state, type } = record.normalizedTuple;
+function fixtureProps(fixture: (typeof fixtures)[number]): GameCardProps {
+  const { state, type } = fixture.configuration;
   if (type === 'compact') return { title: content.title, venue: content.venue, variant: 'compact' };
   if (type === 'completed') {
     return { ...content, onViewResults: () => undefined, participants, variant: 'completed' };
@@ -107,7 +106,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <GameCard {...normalizeGameCardStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[4].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[4].label}</Text>
     </Stack>
   ),
 };
@@ -116,11 +115,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <GameCard {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <GameCard {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -132,9 +131,9 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      <GameCard {...recordProps(records[3])} />
-      <GameCard {...recordProps(records[0])} />
-      <GameCard {...recordProps(records[1])} />
+      <GameCard {...fixtureProps(fixtures[3])} />
+      <GameCard {...fixtureProps(fixtures[0])} />
+      <GameCard {...fixtureProps(fixtures[1])} />
     </Stack>
   ),
 };

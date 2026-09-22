@@ -45,7 +45,7 @@ import {
   type StepperFieldProps,
   type TriggerFieldProps,
 } from '../src/design-system/components/forms/Field';
-import { phase3Families } from '../src/design-system/stories/componentFixtures';
+import { fieldFixtures, choiceChipFixtures, checkboxFixtures, dayTimeSelectorFixtures } from '../src/design-system/stories/fixtures';
 import { colors } from '../src/design-system/tokens';
 
 const flattenedStyle = (style: unknown) =>
@@ -53,12 +53,8 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-const fieldRecords = phase3Families[3].records;
-const choiceChipRecords = phase3Families[4].records;
-const checkboxRecords = phase3Families[5].records;
-const dayTimeSelectorRecords = phase3Families[6].records;
 
-describe('Field source and public contract', () => {});
+describe('Field public contract', () => {});
 
 describe('Field editable branches', () => {
   it('uses a native controlled TextInput and retains empty required copy until rerender', async () => {
@@ -492,7 +488,7 @@ describe('Field Storybook contract', () => {
     const variants = FieldVariants.render?.({} as never, {} as never) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(React.Children.toArray(variants.props.children)).toHaveLength(fieldRecords.length);
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(fieldFixtures.length);
   });
 
   it('records all required boundary and interactive witnesses without native-proof claims', () => {
@@ -510,7 +506,7 @@ describe('Field Storybook contract', () => {
   });
 });
 
-describe('ChoiceChip source and controlled contract', () => {  it.each([
+describe('ChoiceChip controlled public contract', () => {  it.each([
     ['option', 'none', false, 'radio'],
     ['option', 'leading', true, 'radio'],
     ['filter', 'leading', true, 'checkbox'],
@@ -655,7 +651,7 @@ describe('ChoiceChip Storybook contract', () => {
     const variants = ChoiceChipVariants.render?.({} as never, {} as never) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(React.Children.toArray(variants.props.children)).toHaveLength(choiceChipRecords.length);
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(choiceChipFixtures.length);
   });
 
   it('normalizes every visible type, selected, and disabled transition to the exact source tuple', async () => {
@@ -703,7 +699,7 @@ describe('ChoiceChip Storybook contract', () => {
   });
 });
 
-describe('Checkbox source and controlled contract', () => {  it('emits the opposite boolean once while checked state remains consumer-owned', async () => {
+describe('Checkbox controlled public contract', () => {  it('emits the opposite boolean once while checked state remains consumer-owned', async () => {
     const onCheckedChange = jest.fn();
     const screen = await render(
       <Checkbox
@@ -826,7 +822,7 @@ describe('Checkbox Storybook contract', () => {
     const variants = CheckboxVariants.render?.({} as never, {} as never) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(React.Children.toArray(variants.props.children)).toHaveLength(checkboxRecords.length);
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(checkboxFixtures.length);
   });
 
   it('records adjacency, 200%-name, target-clearance, and interactive witnesses', () => {
@@ -840,7 +836,7 @@ describe('Checkbox Storybook contract', () => {
   });
 });
 
-describe('DayTimeSelector source and controlled contract', () => {  it('names each day option from visible day/date content and retains caller-owned selection', async () => {
+describe('DayTimeSelector controlled public contract', () => {  it('names each day option from visible day/date content and retains caller-owned selection', async () => {
     const onSelect = jest.fn();
     const screen = await render(
       <DayTimeSelector
@@ -991,7 +987,7 @@ describe('DayTimeSelector Storybook and forms publication contract', () => {
     const variants = DayTimeSelectorVariants.render?.({} as never, {} as never) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(React.Children.toArray(variants.props.children)).toHaveLength(dayTimeSelectorRecords.length);
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(dayTimeSelectorFixtures.length);
   });
 
   it('normalizes branch and state transitions without retaining incompatible content keys', async () => {

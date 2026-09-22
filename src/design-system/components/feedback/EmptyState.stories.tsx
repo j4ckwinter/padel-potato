@@ -3,11 +3,10 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { emptyStateFixtures } from '../../stories/fixtures';
 import { EmptyState, type EmptyStateProps } from './EmptyState';
 
-const records = phase4Families[13].records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
+const fixtures = emptyStateFixtures;
 
 const meta = {
   title: 'Feedback/Empty State',
@@ -47,8 +46,8 @@ export function normalizeEmptyStateStoryArgs(args: StoryArgs): EmptyStateProps {
   };
 }
 
-function recordProps(record: (typeof records)[number]): EmptyStateProps {
-  switch (record.normalizedTuple.content) {
+function fixtureProps(fixture: (typeof fixtures)[number]): EmptyStateProps {
+  switch (fixture.configuration.content) {
     case 'noNotifications': return { content: 'noNotifications' };
     case 'noPlayers': return { content: 'noPlayers', onInvitePlayers: () => undefined };
     default: return { content: 'noGames', onCreateGame: () => undefined };
@@ -60,7 +59,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <EmptyState {...normalizeEmptyStateStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[2].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[2].label}</Text>
     </Stack>
   ),
 };
@@ -69,11 +68,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <EmptyState {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <EmptyState {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} \u00b7 ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -85,7 +84,7 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => <EmptyState key={record.id} {...recordProps(record)} />)}
+      {fixtures.map((fixture) => <EmptyState key={fixture.label} {...fixtureProps(fixture)} />)}
     </Stack>
   ),
 };

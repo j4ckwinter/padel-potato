@@ -3,14 +3,13 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { statusChipFixtures } from '../../stories/fixtures';
 import {
   StatusChip,
   type StatusChipProps,
 } from './StatusChip';
 
-const records = phase4Families[3].records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
+const fixtures = statusChipFixtures;
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
@@ -19,8 +18,8 @@ type StoryArgs = Readonly<{
 }>;
 
 export const statusChipStoryConfigurations = Object.freeze(
-  records.map(({ normalizedTuple }) => (
-    `${normalizedTuple.style}/${normalizedTuple.state}`
+  fixtures.map(({ configuration }) => (
+    `${configuration.style}/${configuration.state}`
   )),
 );
 
@@ -64,9 +63,9 @@ export function normalizeStatusChipStoryArgs(args: StoryArgs): StatusChipProps {
   }
 }
 
-function recordProps(record: (typeof records)[number]): StatusChipProps {
-  const style = record.normalizedTuple.style;
-  const state = record.normalizedTuple.state;
+function fixtureProps(fixture: (typeof fixtures)[number]): StatusChipProps {
+  const style = fixture.configuration.style;
+  const state = fixture.configuration.state;
   if (state === 'selected') {
     return {
       label: 'Confirmed',
@@ -85,7 +84,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <StatusChip {...normalizeStatusChipStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[6].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[6].label}</Text>
     </Stack>
   ),
 };
@@ -94,11 +93,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <StatusChip {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <StatusChip {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

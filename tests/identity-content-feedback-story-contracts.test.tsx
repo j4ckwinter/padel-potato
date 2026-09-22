@@ -22,8 +22,8 @@ import * as BannerToastStories from '../src/design-system/components/feedback/Ba
 import * as EmptyStateStories from '../src/design-system/components/feedback/EmptyState.stories';
 import * as IllustratedCardStories from '../src/design-system/components/cards/IllustratedCard.stories';
 import {
-  phase4Backstops,
-  phase4StoryContracts,
+  storybookBackstops,
+  storyContracts,
   storyTaxonomy,
 } from '../src/design-system/stories/storyContract';
 
@@ -109,7 +109,7 @@ const storyModules = [
   IllustratedCardStories,
 ] as const;
 
-const phase4StoryFiles = [
+const componentStoryFiles = [
   'identity/Avatar.stories.tsx',
   'identity/AvatarGroup.stories.tsx',
   'identity/AvatarPicker.stories.tsx',
@@ -127,11 +127,15 @@ const phase4StoryFiles = [
   'cards/IllustratedCard.stories.tsx',
 ] as const;
 
-describe('Phase 4 Storybook catalogue contract', () => {
+const componentStoryContracts = Object.fromEntries(
+  expectedDefinitions.map(([name]) => [name, storyContracts[name]]),
+);
+
+describe('identity, content, and feedback Storybook catalogue contract', () => {
   it('publishes exactly the 15 component family contracts and titles', () => {
     const expectedExports = expectedDefinitions.map(([exportName]) => exportName);
-    expect(Object.keys(phase4StoryContracts)).toEqual(expectedExports);
-    expect(Object.values(phase4StoryContracts).map(({ title }) => title)).toEqual(
+    expect(Object.keys(componentStoryContracts)).toEqual(expectedExports);
+    expect(Object.values(componentStoryContracts).map(({ title }) => title)).toEqual(
       expectedDefinitions.map(([, , title]) => title),
     );
     for (const name of expectedExports) {
@@ -148,14 +152,14 @@ describe('Phase 4 Storybook catalogue contract', () => {
 
   it('accounts for the ordered taxonomy with a story or an inherent non-empty reason', () => {
     expect(storyTaxonomy).toEqual(['Canonical', 'Variants', 'States', 'Boundaries', 'Interactive']);
-    for (const contract of Object.values(phase4StoryContracts)) {
+    for (const contract of Object.values(componentStoryContracts)) {
       expect(Object.keys(contract.categories)).toEqual(storyTaxonomy);
       for (const entry of Object.values(contract.categories)) {
         expect(entry.status === 'story' ? entry.story : entry.reason).not.toHaveLength(0);
       }
     }
     for (const name of ['Avatar', 'StepProgress', 'StatTile', 'ScoreResultBlock', 'PlayerPreferencesCard'] as const) {
-      expect(phase4StoryContracts[name].categories.Interactive).toMatchObject({
+      expect(storyContracts[name].categories.Interactive).toMatchObject({
         status: 'inapplicable',
       });
     }
@@ -166,13 +170,13 @@ describe('Phase 4 Storybook catalogue contract', () => {
       'pressed', 'focused', 'color', 'width', 'height', 'artwork', 'children',
       'router', 'route', 'timer', 'remoteSource', 'upload', 'storage', 'persistence',
     ];
-    for (const contract of Object.values(phase4StoryContracts)) {
+    for (const contract of Object.values(componentStoryContracts)) {
       expect(contract.controls.every((control) => !prohibited.includes(control))).toBe(true);
       expect(contract.actions.every((action) => action.startsWith('on'))).toBe(true);
     }
-    expect(phase4StoryContracts.EmptyState.actions).toEqual(['onCreateGame', 'onInvitePlayers']);
-    expect(phase4StoryContracts.StepProgress.actions).toEqual([]);
-    expect(phase4StoryContracts.IllustratedCard.controls).toEqual(['type']);
+    expect(storyContracts.EmptyState.actions).toEqual(['onCreateGame', 'onInvitePlayers']);
+    expect(storyContracts.StepProgress.actions).toEqual([]);
+    expect(storyContracts.IllustratedCard.controls).toEqual(['type']);
     for (const name of [
       'Avatar',
       'StatusChip',
@@ -182,7 +186,7 @@ describe('Phase 4 Storybook catalogue contract', () => {
       'SettingsRow',
       'StatTile',
     ] as const) {
-      expect(phase4StoryContracts[name].controls).toEqual(['configuration']);
+      expect(storyContracts[name].controls).toEqual(['configuration']);
     }
   });
 
@@ -315,8 +319,8 @@ describe('Phase 4 Storybook catalogue contract', () => {
     },
   );
 
-  it('uses only the declared Phase 4 spacing scale in catalogue composition', () => {
-    for (const storyFile of phase4StoryFiles) {
+  it('uses only the declared spacing scale in catalogue composition', () => {
+    for (const storyFile of componentStoryFiles) {
       const source = fs.readFileSync(
         path.resolve('src/design-system/components', storyFile),
         'utf8',
@@ -326,24 +330,24 @@ describe('Phase 4 Storybook catalogue contract', () => {
   });
 
   it('retains host backstops and explicitly defers every native acceptance lane', () => {
-    expect(phase4Backstops).toMatchObject({
-      longContent: { status: 'host-contract', nativeStatus: 'deferred-to-phase-5' },
+    expect(storybookBackstops.contentComponents).toMatchObject({
+      longContent: { status: 'host-contract', nativeStatus: 'deferred-to-native-review' },
       overflow: { status: 'host-contract' },
       cardinality: { status: 'host-contract' },
       targetClearance: { minimumEffectiveTarget: 44, status: 'host-contract' },
       readOrder: { status: 'host-contract' },
       nativeReview: {
-        ios: 'deferred-to-phase-5',
-        android: 'deferred-to-phase-5',
-        fontScale200: 'deferred-to-phase-5',
-        voiceOver: 'deferred-to-phase-5',
-        talkBack: 'deferred-to-phase-5',
+        ios: 'deferred-to-native-review',
+        android: 'deferred-to-native-review',
+        fontScale200: 'deferred-to-native-review',
+        voiceOver: 'deferred-to-native-review',
+        talkBack: 'deferred-to-native-review',
       },
     });
   });
 });
 
-describe('Phase 4 rendered edge witnesses', () => {
+describe('identity, content, and feedback rendered edge witnesses', () => {
   const players = [
     { initials: 'AP', name: 'Alex', presence: 'online' },
     { initials: 'BP', name: 'Bea', presence: 'online' },

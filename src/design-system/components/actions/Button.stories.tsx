@@ -3,14 +3,9 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import {
-  buttonRecords,
-  buttonSizes,
-  buttonStyles,
-} from '../../stories/componentFixtures';
+import { buttonFixtures, buttonStyles, buttonSizes } from '../../stories/fixtures';
 import { Button, type ButtonProps } from './Button';
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Actions/Button',
@@ -70,14 +65,14 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <Button {...normalizeButtonStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a60ea006c15d')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
 };
 
-const recordProps = (record: (typeof buttonRecords)[number]): ButtonProps => {
-  const tuple = record.normalizedTuple;
+const fixtureProps = (fixture: (typeof buttonFixtures)[number]): ButtonProps => {
+  const tuple = fixture.configuration;
   const style = tuple.style as ButtonProps['style'];
   const size = tuple.size as 40 | 48;
   if (tuple.state === 'disabled') {
@@ -94,11 +89,11 @@ export const Variants: Story = {
   args: { label: 'Button label', style: 'primary' },
   render: () => (
     <Stack gap="space12">
-      {buttonRecords.map((record) => (
-        <Fragment key={record.id}>
-          <Button {...recordProps(record)} />
+      {buttonFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <Button {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

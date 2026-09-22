@@ -3,12 +3,11 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { avatarPickerFixtures } from '../../stories/fixtures';
 import { AvatarPicker, type AvatarPickerProps } from './AvatarPicker';
 
 const storyPhoto = require('../../assets/media/mascot-profile.webp');
-const records = phase4Families[2].records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
+const fixtures = avatarPickerFixtures;
 
 const meta = {
   title: 'Identity/Avatar Picker',
@@ -37,9 +36,9 @@ export function normalizeAvatarPickerStoryArgs(args: StoryArgs): AvatarPickerPro
   }
 }
 
-function recordProps(record: (typeof records)[number]): AvatarPickerProps {
-  const content = record.normalizedTuple.content;
-  const state = record.normalizedTuple.state;
+function fixtureProps(fixture: (typeof fixtures)[number]): AvatarPickerProps {
+  const content = fixture.configuration.content;
+  const state = fixture.configuration.state;
   if (content === 'photo' && state === 'selected') {
     return { onPress: () => undefined, source: storyPhoto, variant: 'photo' };
   }
@@ -53,7 +52,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <AvatarPicker {...normalizeAvatarPickerStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[3].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[3].label}</Text>
     </Stack>
   ),
 };
@@ -62,11 +61,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <AvatarPicker {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <AvatarPicker {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

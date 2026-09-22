@@ -40,7 +40,7 @@ import * as DesignSystem from '../../src/design-system';
 const noop = () => undefined;
 const noopBoolean = (_value: boolean) => undefined;
 
-const phase4PublicFamilies = [
+const contentPublicFamilies = [
   'Avatar',
   'AvatarGroup',
   'AvatarPicker',
@@ -61,7 +61,7 @@ const phase4PublicFamilies = [
 // @ts-expect-error Generated artwork renderers remain private.
 const privateArtworkRenderer = DesignSystem.NextGameIllustratedCardArtwork;
 // @ts-expect-error Story-only fixture helpers remain private.
-const privateStoryFixture = DesignSystem.phase4StoryFixtures;
+const privateStoryFixtures = DesignSystem.internalStoryFixtures;
 
 const avatarIdentity = {
   initials: 'AP',
@@ -226,8 +226,8 @@ const invalidIllustratedCardCardinality: IllustratedCardProps = { detailPrimary:
 const invalidIllustratedCardCallback: IllustratedCardProps = { detailPrimary: 'Won', detailSecondary: '6-4, 6-3', eyebrow: 'Result', onViewGame: noop, participants: [illustrated1, illustrated2, illustrated3, illustrated4], title: 'Victory', type: 'matchResult' };
 
 void validContracts;
-void phase4PublicFamilies;
-void [privateArtworkRenderer, privateStoryFixture];
+void contentPublicFamilies;
+void [privateArtworkRenderer, privateStoryFixtures];
 void [
   invalidAvatarTuple,
   invalidAvatarSemantics,

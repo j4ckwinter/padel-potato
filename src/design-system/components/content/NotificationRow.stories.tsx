@@ -3,17 +3,16 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { notificationRowFixtures } from '../../stories/fixtures';
 import { NotificationRow, type NotificationRowProps } from './NotificationRow';
 
-const records = phase4Families[7].records;
+const fixtures = notificationRowFixtures;
 const content = {
   message: 'Your activity has a new update',
   timestamp: '2m',
   title: 'Game update',
 } as const;
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
@@ -24,8 +23,8 @@ type StoryArgs = Readonly<{
 }>;
 
 export const notificationRowStoryConfigurations = Object.freeze(
-  records.map(({ normalizedTuple }) => (
-    `${normalizedTuple.type}/${normalizedTuple.state}`
+  fixtures.map(({ configuration }) => (
+    `${configuration.type}/${configuration.state}`
   )),
 );
 
@@ -62,8 +61,8 @@ export function normalizeNotificationRowStoryArgs(args: StoryArgs): Notification
   return { ...nextContent, read: state === 'read', type } as NotificationRowProps;
 }
 
-function recordProps(record: (typeof records)[number]): NotificationRowProps {
-  const { state, type } = record.normalizedTuple;
+function fixtureProps(fixture: (typeof fixtures)[number]): NotificationRowProps {
+  const { state, type } = fixture.configuration;
   return normalizeNotificationRowStoryArgs({
     configuration: `${type}/${state}`,
     ...content,
@@ -76,7 +75,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <NotificationRow {...normalizeNotificationRowStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[5].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[5].label}</Text>
     </Stack>
   ),
 };
@@ -85,11 +84,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <NotificationRow {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <NotificationRow {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -101,8 +100,8 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      <NotificationRow {...recordProps(records[5])} />
-      <NotificationRow {...recordProps(records[1])} />
+      <NotificationRow {...fixtureProps(fixtures[5])} />
+      <NotificationRow {...fixtureProps(fixtures[1])} />
     </Stack>
   ),
 };

@@ -3,13 +3,13 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { playerPreferencesCardFixtures } from '../../stories/fixtures';
 import {
   PlayerPreferencesCard,
   type PlayerPreferencesCardProps,
 } from './PlayerPreferencesCard';
 
-const records = phase4Families[11].records;
+const fixtures = playerPreferencesCardFixtures;
 const values = {
   days: 'Mon–Sat',
   level: 'Intermediate',
@@ -17,7 +17,6 @@ const values = {
   timeOfDay: 'Afternoons',
 } as const;
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Content/Player Preferences Card',
@@ -53,19 +52,19 @@ export function normalizePlayerPreferencesCardStoryArgs(args: StoryArgs): Player
     : { ...shared, content: 'full', level: normalizedText(args.level, values.level) };
 }
 
-function recordProps(record: (typeof records)[number]): PlayerPreferencesCardProps {
+function fixtureProps(fixture: (typeof fixtures)[number]): PlayerPreferencesCardProps {
   return normalizePlayerPreferencesCardStoryArgs({
     ...values,
-    content: record.normalizedTuple.content,
+    content: fixture.configuration.content,
   });
 }
 
 export const Canonical: Story = {
-  args: recordProps(records[1]),
+  args: fixtureProps(fixtures[1]),
   render: (args) => (
     <Stack gap="space8">
       <PlayerPreferencesCard {...normalizePlayerPreferencesCardStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[1].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[1].label}</Text>
     </Stack>
   ),
 };
@@ -74,11 +73,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <PlayerPreferencesCard {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <PlayerPreferencesCard {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -90,8 +89,8 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      <PlayerPreferencesCard {...recordProps(records[0])} />
-      <PlayerPreferencesCard {...recordProps(records[1])} />
+      <PlayerPreferencesCard {...fixtureProps(fixtures[0])} />
+      <PlayerPreferencesCard {...fixtureProps(fixtures[1])} />
     </Stack>
   ),
 };

@@ -3,17 +3,15 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { bottomNavigationFixtures } from '../../stories/fixtures';
 import {
   BottomNavigation,
   bottomNavigationDestinations,
   type BottomNavigationDestination,
 } from './BottomNavigation';
 
-const family = phase3Families[9];
-const records = family.records;
+const fixtures = bottomNavigationFixtures;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Navigation/Bottom Navigation',
@@ -37,7 +35,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <BottomNavigation {...args} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a608c35c3552')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -47,14 +45,14 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {records.map((record) => (
-        <Fragment key={record.id}>
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
           <BottomNavigation
-            activeDestination={record.normalizedTuple.active as BottomNavigationDestination}
+            activeDestination={fixture.configuration.active as BottomNavigationDestination}
             onDestinationPress={noop}
           />
           <Text color="textSecondary" variant="caption">
-            {`${record.originalTuple.Active} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -69,7 +67,7 @@ export const States: Story = {
       <BottomNavigation activeDestination="home" onDestinationPress={noop} />
       <BottomNavigation activeDestination="create" onDestinationPress={noop} />
       <Text color="textSecondary" variant="caption">
-        Selected state is controlled; Create retains its source-defined accent action treatment.
+        Selected state is controlled; Create retains its component-defined accent action treatment.
       </Text>
     </Stack>
   ),

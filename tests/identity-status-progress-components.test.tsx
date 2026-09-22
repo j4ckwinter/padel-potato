@@ -17,9 +17,7 @@ import {
   type AvatarProps,
   type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
-import {
-  avatarRecords,
-} from '../src/design-system/stories/componentFixtures';
+import {  } from '../src/design-system/stories/fixtures';
 import AvatarGroupStories, {
   Boundaries as AvatarGroupBoundaries,
   Canonical as AvatarGroupCanonical,
@@ -72,7 +70,7 @@ const rejectedImageSources = [
   { uri: 'player.webp' },
 ] as const;
 
-describe('Avatar source contract', () => {});
+describe('Avatar public contract', () => {});
 
 describe('Avatar runtime and semantic contract', () => {
   it.each([

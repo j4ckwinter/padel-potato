@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { fieldFixtures } from '../../stories/fixtures';
 import {
   Field,
   fieldStatuses,
@@ -11,10 +11,7 @@ import {
   type FieldProps,
 } from './Field';
 
-const fieldFamily = phase3Families[3];
-const fieldRecords = fieldFamily.records;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const safeArgs = (args: Partial<FieldProps>): FieldProps => {
   const type = fieldTypes.includes(args.type as (typeof fieldTypes)[number])
@@ -90,14 +87,14 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <Field {...safeArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a60edc611d1f')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
 };
 
-const recordProps = (record: (typeof fieldRecords)[number]): FieldProps => {
-  const { state, type } = record.normalizedTuple;
+const fixtureProps = (fixture: (typeof fieldFixtures)[number]): FieldProps => {
+  const { state, type } = fixture.configuration;
   if (type === 'stepper') {
     return {
       label: 'Players',
@@ -149,11 +146,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {fieldRecords.map((record) => (
-        <Fragment key={record.id}>
-          <Field {...recordProps(record)} />
+      {fieldFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <Field {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

@@ -3,16 +3,14 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { socialSignInButtonFixtures } from '../../stories/fixtures';
 import {
   SocialSignInButton,
   socialSignInProviders,
   type SocialSignInProvider,
 } from './SocialSignInButton';
 
-const family = phase3Families[7];
-const records = family.records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
+const fixtures = socialSignInButtonFixtures;
 
 const meta = {
   title: 'Authentication/Social Sign-In Button',
@@ -33,7 +31,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <SocialSignInButton {...args} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a61e8cd600f5')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -43,14 +41,14 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {records.map((record) => (
-        <Fragment key={record.id}>
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
           <SocialSignInButton
-            disabled={record.normalizedTuple.state === 'disabled'}
-            provider={record.normalizedTuple.provider as SocialSignInProvider}
+            disabled={fixture.configuration.state === 'disabled'}
+            provider={fixture.configuration.provider as SocialSignInProvider}
           />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

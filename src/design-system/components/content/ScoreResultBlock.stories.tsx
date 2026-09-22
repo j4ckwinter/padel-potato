@@ -3,14 +3,14 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { scoreResultBlockFixtures } from '../../stories/fixtures';
 import {
   ScoreResultBlock,
   type ScoreResultBlockProps,
   type ScoreResultTeam,
 } from './ScoreResultBlock';
 
-const records = phase4Families[10].records;
+const fixtures = scoreResultBlockFixtures;
 const winningTeams = [
   { initials: 'AM', name: 'Alex & Jamie', scores: ['6', '6'] },
   { initials: 'RB', name: 'Riley & Sam', scores: ['4', '3'] },
@@ -20,7 +20,6 @@ const losingTeams = [
   { initials: 'RB', name: 'Riley & Sam', scores: ['6', '6'] },
 ] as const satisfies readonly [ScoreResultTeam, ScoreResultTeam];
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Content/Score Result Block',
@@ -66,8 +65,8 @@ export function normalizeScoreResultBlockStoryArgs(args: StoryArgs): ScoreResult
     : { state, teams, type };
 }
 
-function recordProps(record: (typeof records)[number]): ScoreResultBlockProps {
-  const { state, type } = record.normalizedTuple;
+function fixtureProps(fixture: (typeof fixtures)[number]): ScoreResultBlockProps {
+  const { state, type } = fixture.configuration;
   return normalizeScoreResultBlockStoryArgs({
     liveNote: 'Set 2 in progress',
     state,
@@ -78,11 +77,11 @@ function recordProps(record: (typeof records)[number]): ScoreResultBlockProps {
 }
 
 export const Canonical: Story = {
-  args: recordProps(records[5]),
+  args: fixtureProps(fixtures[5]),
   render: (args) => (
     <Stack gap="space8">
       <ScoreResultBlock {...normalizeScoreResultBlockStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[5].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[5].label}</Text>
     </Stack>
   ),
 };
@@ -91,11 +90,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <ScoreResultBlock {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <ScoreResultBlock {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -107,9 +106,9 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      <ScoreResultBlock {...recordProps(records[5])} />
-      <ScoreResultBlock {...recordProps(records[4])} />
-      <ScoreResultBlock {...recordProps(records[3])} />
+      <ScoreResultBlock {...fixtureProps(fixtures[5])} />
+      <ScoreResultBlock {...fixtureProps(fixtures[4])} />
+      <ScoreResultBlock {...fixtureProps(fixtures[3])} />
     </Stack>
   ),
 };

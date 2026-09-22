@@ -82,11 +82,10 @@ import {
   type PlayerItemIdentity,
   type PlayerItemProps,
 } from '../src/design-system/components/content/PlayerItem';
-import { phase4Families } from '../src/design-system/stories/componentFixtures';
+import { playerItemFixtures, gameCardFixtures, notificationRowFixtures, settingsRowFixtures, statTileFixtures, scoreResultBlockFixtures, playerPreferencesCardFixtures } from '../src/design-system/stories/fixtures';
 import * as ContentComponents from '../src/design-system/components/content';
 import { colors } from '../src/design-system/tokens';
 
-const playerItemRecords = phase4Families[5].records;
 
 const player = {
   initials: 'AM',
@@ -107,14 +106,14 @@ const rejectedImageSources = [
   { uri: 'player.webp' },
 ] as const;
 
-const notificationRecords = phase4Families[7].records;
+const notificationFixtures = notificationRowFixtures;
 const notificationContent = {
   message: 'Your activity has a new update',
   timestamp: '2m',
   title: 'Game update',
 } as const;
 
-describe('Notification Row source contract', () => {});
+describe('Notification Row public contract', () => {});
 
 describe('Notification Row runtime and semantic contract', () => {
   it.each([
@@ -199,9 +198,9 @@ describe('Notification Row Storybook contract', () => {
   });
 });
 
-const settingsRecords = phase4Families[8].records;
+const settingsFixtures = settingsRowFixtures;
 
-describe('Settings Row source contract', () => {});
+describe('Settings Row public contract', () => {});
 
 describe('Settings Row runtime and semantic contract', () => {
   it.each([
@@ -341,7 +340,7 @@ describe('Settings Row Storybook contract', () => {
   });
 });
 
-describe('Player Item source contract', () => {});
+describe('Player Item public contract', () => {});
 
 describe('Player Item runtime and semantic contract', () => {
   it.each([
@@ -491,7 +490,6 @@ describe('Player Item Storybook contract', () => {
   });
 });
 
-const gameCardRecords = phase4Families[6].records;
 const participants = [
   { initials: 'AM', name: 'Alex Morgan', presence: 'online', slot: 1 },
   { initials: 'JT', name: 'Jamie Taylor', presence: 'online', slot: 2 },
@@ -505,7 +503,7 @@ const cardContent = {
   venue: 'Padel United · Court 3',
 } as const;
 
-describe('Game Card source contract', () => {});
+describe('Game Card public contract', () => {});
 
 describe('Game Card runtime and semantic contract', () => {
   it.each([
@@ -637,14 +635,13 @@ describe('Game Card Storybook contract', () => {
   });
 });
 
-const statTileRecords = phase4Families[9].records;
 const statContent = {
   label: 'Win rate',
   supportingText: '+8% this month',
   value: '68%',
 } as const;
 
-describe('Stat Tile source contract', () => {});
+describe('Stat Tile public contract', () => {});
 
 describe('Stat Tile runtime and semantic contract', () => {
   it.each([
@@ -734,13 +731,13 @@ describe('Stat Tile Storybook contract', () => {
   });
 });
 
-const scoreResultRecords = phase4Families[10].records;
+const scoreResultFixtures = scoreResultBlockFixtures;
 const scoreTeams = [
   { initials: 'AM', name: 'Alex & Jamie', scores: ['6', '6'] },
   { initials: 'RB', name: 'Riley & Sam', scores: ['4', '3'] },
 ] as const satisfies readonly [ScoreResultTeam, ScoreResultTeam];
 
-describe('Score Result Block source contract', () => {});
+describe('Score Result Block public contract', () => {});
 
 describe('Score Result Block runtime and semantic contract', () => {
   it.each([
@@ -831,7 +828,7 @@ describe('Score Result Block Storybook contract', () => {
   });
 });
 
-const preferenceRecords = phase4Families[11].records;
+const preferenceFixtures = playerPreferencesCardFixtures;
 const profilePreferences = {
   content: 'profile',
   days: 'Mon–Sat',
@@ -844,7 +841,7 @@ const fullPreferences = {
   level: 'Intermediate',
 } as const satisfies PlayerPreferencesCardProps;
 
-describe('Player Preferences Card source contract', () => {});
+describe('Player Preferences Card public contract', () => {});
 
 describe('Player Preferences Card runtime and semantic contract', () => {
   it.each([

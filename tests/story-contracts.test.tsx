@@ -3,8 +3,8 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { Children, type ReactElement, type ReactNode } from 'react';
 
 import {
-  phase2Backstops,
-  phase2StoryContracts,
+  storybookBackstops,
+  storyContracts,
   storyTaxonomy,
 } from '../src/design-system/stories/storyContract';
 import brandMeta, {
@@ -62,7 +62,7 @@ const renderStory = async (
   );
 };
 
-describe('Phase 2 Storybook contract', () => {
+describe('foundation Storybook contract', () => {
   it('fixes the exact taxonomy and accounts for every primitive category', () => {
     expect(storyTaxonomy).toEqual([
       'Canonical',
@@ -82,7 +82,7 @@ describe('Phase 2 Storybook contract', () => {
       'BrandLockup',
       'BrandLockupStacked',
     ] as const) {
-      const contract = phase2StoryContracts[exportName];
+      const contract = storyContracts[exportName];
       expect(Object.keys(contract.categories)).toEqual(storyTaxonomy);
 
       for (const category of storyTaxonomy) {
@@ -308,31 +308,31 @@ describe('Phase 2 Storybook contract', () => {
   });
 
   it('keeps both UI backstops machine-detectable without claiming native proof', async () => {
-    expect(phase2Backstops.overflow).toEqual({
+    expect(storybookBackstops.foundations.overflow).toEqual({
       exports: ['Text', 'Stack', 'Inline', 'Surface'],
       constrainedWidthRendered: true,
       renderedWitness: 'boundary-constrained-width',
       requiredContentWitness: 'boundary-required-content',
       status: 'host-contract',
     });
-    expect(phase2Backstops.longText).toEqual({
+    expect(storybookBackstops.foundations.longText).toEqual({
       exports: ['Text', 'Pressable'],
       constrainedWidthRendered: true,
       preservedAccessibleName: 'Long-content action',
       reachableActionWitness: 'boundary-long-text-action',
       requiresNative200PercentReview: true,
-      nativeStatus: 'deferred-to-phase-5',
+      nativeStatus: 'deferred-to-native-review',
       status: 'host-contract',
     });
 
     const onPress = jest.fn();
     const boundary = await renderStory(PressableBoundaries, { onPress });
     const action = boundary.getByTestId(
-      phase2Backstops.longText.reachableActionWitness,
+      storybookBackstops.foundations.longText.reachableActionWitness,
     );
     expect(
       boundary.getByRole('button', {
-        name: phase2Backstops.longText.preservedAccessibleName,
+        name: storybookBackstops.foundations.longText.preservedAccessibleName,
       }),
     ).toBe(action);
     expect(

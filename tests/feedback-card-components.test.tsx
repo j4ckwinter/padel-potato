@@ -28,7 +28,7 @@ import {
   type EmptyStateProps,
 } from '../src/design-system/components/feedback/EmptyState';
 import * as FeedbackComponents from '../src/design-system/components/feedback';
-import { phase4Families } from '../src/design-system/stories/componentFixtures';
+import { bannerToastFixtures, emptyStateFixtures, illustratedCardFixtures } from '../src/design-system/stories/fixtures';
 import IllustratedCardStories, {
   Boundaries as IllustratedCardBoundaries,
   Canonical as IllustratedCardCanonical,
@@ -44,9 +44,6 @@ import {
 } from '../src/design-system/components/cards/IllustratedCard';
 import * as CardComponents from '../src/design-system/components/cards';
 
-const bannerToastRecords = phase4Families[12].records;
-const emptyStateRecords = phase4Families[13].records;
-const illustratedCardRecords = phase4Families[14].records;
 
 const flattenedStyle = (style: unknown) => StyleSheet.flatten(
   style as Parameters<typeof StyleSheet.flatten>[0],
@@ -83,7 +80,7 @@ const examples = {
   },
 } as const satisfies Record<string, BannerToastProps>;
 
-describe('Banner Toast source contract', () => {});
+describe('Banner Toast public contract', () => {});
 
 describe('Banner Toast runtime and announcement contract', () => {
   it.each(Object.entries(examples))('renders the exact %s branch', async (_name, props) => {
@@ -212,17 +209,17 @@ describe('Banner Toast Storybook contract', () => {
     })).toEqual(expect.objectContaining({ style: 'info', type: 'banner' }));
   });
 
-  it('renders every source record in exact order with visible provenance', () => {
+  it('renders every supported configuration in order with readable labels', () => {
     const variants = BannerToastVariants.render?.(
       {} as never,
       {} as never,
     ) as React.ReactElement<{ children: React.ReactNode }>;
     const children = Children.toArray(variants.props.children);
-    expect(children).toHaveLength(bannerToastRecords.length);
+    expect(children).toHaveLength(bannerToastFixtures.length);
     const variantJson = JSON.stringify(variants);
     let previousIndex = -1;
-    for (const record of bannerToastRecords) {
-      const currentIndex = variantJson.indexOf(record.id);
+    for (const fixture of bannerToastFixtures) {
+      const currentIndex = variantJson.indexOf(fixture.label);
       expect(currentIndex).toBeGreaterThan(previousIndex);
       previousIndex = currentIndex;
     }
@@ -262,7 +259,7 @@ const emptyStateExamples = {
   noPlayers: { content: 'noPlayers', onInvitePlayers: jest.fn() },
 } as const satisfies Record<string, EmptyStateProps>;
 
-describe('Empty State source and approved-copy contract', () => {  it.each([
+describe('Empty State approved-copy contract', () => {  it.each([
     ['noGames', emptyStateExamples.noGames, 'No games', 'You don\u2019t have any games scheduled yet.', 'Create game', 'phase4-artwork-empty-state-no-games'],
     ['noNotifications', emptyStateExamples.noNotifications, 'No notifications', 'You\u2019re all caught up. New updates will appear here.', null, 'phase4-artwork-empty-state-no-notifications'],
     ['noPlayers', emptyStateExamples.noPlayers, 'No players', 'Invite friends to start building your padel group.', 'Invite players', 'phase4-artwork-empty-state-no-players'],
@@ -341,12 +338,12 @@ describe('Empty State Storybook contract', () => {
     );
   });
 
-  it('renders every source record in exact order with visible provenance', () => {
+  it('renders every supported configuration in order with readable labels', () => {
     const variants = EmptyStateVariants.render?.({} as never, {} as never) as React.ReactElement;
     const variantsJson = JSON.stringify(variants);
     let previousIndex = -1;
-    for (const record of emptyStateRecords) {
-      const currentIndex = variantsJson.indexOf(record.id);
+    for (const fixture of emptyStateFixtures) {
+      const currentIndex = variantsJson.indexOf(fixture.label);
       expect(currentIndex).toBeGreaterThan(previousIndex);
       previousIndex = currentIndex;
     }
@@ -408,7 +405,7 @@ const illustratedCardExamples = {
   },
 } as const satisfies Record<string, IllustratedCardProps>;
 
-describe('Illustrated Card source and runtime contract', () => {  it.each([
+describe('Illustrated Card runtime contract', () => {  it.each([
     ['nextGame', illustratedCardExamples.nextGame, 'View', 'View game', 'phase4-artwork-illustrated-card-next-game'],
     ['matchResult', illustratedCardExamples.matchResult, 'Results', 'View results', 'phase4-artwork-illustrated-card-match-result'],
     ['invitePlayers', illustratedCardExamples.invitePlayers, 'Invite', 'Invite players', 'phase4-artwork-illustrated-card-invite-players'],
@@ -524,13 +521,13 @@ describe('Illustrated Card Storybook and public contract', () => {
     );
   });
 
-  it('renders every source record in exact order with visible provenance', () => {
+  it('renders every supported configuration in order with readable labels', () => {
     const variantsJson = JSON.stringify(
       IllustratedCardVariants.render?.({} as never, {} as never),
     );
     let previousIndex = -1;
-    for (const record of illustratedCardRecords) {
-      const currentIndex = variantsJson.indexOf(record.id);
+    for (const fixture of illustratedCardFixtures) {
+      const currentIndex = variantsJson.indexOf(fixture.label);
       expect(currentIndex).toBeGreaterThan(previousIndex);
       previousIndex = currentIndex;
     }

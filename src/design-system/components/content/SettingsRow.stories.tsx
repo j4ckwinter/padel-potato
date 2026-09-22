@@ -3,11 +3,10 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { settingsRowFixtures } from '../../stories/fixtures';
 import { SettingsRow, type SettingsRowProps } from './SettingsRow';
 
-const records = phase4Families[8].records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
+const fixtures = settingsRowFixtures;
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
@@ -18,10 +17,10 @@ type StoryArgs = Readonly<{
 }>;
 
 export const settingsRowStoryConfigurations = Object.freeze(
-  records
-    .filter(({ normalizedTuple }) => normalizedTuple.state !== 'pressed')
-    .map(({ normalizedTuple }) => (
-      `${normalizedTuple.type}/${normalizedTuple.icon}/${normalizedTuple.state}`
+  fixtures
+    .filter(({ configuration }) => configuration.state !== 'pressed')
+    .map(({ configuration }) => (
+      `${configuration.type}/${configuration.icon}/${configuration.state}`
     )),
 );
 
@@ -88,8 +87,8 @@ export function normalizeSettingsRowStoryArgs(args: StoryArgs): SettingsRowProps
       };
 }
 
-function recordProps(record: (typeof records)[number]): SettingsRowProps {
-  const { icon, state, type } = record.normalizedTuple;
+function fixtureProps(fixture: (typeof fixtures)[number]): SettingsRowProps {
+  const { icon, state, type } = fixture.configuration;
   if (type === 'destructive') return { icon: 'close', onPress: () => undefined, variant: 'destructive' };
   if (type === 'value') {
     return { icon: 'location', label: 'Location', onPress: () => undefined, value: 'London', variant: 'value' };
@@ -118,7 +117,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <SettingsRow {...normalizeSettingsRowStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[8].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[8].label}</Text>
     </Stack>
   ),
 };
@@ -127,11 +126,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <SettingsRow {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <SettingsRow {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -143,12 +142,12 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      <SettingsRow {...recordProps(records[8])} />
+      <SettingsRow {...fixtureProps(fixtures[8])} />
       <Text color="textSecondary" variant="caption">Hold Account to inspect the native-driven pressed state.</Text>
-      <SettingsRow {...recordProps(records[6])} />
-      <SettingsRow {...recordProps(records[4])} />
-      <SettingsRow {...recordProps(records[3])} />
-      <SettingsRow {...recordProps(records[2])} />
+      <SettingsRow {...fixtureProps(fixtures[6])} />
+      <SettingsRow {...fixtureProps(fixtures[4])} />
+      <SettingsRow {...fixtureProps(fixtures[3])} />
+      <SettingsRow {...fixtureProps(fixtures[2])} />
     </Stack>
   ),
 };

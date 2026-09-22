@@ -4,13 +4,10 @@ import { Fragment, useState } from 'react';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { checkboxFixtures } from '../../stories/fixtures';
 import { Checkbox } from './Checkbox';
 
-const checkboxFamily = phase3Families[5];
-const checkboxRecords = checkboxFamily.records;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Forms/Checkbox',
@@ -36,7 +33,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <Checkbox {...args} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a61e91ee2b48')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -46,16 +43,16 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {checkboxRecords.map((record) => (
-        <Fragment key={record.id}>
+      {checkboxFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
           <Checkbox
             accessibilityLabel="Include completed games"
-            checked={record.normalizedTuple.state === 'checked'}
-            disabled={record.normalizedTuple.state === 'disabled'}
+            checked={fixture.configuration.state === 'checked'}
+            disabled={fixture.configuration.state === 'disabled'}
             onCheckedChange={noop}
           />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

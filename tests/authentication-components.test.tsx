@@ -24,7 +24,7 @@ import {
   type AuthDividerProps,
 } from '../src/design-system/components/authentication/AuthDivider';
 import * as authentication from '../src/design-system/components/authentication';
-import { phase3Families } from '../src/design-system/stories/componentFixtures';
+import { socialSignInButtonFixtures, authDividerFixtures } from '../src/design-system/stories/fixtures';
 import { colors } from '../src/design-system/tokens';
 
 const flattenedStyle = (style: unknown) =>
@@ -32,9 +32,9 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-const socialRecords = phase3Families[7].records;
+const socialFixtures = socialSignInButtonFixtures;
 
-describe('SocialSignInButton source and public contract', () => {  it('exposes only the two closed providers and no service-shaped props', () => {
+describe('SocialSignInButton public contract', () => {  it('exposes only the two closed providers and no service-shaped props', () => {
     const providers: SocialSignInProvider[] = ['google', 'apple'];
     type ServiceEscape = Extract<
       'accessToken' | 'credential' | 'oauth' | 'session' | 'storage',
@@ -134,7 +134,7 @@ describe('SocialSignInButton Storybook contract', () => {
     const variants = SocialSignInButtonVariants.render?.({} as never, {} as never) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(Children.toArray(variants.props.children)).toHaveLength(socialRecords.length);
+    expect(Children.toArray(variants.props.children)).toHaveLength(socialFixtures.length);
   });
 
   it('discloses long-copy, font-scale, target, and fixed-provider boundaries', () => {
@@ -146,9 +146,8 @@ describe('SocialSignInButton Storybook contract', () => {
   });
 });
 
-const authDividerRecords = phase3Families[8].records;
 
-describe('AuthDivider source and static contract', () => {  it('renders readable default or custom content at exact geometry with hidden rules', async () => {
+describe('AuthDivider static public contract', () => {  it('renders readable default or custom content at exact geometry with hidden rules', async () => {
     const screen = await render(<AuthDivider />);
     const label = screen.getByText('or');
     const container = screen.getByTestId('auth-divider');

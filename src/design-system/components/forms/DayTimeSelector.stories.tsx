@@ -4,17 +4,15 @@ import { Fragment, useState } from 'react';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { dayTimeSelectorFixtures } from '../../stories/fixtures';
 import {
   DayTimeSelector,
   dayTimeSelectorTypes,
   type DayTimeSelectorProps,
 } from './DayTimeSelector';
 
-const selectorFamily = phase3Families[6];
-const selectorRecords = selectorFamily.records;
+const selectorFixtures = dayTimeSelectorFixtures;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Forms/Day Time Selector',
@@ -79,14 +77,14 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <DayTimeSelector {...normalizeDayTimeSelectorStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a6257eaab1fe')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
 };
 
-const recordProps = (record: (typeof selectorRecords)[number]): DayTimeSelectorProps => {
-  const { state, type } = record.normalizedTuple;
+const fixtureProps = (fixture: (typeof selectorFixtures)[number]): DayTimeSelectorProps => {
+  const { state, type } = fixture.configuration;
   const stateProps = {
     disabled: state === 'disabled',
     onSelect: noop,
@@ -112,11 +110,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {selectorRecords.map((record) => (
-        <Fragment key={record.id}>
-          <DayTimeSelector {...recordProps(record)} />
+      {selectorFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <DayTimeSelector {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { appHeaderFixtures } from '../../stories/fixtures';
 import {
   AppHeader,
   appHeaderPages,
@@ -11,10 +11,8 @@ import {
   type AppHeaderProps,
 } from './AppHeader';
 
-const family = phase3Families[11];
-const records = family.records;
+const fixtures = appHeaderFixtures;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const storyProps = (page: AppHeaderPage): AppHeaderProps => {
   if (page === 'home' || page === 'games' || page === 'create' || page === 'players') {
@@ -98,7 +96,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <AppHeader {...normalizeAppHeaderStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a614fb46e43a')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -108,13 +106,13 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {records.map((record) => {
-        const page = record.normalizedTuple.page as AppHeaderPage;
+      {fixtures.map((fixture) => {
+        const page = fixture.configuration.page as AppHeaderPage;
         return (
-          <Fragment key={record.id}>
+          <Fragment key={fixture.label}>
             <AppHeader {...storyProps(page)} />
             <Text color="textSecondary" variant="caption">
-              {`${record.originalTuple.Page} · ${record.id}`}
+              {fixture.label}
             </Text>
           </Fragment>
         );

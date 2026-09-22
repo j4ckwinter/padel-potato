@@ -3,17 +3,15 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { segmentedControlFixtures } from '../../stories/fixtures';
 import {
   SegmentedControl,
   type SegmentOptions,
   type SegmentedControlProps,
 } from './SegmentedControl';
 
-const family = phase3Families[10];
-const records = family.records;
+const fixtures = segmentedControlFixtures;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 const optionsByCount = Object.freeze({
   2: ['Upcoming', 'Open'] as const,
   3: ['Upcoming', 'Open', 'Past'] as const,
@@ -69,7 +67,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <SegmentedControl {...normalizeSegmentedControlStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a60ede15a862')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -79,19 +77,19 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {records.map((record) => {
-        const count = record.normalizedTuple.options as 2 | 3 | 4;
+      {fixtures.map((fixture) => {
+        const count = fixture.configuration.options as 2 | 3 | 4;
         const options = optionsByCount[count];
         return (
-          <Fragment key={record.id}>
+          <Fragment key={fixture.label}>
             <SegmentedControl
-              disabled={record.normalizedTuple.state === 'disabled'}
+              disabled={fixture.configuration.state === 'disabled'}
               onValueChange={noop}
               options={options}
               value="Upcoming"
             />
             <Text color="textSecondary" variant="caption">
-              {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+              {fixture.label}
             </Text>
           </Fragment>
         );

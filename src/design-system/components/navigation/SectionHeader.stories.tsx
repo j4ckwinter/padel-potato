@@ -3,13 +3,11 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { sectionHeaderFixtures } from '../../stories/fixtures';
 import { SectionHeader } from './SectionHeader';
 
-const family = phase3Families[12];
-const records = family.records;
+const fixtures = sectionHeaderFixtures;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Navigation/Section Header',
@@ -35,7 +33,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <SectionHeader {...args} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a608c3bde79a')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -45,11 +43,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {records.map((record) => (
-        <Fragment key={record.id}>
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
           <SectionHeader actionLabel="See all ›" onActionPress={noop} title="Open games near you" />
           <Text color="textSecondary" variant="caption">
-            {sourceLabel(record.id)}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

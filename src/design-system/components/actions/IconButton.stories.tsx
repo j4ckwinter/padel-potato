@@ -5,16 +5,13 @@ import { iconNames } from '../../assets/iconDefinitions';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { iconButtonFixtures } from '../../stories/fixtures';
 import {
   IconButton,
   iconButtonSizes,
   type IconButtonProps,
 } from './IconButton';
 
-const iconButtonFamily = phase3Families[1];
-const iconButtonRecords = iconButtonFamily.records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Actions/Icon Button',
@@ -40,28 +37,28 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <IconButton {...args} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a60eda7950b0')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
 };
 
-const recordProps = (record: (typeof iconButtonRecords)[number]): IconButtonProps => ({
-  accessibilityLabel: `Open notifications — ${Object.values(record.originalTuple).join(' / ')}`,
-  disabled: record.normalizedTuple.state === 'disabled',
+const fixtureProps = (fixture: (typeof iconButtonFixtures)[number]): IconButtonProps => ({
+  accessibilityLabel: `Open notifications — ${fixture.label}`,
+  disabled: fixture.configuration.state === 'disabled',
   icon: 'notification',
-  size: record.normalizedTuple.size as 40 | 44,
+  size: fixture.configuration.size as 40 | 44,
 });
 
 export const Variants: Story = {
   args: { accessibilityLabel: 'Open notifications', icon: 'notification' },
   render: () => (
     <Stack gap="space12">
-      {iconButtonRecords.map((record) => (
-        <Fragment key={record.id}>
-          <IconButton {...recordProps(record)} />
+      {iconButtonFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <IconButton {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

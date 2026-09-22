@@ -3,14 +3,14 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { playerItemFixtures } from '../../stories/fixtures';
 import {
   PlayerItem,
   type PlayerItemIdentity,
   type PlayerItemProps,
 } from './PlayerItem';
 
-const records = phase4Families[5].records;
+const fixtures = playerItemFixtures;
 const player = {
   initials: 'AM',
   name: 'Alex Morgan',
@@ -18,7 +18,6 @@ const player = {
   supportingText: 'Intermediate · Rating 4.6',
 } as const satisfies PlayerItemIdentity;
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
@@ -28,8 +27,8 @@ type StoryArgs = Readonly<{
 }>;
 
 export const playerItemStoryConfigurations = Object.freeze(
-  records.map(({ normalizedTuple }) => (
-    `${normalizedTuple.type}/${normalizedTuple.state}`
+  fixtures.map(({ configuration }) => (
+    `${configuration.type}/${configuration.state}`
   )),
 );
 
@@ -87,8 +86,8 @@ export function normalizePlayerItemStoryArgs(args: StoryArgs): PlayerItemProps {
   }
 }
 
-function recordProps(record: (typeof records)[number]): PlayerItemProps {
-  const { state, type } = record.normalizedTuple;
+function fixtureProps(fixture: (typeof fixtures)[number]): PlayerItemProps {
+  const { state, type } = fixture.configuration;
   if (type === 'gameSlot' && state === 'empty') {
     return { onInvite: () => undefined, variant: 'empty-game-slot' };
   }
@@ -120,7 +119,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <PlayerItem {...normalizePlayerItemStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[5].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[5].label}</Text>
     </Stack>
   ),
 };
@@ -129,11 +128,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <PlayerItem {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <PlayerItem {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

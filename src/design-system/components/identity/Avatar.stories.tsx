@@ -3,14 +3,11 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import {
-  avatarRecords,
-} from '../../stories/componentFixtures';
+import { avatarFixtures } from '../../stories/fixtures';
 import { Avatar, type AvatarProps } from './Avatar';
 
 const storyPhoto = require('../../assets/media/mascot-profile.webp');
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 type AvatarStoryArgs = Readonly<{
   accessibilityLabel?: unknown;
@@ -19,8 +16,8 @@ type AvatarStoryArgs = Readonly<{
 }>;
 
 export const avatarStoryConfigurations = Object.freeze(
-  avatarRecords.map(({ normalizedTuple }) => (
-    `${normalizedTuple.size}/${normalizedTuple.presence}`
+  avatarFixtures.map(({ configuration }) => (
+    `${configuration.size}/${configuration.presence}`
   )),
 );
 
@@ -54,8 +51,8 @@ export const normalizeAvatarStoryArgs = (args: AvatarStoryArgs): AvatarProps => 
   }
 };
 
-const recordProps = (record: (typeof avatarRecords)[number]): AvatarProps => {
-  const { presence, size } = record.normalizedTuple;
+const fixtureProps = (fixture: (typeof avatarFixtures)[number]): AvatarProps => {
+  const { presence, size } = fixture.configuration;
   return normalizeAvatarStoryArgs({
     accessibilityLabel: `Alex Morgan, ${presence}`,
     configuration: `${size}/${presence}`,
@@ -73,7 +70,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <Avatar {...normalizeAvatarStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a60fcb3084a2')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -83,11 +80,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {avatarRecords.map((record) => (
-        <Fragment key={record.id}>
-          <Avatar {...recordProps(record)} />
+      {avatarFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <Avatar {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

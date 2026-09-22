@@ -4,7 +4,7 @@ import { Fragment, useState } from 'react';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { choiceChipFixtures } from '../../stories/fixtures';
 import {
   ChoiceChip,
   choiceChipTypes,
@@ -12,10 +12,7 @@ import {
   type ChoiceChipType,
 } from './ChoiceChip';
 
-const choiceChipFamily = phase3Families[4];
-const choiceChipRecords = choiceChipFamily.records;
 const noop = () => undefined;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Forms/Choice Chip',
@@ -73,14 +70,14 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <ChoiceChip {...normalizeChoiceChipStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a61b0dda64ca')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
 };
 
-const recordProps = (record: (typeof choiceChipRecords)[number]): ChoiceChipProps => {
-  const { icon, state, type } = record.normalizedTuple;
+const fixtureProps = (fixture: (typeof choiceChipFixtures)[number]): ChoiceChipProps => {
+  const { icon, state, type } = fixture.configuration;
   return {
     disabled: state === 'disabled',
     icon,
@@ -95,11 +92,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {choiceChipRecords.map((record) => (
-        <Fragment key={record.id}>
-          <ChoiceChip {...recordProps(record)} />
+      {choiceChipFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <ChoiceChip {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -115,7 +112,7 @@ export const States: Story = {
       <ChoiceChip icon="leading" label="Social" onSelectedChange={noop} selected type="option" />
       <ChoiceChip disabled icon="trailing" label="Intermediate" onSelectedChange={noop} selected={false} type="filter" />
       <Text color="textSecondary" variant="caption">
-        Keyboard/native focus drives the focused record; it is never a persistent prop.
+        Keyboard/native focus drives the focused fixture; it is never a persistent prop.
       </Text>
     </Stack>
   ),

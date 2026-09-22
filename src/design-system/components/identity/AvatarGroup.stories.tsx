@@ -3,14 +3,14 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { avatarGroupFixtures } from '../../stories/fixtures';
 import {
   AvatarGroup,
   type AvatarGroupIdentity,
   type AvatarGroupProps,
 } from './AvatarGroup';
 
-const records = phase4Families[1].records;
+const fixtures = avatarGroupFixtures;
 const players = [
   { initials: 'AM', name: 'Alex Morgan', presence: 'online' },
   { initials: 'JT', name: 'Jamie Taylor', presence: 'online' },
@@ -18,7 +18,6 @@ const players = [
   { initials: 'RB', name: 'Riley Brown', presence: 'online' },
 ] as const satisfies readonly AvatarGroupIdentity[];
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Identity/Avatar Group',
@@ -53,9 +52,9 @@ export function normalizeAvatarGroupStoryArgs(args: StoryArgs): AvatarGroupProps
   }
 }
 
-function recordProps(record: (typeof records)[number]): AvatarGroupProps {
-  const content = record.normalizedTuple.content;
-  const state = record.normalizedTuple.state;
+function fixtureProps(fixture: (typeof fixtures)[number]): AvatarGroupProps {
+  const content = fixture.configuration.content;
+  const state = fixture.configuration.state;
   if (content === '2Slots' && state === 'empty') {
     return { onAddPlayer1: () => undefined, onAddPlayer2: () => undefined, variant: 'empty' };
   }
@@ -75,7 +74,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <AvatarGroup {...normalizeAvatarGroupStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel(records[4].id)}
+        {fixtures[4].label}
       </Text>
     </Stack>
   ),
@@ -85,11 +84,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <AvatarGroup {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <AvatarGroup {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

@@ -3,21 +3,20 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { illustratedCardFixtures } from '../../stories/fixtures';
 import {
   IllustratedCard,
   type IllustratedCardParticipant,
   type IllustratedCardProps,
 } from './IllustratedCard';
 
-const records = phase4Families[14].records;
+const fixtures = illustratedCardFixtures;
 const participants = [
   { initials: 'AM', name: 'Alex Morgan', slot: 1 },
   { initials: 'JT', name: 'Jamie Taylor', slot: 2 },
   { initials: 'SK', name: 'Sam Kim', slot: 3 },
   { initials: 'RB', name: 'Riley Brown', slot: 4 },
 ] as const satisfies readonly IllustratedCardParticipant[];
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Cards/Illustrated Card',
@@ -84,8 +83,8 @@ export function normalizeIllustratedCardStoryArgs(args: StoryArgs): IllustratedC
   }
 }
 
-function recordProps(record: (typeof records)[number]): IllustratedCardProps {
-  return normalizeIllustratedCardStoryArgs({ type: record.normalizedTuple.type });
+function fixtureProps(fixture: (typeof fixtures)[number]): IllustratedCardProps {
+  return normalizeIllustratedCardStoryArgs({ type: fixture.configuration.type });
 }
 
 export const Canonical: Story = {
@@ -93,7 +92,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <IllustratedCard {...normalizeIllustratedCardStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[3].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[3].label}</Text>
     </Stack>
   ),
 };
@@ -102,11 +101,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <IllustratedCard {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <IllustratedCard {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} \u00b7 ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -118,7 +117,7 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => <IllustratedCard key={record.id} {...recordProps(record)} />)}
+      {fixtures.map((fixture) => <IllustratedCard key={fixture.label} {...fixtureProps(fixture)} />)}
     </Stack>
   ),
 };
@@ -145,18 +144,18 @@ export const Boundaries: Story = {
 
 function InteractiveIllustratedCardHarness(props: IllustratedCardProps) {
   const [activations, setActivations] = useState(0);
-  const record = normalizeIllustratedCardStoryArgs({ type: props.type });
+  const fixture = normalizeIllustratedCardStoryArgs({ type: props.type });
   const track = (intent: () => void) => () => {
     setActivations((count) => count + 1);
     intent();
   };
-  const tracked: IllustratedCardProps = record.type === 'nextGame'
-    ? { ...record, onViewGame: track(props.type === 'nextGame' ? props.onViewGame : () => undefined) }
-    : record.type === 'matchResult'
-      ? { ...record, onViewResults: track(props.type === 'matchResult' ? props.onViewResults : () => undefined) }
-      : record.type === 'invitePlayers'
-        ? { ...record, onInvitePlayers: track(props.type === 'invitePlayers' ? props.onInvitePlayers : () => undefined) }
-        : { ...record, onShareGame: track(props.type === 'gameCreated' ? props.onShareGame : () => undefined) };
+  const tracked: IllustratedCardProps = fixture.type === 'nextGame'
+    ? { ...fixture, onViewGame: track(props.type === 'nextGame' ? props.onViewGame : () => undefined) }
+    : fixture.type === 'matchResult'
+      ? { ...fixture, onViewResults: track(props.type === 'matchResult' ? props.onViewResults : () => undefined) }
+      : fixture.type === 'invitePlayers'
+        ? { ...fixture, onInvitePlayers: track(props.type === 'invitePlayers' ? props.onInvitePlayers : () => undefined) }
+        : { ...fixture, onShareGame: track(props.type === 'gameCreated' ? props.onShareGame : () => undefined) };
   return (
     <Stack gap="space8">
       <IllustratedCard {...tracked} />

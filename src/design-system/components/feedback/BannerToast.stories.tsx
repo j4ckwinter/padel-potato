@@ -3,17 +3,16 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { bannerToastFixtures } from '../../stories/fixtures';
 import {
   BannerToast,
   bannerToastStyles,
   type BannerToastProps,
 } from './BannerToast';
 
-const records = phase4Families[12].records;
+const fixtures = bannerToastFixtures;
 const noop = () => undefined;
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Feedback/Banner Toast',
@@ -115,22 +114,22 @@ export function normalizeBannerToastStoryArgs(
   }
 }
 
-function recordProps(record: (typeof records)[number]): BannerToastProps {
-  const [title, message] = record.metrics.typography.map(({ text }) => text);
+function fixtureProps(fixture: (typeof fixtures)[number]): BannerToastProps {
+  const [title, message] = fixture.copy;
   return normalizeBannerToastStoryArgs({
     message,
-    style: record.normalizedTuple.style,
+    style: fixture.configuration.style,
     title,
-    type: record.normalizedTuple.type,
+    type: fixture.configuration.type,
   });
 }
 
 export const Canonical: Story = {
-  args: recordProps(records[3]),
+  args: fixtureProps(fixtures[3]),
   render: (args) => (
     <Stack gap="space8">
       <BannerToast {...normalizeBannerToastStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[3].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[3].label}</Text>
     </Stack>
   ),
 };
@@ -139,11 +138,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <BannerToast {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <BannerToast {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -155,7 +154,7 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => <BannerToast key={record.id} {...recordProps(record)} />)}
+      {fixtures.map((fixture) => <BannerToast key={fixture.label} {...fixtureProps(fixture)} />)}
     </Stack>
   ),
 };

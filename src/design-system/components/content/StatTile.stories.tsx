@@ -3,12 +3,11 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families } from '../../stories/componentFixtures';
+import { statTileFixtures } from '../../stories/fixtures';
 import { StatTile, type StatTileProps } from './StatTile';
 
-const records = phase4Families[9].records;
+const fixtures = statTileFixtures;
 
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
@@ -18,8 +17,8 @@ type StoryArgs = Readonly<{
 }>;
 
 export const statTileStoryConfigurations = Object.freeze(
-  records.map(({ normalizedTuple }) => (
-    `${normalizedTuple.type}/${normalizedTuple.content}/${normalizedTuple.state}`
+  fixtures.map(({ configuration }) => (
+    `${configuration.type}/${configuration.content}/${configuration.state}`
   )),
 );
 
@@ -56,10 +55,10 @@ export function normalizeStatTileStoryArgs(args: StoryArgs): StatTileProps {
   }
 }
 
-function recordProps(record: (typeof records)[number]): StatTileProps {
-  const [label, value, supportingText] = record.metrics.typography.map(({ text }) => text);
+function fixtureProps(fixture: (typeof fixtures)[number]): StatTileProps {
+  const [label, value, supportingText] = fixture.copy;
   return normalizeStatTileStoryArgs({
-    configuration: `${record.normalizedTuple.type}/${record.normalizedTuple.content}/${record.normalizedTuple.state}`,
+    configuration: `${fixture.configuration.type}/${fixture.configuration.content}/${fixture.configuration.state}`,
     label,
     supportingText,
     value,
@@ -76,7 +75,7 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <StatTile {...normalizeStatTileStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{sourceLabel(records[4].id)}</Text>
+      <Text color="textSecondary" variant="caption">{fixtures[4].label}</Text>
     </Stack>
   ),
 };
@@ -85,11 +84,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {records.map((record) => (
-        <Fragment key={record.id}>
-          <StatTile {...recordProps(record)} />
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
+          <StatTile {...fixtureProps(fixture)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
@@ -101,8 +100,8 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      <StatTile {...recordProps(records[5])} />
-      <StatTile {...recordProps(records[4])} />
+      <StatTile {...fixtureProps(fixtures[5])} />
+      <StatTile {...fixtureProps(fixtures[4])} />
     </Stack>
   ),
 };

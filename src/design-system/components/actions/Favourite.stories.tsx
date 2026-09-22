@@ -4,12 +4,9 @@ import { Fragment, useState } from 'react';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { favouriteFixtures } from '../../stories/fixtures';
 import { Favourite, type FavouriteProps } from './Favourite';
 
-const favouriteFamily = phase3Families[2];
-const favouriteRecords = favouriteFamily.records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Actions/Favourite',
@@ -34,7 +31,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <Favourite {...args} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('ab02a31f-1852-80be-8008-a6fb4b6d6c28')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -48,15 +45,15 @@ export const Variants: Story = {
   },
   render: () => (
     <Stack gap="space12">
-      {favouriteRecords.map((record) => (
-        <Fragment key={record.id}>
+      {favouriteFixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
           <Favourite
             accessibilityLabel="Alex favourite"
-            checked={record.normalizedTuple.checked}
+            checked={fixture.configuration.checked}
             onCheckedChange={() => undefined}
           />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}

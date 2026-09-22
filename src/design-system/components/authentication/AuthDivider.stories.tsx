@@ -3,12 +3,10 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families } from '../../stories/componentFixtures';
+import { authDividerFixtures } from '../../stories/fixtures';
 import { AuthDivider } from './AuthDivider';
 
-const family = phase3Families[8];
-const records = family.records;
-const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
+const fixtures = authDividerFixtures;
 
 export const authDividerStoryApplicability = Object.freeze({
   Canonical: Object.freeze({ status: 'story', story: 'Canonical' }),
@@ -42,7 +40,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <AuthDivider {...args} />
       <Text color="textSecondary" variant="caption">
-        {sourceLabel('482a7222-5a3b-8086-8008-a61e93b191ff')}
+        {'Canonical configuration'}
       </Text>
     </Stack>
   ),
@@ -52,11 +50,11 @@ export const Variants: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      {records.map((record) => (
-        <Fragment key={record.id}>
+      {fixtures.map((fixture) => (
+        <Fragment key={fixture.label}>
           <AuthDivider />
           <Text color="textSecondary" variant="caption">
-            {sourceLabel(record.id)}
+            {fixture.label}
           </Text>
         </Fragment>
       ))}
