@@ -89,7 +89,7 @@ export const Variants: Story = {
         <Fragment key={record.id}>
           <NotificationRow {...recordProps(record)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} Â· ${record.id}`}
+            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
           </Text>
         </Fragment>
       ))}
@@ -112,7 +112,7 @@ export const Boundaries: Story = {
   render: () => (
     <Stack gap="space8" style={{ width: 352 }}>
       <NotificationRow
-        message="ÅucÃ­a Nguyá»…n from æ±äº¬ has joined an exceptionally long Tuesday social padel game"
+        message="Łucía Nguyễn from 東京 has joined an exceptionally long Tuesday social padel game"
         onPress={() => undefined}
         read={false}
         timestamp="2 minutes ago"

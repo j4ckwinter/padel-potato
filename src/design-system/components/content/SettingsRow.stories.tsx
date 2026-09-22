@@ -131,7 +131,7 @@ export const Variants: Story = {
         <Fragment key={record.id}>
           <SettingsRow {...recordProps(record)} />
           <Text color="textSecondary" variant="caption">
-            {`${Object.values(record.originalTuple).join(' / ')} Â· ${record.id}`}
+            {`${Object.values(record.originalTuple).join(' / ')} · ${record.id}`}
           </Text>
         </Fragment>
       ))}
@@ -159,7 +159,7 @@ export const Boundaries: Story = {
     <Stack gap="space8" style={{ width: 352 }}>
       <SettingsRow
         icon="location"
-        label="Preferred location for ÅucÃ­a Nguyá»…n from æ±äº¬"
+        label="Preferred location for Łucía Nguyễn from 東京"
         onPress={() => undefined}
         value="Padel United International Centre, London"
         variant="value"

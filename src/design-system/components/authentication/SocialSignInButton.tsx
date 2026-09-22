@@ -5,9 +5,9 @@ import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 import {
-  AppleProviderArtwork,
-  GoogleProviderArtwork,
-} from '../generated/phase3Artwork';
+  AppleProviderMark,
+  GoogleProviderMark,
+} from '../../assets/artwork/actionProviderArtwork';
 
 export const socialSignInProviders = Object.freeze(['google', 'apple'] as const);
 
@@ -27,13 +27,13 @@ const supportedRuntimeProps = Object.freeze([
 
 const providerContent = Object.freeze({
   apple: Object.freeze({
-    Artwork: AppleProviderArtwork,
+    Artwork: AppleProviderMark,
     backgroundColor: colors.deep,
     label: 'Continue with Apple',
     textColor: 'surface' as const,
   }),
   google: Object.freeze({
-    Artwork: GoogleProviderArtwork,
+    Artwork: GoogleProviderMark,
     backgroundColor: colors.surface,
     label: 'Continue with Google',
     textColor: 'ink' as const,

@@ -8,9 +8,9 @@ import {
   GameCreatedIllustratedCardArtwork, InvitePlayersIllustratedCardArtwork,
   MatchResultIllustratedCardArtwork, NextGameIllustratedCardArtwork,
   NoGamesEmptyStateArtwork, NoNotificationsEmptyStateArtwork, NoPlayersEmptyStateArtwork,
-} from '../src/design-system/components/generated/phase4Artwork';
+} from '../src/design-system/assets/artwork/feedbackArtwork';
 
-describe('Phase 4 runtime artwork', () => {
+describe('feedback and card artwork', () => {
   it.each([
     ['empty-state-no-games', 96, NoGamesEmptyStateArtwork],
     ['empty-state-no-notifications', 96, NoNotificationsEmptyStateArtwork],
@@ -29,9 +29,9 @@ describe('Phase 4 runtime artwork', () => {
   });
 
   it('uses literal component-local media paths and exposes no configurable artwork API', () => {
-    const source = readFileSync(join(process.cwd(), 'src/design-system/components/generated/phase4Artwork.tsx'), 'utf8');
+    const source = readFileSync(join(process.cwd(), 'src/design-system/assets/artwork/feedbackArtwork.tsx'), 'utf8');
     expect(source).not.toMatch(/https?:|fetch\(|XMLHttpRequest|design-spec|design-source|data-penpot/iu);
     expect(source).not.toMatch(/export (?:type|interface|const)|export function \w+\([^)]{1,}\)/u);
-    expect(source.match(/require\('\.\.\/\.\.\/assets\/media\/mascot-[a-z-]+\.webp'\)/gu)).toHaveLength(7);
+    expect(source.match(/require\('\.\.\/media\/mascot-[a-z-]+\.webp'\)/gu)).toHaveLength(7);
   });
 });

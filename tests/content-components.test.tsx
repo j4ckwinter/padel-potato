@@ -169,7 +169,7 @@ describe('Notification Row runtime and semantic contract', () => {
   it('retains complete long Unicode content in stable title/message/timestamp/read order', async () => {
     const screen = await render(
       <NotificationRow
-        message="ÅucÃ­a Nguyá»…n from æ±äº¬ has joined an exceptionally long Tuesday social padel game"
+        message="Łucía Nguyễn from 東京 has joined an exceptionally long Tuesday social padel game"
         onPress={jest.fn()}
         read={false}
         timestamp="2 minutes ago"
@@ -178,7 +178,7 @@ describe('Notification Row runtime and semantic contract', () => {
       />,
     );
     expect(screen.getByRole('button', {
-      name: 'A very long social update, ÅucÃ­a Nguyá»…n from æ±äº¬ has joined an exceptionally long Tuesday social padel game, 2 minutes ago, unread',
+      name: 'A very long social update, Łucía Nguyễn from 東京 has joined an exceptionally long Tuesday social padel game, 2 minutes ago, unread',
     })).toBeTruthy();
   });
 });
@@ -312,14 +312,14 @@ describe('Settings Row runtime and semantic contract', () => {
     const screen = await render(
       <SettingsRow
         icon="location"
-        label="Preferred location for ÅucÃ­a Nguyá»…n from æ±äº¬"
+        label="Preferred location for Łucía Nguyễn from 東京"
         onPress={jest.fn()}
         value="Padel United International Centre, London"
         variant="value"
       />,
     );
     expect(screen.getByRole('button', {
-      name: 'Preferred location for ÅucÃ­a Nguyá»…n from æ±äº¬, Padel United International Centre, London',
+      name: 'Preferred location for Łucía Nguyễn from 東京, Padel United International Centre, London',
     })).toBeTruthy();
   });
 });

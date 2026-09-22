@@ -1,12 +1,7 @@
-// Generated fixed artwork for Phase 3 component families. Do not edit.
-import { Image, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 
-const decorative = {
-  accessibilityElementsHidden: true,
-  accessible: false,
-  importantForAccessibility: 'no-hide-descendants' as const,
-};
+import { decorativeImageProps } from './decorativeArtwork';
 
 const decorativeVector =
   Platform.OS === 'web'
@@ -14,9 +9,9 @@ const decorativeVector =
         'aria-hidden': true,
         focusable: false,
       }
-    : decorative;
+    : decorativeImageProps;
 
-export function HeartArtwork() {
+export function FavouriteHeartArtwork() {
   return (
     <Svg {...decorativeVector} height={20} testID="phase3-artwork-heart" viewBox="1052 1102 20 20" width={20}>
       <Path
@@ -30,7 +25,7 @@ export function HeartArtwork() {
   );
 }
 
-export function GoogleProviderArtwork() {
+export function GoogleProviderMark() {
   return (
     <Svg {...decorativeVector} height={20} testID="phase3-artwork-google" viewBox="57 4865 20 20" width={20}>
       <Path d="M75.5999755859375,4875.2001953125C75.5999755859375,4874.60009765625,75.5,4874.0,75.4000244140625,4873.39990234375L67.0,4873.39990234375L67.0,4876.7998046875L71.79998779296875,4876.7998046875C71.59686279296875,4877.9091796875,70.94580078125,4878.8857421875,70.0,4879.5L70.0,4881.7998046875L72.9000244140625,4881.7998046875C74.5999755859375,4880.2001953125,75.5999755859375,4877.89990234375,75.5999755859375,4875.2001953125Z" fill="#4285f4" />
@@ -41,31 +36,11 @@ export function GoogleProviderArtwork() {
   );
 }
 
-export function AppleProviderArtwork() {
+export function AppleProviderMark() {
   return (
     <Svg {...decorativeVector} height={20} testID="phase3-artwork-apple" viewBox="57 4993 20 20" width={20}>
       <Path d="M70.79998779296875,5003.60009765625C70.79998779296875,5001.60009765625,72.4000244140625,5000.60009765625,72.5,5000.5C71.5,4999.10009765625,70.0,4998.89990234375,69.5,4998.89990234375C68.20001220703125,4998.7998046875,67.0,4999.60009765625,66.4000244140625,4999.60009765625C65.79998779296875,4999.60009765625,64.79998779296875,4998.89990234375,63.79998779296875,4998.89990234375C62.5,4998.89990234375,61.20001220703125,4999.7001953125,60.5,5000.89990234375C59.0999755859375,5003.2998046875,60.0999755859375,5006.89990234375,61.5,5008.89990234375C62.20001220703125,5009.89990234375,63.0,5011.0,64.0999755859375,5010.89990234375C65.0999755859375,5010.89990234375,65.5,5010.2998046875,66.79998779296875,5010.2998046875C68.0,5010.2998046875,68.4000244140625,5010.89990234375,69.5,5010.89990234375C70.5999755859375,5010.89990234375,71.29998779296875,5009.89990234375,72.0,5008.89990234375C72.79998779296875,5007.7998046875,73.0999755859375,5006.7001953125,73.0999755859375,5006.60009765625C73.0,5006.60009765625,70.79998779296875,5005.7001953125,70.79998779296875,5003.60009765625Z" fill="#0e1716" />
       <Path d="M68.70001220703125,4997.5C69.29998779296875,4996.7001953125,69.79998779296875,4995.7001953125,69.70001220703125,4994.7001953125C68.79998779296875,4994.7001953125,67.70001220703125,4995.2998046875,67.0,4996.0C66.4000244140625,4996.7001953125,65.9000244140625,4997.7001953125,66.0,4998.7001953125C67.0,4998.7998046875,68.0,4998.2001953125,68.70001220703125,4997.5Z" fill="#0e1716" />
     </Svg>
   );
-}
-
-export function WaveHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-wave.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-wave" />;
-}
-
-export function SearchHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-search.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-search" />;
-}
-
-export function CreateHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-create.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-create" />;
-}
-
-export function PlayersHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-players.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-players" />;
-}
-
-export function ProfileHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-profile.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-profile" />;
 }

@@ -8,7 +8,7 @@ import {
   InvitePlayersIllustratedCardArtwork,
   MatchResultIllustratedCardArtwork,
   NextGameIllustratedCardArtwork,
-} from '../generated/phase4Artwork';
+} from '../../assets/artwork/feedbackArtwork';
 
 export type IllustratedCardParticipant = Readonly<{
   initials: string;

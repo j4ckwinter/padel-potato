@@ -7,7 +7,7 @@ import {
   NoGamesEmptyStateArtwork,
   NoNotificationsEmptyStateArtwork,
   NoPlayersEmptyStateArtwork,
-} from '../generated/phase4Artwork';
+} from '../../assets/artwork/feedbackArtwork';
 
 export type EmptyStateProps =
   | Readonly<{ content: 'noGames'; onCreateGame: () => void }>

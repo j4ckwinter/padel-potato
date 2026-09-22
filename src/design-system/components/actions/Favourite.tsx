@@ -3,7 +3,7 @@ import { Path, Svg } from 'react-native-svg';
 
 import { Pressable } from '../../primitives/Pressable';
 import { colors } from '../../tokens';
-import { HeartArtwork } from '../generated/phase3Artwork';
+import { FavouriteHeartArtwork } from '../../assets/artwork/actionProviderArtwork';
 
 export type FavouriteProps = Readonly<{
   accessibilityLabel: string;
@@ -92,7 +92,7 @@ export function Favourite(props: FavouriteProps) {
       >
         {checked ? <SelectedHeartFill /> : null}
         <View pointerEvents="none" style={styles.heartStroke}>
-          <HeartArtwork />
+          <FavouriteHeartArtwork />
         </View>
       </View>
     </Pressable>

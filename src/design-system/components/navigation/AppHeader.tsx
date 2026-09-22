@@ -1,17 +1,10 @@
-import type { ComponentType } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { HeaderMascot, type HeaderMascotName } from '../../assets/artwork/headerMascots';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 import { Favourite } from '../actions/Favourite';
 import { IconButton } from '../actions/IconButton';
-import {
-  CreateHeaderMascot,
-  PlayersHeaderMascot,
-  ProfileHeaderMascot,
-  SearchHeaderMascot,
-  WaveHeaderMascot,
-} from '../generated/phase3Artwork';
 
 export const appHeaderPages = Object.freeze([
   'home',
@@ -60,17 +53,17 @@ export type AppHeaderProps =
   | PlayerDetailsPage;
 
 type HeaderConfig = Readonly<{
-  mascot?: ComponentType;
+  mascot?: HeaderMascotName;
   subtitle: string;
   title: string;
 }>;
 
 const configs: Readonly<Record<AppHeaderPage, HeaderConfig>> = Object.freeze({
-  home: Object.freeze({ mascot: WaveHeaderMascot, subtitle: 'Ready for your next match?', title: 'Hi, Alex' }),
-  games: Object.freeze({ mascot: SearchHeaderMascot, subtitle: 'Find your next match', title: 'Games' }),
-  create: Object.freeze({ mascot: CreateHeaderMascot, subtitle: 'Set up your next match', title: 'Create game' }),
-  players: Object.freeze({ mascot: PlayersHeaderMascot, subtitle: 'Find your next partner', title: 'Players' }),
-  profile: Object.freeze({ mascot: ProfileHeaderMascot, subtitle: 'Manage your account', title: 'Profile' }),
+  home: Object.freeze({ mascot: 'wave', subtitle: 'Ready for your next match?', title: 'Hi, Alex' }),
+  games: Object.freeze({ mascot: 'search', subtitle: 'Find your next match', title: 'Games' }),
+  create: Object.freeze({ mascot: 'create', subtitle: 'Set up your next match', title: 'Create game' }),
+  players: Object.freeze({ mascot: 'players', subtitle: 'Find your next partner', title: 'Players' }),
+  profile: Object.freeze({ mascot: 'profile', subtitle: 'Manage your account', title: 'Profile' }),
   notifications: Object.freeze({ subtitle: 'Updates and activity', title: 'Notifications' }),
   gameDetails: Object.freeze({ subtitle: 'Open game · 1 spot left', title: 'Game details' }),
   playerDetails: Object.freeze({ subtitle: 'Player details and form', title: 'Player profile' }),
@@ -145,7 +138,7 @@ function validateAppHeaderProps(props: AppHeaderProps) {
 export function AppHeader(props: AppHeaderProps) {
   validateAppHeaderProps(props);
   const config = configs[props.page];
-  const Mascot = config.mascot;
+  const mascot = config.mascot;
   const title = props.title ?? config.title;
   const subtitle = props.subtitle ?? config.subtitle;
   const hasBack = backPages.includes(props.page as (typeof backPages)[number])
@@ -159,7 +152,7 @@ export function AppHeader(props: AppHeaderProps) {
         importantForAccessibility="no-hide-descendants"
         style={styles.leading}
       >
-        {Mascot ? <Mascot /> : null}
+        {mascot ? <HeaderMascot name={mascot} /> : null}
       </View>
       {hasBack ? (
         <View style={styles.backAction}>
