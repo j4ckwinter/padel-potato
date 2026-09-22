@@ -25,6 +25,7 @@ import {
   colors,
   type ColorToken,
   radii,
+  layoutWidths,
   type RadiusToken,
   spacing,
   type SpacingToken,
@@ -131,7 +132,8 @@ describe('Text primitive', () => {
     const screen = await render(
       <DesignText
         color="accent"
-        style={{ alignSelf: 'center', marginTop: 12 }}
+        marginTop="space12"
+        style={{ alignSelf: 'center' }}
         testID="subject"
         variant="heading"
       >
@@ -235,7 +237,7 @@ describe.each(layoutPrimitiveCases)(
 
       expect(() =>
         Component({
-          style: [{ width: 100 }, registered.protected] as StackProps['style'],
+          style: [{ flex: 1 }, registered.protected] as StackProps['style'],
         } as StackProps & InlineProps),
       ).toThrow(
         new RegExp(
@@ -251,9 +253,10 @@ describe.each(layoutPrimitiveCases)(
           align="center"
           gap="space20"
           justify="spaceBetween"
+          marginTop="space8"
           padding="space12"
-          style={{ marginTop: 8, width: 200 }}
           testID="subject"
+          width="compact"
         />,
       );
 
@@ -265,7 +268,7 @@ describe.each(layoutPrimitiveCases)(
           justifyContent: 'space-between',
           marginTop: 8,
           padding: 12,
-          width: 200,
+          width: layoutWidths.compact,
         }),
       );
     });
@@ -442,7 +445,7 @@ describe('Surface primitive', () => {
 
     expect(() =>
       Surface({
-        style: [{ width: 100 }, registered.protected] as SurfaceProps['style'],
+        style: [{ flex: 1 }, registered.protected] as SurfaceProps['style'],
       }),
     ).toThrow(
       new RegExp(
@@ -460,8 +463,9 @@ describe('Surface primitive', () => {
         borderWidth="borderDefault"
         padding="space24"
         radius="radius20"
-        style={{ alignSelf: 'center', width: 240 }}
+        style={{ alignSelf: 'center' }}
         testID="subject"
+        width="compact"
       />,
     );
     expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
@@ -472,7 +476,7 @@ describe('Surface primitive', () => {
         borderRadius: radii.radius20,
         borderWidth: borders.borderDefault,
         padding: spacing.space24,
-        width: 240,
+        width: layoutWidths.compact,
       }),
     );
   });

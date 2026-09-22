@@ -154,7 +154,7 @@ describe('DayTimeSelector controlled public contract', () => {
     expect(
       flattenedStyle(day.getByTestId('day-time-selector-root').props.style)
         .opacity,
-    ).toBe(0.55);
+    ).toBe(0.4);
 
     const time = await render(
       <DayTimeSelector

@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 
 export type SettingsRowProps =
   | Readonly<{
@@ -202,8 +202,9 @@ export function SettingsRow(props: SettingsRowProps) {
       accessibilityState={toggle ? { checked: props.checked } : undefined}
       disabled={disabled}
       onPress={onPress}
+      minHeight="size64"
       size="controlHeight44"
-      style={styles.target}
+      width="fill"
       testID="settings-row"
     >
       <View
@@ -251,13 +252,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: radii.radius16,
+    borderWidth: borders.borderDefault,
     flexDirection: 'row',
-    gap: 12,
-    height: 64,
-    paddingHorizontal: 12,
-    width: 352,
+    gap: spacing.space12,
+    minHeight: sizing.size64,
+    paddingHorizontal: spacing.space12,
+    width: '100%',
   },
   copy: { flex: 1, minWidth: 0 },
   destructive: { backgroundColor: colors.danger },
@@ -265,33 +266,31 @@ const styles = StyleSheet.create({
   iconWell: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 20,
-    height: 40,
+    borderRadius: radii.radiusFull,
+    height: sizing.size40,
     justifyContent: 'center',
-    width: 40,
+    width: sizing.size40,
   },
   switchThumb: {
     backgroundColor: colors.surface,
-    borderRadius: 10,
-    height: 20,
-    transform: [{ translateX: 0 }],
-    width: 20,
+    borderRadius: radii.radiusFull,
+    height: sizing.size20,
+    transform: [{ translateX: sizing.size0 }],
+    width: sizing.size20,
   },
-  switchThumbChecked: { transform: [{ translateX: 16 }] },
+  switchThumbChecked: { transform: [{ translateX: sizing.size16 }] },
   switchTrack: {
     backgroundColor: colors.muted,
-    borderRadius: 14,
+    borderRadius: radii.radiusFull,
     justifyContent: 'center',
-    paddingHorizontal: 4,
-    height: 28,
-    width: 44,
+    paddingHorizontal: spacing.space4,
+    height: sizing.size28,
+    width: sizing.size44,
   },
   switchTrackChecked: { backgroundColor: colors.deep },
-  target: { height: 64, width: 352 },
   trailingValue: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 8,
-    maxWidth: 176,
+    gap: spacing.space8,
   },
 });

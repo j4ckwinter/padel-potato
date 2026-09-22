@@ -6,7 +6,7 @@ import {
 } from '../../assets/artwork/headerMascots';
 import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { colors, radii, sizing, spacing } from '../../tokens';
 import { Favourite } from '../actions/Favourite';
 import { IconButton } from '../actions/IconButton';
 
@@ -234,29 +234,29 @@ export function AppHeader(props: AppHeaderProps) {
 
 const styles = StyleSheet.create({
   backAction: {
-    marginRight: 4,
+    marginRight: spacing.space4,
   },
   container: {
     alignItems: 'center',
     backgroundColor: colors.canvas,
-    borderRadius: 20,
+    borderRadius: radii.radius20,
     flexDirection: 'row',
-    gap: 12,
-    height: 112,
+    gap: spacing.space12,
+    minHeight: sizing.size112,
     overflow: 'visible',
-    paddingHorizontal: 16,
-    width: 390,
+    paddingHorizontal: spacing.space16,
+    width: '100%',
   },
   copy: {
     flex: 1,
     flexShrink: 1,
-    gap: 4,
+    gap: spacing.space4,
     minWidth: 0,
   },
   leading: {
     alignItems: 'center',
-    height: 64,
+    height: sizing.size64,
     justifyContent: 'center',
-    width: 64,
+    width: sizing.size64,
   },
 });

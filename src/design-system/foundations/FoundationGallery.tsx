@@ -13,8 +13,10 @@ import {
   borders,
   colors,
   dimensions,
+  layoutWidths,
   opacity,
   radii,
+  sizing,
   spacing,
   typography,
 } from '../tokens';
@@ -25,6 +27,9 @@ export type FoundationCategory =
   | 'spacing'
   | 'radii'
   | 'dimensions'
+  | 'sizing'
+  | 'layout'
+  | 'rhythm'
   | 'borders'
   | 'opacity';
 
@@ -38,6 +43,9 @@ export const foundationCategories = Object.freeze([
   'spacing',
   'radii',
   'dimensions',
+  'sizing',
+  'layout',
+  'rhythm',
   'borders',
   'opacity',
 ] as const satisfies readonly FoundationCategory[]);
@@ -48,6 +56,9 @@ const categoryHeadings: Readonly<Record<FoundationCategory, string>> = {
   spacing: 'Spacing',
   radii: 'Radii',
   dimensions: 'Dimensions',
+  sizing: 'Sizing',
+  layout: 'Responsive layout',
+  rhythm: 'Four-point rhythm',
   borders: 'Borders',
   opacity: 'Opacity',
 };
@@ -150,6 +161,21 @@ function scalarVisual(category: ScalarCategory, value: number): ViewStyle {
       };
     case 'dimensions':
       return { height: value, width: value, borderRadius: radii.radius8 };
+    case 'sizing':
+      return { height: value, width: value, borderRadius: radii.radius8 };
+    case 'layout':
+      return {
+        borderRadius: radii.radius8,
+        height: sizing.size24,
+        maxWidth: '100%',
+        width: value,
+      };
+    case 'rhythm':
+      return {
+        borderRadius: radii.radiusFull,
+        height: sizing.size8,
+        width: value,
+      };
     case 'borders':
       return {
         height: dimensions.controlHeight40,
@@ -223,6 +249,24 @@ function FoundationSection({ category }: { category: FoundationCategory }) {
       return (
         <Section category={category}>
           <ScalarSpecimens category={category} tokens={dimensions} />
+        </Section>
+      );
+    case 'sizing':
+      return (
+        <Section category={category}>
+          <ScalarSpecimens category={category} tokens={sizing} />
+        </Section>
+      );
+    case 'layout':
+      return (
+        <Section category={category}>
+          <ScalarSpecimens category={category} tokens={layoutWidths} />
+        </Section>
+      );
+    case 'rhythm':
+      return (
+        <Section category={category}>
+          <ScalarSpecimens category={category} tokens={spacing} />
         </Section>
       );
     case 'borders':

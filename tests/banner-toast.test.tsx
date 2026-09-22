@@ -66,7 +66,7 @@ describe('Banner Toast runtime and announcement contract', () => {
       expect(rootStyle).toEqual(
         expect.objectContaining({
           minHeight: props.type === 'toast' ? 72 : 88,
-          width: 352,
+          width: '100%',
         }),
       );
       expect(

@@ -20,7 +20,9 @@ import {
   borders,
   colors,
   dimensions,
+  layoutWidths,
   opacity,
+  sizing,
 } from '../src/design-system/tokens';
 
 const flattenedStyle = (style: unknown) =>
@@ -295,20 +297,21 @@ describe('Pressable interaction contract', () => {
     );
   });
 
-  it('allows caller dimensions without permitting them to remove the target minimum', async () => {
+  it('resolves tokenized dimensions without permitting them to remove the target minimum', async () => {
     const screen = await render(
       <Pressable
         size="controlHeight40"
-        style={{ height: 12, width: 180 }}
+        height="size12"
         testID="subject"
+        width="content"
       />,
     );
     expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
       expect.objectContaining({
-        height: 12,
+        height: sizing.size12,
         minHeight: dimensions.controlHeight40,
         minWidth: dimensions.controlHeight40,
-        width: 180,
+        width: layoutWidths.content,
       }),
     );
   });

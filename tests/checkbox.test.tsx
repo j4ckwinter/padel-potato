@@ -102,10 +102,8 @@ describe('Checkbox controlled public contract', () => {
     });
     expect(flattenedStyle(checkbox.props.style)).toEqual(
       expect.objectContaining({
-        height: 40,
         minHeight: 40,
         minWidth: 40,
-        width: 40,
       }),
     );
     expect(

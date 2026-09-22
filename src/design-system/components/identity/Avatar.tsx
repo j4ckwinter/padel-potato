@@ -6,10 +6,15 @@ import {
 } from 'react-native';
 
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, sizing } from '../../tokens';
 import { isLocalImageSource } from '../../internal/validation';
 
-export const avatarSizes = Object.freeze([32, 40, 48, 56] as const);
+export const avatarSizes = Object.freeze([
+  sizing.size32,
+  sizing.size40,
+  sizing.size48,
+  sizing.size56,
+] as const);
 export const avatarPresences = Object.freeze([
   'online',
   'away',
@@ -226,7 +231,7 @@ export function Avatar(props: AvatarProps) {
             backgroundColor: indicatorColor,
             borderColor: colors.surface,
             borderRadius: indicatorDiameter / 2,
-            borderWidth: 2,
+            borderWidth: borders.focusRingWidth,
             height: indicatorDiameter,
             left: indicatorOffset,
             top: indicatorOffset,

@@ -17,9 +17,11 @@ import {
 } from '../tokens';
 import {
   containerLayoutStyleKeys,
-  guardStyle,
+  guardStructuralStyle,
   resolveDesignToken,
+  resolveLayoutTokenProps,
   type ContainerLayoutStyle,
+  type LayoutTokenProps,
 } from './styleGuards';
 
 const surfaceOwnedStyleKeys = [
@@ -64,25 +66,55 @@ const surfaceOwnedStyleKeys = [
   'shadowRadius',
 ] as const satisfies readonly (keyof ViewStyle)[];
 
-export type SurfaceProps = Omit<ViewProps, 'style'> & {
-  background?: ColorToken;
-  borderColor?: ColorToken;
-  borderWidth?: BorderToken;
-  padding?: SpacingToken;
-  radius?: RadiusToken;
-  style?: StyleProp<ContainerLayoutStyle>;
-};
+export type SurfaceProps = Omit<ViewProps, 'style'> &
+  LayoutTokenProps & {
+    background?: ColorToken;
+    borderColor?: ColorToken;
+    borderWidth?: BorderToken;
+    padding?: SpacingToken;
+    radius?: RadiusToken;
+    style?: StyleProp<ContainerLayoutStyle>;
+  };
 
 export function Surface({
   background = 'surface',
   borderColor,
   borderWidth,
+  height,
+  margin,
+  marginBottom,
+  marginHorizontal,
+  marginLeft,
+  marginRight,
+  marginTop,
+  marginVertical,
+  maxHeight,
+  maxWidth,
+  minHeight,
+  minWidth,
   padding = 'space16',
   radius,
   style,
+  width,
   ...props
 }: SurfaceProps) {
-  guardStyle(style, surfaceOwnedStyleKeys, containerLayoutStyleKeys);
+  guardStructuralStyle(style, surfaceOwnedStyleKeys, containerLayoutStyleKeys);
+
+  const layoutStyle = resolveLayoutTokenProps({
+    height,
+    margin,
+    marginBottom,
+    marginHorizontal,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginVertical,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    width,
+  });
 
   const ownedStyle: ViewStyle = {
     backgroundColor: resolveDesignToken(colors, background),
@@ -98,5 +130,5 @@ export function Surface({
       : { borderRadius: resolveDesignToken(radii, radius) }),
   };
 
-  return <View {...props} style={[style, ownedStyle]} />;
+  return <View {...props} style={[style, layoutStyle, ownedStyle]} />;
 }

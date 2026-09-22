@@ -4,7 +4,7 @@ import { Icon } from '../../assets/Icon';
 import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 
 export const choiceChipTypes = Object.freeze(['option', 'filter'] as const);
 export const choiceChipIcons = Object.freeze([
@@ -152,7 +152,6 @@ export function ChoiceChip(props: ChoiceChipProps) {
       disabled={disabled}
       onPress={() => onSelectedChange(!selected)}
       size="controlHeight40"
-      style={styles.target}
     >
       <View
         accessible={false}
@@ -167,7 +166,7 @@ export function ChoiceChip(props: ChoiceChipProps) {
                 ? colors.accent
                 : colors.surface,
             borderColor: colors.border,
-            borderWidth: 1,
+            borderWidth: borders.borderDefault,
           },
         ]}
         testID="choice-chip-content"
@@ -183,16 +182,11 @@ export function ChoiceChip(props: ChoiceChipProps) {
 const styles = StyleSheet.create({
   content: {
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: radii.radiusFull,
     flexDirection: 'row',
-    gap: 8,
-    height: 40,
+    gap: spacing.space8,
+    minHeight: sizing.size40,
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    width: 148,
-  },
-  target: {
-    height: 40,
-    width: 148,
+    paddingHorizontal: spacing.space12,
   },
 });

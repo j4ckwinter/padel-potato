@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '../../assets/Icon';
 import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing } from '../../tokens';
 
 export type CheckboxProps = Readonly<{
   accessibilityLabel: string;
@@ -69,7 +69,6 @@ export function Checkbox(props: CheckboxProps) {
       disabled={disabled}
       onPress={() => onCheckedChange(!checked)}
       size="controlHeight40"
-      style={styles.target}
     >
       <View
         accessible={false}
@@ -84,7 +83,7 @@ export function Checkbox(props: CheckboxProps) {
                 ? colors.accent
                 : colors.surface,
             borderColor: colors.border,
-            borderWidth: 1,
+            borderWidth: borders.borderDefault,
           },
         ]}
         testID="checkbox-content"
@@ -98,13 +97,9 @@ export function Checkbox(props: CheckboxProps) {
 const styles = StyleSheet.create({
   content: {
     alignItems: 'center',
-    borderRadius: 8,
-    height: 40,
+    borderRadius: radii.radius8,
+    height: sizing.size40,
     justifyContent: 'center',
-    width: 40,
-  },
-  target: {
-    height: 40,
-    width: 40,
+    width: sizing.size40,
   },
 });

@@ -37,15 +37,7 @@ export function FieldShell({
       : props.message;
 
   return (
-    <View
-      style={[
-        fieldStyles.field,
-        supportingText
-          ? fieldStyles.fieldWithSupportingText
-          : fieldStyles.fieldWithoutSupportingText,
-      ]}
-      testID="field"
-    >
+    <View style={fieldStyles.field} testID="field">
       <View style={fieldStyles.labelRow}>
         <Text color="textSecondary" variant="label">
           {fieldLabel(props.label, props.required ?? false)}

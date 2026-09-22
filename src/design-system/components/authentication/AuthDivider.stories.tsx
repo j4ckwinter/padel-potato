@@ -65,7 +65,7 @@ export const Variants: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space8" style={{ width: 352 }}>
+    <Stack gap="space8" width="content">
       <AuthDivider label="or continue with a deliberately long static alternative" />
       <Text color="textSecondary" variant="caption">
         A blank label is rejected. Long static content and 200% font-scale

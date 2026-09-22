@@ -21,13 +21,13 @@ const rejectedImageSources = [
 
 describe('Avatar Picker runtime and semantic contract', () => {
   it.each([
-    ['empty', 'Add a profile photo', 136],
-    ['initials', 'Change profile photo', 136],
-    ['photo', 'Change profile photo', 136],
-    ['error', 'Add a profile photo', 160],
-  ] as ['empty' | 'initials' | 'photo' | 'error', string, number][])(
+    ['empty', 'Add a profile photo'],
+    ['initials', 'Change profile photo'],
+    ['photo', 'Change profile photo'],
+    ['error', 'Add a profile photo'],
+  ] as ['empty' | 'initials' | 'photo' | 'error', string][])(
     'renders the controlled %s branch as one named button',
-    async (variant, name, height) => {
+    async (variant, name) => {
       const common = { onPress: jest.fn(), variant } as const;
       const props =
         variant === 'initials'
@@ -39,7 +39,9 @@ describe('Avatar Picker runtime and semantic contract', () => {
         <AvatarPicker {...(props as AvatarPickerProps)} />,
       );
 
-      expect(screen.getByRole('button', { name })).toHaveStyle({ height });
+      expect(screen.getByRole('button', { name })).toHaveStyle({
+        width: '100%',
+      });
       if (variant === 'error') {
         expect(screen.getByText('Choose a JPG or PNG under 5 MB')).toBeTruthy();
         expect(

@@ -104,7 +104,7 @@ describe('Settings Row runtime and semantic contract', () => {
       const screen = await render(<SettingsRow {...props} />);
       expect(
         flattenedStyle(screen.getByTestId('settings-row').props.style),
-      ).toEqual(expect.objectContaining({ height: 64, width: 352 }));
+      ).toEqual(expect.objectContaining({ minHeight: 64, width: '100%' }));
     },
   );
 

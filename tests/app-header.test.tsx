@@ -41,7 +41,7 @@ describe('AppHeader closed page configurations', () => {
       expect(onNotificationPress).toHaveBeenCalledTimes(1);
       expect(
         flattenedStyle(screen.getByTestId('app-header').props.style),
-      ).toEqual(expect.objectContaining({ height: 112, width: 390 }));
+      ).toEqual(expect.objectContaining({ minHeight: 112, width: '100%' }));
     },
   );
 
@@ -83,10 +83,8 @@ describe('AppHeader closed page configurations', () => {
       });
       expect(flattenedStyle(back.props.style)).toEqual(
         expect.objectContaining({
-          height: 40,
           minHeight: 40,
           minWidth: 40,
-          width: 40,
         }),
       );
       await user.press(back);

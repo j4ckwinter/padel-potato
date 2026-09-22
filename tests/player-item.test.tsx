@@ -83,7 +83,7 @@ describe('Player Item runtime and semantic contract', () => {
       const screen = await render(<PlayerItem {...props} />);
       expect(
         flattenedStyle(screen.getByTestId('player-item').props.style),
-      ).toEqual(expect.objectContaining({ height: 80, width: 328 }));
+      ).toEqual(expect.objectContaining({ minHeight: 80, width: '100%' }));
     },
   );
 

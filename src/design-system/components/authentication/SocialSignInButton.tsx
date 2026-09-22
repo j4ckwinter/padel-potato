@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 import {
   assertOnlyKeys,
   isCallback,
@@ -87,7 +87,7 @@ export function SocialSignInButton(props: SocialSignInButtonProps) {
       disabled={disabled}
       onPress={onPress}
       size="controlHeight48"
-      style={styles.target}
+      width="fill"
     >
       {({ pressed }) => (
         <View
@@ -119,17 +119,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     borderColor: colors.border,
-    borderRadius: 24,
-    borderWidth: 1,
+    borderRadius: radii.radiusFull,
+    borderWidth: borders.borderDefault,
     flexDirection: 'row',
-    gap: 8,
-    height: 48,
+    gap: spacing.space8,
+    minHeight: sizing.size48,
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    width: 352,
-  },
-  target: {
-    height: 48,
-    width: 352,
+    paddingHorizontal: spacing.space16,
+    width: '100%',
   },
 });

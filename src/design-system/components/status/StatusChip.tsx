@@ -3,7 +3,14 @@ import { StyleSheet, View } from 'react-native';
 import { Icon, type IconName } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors, type ColorToken } from '../../tokens';
+import {
+  borders,
+  colors,
+  radii,
+  sizing,
+  spacing,
+  type ColorToken,
+} from '../../tokens';
 
 export type StatusChipStyle =
   'neutral' | 'success' | 'warning' | 'info' | 'error';
@@ -151,7 +158,6 @@ export function StatusChip(props: StatusChipProps) {
         accessibilityRole="button"
         disabled
         size="controlHeight40"
-        style={stylesSheet.target}
       >
         <Content label={props.label} style="neutral" />
       </Pressable>
@@ -164,7 +170,6 @@ export function StatusChip(props: StatusChipProps) {
       accessibilityState={{ checked: props.selected }}
       onPress={() => props.onSelectedChange(!props.selected)}
       size="controlHeight40"
-      style={stylesSheet.target}
     >
       <Content label={props.label} style="success" />
     </Pressable>
@@ -175,14 +180,12 @@ const stylesSheet = StyleSheet.create({
   content: {
     alignItems: 'center',
     borderColor: colors.border,
-    borderRadius: 18,
-    borderWidth: 1,
+    borderRadius: radii.radiusFull,
+    borderWidth: borders.borderDefault,
     flexDirection: 'row',
-    gap: 4,
-    height: 36,
+    gap: spacing.space4,
+    minHeight: sizing.size36,
     justifyContent: 'center',
-    paddingHorizontal: 8,
-    width: 132,
+    paddingHorizontal: spacing.space12,
   },
-  target: { width: 132 },
 });

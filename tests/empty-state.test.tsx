@@ -58,7 +58,7 @@ describe('Empty State approved-copy contract', () => {
       const screen = await render(<EmptyState {...props} />);
       expect(
         flattenedStyle(screen.getByTestId('empty-state').props.style),
-      ).toEqual(expect.objectContaining({ minHeight: 220, width: 352 }));
+      ).toEqual(expect.objectContaining({ minHeight: 216, width: '100%' }));
       expect(screen.getByText(heading)).toBeTruthy();
       expect(screen.getByText(body)).toBeTruthy();
       expect(

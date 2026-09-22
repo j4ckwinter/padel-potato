@@ -44,6 +44,18 @@ export const Dimensions: Story = {
   args: { category: 'dimensions' },
 };
 
+export const Sizing: Story = {
+  args: { category: 'sizing' },
+};
+
+export const ResponsiveLayout: Story = {
+  args: { category: 'layout' },
+};
+
+export const Rhythm: Story = {
+  args: { category: 'rhythm' },
+};
+
 export const Borders: Story = {
   args: { category: 'borders' },
 };

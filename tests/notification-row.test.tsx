@@ -77,7 +77,7 @@ describe('Notification Row runtime and semantic contract', () => {
       const screen = await render(<NotificationRow {...props} />);
       expect(
         flattenedStyle(screen.getByTestId('notification-row').props.style),
-      ).toEqual(expect.objectContaining({ height: 92, width: 352 }));
+      ).toEqual(expect.objectContaining({ minHeight: 92, width: '100%' }));
     },
   );
 

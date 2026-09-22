@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { colors, radii, sizing, spacing } from '../../tokens';
 import { Button } from '../actions/Button';
 import {
   NoGamesEmptyStateArtwork,
@@ -120,16 +120,16 @@ export function EmptyState(props: EmptyStateProps) {
 }
 
 const styles = StyleSheet.create({
-  copy: { maxWidth: 288, textAlign: 'center' },
+  copy: { textAlign: 'center' },
   root: {
     alignItems: 'center',
     backgroundColor: colors.surface,
-    borderRadius: 20,
-    gap: 4,
+    borderRadius: radii.radius20,
+    gap: spacing.space4,
     justifyContent: 'center',
-    minHeight: 220,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    width: 352,
+    minHeight: sizing.size112 + sizing.size104,
+    paddingHorizontal: spacing.space16,
+    paddingVertical: spacing.space8,
+    width: '100%',
   },
 });

@@ -9,9 +9,11 @@ import { spacing, type SpacingToken } from '../tokens';
 import {
   containerLayoutStyleKeys,
   containerOwnedStyleKeys,
-  guardStyle,
+  guardStructuralStyle,
   resolveDesignToken,
+  resolveLayoutTokenProps,
   type ContainerLayoutStyle,
+  type LayoutTokenProps,
 } from './styleGuards';
 
 const alignments = {
@@ -33,23 +35,57 @@ const justifications = {
 export type LayoutAlignment = keyof typeof alignments;
 export type LayoutJustification = keyof typeof justifications;
 
-export type StackProps = Omit<ViewProps, 'style'> & {
-  align?: LayoutAlignment;
-  gap?: SpacingToken;
-  justify?: LayoutJustification;
-  padding?: SpacingToken;
-  style?: StyleProp<ContainerLayoutStyle>;
-};
+export type StackProps = Omit<ViewProps, 'style'> &
+  LayoutTokenProps & {
+    align?: LayoutAlignment;
+    gap?: SpacingToken;
+    justify?: LayoutJustification;
+    padding?: SpacingToken;
+    style?: StyleProp<ContainerLayoutStyle>;
+  };
 
 export function Stack({
   align = 'stretch',
   gap = 'space16',
+  height,
   justify = 'start',
+  margin,
+  marginBottom,
+  marginHorizontal,
+  marginLeft,
+  marginRight,
+  marginTop,
+  marginVertical,
+  maxHeight,
+  maxWidth,
+  minHeight,
+  minWidth,
   padding,
   style,
+  width,
   ...props
 }: StackProps) {
-  guardStyle(style, containerOwnedStyleKeys, containerLayoutStyleKeys);
+  guardStructuralStyle(
+    style,
+    containerOwnedStyleKeys,
+    containerLayoutStyleKeys,
+  );
+
+  const layoutStyle = resolveLayoutTokenProps({
+    height,
+    margin,
+    marginBottom,
+    marginHorizontal,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginVertical,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    width,
+  });
 
   const ownedStyle: ViewStyle = {
     alignItems: resolveDesignToken(alignments, align),
@@ -61,5 +97,5 @@ export function Stack({
       : { padding: resolveDesignToken(spacing, padding) }),
   };
 
-  return <View {...props} style={[style, ownedStyle]} />;
+  return <View {...props} style={[style, layoutStyle, ownedStyle]} />;
 }

@@ -10,10 +10,12 @@ import type { LayoutAlignment, LayoutJustification } from './Stack';
 import {
   containerLayoutStyleKeys,
   containerOwnedStyleKeys,
-  guardStyle,
+  guardStructuralStyle,
   resolveBooleanDesignValue,
   resolveDesignToken,
+  resolveLayoutTokenProps,
   type ContainerLayoutStyle,
+  type LayoutTokenProps,
 } from './styleGuards';
 
 const alignments = {
@@ -34,25 +36,59 @@ const justifications = {
   Record<LayoutJustification, ViewStyle['justifyContent']>
 >;
 
-export type InlineProps = Omit<ViewProps, 'style'> & {
-  align?: LayoutAlignment;
-  gap?: SpacingToken;
-  justify?: LayoutJustification;
-  padding?: SpacingToken;
-  style?: StyleProp<ContainerLayoutStyle>;
-  wrap?: boolean;
-};
+export type InlineProps = Omit<ViewProps, 'style'> &
+  LayoutTokenProps & {
+    align?: LayoutAlignment;
+    gap?: SpacingToken;
+    justify?: LayoutJustification;
+    padding?: SpacingToken;
+    style?: StyleProp<ContainerLayoutStyle>;
+    wrap?: boolean;
+  };
 
 export function Inline({
   align = 'stretch',
   gap = 'space16',
+  height,
   justify = 'start',
+  margin,
+  marginBottom,
+  marginHorizontal,
+  marginLeft,
+  marginRight,
+  marginTop,
+  marginVertical,
+  maxHeight,
+  maxWidth,
+  minHeight,
+  minWidth,
   padding,
   style,
+  width,
   wrap = false,
   ...props
 }: InlineProps) {
-  guardStyle(style, containerOwnedStyleKeys, containerLayoutStyleKeys);
+  guardStructuralStyle(
+    style,
+    containerOwnedStyleKeys,
+    containerLayoutStyleKeys,
+  );
+
+  const layoutStyle = resolveLayoutTokenProps({
+    height,
+    margin,
+    marginBottom,
+    marginHorizontal,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginVertical,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    width,
+  });
 
   const ownedStyle: ViewStyle = {
     alignItems: resolveDesignToken(alignments, align),
@@ -65,5 +101,5 @@ export function Inline({
       : { padding: resolveDesignToken(spacing, padding) }),
   };
 
-  return <View {...props} style={[style, ownedStyle]} />;
+  return <View {...props} style={[style, layoutStyle, ownedStyle]} />;
 }

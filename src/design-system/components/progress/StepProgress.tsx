@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Icon } from '../../assets/Icon';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { colors, radii, sizing, spacing } from '../../tokens';
 
 export type StepProgressValue = 1 | 2 | 3 | 'complete';
 export type StepProgressProps = Readonly<{ value: StepProgressValue }>;
@@ -51,15 +51,15 @@ export function StepProgress(props: StepProgressProps) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
-    height: 48,
+    gap: spacing.space8,
+    minHeight: sizing.size48,
     justifyContent: 'center',
-    width: 352,
+    width: '100%',
   },
   fill: {
     backgroundColor: colors.accent,
-    borderRadius: 4,
-    height: 8,
+    borderRadius: radii.radiusFull,
+    height: sizing.size8,
   },
   labelRow: {
     alignItems: 'center',
@@ -68,9 +68,9 @@ const styles = StyleSheet.create({
   },
   track: {
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 4,
-    height: 8,
+    borderRadius: radii.radiusFull,
+    height: sizing.size8,
     overflow: 'hidden',
-    width: 352,
+    width: '100%',
   },
 });

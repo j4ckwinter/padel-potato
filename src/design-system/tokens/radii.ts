@@ -5,6 +5,7 @@ export const radii = Object.freeze({
   radius28: 28,
   radius36: 36,
   radius8: 8,
+  radiusFull: 999,
 } as const);
 
 export type RadiusToken = keyof typeof radii;

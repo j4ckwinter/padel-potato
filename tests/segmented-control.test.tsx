@@ -34,16 +34,14 @@ describe('SegmentedControl tuple boundary and controlled selection', () => {
       ]);
       expect(
         flattenedStyle(screen.getByTestId('segmented-control').props.style),
-      ).toEqual(expect.objectContaining({ height: 48, width: 350 }));
+      ).toEqual(expect.objectContaining({ minHeight: 48, width: '100%' }));
       for (const tab of tabs) {
         expect(flattenedStyle(tab.props.style)).toEqual(
           expect.objectContaining({
             flexBasis: 0,
             flexGrow: 1,
-            height: 48,
             minHeight: 48,
             minWidth: 48,
-            width: 0,
           }),
         );
       }

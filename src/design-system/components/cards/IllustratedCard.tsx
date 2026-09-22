@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 import {
   GameCreatedIllustratedCardArtwork,
   InvitePlayersIllustratedCardArtwork,
@@ -215,7 +215,7 @@ function CardAction({
       accessibilityRole="button"
       onPress={onPress}
       size="controlHeight44"
-      style={styles.actionTarget}
+      width="size72"
     >
       <View
         accessible={false}
@@ -315,44 +315,47 @@ export function IllustratedCard(props: IllustratedCardProps) {
 }
 
 const styles = StyleSheet.create({
-  actionTarget: { height: 44, width: 72 },
   actionVisual: {
     alignItems: 'center',
     backgroundColor: colors.accent,
-    borderRadius: 20,
-    height: 40,
+    borderRadius: radii.radiusFull,
+    height: sizing.size40,
     justifyContent: 'center',
-    width: 72,
+    width: sizing.size72,
   },
-  artwork: { position: 'absolute', right: 16, top: 16 },
-  copy: { gap: 4, maxWidth: 224 },
+  artwork: {
+    position: 'absolute',
+    right: spacing.space16,
+    top: spacing.space16,
+  },
+  copy: { flex: 1, gap: spacing.space4 },
   footer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
+    marginTop: spacing.space8,
   },
   nextGame: { backgroundColor: colors.deep, borderWidth: 0 },
   participant: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.surface,
-    borderRadius: 16,
-    borderWidth: 2,
-    height: 32,
+    borderRadius: radii.radius16,
+    borderWidth: borders.focusRingWidth,
+    height: sizing.size32,
     justifyContent: 'center',
-    marginRight: -8,
-    width: 32,
+    marginRight: -spacing.space8,
+    width: sizing.size32,
   },
-  participants: { flexDirection: 'row', paddingRight: 8 },
+  participants: { flexDirection: 'row', paddingRight: spacing.space8 },
   root: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
-    borderWidth: 1,
+    borderRadius: radii.radius20,
+    borderWidth: borders.borderDefault,
     justifyContent: 'space-between',
-    minHeight: 176,
-    padding: 16,
-    width: 352,
+    minHeight: sizing.size112 + sizing.size64,
+    padding: spacing.space16,
+    width: '100%',
   },
 });

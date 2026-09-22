@@ -23,8 +23,8 @@ describe('AuthDivider static public contract', () => {
     expect(label).toBeTruthy();
     expect(flattenedStyle(container.props.style)).toEqual(
       expect.objectContaining({
-        height: 24,
-        width: 352,
+        minHeight: 24,
+        width: '100%',
       }),
     );
     expect(rules).toHaveLength(2);

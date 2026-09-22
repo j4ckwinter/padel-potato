@@ -4,7 +4,7 @@ import { Icon, type IconName } from '../../assets/Icon';
 import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 
 export const bottomNavigationDestinations = Object.freeze([
   Object.freeze({ destination: 'home', icon: 'home', label: 'Home' }),
@@ -68,6 +68,7 @@ export function BottomNavigation(props: BottomNavigationProps) {
             accessibilityState={{ selected }}
             key={destination}
             onPress={() => onDestinationPress(destination)}
+            minHeight="size76"
             size="controlHeight44"
             style={styles.target}
             testID={`bottom-navigation-${destination}`}
@@ -105,19 +106,19 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 24,
-    borderWidth: 1,
+    borderRadius: radii.radiusFull,
+    borderWidth: borders.borderDefault,
     flexDirection: 'row',
-    height: 76,
+    minHeight: sizing.size76,
     overflow: 'visible',
-    width: 390,
+    width: '100%',
   },
   iconFrame: {
     alignItems: 'center',
-    borderRadius: 16,
-    height: 32,
+    borderRadius: radii.radius16,
+    height: sizing.size32,
     justifyContent: 'center',
-    width: 40,
+    width: sizing.size40,
   },
   iconFrameActive: {
     backgroundColor: colors.surfaceAccent,
@@ -125,13 +126,12 @@ const styles = StyleSheet.create({
   item: {
     alignItems: 'center',
     flex: 1,
-    gap: 4,
+    gap: spacing.space4,
     justifyContent: 'center',
   },
   target: {
     flexBasis: 0,
     flexGrow: 1,
     flexShrink: 1,
-    height: 76,
   },
 });

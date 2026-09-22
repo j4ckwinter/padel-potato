@@ -35,10 +35,11 @@ export function TriggerField(props: TriggerFieldProps) {
         accessibilityRole="button"
         accessibilityValue={{ text: displayedValue }}
         disabled={props.disabled}
+        minHeight="size52"
         onPress={props.onPress}
         size="controlHeight48"
-        style={fieldStyles.trigger}
         testID="field-control"
+        width="fill"
       >
         <View
           accessible={false}

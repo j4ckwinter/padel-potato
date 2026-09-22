@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon, type IconName } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 
 type NotificationContent = Readonly<{
   message: string;
@@ -95,8 +95,9 @@ export function NotificationRow(props: NotificationRowProps) {
       accessibilityLabel={`${title}, ${message}, ${timestamp}, ${readMeaning}`}
       accessibilityRole="button"
       onPress={props.onPress}
+      minHeight="size92"
       size="controlHeight44"
-      style={styles.target}
+      width="fill"
       testID="notification-row"
     >
       <View
@@ -132,30 +133,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: radii.radius16,
+    borderWidth: borders.borderDefault,
     flexDirection: 'row',
-    gap: 12,
-    height: 92,
-    paddingHorizontal: 16,
-    width: 352,
+    gap: spacing.space12,
+    minHeight: sizing.size92,
+    paddingHorizontal: spacing.space16,
+    width: '100%',
   },
-  copy: { flex: 1, gap: 4, minWidth: 0 },
+  copy: { flex: 1, gap: spacing.space4, minWidth: 0 },
   iconWell: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 20,
-    height: 40,
+    borderRadius: radii.radiusFull,
+    height: sizing.size40,
     justifyContent: 'center',
-    width: 40,
+    width: sizing.size40,
   },
-  meta: { alignItems: 'flex-end', gap: 8 },
-  target: { height: 92, width: 352 },
-  unread: { borderColor: colors.accent, borderWidth: 2 },
+  meta: { alignItems: 'flex-end', gap: spacing.space8 },
+  unread: { borderColor: colors.accent, borderWidth: borders.focusRingWidth },
   unreadDot: {
     backgroundColor: colors.accent,
-    borderRadius: 4,
-    height: 8,
-    width: 8,
+    borderRadius: radii.radiusFull,
+    height: sizing.size8,
+    width: sizing.size8,
   },
 });

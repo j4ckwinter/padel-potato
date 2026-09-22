@@ -54,11 +54,7 @@ export const Variants: Story = {
 export const Boundaries: Story = {
   args: { background: 'surface', padding: 'space8' },
   render: () => (
-    <Stack
-      gap="space8"
-      style={{ width: 220 }}
-      testID="boundary-constrained-width"
-    >
+    <Stack gap="space8" width="compact" testID="boundary-constrained-width">
       <Surface testID="boundary-zero" />
       <Surface testID="boundary-one">
         <Text variant="body">One</Text>

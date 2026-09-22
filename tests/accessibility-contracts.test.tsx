@@ -146,10 +146,9 @@ describe('shared accessibility and interaction assertions', () => {
     expectLabelledIconImage(labelled, name);
   });
 
-  it('compares flattened registered token styles rather than snapshots', async () => {
-    const registered = StyleSheet.create({ layout: { marginTop: 8 } });
+  it('compares flattened tokenized layout styles rather than snapshots', async () => {
     const screen = await render(
-      <Text style={registered.layout} testID="subject" variant="body">
+      <Text marginTop="space8" testID="subject" variant="body">
         Registered
       </Text>,
     );
@@ -166,7 +165,7 @@ describe('shared accessibility and interaction assertions', () => {
 describe('published interaction and long-content host contract', () => {
   it('publishes Pressable by identity while keeping test helpers on a dedicated boundary', () => {
     const publicSize: PublicPressableSize = 'controlHeight44';
-    const publicStyle: PublicPressableLayoutStyle = { width: 120 };
+    const publicStyle: PublicPressableLayoutStyle = { flex: 1 };
     const publicProps: PublicPressableProps = {
       size: publicSize,
       style: publicStyle,
@@ -188,7 +187,7 @@ describe('published interaction and long-content host contract', () => {
     expect(testing.expectTouchTargetContract).toBe(expectTouchTargetContract);
     expect(publicProps).toEqual({
       size: 'controlHeight44',
-      style: { width: 120 },
+      style: { flex: 1 },
     });
   });
 
@@ -202,10 +201,10 @@ describe('published interaction and long-content host contract', () => {
         accessibilityLabel={name}
         accessibilityRole="button"
         onPress={onPress}
-        style={{ width: 180 }}
         testID="action"
+        width="compact"
       >
-        <Text style={{ width: 180 }} testID="content" variant="body">
+        <Text testID="content" variant="body" width="compact">
           {name}
         </Text>
       </Pressable>,
@@ -217,7 +216,7 @@ describe('published interaction and long-content host contract', () => {
     expect(content.props.allowFontScaling).not.toBe(false);
     expect(content.props.maxFontSizeMultiplier).toBeUndefined();
     expect(StyleSheet.flatten(content.props.style)).toEqual(
-      expect.objectContaining({ width: 180 }),
+      expect.objectContaining({ width: 320 }),
     );
     await expectPressContract(user, action, onPress, 1);
   });

@@ -105,7 +105,7 @@ describe('Illustrated Card runtime contract', () => {
       const screen = await render(<IllustratedCard {...props} />);
       expect(
         flattenedStyle(screen.getByTestId('illustrated-card').props.style),
-      ).toEqual(expect.objectContaining({ minHeight: 176, width: 352 }));
+      ).toEqual(expect.objectContaining({ minHeight: 176, width: '100%' }));
       expect(screen.getByText(props.eyebrow)).toBeTruthy();
       expect(screen.getByText(props.title)).toBeTruthy();
       expect(screen.getByText(props.detailPrimary)).toBeTruthy();

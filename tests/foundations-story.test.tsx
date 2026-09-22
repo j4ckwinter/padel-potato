@@ -10,6 +10,9 @@ import galleryMeta, {
   Borders,
   Colors,
   Dimensions,
+  ResponsiveLayout,
+  Rhythm,
+  Sizing,
   Opacity,
   Radii,
   Spacing,
@@ -19,8 +22,10 @@ import {
   borders,
   colors,
   dimensions,
+  layoutWidths,
   opacity,
   radii,
+  sizing,
   spacing,
   typography,
 } from '../src/design-system/tokens';
@@ -31,6 +36,9 @@ const categoryCases: [FoundationCategory, string, string[]][] = [
   ['spacing', 'Spacing', Object.keys(spacing)],
   ['radii', 'Radii', Object.keys(radii)],
   ['dimensions', 'Dimensions', Object.keys(dimensions)],
+  ['sizing', 'Sizing', Object.keys(sizing)],
+  ['layout', 'Responsive layout', Object.keys(layoutWidths)],
+  ['rhythm', 'Four-point rhythm', Object.keys(spacing)],
   ['borders', 'Borders', Object.keys(borders)],
   ['opacity', 'Opacity', Object.keys(opacity)],
 ];
@@ -64,7 +72,7 @@ describe('FoundationGallery', () => {
       );
 
       tokenNames.forEach((tokenName) => {
-        expect(within(section).getByText(tokenName)).toBeVisible();
+        expect(within(section).getAllByText(tokenName)[0]).toBeVisible();
       });
     },
   );
@@ -73,7 +81,7 @@ describe('FoundationGallery', () => {
     expect(() =>
       FoundationGallery({ category: '' as FoundationCategory }),
     ).toThrow(
-      'Unsupported design-system value: . Supported values: colors, typography, spacing, radii, dimensions, borders, opacity',
+      'Unsupported design-system value: . Supported values: colors, typography, spacing, radii, dimensions, sizing, layout, rhythm, borders, opacity',
     );
   });
 });
@@ -86,11 +94,14 @@ describe('Foundations/Overview stories', () => {
     Spacing,
     Radii,
     Dimensions,
+    Sizing,
+    ResponsiveLayout,
+    Rhythm,
     Borders,
     Opacity,
   };
 
-  it('publishes the stable taxonomy and all eight named stories', () => {
+  it('publishes the stable taxonomy and all foundation stories', () => {
     expect(galleryMeta.title).toBe('Foundations/Overview');
     expect(Object.keys(stories)).toEqual([
       'AllFoundations',
@@ -99,6 +110,9 @@ describe('Foundations/Overview stories', () => {
       'Spacing',
       'Radii',
       'Dimensions',
+      'Sizing',
+      'ResponsiveLayout',
+      'Rhythm',
       'Borders',
       'Opacity',
     ]);
@@ -116,9 +130,11 @@ describe('Foundations/Overview stories', () => {
     },
   );
 
-  it('accounts for all 45 authored manifest records in aggregate', async () => {
+  it('accounts for every published foundation token in aggregate', async () => {
     const screen = await render(<FoundationGallery {...AllFoundations.args} />);
 
-    expect(screen.getAllByTestId(/^foundation-token-/)).toHaveLength(45);
+    expect(screen.getAllByTestId(/^foundation-token-/)).toHaveLength(
+      categoryCases.reduce((count, [, , tokens]) => count + tokens.length, 0),
+    );
   });
 });

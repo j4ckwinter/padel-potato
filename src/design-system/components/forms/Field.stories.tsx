@@ -213,7 +213,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space12" style={{ width: 260 }}>
+    <Stack gap="space12" width="compact">
       <Field
         label="Required empty value"
         onChangeText={noop}

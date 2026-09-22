@@ -28,8 +28,9 @@ function StepperAction({
       accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
+      height="size44"
       size="controlHeight44"
-      style={fieldStyles.stepperAction}
+      width="size44"
     >
       <View
         accessible={false}

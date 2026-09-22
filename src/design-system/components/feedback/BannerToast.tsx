@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon, type IconName } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { colors, radii, sizing, spacing } from '../../tokens';
 import { IconButton } from '../actions/IconButton';
 
 type BannerToastContent = Readonly<{
@@ -134,8 +134,9 @@ function BannerAction({
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       onPress={onPress}
+      height="size44"
       size="controlHeight44"
-      style={styles.bannerAction}
+      width="size48"
     >
       <View
         accessible={false}
@@ -222,34 +223,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.space12,
     minWidth: 0,
   },
-  banner: { minHeight: 88 },
-  bannerAction: { height: 44, width: 48 },
+  banner: { minHeight: sizing.size88 },
   bannerActionContent: {
     alignItems: 'center',
-    height: 44,
+    height: sizing.size44,
     justifyContent: 'center',
-    width: 48,
+    width: sizing.size48,
   },
-  copy: { flex: 1, flexShrink: 1, gap: 4, minWidth: 0 },
+  copy: { flex: 1, flexShrink: 1, gap: spacing.space4, minWidth: 0 },
   iconWell: {
     alignItems: 'center',
     backgroundColor: colors.surface,
-    borderRadius: 20,
-    height: 40,
+    borderRadius: radii.radiusFull,
+    height: sizing.size40,
     justifyContent: 'center',
-    width: 40,
+    width: sizing.size40,
   },
   root: {
     alignItems: 'center',
-    borderRadius: 16,
+    borderRadius: radii.radius16,
     flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    width: 352,
+    gap: spacing.space8,
+    paddingHorizontal: spacing.space12,
+    paddingVertical: spacing.space8,
+    width: '100%',
   },
-  toast: { minHeight: 72 },
+  toast: { minHeight: sizing.size72 },
 });

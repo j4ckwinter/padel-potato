@@ -37,14 +37,13 @@ describe('BottomNavigation source, order, and controlled intent', () => {
     expect(screen.queryAllByRole('image')).toHaveLength(0);
     expect(
       flattenedStyle(screen.getByTestId('bottom-navigation').props.style),
-    ).toEqual(expect.objectContaining({ height: 76, width: 390 }));
+    ).toEqual(expect.objectContaining({ minHeight: 76, width: '100%' }));
     for (const tab of tabs) {
       expect(flattenedStyle(tab.props.style)).toEqual(
         expect.objectContaining({
           flexBasis: 0,
           flexGrow: 1,
-          height: 76,
-          minHeight: 44,
+          minHeight: 76,
         }),
       );
     }

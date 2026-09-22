@@ -104,10 +104,8 @@ describe('ChoiceChip controlled public contract', () => {
     });
     expect(flattenedStyle(chip.props.style)).toEqual(
       expect.objectContaining({
-        height: 40,
         minHeight: 40,
         minWidth: 40,
-        width: 148,
       }),
     );
     expect(
@@ -118,8 +116,8 @@ describe('ChoiceChip controlled public contract', () => {
       ),
     ).toEqual(
       expect.objectContaining({
-        borderRadius: 20,
-        height: 40,
+        borderRadius: 999,
+        minHeight: 40,
         paddingHorizontal: 12,
       }),
     );

@@ -103,11 +103,7 @@ export const Boundaries: Story = {
     accessibilityRole: 'button',
   },
   render: (args) => (
-    <Stack
-      gap="space8"
-      style={{ width: 220 }}
-      testID="boundary-constrained-width"
-    >
+    <Stack gap="space8" width="compact" testID="boundary-constrained-width">
       <Text testID="boundary-required-content" variant="body">
         {longUnicode}
       </Text>

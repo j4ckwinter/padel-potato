@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, spacing } from '../../tokens';
 import { StatusChip, type StatusChipStyle } from '../status/StatusChip';
 
 type SharedPreferences = Readonly<{
@@ -122,16 +122,15 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    height: 152,
-    padding: 16,
-    width: 350,
+    borderRadius: radii.radius16,
+    borderWidth: borders.borderDefault,
+    padding: spacing.space16,
+    width: '100%',
   },
-  content: { gap: 12 },
+  content: { gap: spacing.space12 },
   preferences: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: spacing.space8,
   },
 });

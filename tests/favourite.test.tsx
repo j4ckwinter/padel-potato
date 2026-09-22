@@ -102,10 +102,8 @@ describe('Favourite controlled public contract', () => {
     });
     expect(flattenedStyle(subject.props.style)).toEqual(
       expect.objectContaining({
-        height: 44,
         minHeight: 44,
         minWidth: 44,
-        width: 44,
       }),
     );
   });

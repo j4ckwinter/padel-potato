@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Icon } from '../../assets/Icon';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 
 type StatTileCopy = Readonly<{
   label: string;
@@ -119,9 +119,9 @@ export function StatTile(props: StatTileProps) {
 }
 
 const styles = StyleSheet.create({
-  compact: { width: 160 },
-  content: { gap: 4 },
-  featured: { width: 328 },
+  compact: { flex: 1 },
+  content: { gap: spacing.space4 },
+  featured: { width: '100%' },
   neutral: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
@@ -133,14 +133,14 @@ const styles = StyleSheet.create({
   supportingRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 4,
+    gap: spacing.space4,
   },
   tile: {
-    borderRadius: 20,
-    borderWidth: 1,
-    height: 112,
+    borderRadius: radii.radius20,
+    borderWidth: borders.borderDefault,
+    minHeight: sizing.size112,
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.space16,
+    paddingVertical: spacing.space16,
   },
 });

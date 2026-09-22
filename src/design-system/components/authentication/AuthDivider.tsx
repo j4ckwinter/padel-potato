@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { colors, sizing, spacing } from '../../tokens';
 import {
   assertOnlyKeys,
   isNonEmptyString,
@@ -48,13 +48,13 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    height: 24,
-    width: 352,
+    gap: spacing.space12,
+    minHeight: sizing.size24,
+    width: '100%',
   },
   rule: {
     backgroundColor: colors.border,
     flex: 1,
-    height: 1,
+    height: sizing.size4 / spacing.space4,
   },
 });

@@ -46,7 +46,7 @@ describe('Player Preferences Card runtime and semantic contract', () => {
         flattenedStyle(
           screen.getByTestId('player-preferences-card').props.style,
         ),
-      ).toEqual(expect.objectContaining({ height: 152, width: 350 }));
+      ).toEqual(expect.objectContaining({ width: '100%' }));
     },
   );
 

@@ -173,7 +173,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space8" style={{ width: 352 }}>
+    <Stack gap="space8" width="content">
       <BannerToast
         message="Court details changed for an exceptionally long Tuesday evening social game, including the entrance instructions."
         onViewBookingUpdate={noop}

@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 
 export type ScoreResultTeam = Readonly<{
   initials: string;
@@ -221,28 +221,28 @@ const styles = StyleSheet.create({
   block: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    width: 352,
+    borderRadius: radii.radius20,
+    borderWidth: borders.borderDefault,
+    paddingHorizontal: spacing.space16,
+    paddingVertical: spacing.space12,
+    width: '100%',
   },
-  compact: { height: 120 },
-  content: { gap: 4 },
-  full: { height: 176 },
+  compact: { minHeight: sizing.size112 + spacing.space8 },
+  content: { gap: spacing.space4 },
+  full: { minHeight: sizing.size112 + sizing.size64 },
   headerRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.space16,
   },
   teamName: { flex: 1 },
   teamRow: {
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: radii.radius8,
     flexDirection: 'row',
-    gap: 16,
-    minHeight: 24,
-    paddingHorizontal: 4,
+    gap: spacing.space16,
+    minHeight: sizing.size24,
+    paddingHorizontal: spacing.space4,
   },
   winner: { backgroundColor: colors.surfaceAccent },
 });

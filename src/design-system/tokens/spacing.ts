@@ -1,4 +1,5 @@
 export const spacing = Object.freeze({
+  space0: 0,
   space12: 12,
   space16: 16,
   space20: 20,

@@ -13,9 +13,13 @@ import {
 import { unsupportedValue as unsupported } from '../internal/validation';
 import { borders, colors, dimensions, opacity } from '../tokens';
 import {
-  guardStyle,
+  containerLayoutStyleKeys,
+  guardStructuralStyle,
   resolveBooleanDesignValue,
   resolveDesignToken,
+  resolveLayoutTokenProps,
+  type ContainerLayoutStyle,
+  type LayoutTokenProps,
 } from './styleGuards';
 
 const pressableSizes = {
@@ -24,29 +28,7 @@ const pressableSizes = {
   controlHeight48: dimensions.controlHeight48,
 } as const;
 
-const pressableLayoutStyleKeys = [
-  'alignSelf',
-  'bottom',
-  'flex',
-  'flexBasis',
-  'flexGrow',
-  'flexShrink',
-  'height',
-  'left',
-  'margin',
-  'marginBottom',
-  'marginEnd',
-  'marginHorizontal',
-  'marginLeft',
-  'marginRight',
-  'marginStart',
-  'marginTop',
-  'marginVertical',
-  'position',
-  'right',
-  'top',
-  'width',
-] as const satisfies readonly (keyof ViewStyle)[];
+const pressableLayoutStyleKeys = containerLayoutStyleKeys;
 
 const pressableOwnedStyleKeys = [
   'minHeight',
@@ -104,6 +86,18 @@ const supportedRuntimeProps = [
   'focusable',
   'id',
   'loading',
+  'height',
+  'margin',
+  'marginBottom',
+  'marginHorizontal',
+  'marginLeft',
+  'marginRight',
+  'marginTop',
+  'marginVertical',
+  'maxHeight',
+  'maxWidth',
+  'minHeight',
+  'minWidth',
   'nativeID',
   'onBlur',
   'onFocus',
@@ -112,13 +106,11 @@ const supportedRuntimeProps = [
   'size',
   'style',
   'testID',
+  'width',
 ] as const;
 
 export type PressableSize = keyof typeof pressableSizes;
-export type PressableLayoutStyle = Pick<
-  ViewStyle,
-  (typeof pressableLayoutStyleKeys)[number]
->;
+export type PressableLayoutStyle = ContainerLayoutStyle;
 
 type SupportedNativeProps = AccessibilityProps &
   Pick<
@@ -133,13 +125,14 @@ type SupportedNativeProps = AccessibilityProps &
     | 'testID'
   >;
 
-export type PressableProps = SupportedNativeProps & {
-  disabled?: boolean;
-  loading?: boolean;
-  onPress?: (event: GestureResponderEvent) => void;
-  size?: PressableSize;
-  style?: StyleProp<PressableLayoutStyle>;
-};
+export type PressableProps = SupportedNativeProps &
+  LayoutTokenProps & {
+    disabled?: boolean;
+    loading?: boolean;
+    onPress?: (event: GestureResponderEvent) => void;
+    size?: PressableSize;
+    style?: StyleProp<PressableLayoutStyle>;
+  };
 
 /**
  * Shared native activation boundary.
@@ -162,19 +155,51 @@ export function Pressable(props: PressableProps) {
   const {
     accessibilityState,
     disabled = false,
+    height,
     loading = false,
+    margin,
+    marginBottom,
+    marginHorizontal,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginVertical,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
     onBlur,
     onFocus,
     onPress,
     size = 'controlHeight44',
     style,
+    width,
     ...nativeProps
   } = props;
 
-  guardStyle(style, pressableOwnedStyleKeys, pressableLayoutStyleKeys);
+  guardStructuralStyle(
+    style,
+    pressableOwnedStyleKeys,
+    pressableLayoutStyleKeys,
+  );
   const isDisabled = resolveBooleanDesignValue(disabled, true, false);
   const isLoading = resolveBooleanDesignValue(loading, true, false);
   const visualSize = resolveDesignToken(pressableSizes, size);
+  const layoutStyle = resolveLayoutTokenProps({
+    height,
+    margin,
+    marginBottom,
+    marginHorizontal,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginVertical,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    width,
+  });
   const blocked = isDisabled || isLoading;
   const expansion = Math.max(0, (44 - visualSize) / 2);
   const [focused, setFocused] = useState(false);
@@ -217,9 +242,18 @@ export function Pressable(props: PressableProps) {
       onPress={handlePress}
       style={[
         style,
+        layoutStyle,
         {
-          minHeight: visualSize,
-          minWidth: visualSize,
+          minHeight: Math.max(
+            visualSize,
+            typeof layoutStyle.minHeight === 'number'
+              ? layoutStyle.minHeight
+              : 0,
+          ),
+          minWidth: Math.max(
+            visualSize,
+            typeof layoutStyle.minWidth === 'number' ? layoutStyle.minWidth : 0,
+          ),
           opacity: blocked ? opacity.opacityDisabled : 1,
           outlineColor: colors.focusRing,
           outlineStyle: 'solid',

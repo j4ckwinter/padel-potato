@@ -74,8 +74,8 @@ describe('Score Result Block runtime and semantic contract', () => {
         flattenedStyle(screen.getByTestId('score-result-block').props.style),
       ).toEqual(
         expect.objectContaining({
-          height: props.type === 'full' ? 176 : 120,
-          width: 352,
+          minHeight: props.type === 'full' ? 176 : 120,
+          width: '100%',
         }),
       );
     },

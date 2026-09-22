@@ -11,7 +11,13 @@ import {
   type ColorToken,
   type TypographyToken,
 } from '../tokens';
-import { guardStyle, resolveDesignToken } from './styleGuards';
+import {
+  guardStructuralStyle,
+  resolveDesignToken,
+  resolveLayoutTokenProps,
+  type ContainerLayoutStyle,
+  type LayoutTokenProps,
+} from './styleGuards';
 
 const textLayoutStyleKeys = [
   'alignSelf',
@@ -20,20 +26,7 @@ const textLayoutStyleKeys = [
   'flexBasis',
   'flexGrow',
   'flexShrink',
-  'height',
   'left',
-  'margin',
-  'marginBottom',
-  'marginEnd',
-  'marginHorizontal',
-  'marginLeft',
-  'marginRight',
-  'marginStart',
-  'marginTop',
-  'marginVertical',
-  'maxHeight',
-  'maxWidth',
-  'minHeight',
   'minWidth',
   'position',
   'right',
@@ -52,27 +45,59 @@ const textOwnedStyleKeys = [
   'lineHeight',
 ] as const satisfies readonly (keyof TextStyle)[];
 
-export type TextLayoutStyle = Pick<
-  TextStyle,
-  (typeof textLayoutStyleKeys)[number]
->;
+export type TextLayoutStyle = ContainerLayoutStyle &
+  Pick<TextStyle, 'textAlign'>;
 
-export type TextProps = Omit<NativeTextProps, 'style'> & {
-  color?: ColorToken;
-  style?: StyleProp<TextLayoutStyle>;
-  variant: TypographyToken;
-};
+export type TextProps = Omit<NativeTextProps, 'style'> &
+  LayoutTokenProps & {
+    color?: ColorToken;
+    style?: StyleProp<TextLayoutStyle>;
+    variant: TypographyToken;
+  };
 
-export function Text({ color = 'ink', style, variant, ...props }: TextProps) {
-  guardStyle(style, textOwnedStyleKeys, textLayoutStyleKeys);
+export function Text({
+  color = 'ink',
+  height,
+  margin,
+  marginBottom,
+  marginHorizontal,
+  marginLeft,
+  marginRight,
+  marginTop,
+  marginVertical,
+  maxHeight,
+  maxWidth,
+  minHeight,
+  minWidth,
+  style,
+  variant,
+  width,
+  ...props
+}: TextProps) {
+  guardStructuralStyle(style, textOwnedStyleKeys, textLayoutStyleKeys);
 
   const typographyStyle = resolveDesignToken(typography, variant);
   const textColor = resolveDesignToken(colors, color);
+  const layoutStyle = resolveLayoutTokenProps({
+    height,
+    margin,
+    marginBottom,
+    marginHorizontal,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginVertical,
+    maxHeight,
+    maxWidth,
+    minHeight,
+    minWidth,
+    width,
+  });
 
   return (
     <NativeText
       {...props}
-      style={[style, typographyStyle, { color: textColor }]}
+      style={[style, layoutStyle, typographyStyle, { color: textColor }]}
     />
   );
 }

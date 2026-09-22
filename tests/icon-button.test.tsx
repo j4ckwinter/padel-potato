@@ -72,10 +72,8 @@ describe('IconButton public contract', () => {
       });
       expect(flattenedStyle(subject.props.style)).toEqual(
         expect.objectContaining({
-          height: size,
           minHeight: size,
           minWidth: size,
-          width: size,
         }),
       );
     },

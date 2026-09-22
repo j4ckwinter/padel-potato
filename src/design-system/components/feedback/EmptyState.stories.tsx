@@ -110,7 +110,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space8" style={{ width: 352 }}>
+    <Stack gap="space8" width="content">
       <EmptyState content="noGames" onCreateGame={() => undefined} />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
         You don’t have any games scheduled yet. Create game remains reachable at

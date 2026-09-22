@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing } from '../../tokens';
 
 export type SegmentOptions =
   | readonly [string, string]
@@ -77,6 +77,7 @@ export function SegmentedControl(props: SegmentedControlProps) {
             accessibilityState={{ selected }}
             disabled={disabled}
             key={option}
+            minHeight="size48"
             onPress={() => onValueChange(option)}
             size="controlHeight48"
             style={styles.target}
@@ -103,17 +104,17 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'stretch',
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 20,
+    borderRadius: radii.radius20,
     flexDirection: 'row',
-    height: 48,
+    minHeight: sizing.size48,
     overflow: 'visible',
-    width: 350,
+    width: '100%',
   },
   segment: {
     alignItems: 'center',
-    borderColor: 'transparent',
-    borderRadius: 20,
-    borderWidth: 1,
+    borderColor: colors.transparent,
+    borderRadius: radii.radius20,
+    borderWidth: borders.borderDefault,
     flex: 1,
     justifyContent: 'center',
     minWidth: 0,
@@ -127,7 +128,5 @@ const styles = StyleSheet.create({
     flexBasis: 0,
     flexGrow: 1,
     flexShrink: 1,
-    height: 48,
-    width: 0,
   },
 });

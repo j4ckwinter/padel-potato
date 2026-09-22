@@ -106,14 +106,12 @@ describe('Button interaction and visual contract', () => {
     ).toBeTruthy();
     expect(flattenedStyle(subject.props.style)).toEqual(
       expect.objectContaining({
-        height: 48,
         minHeight: 48,
         minWidth: 48,
-        width: 160,
       }),
     );
     expect(flattenedStyle(visual?.props.style)).toEqual(
-      expect.objectContaining({ borderRadius: 24, height: 48, width: 160 }),
+      expect.objectContaining({ borderRadius: 24, height: 48, minWidth: 112 }),
     );
   });
 
@@ -131,10 +129,8 @@ describe('Button interaction and visual contract', () => {
     });
     expect(flattenedStyle(subject.props.style)).toEqual(
       expect.objectContaining({
-        height: 40,
         minHeight: 40,
         minWidth: 40,
-        width: 160,
       }),
     );
   });

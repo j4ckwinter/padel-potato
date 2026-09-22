@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 
 import { Pressable } from '../../primitives/Pressable';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing } from '../../tokens';
 import { FavouriteHeartArtwork } from '../../assets/artwork/actionProviderArtwork';
 import {
   assertOnlyKeys,
@@ -81,7 +81,6 @@ export function Favourite(props: FavouriteProps) {
       disabled={disabled}
       onPress={() => onCheckedChange(!checked)}
       size="controlHeight44"
-      style={styles.target}
     >
       <View
         accessible={false}
@@ -103,19 +102,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 22,
-    borderWidth: 1,
-    height: 44,
+    borderRadius: radii.radiusFull,
+    borderWidth: borders.borderDefault,
+    height: sizing.size44,
     justifyContent: 'center',
-    width: 44,
+    width: sizing.size44,
   },
   heartStroke: {
-    height: 20,
+    height: sizing.size20,
     position: 'absolute',
-    width: 20,
-  },
-  target: {
-    height: 44,
-    width: 44,
+    width: sizing.size20,
   },
 });

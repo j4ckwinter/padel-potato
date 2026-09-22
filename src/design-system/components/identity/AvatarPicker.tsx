@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 import { isLocalImageSource } from '../../internal/validation';
 import { Avatar } from './Avatar';
 
@@ -87,7 +87,7 @@ export function AvatarPicker(props: AvatarPickerProps) {
       accessibilityRole="button"
       onPress={props.onPress}
       size="controlHeight44"
-      style={[styles.target, isError ? styles.errorTarget : undefined]}
+      width="fill"
     >
       <View
         accessible={false}
@@ -132,10 +132,10 @@ const styles = StyleSheet.create({
   avatarWell: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 28,
-    height: 56,
+    borderRadius: radii.radiusFull,
+    height: sizing.size56,
     justifyContent: 'center',
-    width: 56,
+    width: sizing.size56,
   },
   avatarWellError: {
     backgroundColor: colors.danger,
@@ -144,14 +144,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: 8,
-    height: 136,
+    borderRadius: radii.radius16,
+    borderWidth: borders.borderDefault,
+    gap: spacing.space8,
     justifyContent: 'center',
-    width: 352,
+    minHeight: sizing.size112 + spacing.space24,
+    padding: spacing.space16,
+    width: '100%',
   },
-  errorContent: { height: 160 },
-  target: { height: 136, width: 352 },
-  errorTarget: { height: 160 },
+  errorContent: { minHeight: sizing.size112 + sizing.size48 },
 });

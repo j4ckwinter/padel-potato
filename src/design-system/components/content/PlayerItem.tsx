@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 import { Avatar } from '../identity/Avatar';
 import { isLocalImageSource } from '../../internal/validation';
 
@@ -285,8 +285,9 @@ export function PlayerItem(props: PlayerItemProps) {
       }
       disabled={disabled}
       onPress={onPress}
+      minHeight="size80"
       size="controlHeight44"
-      style={styles.target}
+      width="fill"
       testID="player-item"
     >
       <View
@@ -330,41 +331,40 @@ const styles = StyleSheet.create({
   action: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 20,
-    height: 40,
+    borderRadius: radii.radiusFull,
+    height: sizing.size40,
     justifyContent: 'center',
-    width: 40,
+    width: sizing.size40,
   },
   content: {
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: radii.radius16,
+    borderWidth: borders.borderDefault,
     flexDirection: 'row',
-    gap: 16,
-    height: 80,
-    paddingHorizontal: 16,
-    width: 328,
+    gap: spacing.space16,
+    minHeight: sizing.size80,
+    paddingHorizontal: spacing.space16,
+    width: '100%',
   },
   copy: {
     flex: 1,
-    gap: 4,
+    gap: spacing.space4,
     minWidth: 0,
   },
   emptyAvatar: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 24,
-    height: 48,
+    borderRadius: radii.radiusFull,
+    height: sizing.size48,
     justifyContent: 'center',
-    width: 48,
+    width: sizing.size48,
   },
   selected: {
     backgroundColor: colors.surfaceAccent,
     borderColor: colors.accent,
-    borderWidth: 2,
+    borderWidth: borders.focusRingWidth,
   },
   selectedAction: { backgroundColor: colors.accent },
-  target: { height: 80, width: 328 },
 });

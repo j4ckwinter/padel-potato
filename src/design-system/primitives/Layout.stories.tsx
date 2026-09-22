@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 
 import { spacing, type SpacingToken } from '../tokens';
+import { StoryFrame } from '../stories/StoryFrame';
 import { Inline } from './Inline';
 import { Stack, type LayoutAlignment, type LayoutJustification } from './Stack';
 import { Text } from './Text';
@@ -106,31 +107,33 @@ export const Boundaries: Story = {
     wrap: true,
   },
   render: () => (
-    <Stack
-      gap="space8"
-      style={{ width: 220 }}
-      testID="boundary-constrained-width"
-    >
-      <Stack testID="boundary-zero" />
-      <Stack testID="boundary-one">
-        <Text variant="body">One</Text>
-      </Stack>
-      <Inline gap="space4" testID="boundary-many" wrap>
-        <Text variant="body">One</Text>
-        <Text variant="body">Two</Text>
-        <Text variant="body">Three</Text>
-      </Inline>
-      <Inline gap="space4" testID="boundary-required-content" wrap>
-        <Text variant="body">{longUnicode}</Text>
-      </Inline>
-      <Text
-        ellipsizeMode="tail"
-        numberOfLines={1}
-        testID="boundary-explicit-truncation"
-        variant="body"
-      >
-        Consumer-authored optional truncation: {longUnicode}
-      </Text>
+    <Stack gap="space16">
+      {(['compact', 'content', 'viewport'] as const).map((width) => (
+        <StoryFrame key={width} width={width}>
+          <Stack gap="space8" testID={`boundary-${width}`}>
+            <Stack testID="boundary-zero" />
+            <Stack testID="boundary-one">
+              <Text variant="body">One</Text>
+            </Stack>
+            <Inline gap="space4" testID="boundary-many" wrap>
+              <Text variant="body">One</Text>
+              <Text variant="body">Two</Text>
+              <Text variant="body">Three</Text>
+            </Inline>
+            <Inline gap="space4" testID="boundary-required-content" wrap>
+              <Text variant="body">{longUnicode}</Text>
+            </Inline>
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={1}
+              testID="boundary-explicit-truncation"
+              variant="body"
+            >
+              Consumer-authored optional truncation: {longUnicode}
+            </Text>
+          </Stack>
+        </StoryFrame>
+      ))}
     </Stack>
   ),
 };

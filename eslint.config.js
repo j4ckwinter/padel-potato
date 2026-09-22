@@ -1,5 +1,6 @@
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
+const foundationStyles = require('./scripts/eslint-rules/foundation-styles.cjs');
 
 const configuredExpo = expoConfig.map((config) => {
   if (!config.plugins?.['@typescript-eslint']) return config;
@@ -23,6 +24,20 @@ const configuredExpo = expoConfig.map((config) => {
 
 module.exports = defineConfig([
   configuredExpo,
+  {
+    files: ['src/design-system/**/*.{ts,tsx}', '.rnstorybook/**/*.{ts,tsx}'],
+    ignores: [
+      'src/design-system/assets/artwork/**',
+      'src/design-system/tokens/**',
+      '.rnstorybook/storybook.requires.ts',
+    ],
+    plugins: {
+      local: { rules: { 'foundation-styles': foundationStyles } },
+    },
+    rules: {
+      'local/foundation-styles': 'error',
+    },
+  },
   {
     ignores: ['dist/*', '.rnstorybook/storybook.requires.ts', 'tests/types/**'],
   },

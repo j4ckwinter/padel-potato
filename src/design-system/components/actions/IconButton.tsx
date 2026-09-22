@@ -71,7 +71,6 @@ export function IconButton(props: IconButtonProps) {
       disabled={disabled}
       onPress={onPress}
       size={size === 40 ? 'controlHeight40' : 'controlHeight44'}
-      style={{ height: size, width: size }}
     >
       {({ pressed }) => (
         <View

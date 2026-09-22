@@ -92,8 +92,8 @@ describe('Game Card runtime and semantic contract', () => {
         flattenedStyle(screen.getByTestId('game-card').props.style),
       ).toEqual(
         expect.objectContaining({
-          height: props.variant === 'compact' ? 112 : 176,
-          width: 352,
+          minHeight: props.variant === 'compact' ? 112 : 176,
+          width: '100%',
         }),
       );
       expect(screen.getByText(cardContent.title)).toBeTruthy();

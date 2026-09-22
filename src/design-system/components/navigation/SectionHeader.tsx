@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
+import { sizing, spacing } from '../../tokens';
 
 type SectionHeaderWithoutAction = Readonly<{
   actionLabel?: never;
@@ -68,13 +69,19 @@ export function SectionHeader(props: SectionHeaderProps) {
   return (
     <View style={styles.clearanceWrapper} testID="section-header">
       <View style={styles.visualRow} testID="section-header-visual-row">
-        <Text accessibilityRole="header" style={styles.title} variant="heading">
+        <Text
+          accessibilityRole="header"
+          minWidth="size0"
+          style={styles.title}
+          variant="heading"
+        >
           {props.title}
         </Text>
         {hasAction ? (
           <Pressable
             accessibilityLabel={actionProps?.actionLabel}
             accessibilityRole="button"
+            minHeight="size40"
             onPress={actionProps?.onActionPress}
             size="controlHeight40"
             style={styles.actionTarget}
@@ -94,31 +101,29 @@ export function SectionHeader(props: SectionHeaderProps) {
 const styles = StyleSheet.create({
   actionContent: {
     alignItems: 'center',
-    height: 28,
+    minHeight: sizing.size28,
     justifyContent: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.space8,
   },
   actionTarget: {
     flexShrink: 0,
-    height: 40,
   },
   clearanceWrapper: {
     alignItems: 'center',
-    height: 44,
+    minHeight: sizing.size44,
     justifyContent: 'center',
     overflow: 'visible',
-    width: 354,
+    width: '100%',
   },
   visualRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    height: 28,
+    minHeight: sizing.size28,
     justifyContent: 'space-between',
     overflow: 'visible',
-    width: 350,
+    width: '100%',
   },
   title: {
     flexShrink: 1,
-    minWidth: 0,
   },
 });

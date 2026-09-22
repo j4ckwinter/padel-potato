@@ -3,7 +3,7 @@ import { Pressable as NativePressable, StyleSheet, View } from 'react-native';
 
 import { unsupportedValue as unsupported } from '../../internal/validation';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, opacity, radii, sizing, spacing } from '../../tokens';
 
 export const dayTimeSelectorTypes = Object.freeze(['day', 'time'] as const);
 
@@ -117,7 +117,7 @@ export function DayTimeSelector(props: DayTimeSelectorProps) {
 
   return (
     <View
-      style={{ opacity: disabled ? 0.55 : 1 }}
+      style={{ opacity: disabled ? opacity.opacityDisabled : 1 }}
       testID="day-time-selector-root"
     >
       <NativePressable
@@ -140,7 +140,10 @@ export function DayTimeSelector(props: DayTimeSelectorProps) {
                 ? colors.accent
                 : colors.surface,
             borderColor: focused || selected ? colors.focusRing : colors.border,
-            borderWidth: focused || selected ? 2 : 1,
+            borderWidth:
+              focused || selected
+                ? borders.focusRingWidth
+                : borders.borderDefault,
           },
         ]}
       >
@@ -172,23 +175,23 @@ export function DayTimeSelector(props: DayTimeSelectorProps) {
 const styles = StyleSheet.create({
   content: {
     alignItems: 'center',
-    borderRadius: 16,
-    gap: 4,
+    borderRadius: radii.radius16,
+    gap: spacing.space4,
     justifyContent: 'center',
   },
   day: {
-    height: 72,
-    width: 104,
+    height: sizing.size72,
+    width: sizing.size104,
   },
   target: {
     alignItems: 'center',
-    borderRadius: 16,
+    borderRadius: radii.radius16,
     justifyContent: 'center',
-    minHeight: 44,
-    minWidth: 44,
+    minHeight: sizing.size44,
+    minWidth: sizing.size44,
   },
   time: {
-    height: 56,
-    width: 112,
+    height: sizing.size56,
+    width: sizing.size112,
   },
 });

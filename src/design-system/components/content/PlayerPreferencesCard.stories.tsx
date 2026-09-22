@@ -109,7 +109,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space8" style={{ width: 350 }}>
+    <Stack gap="space8" width="content">
       <PlayerPreferencesCard
         content="full"
         days="Monday through Saturday across 東京 holidays"

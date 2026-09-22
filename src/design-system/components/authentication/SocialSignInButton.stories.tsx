@@ -75,7 +75,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space8" style={{ width: 352 }}>
+    <Stack gap="space8" width="content">
       <SocialSignInButton provider="google" />
       <SocialSignInButton provider="apple" />
       <Text color="textSecondary" variant="caption">

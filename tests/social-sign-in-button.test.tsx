@@ -68,10 +68,9 @@ describe('SocialSignInButton callback, semantics, and visual contract', () => {
       expect(screen.queryAllByRole('image')).toHaveLength(0);
       expect(flattenedStyle(subject.props.style)).toEqual(
         expect.objectContaining({
-          height: 48,
           minHeight: 48,
           minWidth: 48,
-          width: 352,
+          width: '100%',
         }),
       );
     },

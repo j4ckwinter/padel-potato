@@ -104,8 +104,8 @@ describe('Stat Tile runtime and semantic contract', () => {
         flattenedStyle(screen.getByTestId('stat-tile').props.style),
       ).toEqual(
         expect.objectContaining({
-          height: 112,
-          width: props.type === 'featured' ? 328 : 160,
+          minHeight: 112,
+          ...(props.type === 'featured' ? { width: '100%' } : { flex: 1 }),
         }),
       );
     },

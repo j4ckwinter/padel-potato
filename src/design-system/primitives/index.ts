@@ -13,3 +13,4 @@ export {
 } from './Stack';
 export { Surface, type SurfaceProps } from './Surface';
 export { Text, type TextLayoutStyle, type TextProps } from './Text';
+export type { ContainerLayoutStyle, LayoutTokenProps } from './styleGuards';

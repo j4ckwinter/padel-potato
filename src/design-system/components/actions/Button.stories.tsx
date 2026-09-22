@@ -135,7 +135,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: { label: 'Long label', style: 'primary' },
   render: () => (
-    <Stack gap="space8" style={{ width: 200 }}>
+    <Stack gap="space8" width="compact">
       <Button
         label="Create a very long game name for Łucía, 東京, and Nguyễn"
         style="primary"

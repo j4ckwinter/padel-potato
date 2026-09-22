@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { colors, radii, sizing, spacing } from '../../tokens';
 import { AvatarGroup, type AvatarGroupIdentity } from '../identity/AvatarGroup';
 import { isLocalImageSource } from '../../internal/validation';
 
@@ -295,7 +295,7 @@ function CardAction({
       accessibilityRole="button"
       onPress={onPress}
       size="controlHeight44"
-      style={styles.actionTarget}
+      width="size72"
     >
       <View
         accessible={false}
@@ -401,29 +401,28 @@ export function GameCard(props: GameCardProps) {
 }
 
 const styles = StyleSheet.create({
-  actionTarget: { height: 44, width: 72 },
   actionVisual: {
     alignItems: 'center',
     backgroundColor: colors.accent,
-    borderRadius: 20,
-    height: 40,
+    borderRadius: radii.radiusFull,
+    height: sizing.size40,
     justifyContent: 'center',
-    width: 72,
+    width: sizing.size72,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 20,
-    gap: 4,
-    padding: 16,
-    width: 352,
+    borderRadius: radii.radius20,
+    gap: spacing.space4,
+    padding: spacing.space16,
+    width: '100%',
   },
-  compact: { height: 112 },
+  compact: { minHeight: sizing.size112 },
   footer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: spacing.space4,
   },
-  full: { height: 176 },
+  full: { minHeight: sizing.size112 + sizing.size64 },
   next: { backgroundColor: colors.deep },
 });

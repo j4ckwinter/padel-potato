@@ -147,7 +147,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space8" style={{ width: 180 }}>
+    <Stack gap="space8" width="compact">
       <StatusChip
         label="Awaiting confirmation from Łucía"
         style="warning"

@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { borders, colors, radii, sizing, spacing } from '../../tokens';
 import { isLocalImageSource } from '../../internal/validation';
 import { Avatar } from './Avatar';
 
@@ -184,8 +184,9 @@ function EmptySlot({
       accessibilityLabel={label}
       accessibilityRole="button"
       onPress={onPress}
+      height="size44"
       size="controlHeight44"
-      style={styles.emptyTarget}
+      width="size44"
     >
       <View
         accessible={false}
@@ -265,37 +266,35 @@ export function AvatarGroup(props: AvatarGroupProps) {
 }
 
 const styles = StyleSheet.create({
-  emptyTarget: { height: 44, width: 44 },
   emptyVisual: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 22,
-    borderWidth: 1,
-    height: 44,
+    borderRadius: radii.radiusFull,
+    borderWidth: borders.borderDefault,
+    height: sizing.size44,
     justifyContent: 'center',
-    width: 44,
+    width: sizing.size44,
   },
   group: {
     alignItems: 'center',
     flexDirection: 'row',
-    height: 56,
-    width: 190,
+    minHeight: sizing.size56,
   },
   identity: {
     borderColor: colors.surface,
-    borderRadius: 22,
-    borderWidth: 2,
+    borderRadius: radii.radiusFull,
+    borderWidth: borders.focusRingWidth,
   },
   overflow: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.surface,
-    borderRadius: 22,
-    borderWidth: 2,
-    height: 44,
+    borderRadius: radii.radiusFull,
+    borderWidth: borders.focusRingWidth,
+    height: sizing.size44,
     justifyContent: 'center',
-    width: 44,
+    width: sizing.size44,
   },
-  overlap: { marginLeft: -12 },
+  overlap: { marginLeft: -spacing.space12 },
 });

@@ -29,7 +29,6 @@ describe('SectionHeader optional action pair', () => {
     });
     expect(flattenedStyle(action.props.style)).toEqual(
       expect.objectContaining({
-        height: 40,
         minHeight: 40,
         minWidth: 40,
       }),
@@ -41,20 +40,13 @@ describe('SectionHeader optional action pair', () => {
       screen.getByTestId('section-header').props.style,
     );
     expect(visualRowStyle).toEqual(
-      expect.objectContaining({ height: 28, width: 350 }),
+      expect.objectContaining({ minHeight: 28, width: '100%' }),
     );
     expect(wrapperStyle).toEqual(
-      expect.objectContaining({ height: 44, width: 354 }),
+      expect.objectContaining({ minHeight: 44, width: '100%' }),
     );
-    expect(
-      (wrapperStyle.width as number) - (visualRowStyle.width as number),
-    ).toBe(4);
     expect(action.props.hitSlop.left + action.props.hitSlop.right).toBe(4);
-    expect(
-      (flattenedStyle(action.props.style).height as number) +
-        action.props.hitSlop.top +
-        action.props.hitSlop.bottom,
-    ).toBe(44);
+    expect(flattenedStyle(action.props.style).minHeight).toBe(40);
     await user.press(action);
     expect(onActionPress).toHaveBeenCalledTimes(1);
   });

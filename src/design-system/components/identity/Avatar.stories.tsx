@@ -143,7 +143,7 @@ export const States: Story = {
 export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
-    <Stack gap="space8" style={{ width: 200 }}>
+    <Stack gap="space8" width="compact">
       <Avatar
         accessibilityLabel="Łucía Nguyễn from 東京, online"
         initials="ŁN"

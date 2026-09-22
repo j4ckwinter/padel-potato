@@ -43,7 +43,7 @@ export const Variants: Story = {
 
 export const Boundaries: Story = {
   render: () => (
-    <Stack gap="space8" style={{ width: 220 }}>
+    <Stack gap="space8" width="compact">
       <BrandLockup testID="brand-boundary-horizontal" width={120} />
       <BrandLockupStacked testID="brand-boundary-stacked" width={120} />
       <Text variant="caption">

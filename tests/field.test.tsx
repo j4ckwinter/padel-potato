@@ -405,11 +405,11 @@ describe('Field focus, geometry, and content boundaries', () => {
       expect.objectContaining({
         borderColor: colors.focusRing,
         borderWidth: 2,
-        height: 52,
+        minHeight: 52,
       }),
     );
     expect(flattenedStyle(screen.getByTestId('field').props.style)).toEqual(
-      expect.objectContaining({ minHeight: 84, width: 350 }),
+      expect.objectContaining({ width: '100%' }),
     );
 
     await act(async () => {
@@ -437,7 +437,7 @@ describe('Field focus, geometry, and content boundaries', () => {
         .accessibilityHint,
     ).toContain('A long error remains visible');
     expect(flattenedStyle(screen.getByTestId('field').props.style)).toEqual(
-      expect.objectContaining({ minHeight: 100, width: 350 }),
+      expect.objectContaining({ width: '100%' }),
     );
   });
 });

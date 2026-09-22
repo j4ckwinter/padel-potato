@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
-import { colors } from '../../tokens';
+import { colors, sizing, spacing } from '../../tokens';
 import {
   assertOnlyKeys,
   isCallback,
@@ -17,7 +17,7 @@ const buttonStyles = Object.freeze([
   'destructive',
   'ghost',
 ] as const);
-const buttonSizes = Object.freeze([40, 48] as const);
+const buttonSizes = Object.freeze([sizing.size40, sizing.size48] as const);
 
 export type ButtonStyle = (typeof buttonStyles)[number];
 export type ButtonSize = (typeof buttonSizes)[number];
@@ -136,7 +136,7 @@ export function Button(props: ButtonProps) {
   // Pressable supplies the shared 0.4 blocked opacity. The authored Button
   // disabled fill is 0.32, so its inner accent alpha is 0.8 (0.8 * 0.4).
   const defaultBackground = disabled
-    ? 'rgba(173, 229, 51, 0.8)'
+    ? colors.accentDisabledLayer
     : backgroundByStyle[buttonStyle];
 
   return (
@@ -147,7 +147,6 @@ export function Button(props: ButtonProps) {
       loading={loading}
       onPress={onPress}
       size={size === 40 ? 'controlHeight40' : 'controlHeight48'}
-      style={{ height: size, width: 160 }}
     >
       {({ pressed }) => (
         <View
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    width: 160,
+    minWidth: sizing.size112,
+    paddingHorizontal: spacing.space24,
   },
 });
