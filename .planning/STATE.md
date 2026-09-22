@@ -100,6 +100,9 @@ Progress: [████████░░] 80%
 
 Recent decisions affecting current work:
 
+- [Quick 260922-uw8]: Foundations are the enforceable source of truth for governed visual styling; active components use the four-point sizing/spacing scales, responsive parent-owned widths, full radius, shared disabled opacity, and tokenized primitive geometry.
+- [Quick 260922-uw8]: Raw primitive styles are structural only; ESLint and Jest reject un-tokenized geometry, colours, and typography outside foundation and closed-artwork modules.
+
 - Active runtime code, tests, and Storybook guidance use standalone component-owned assets and contracts; completed design-source decisions below remain historical only.
 - Phase 1: Native iOS and Android Storybook are authoritative; Expo web is a secondary local review lane.
 - Phase 2: Penpot manifests, reference renders, and deviation records are source evidence, not runtime dependencies.
@@ -154,7 +157,7 @@ Recent decisions affecting current work:
 - [Phase 03]: Phase 03-07: AuthDivider keeps readable static content while hiding only its decorative rules and marking state/interaction taxonomy entries inapplicable.
 - [Phase 03]: Phase 03-06: Encode ChoiceChip as only the source-backed persistent tuples; focused records derive from native focus.
 - [Phase 03]: Phase 03-06: Keep Checkbox boolean-only and reject indeterminate or unknown runtime state.
-- [Phase 03]: Phase 03-06: Keep DayTimeSelector disabled opacity 0.55 family-local and name each radio from both visible lines.
+- [Phase 03, superseded by Quick 260922-uw8]: DayTimeSelector originally used family-local disabled opacity 0.55; it now uses the shared disabled opacity while retaining each radio name from both visible lines.
 - [Phase 03]: Phase 03-08: Keep BottomNavigation visual and focus order fixed as Home, Games, Create, Players, Profile independently from retained variant-record order.
 - [Phase 03]: Phase 03-08: Use zero-basis flex growth for deterministic native equal allocation across 2, 3, or 4 SegmentedControl items.
 - [Phase 03]: Phase 03-08: Encode AppHeader as closed notification, no-action Profile, back, and Player Details branches with only source-valid callbacks.
@@ -180,13 +183,14 @@ None yet.
 
 ### Quick Tasks Completed
 
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260918-noz | Adopt the local Penpot export as the canonical design source and replace routine MCP-dependent workflow checks with deterministic local validation | 2026-09-18 | 42bf053 | [260918-noz-adopt-the-local-penpot-export-as-the-can](./quick/260918-noz-adopt-the-local-penpot-export-as-the-can/) |
-| 260922-qrl | Remove design-tool coupling and make components standalone | 2026-09-22 | 07b930f | [260922-qrl-remove-penpot-coupling-and-make-componen](./quick/260922-qrl-remove-penpot-coupling-and-make-componen/) |
-| 260922-rrw | Refactor the standalone design system for maintainability without changing behavior | 2026-09-22 | 7929533 | [260922-rrw-staged-design-system-cleanup](./quick/260922-rrw-staged-design-system-cleanup/) |
-| 260922-tc1 | Focused project stabilization cleanup | 2026-09-22 | f43b7df | [260922-tc1-focused-project-stabilization-cleanup](./quick/260922-tc1-focused-project-stabilization-cleanup/) |
-| 260922-u7r | Fix StatusChip semantic text leaking vertically in Storybook web | 2026-09-22 | 41b31b9 | [260922-u7r-fix-statuschip-semantic-text-leaking-ver](./quick/260922-u7r-fix-statuschip-semantic-text-leaking-ver/) |
+| # | Description | Date | Commit | Status | Directory |
+|---|-------------|------|--------|--------|-----------|
+| 260918-noz | Adopt the local Penpot export as the canonical design source and replace routine MCP-dependent workflow checks with deterministic local validation | 2026-09-18 | 42bf053 | Complete | [260918-noz-adopt-the-local-penpot-export-as-the-can](./quick/260918-noz-adopt-the-local-penpot-export-as-the-can/) |
+| 260922-qrl | Remove design-tool coupling and make components standalone | 2026-09-22 | 07b930f | Complete | [260922-qrl-remove-penpot-coupling-and-make-componen](./quick/260922-qrl-remove-penpot-coupling-and-make-componen/) |
+| 260922-rrw | Refactor the standalone design system for maintainability without changing behavior | 2026-09-22 | 7929533 | Complete | [260922-rrw-staged-design-system-cleanup](./quick/260922-rrw-staged-design-system-cleanup/) |
+| 260922-tc1 | Focused project stabilization cleanup | 2026-09-22 | f43b7df | Complete | [260922-tc1-focused-project-stabilization-cleanup](./quick/260922-tc1-focused-project-stabilization-cleanup/) |
+| 260922-u7r | Fix StatusChip semantic text leaking vertically in Storybook web | 2026-09-22 | 41b31b9 | Complete | [260922-u7r-fix-statuschip-semantic-text-leaking-ver](./quick/260922-u7r-fix-statuschip-semantic-text-leaking-ver/) |
+| 260922-uw8 | Foundation-driven styling and rhythm cleanup | 2026-09-22 | 60c08b4 | Needs Review | [260922-uw8-foundation-driven-styling-and-rhythm-cle](./quick/260922-uw8-foundation-driven-styling-and-rhythm-cle/) |
 
 ### Roadmap Evolution
 
@@ -202,5 +206,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-09-22
-Stopped at: Staged cleanup complete; awaiting user-led Storybook visual review
+Stopped at: Foundation-driven styling cleanup complete; awaiting native Storybook rhythm and 200% font-scale review
 Resume file: None
