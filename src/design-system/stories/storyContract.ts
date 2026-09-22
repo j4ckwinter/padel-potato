@@ -1,6 +1,3 @@
-import { phase3SourceEvidence } from '../components/sourceRegistry';
-import { phase4SourceEvidence } from '../components/phase4SourceRegistry';
-
 export const storyTaxonomy = Object.freeze([
   'Canonical',
   'Variants',
@@ -31,13 +28,6 @@ type InapplicableStory = Readonly<{
 }>;
 
 export type StoryApplicability = ApplicableStory | InapplicableStory;
-
-export type StorySourceIdentity = Readonly<{
-  fileId: string;
-  pageId: string;
-  revision: 292;
-  sourceId: string;
-}>;
 
 const story = (storyName: string): ApplicableStory =>
   Object.freeze({ status: 'story', story: storyName });
@@ -161,30 +151,6 @@ export const phase2StoryContracts = Object.freeze({
   >
 >);
 
-const foundationsPageId = '482a7222-5a3b-8086-8008-a6072bd7e924';
-const componentsPageId = '482a7222-5a3b-8086-8008-a6073072bbb1';
-const fileId = 'c514c1fb-1cda-8125-8008-a606253a77a3';
-const source = (pageId: string, sourceId: string): StorySourceIdentity =>
-  Object.freeze({ fileId, pageId, revision: 292, sourceId });
-
-export const phase2StorySources = Object.freeze({
-  Text: source(foundationsPageId, '482a7222-5a3b-8086-8008-a6072b69005a'),
-  Stack: source(foundationsPageId, '482a7222-5a3b-8086-8008-a6072bc42252'),
-  Inline: source(foundationsPageId, '482a7222-5a3b-8086-8008-a6072bc0bac7'),
-  Surface: source(foundationsPageId, '482a7222-5a3b-8086-8008-a6072babe9c2'),
-  Pressable: source(foundationsPageId, '482a7222-5a3b-8086-8008-a60e5e62fb1e'),
-  Icon: source(componentsPageId, '482a7222-5a3b-8086-8008-a60e7bbc99e5'),
-  BrandLockup: source(componentsPageId, '482a7222-5a3b-8086-8008-a61e9426c83d'),
-  BrandLockupStacked: source(
-    componentsPageId,
-    '482a7222-5a3b-8086-8008-a62b8a2c0f47',
-  ),
-} as const satisfies Readonly<Record<Phase2PublicExport, StorySourceIdentity>>);
-
-export function formatStorySourceIdentity(sourceIdentity: StorySourceIdentity) {
-  return `Penpot ${sourceIdentity.fileId} / ${sourceIdentity.pageId} / revision ${sourceIdentity.revision} / source ${sourceIdentity.sourceId}`;
-}
-
 export const phase2Backstops = Object.freeze({
   overflow: Object.freeze({
     exports: Object.freeze(['Text', 'Stack', 'Inline', 'Surface'] as const),
@@ -219,13 +185,6 @@ export type Phase3PublicExport =
   | 'AppHeader'
   | 'SectionHeader';
 
-export type Phase3StorySourceIdentity = Readonly<{
-  fileId: string;
-  pageId: string;
-  revision: 296;
-  sourceId: string;
-}>;
-
 const allStories = categories(
   story('Canonical'),
   story('Variants'),
@@ -250,15 +209,8 @@ const phase3Definitions = Object.freeze([
   ['SectionHeader', 'sectionHeader', 'Navigation/Section Header', ['title', 'actionLabel'], ['onActionPress']],
 ] as const);
 
-const phase3Family = (familyKey: string) => {
-  const family = phase3SourceEvidence.families.find(({ key }) => key === familyKey);
-  if (!family) throw new Error(`Missing Phase 3 source family: ${familyKey}`);
-  return family;
-};
-
 export const phase3StoryContracts = Object.freeze(
   Object.fromEntries(phase3Definitions.map(([exportName, familyKey, title, controls, actions]) => {
-    const family = phase3Family(familyKey);
     return [exportName, Object.freeze({
       exportName,
       familyKey,
@@ -273,7 +225,6 @@ export const phase3StoryContracts = Object.freeze(
         : allStories,
       controls: Object.freeze([...controls]),
       actions: Object.freeze([...actions]),
-      recordIds: Object.freeze(family.records.map(({ id }) => id)),
     })];
   })),
 ) as Readonly<Record<Phase3PublicExport, Readonly<{
@@ -283,20 +234,7 @@ export const phase3StoryContracts = Object.freeze(
   categories: Readonly<Record<StoryCategory, StoryApplicability>>;
   controls: readonly string[];
   actions: readonly string[];
-  recordIds: readonly string[];
 }>>>;
-
-export const phase3StorySources = Object.freeze(
-  Object.fromEntries(phase3Definitions.map(([exportName, familyKey]) => {
-    const family = phase3Family(familyKey);
-    return [exportName, Object.freeze({
-      fileId: phase3SourceEvidence.source.fileId,
-      pageId: phase3SourceEvidence.source.pageId,
-      revision: 296 as const,
-      sourceId: family.sourceId,
-    })];
-  })),
-) as Readonly<Record<Phase3PublicExport, Phase3StorySourceIdentity>>;
 
 export const phase3Backstops = Object.freeze({
   emptyField: Object.freeze({ witness: 'field-boundary-empty', status: 'host-contract' }),
@@ -347,13 +285,6 @@ export type Phase4PublicExport =
   | 'EmptyState'
   | 'IllustratedCard';
 
-export type Phase4StorySourceIdentity = Readonly<{
-  fileId: string;
-  pageId: string;
-  revision: 296;
-  sourceId: string;
-}>;
-
 const phase4Definitions = Object.freeze([
   ['Avatar', 'avatar', 'Identity/Avatar', ['configuration'], []],
   ['AvatarGroup', 'avatarGroup', 'Identity/Avatar Group', ['variant'], ['onAddPlayer1', 'onAddPlayer2']],
@@ -371,12 +302,6 @@ const phase4Definitions = Object.freeze([
   ['EmptyState', 'emptyState', 'Feedback/Empty State', ['content'], ['onCreateGame', 'onInvitePlayers']],
   ['IllustratedCard', 'illustratedCard', 'Cards/Illustrated Card', ['type'], ['onViewGame', 'onViewResults', 'onInvitePlayers', 'onShareGame']],
 ] as const);
-
-const phase4Family = (familyKey: string) => {
-  const family = phase4SourceEvidence.families.find(({ key }) => key === familyKey);
-  if (!family) throw new Error(`Missing Phase 4 source family: ${familyKey}`);
-  return family;
-};
 
 const phase4Categories = (exportName: Phase4PublicExport) => {
   if (
@@ -400,7 +325,6 @@ const phase4Categories = (exportName: Phase4PublicExport) => {
 export const phase4StoryContracts = Object.freeze(
   Object.fromEntries(
     phase4Definitions.map(([exportName, familyKey, title, controls, actions]) => {
-      const family = phase4Family(familyKey);
       return [exportName, Object.freeze({
         exportName,
         familyKey,
@@ -408,7 +332,6 @@ export const phase4StoryContracts = Object.freeze(
         categories: phase4Categories(exportName),
         controls: Object.freeze([...controls]),
         actions: Object.freeze([...actions]),
-        recordIds: Object.freeze(family.records.map(({ id }) => id)),
       })];
     }),
   ),
@@ -419,20 +342,7 @@ export const phase4StoryContracts = Object.freeze(
   categories: Readonly<Record<StoryCategory, StoryApplicability>>;
   controls: readonly string[];
   actions: readonly string[];
-  recordIds: readonly string[];
 }>>>;
-
-export const phase4StorySources = Object.freeze(
-  Object.fromEntries(phase4Definitions.map(([exportName, familyKey]) => {
-    const family = phase4Family(familyKey);
-    return [exportName, Object.freeze({
-      fileId: phase4SourceEvidence.source.fileId,
-      pageId: phase4SourceEvidence.source.pageId,
-      revision: 296 as const,
-      sourceId: family.sourceId,
-    })];
-  })),
-) as Readonly<Record<Phase4PublicExport, Phase4StorySourceIdentity>>;
 
 export const phase4Backstops = Object.freeze({
   longContent: Object.freeze({

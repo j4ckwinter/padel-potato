@@ -3,12 +3,11 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families, phase4SourceIdentity } from '../phase4SourceRegistry';
+import { phase4Families } from '../../stories/componentFixtures';
 import { SettingsRow, type SettingsRowProps } from './SettingsRow';
 
 const records = phase4Families[8].records;
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a61b708e9d2e / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 type StoryArgs = Readonly<{
   configuration?: unknown;

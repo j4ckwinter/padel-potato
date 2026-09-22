@@ -37,8 +37,7 @@ import {
   buttonSizes,
   buttonStyles,
   phase3Families,
-  phase3SourceIdentity,
-} from '../src/design-system/components/sourceRegistry';
+} from '../src/design-system/stories/componentFixtures';
 import { colors } from '../src/design-system/tokens';
 
 const flattenedStyle = (style: unknown) =>
@@ -46,46 +45,7 @@ const flattenedStyle = (style: unknown) =>
     style as Parameters<typeof StyleSheet.flatten>[0],
   ) as Record<string, unknown>;
 
-describe('Button source contract', () => {
-  it('retains the exact sparse nine-record revision-296 ledger in source order', () => {
-    expect(phase3SourceIdentity).toEqual(expect.objectContaining({
-      fileId: 'c514c1fb-1cda-8125-8008-a606253a77a3',
-      pageId: '482a7222-5a3b-8086-8008-a6073072bbb1',
-      revision: 296,
-    }));
-    expect(buttonStyles).toEqual([
-      'primary',
-      'secondary',
-      'destructive',
-      'ghost',
-    ]);
-    expect(buttonSizes).toEqual([40, 48]);
-    expect(buttonRecords).toHaveLength(9);
-    expect(buttonRecords.map((record) => record.id)).toEqual([
-      '482a7222-5a3b-8086-8008-a60ea00aa7c3',
-      '482a7222-5a3b-8086-8008-a60ea006c15d',
-      '482a7222-5a3b-8086-8008-a60ea002fe1f',
-      '482a7222-5a3b-8086-8008-a60e9fff0e5a',
-      '482a7222-5a3b-8086-8008-a60e9ffb012d',
-      '482a7222-5a3b-8086-8008-a60e9ff76866',
-      '482a7222-5a3b-8086-8008-a60e9ff37cc9',
-      '482a7222-5a3b-8086-8008-a60e9fef8841',
-      '482a7222-5a3b-8086-8008-a60e9febb9fe',
-    ]);
-    expect(buttonRecords.map((record) => record.originalTuple)).toEqual([
-      { Style: 'Primary', Size: '48', State: 'Disabled' },
-      { Style: 'Primary', Size: '48', State: 'Default' },
-      { Style: 'Ghost', Size: '48', State: 'Default' },
-      { Style: 'Primary', Size: '48', State: 'Loading' },
-      { Style: 'Primary', Size: '48', State: 'Focused' },
-      { Style: 'Destructive', Size: '48', State: 'Default' },
-      { Style: 'Primary', Size: '48', State: 'Pressed' },
-      { Style: 'Primary', Size: '40', State: 'Default' },
-      { Style: 'Secondary', Size: '48', State: 'Default' },
-    ]);
-  });
-
-  it('exposes only closed authored style and size values', () => {
+describe('Button source contract', () => {  it('exposes only closed authored style and size values', () => {
     const stylesAreClosed: ButtonStyle[] = [
       'primary',
       'secondary',
@@ -310,34 +270,7 @@ describe('Button Storybook contract', () => {
 
 const iconButtonRecords = phase3Families[1].records;
 
-describe('IconButton source and public contract', () => {
-  it('retains the exact six records and approved Value 2 normalization in source order', () => {
-    expect(phase3Families[1]).toEqual(expect.objectContaining({
-      key: 'iconButton',
-      recordCount: 6,
-      sourceId: '482a7222-5a3b-8086-8008-a60eda8bf731',
-    }));
-    expect(iconButtonRecords.map((record) => record.id)).toEqual([
-      '482a7222-5a3b-8086-8008-a60eda87a472',
-      '482a7222-5a3b-8086-8008-a60eda8475eb',
-      '482a7222-5a3b-8086-8008-a60eda809f18',
-      '482a7222-5a3b-8086-8008-a60eda7d0395',
-      '482a7222-5a3b-8086-8008-a60eda7950b0',
-      'ab02a31f-1852-80be-8008-a6fb1c6fcb94',
-    ]);
-    expect(iconButtonRecords.at(-1)).toEqual(expect.objectContaining({
-      originalTuple: { Icon: 'Value 2', Size: '44', State: 'Default' },
-      normalizedTuple: { icon: 'notification', size: 44, state: 'default' },
-    }));
-
-    const closedSizes: IconButtonSize[] = [40, 44];
-    type VisualEscape = Extract<'pressed' | 'focused' | 'style' | 'color', keyof IconButtonProps>;
-    const hasNoVisualEscape: VisualEscape extends never ? true : false = true;
-    expect(closedSizes).toEqual([40, 44]);
-    expect(hasNoVisualEscape).toBe(true);
-  });
-
-  it.each([
+describe('IconButton source and public contract', () => {  it.each([
     ['enabled', false, 1],
     ['disabled', true, 0],
   ] as Array<[string, boolean, 0 | 1]>)('%s activation follows the shared blocked contract', async (_name, disabled, expectedCalls) => {
@@ -438,37 +371,7 @@ describe('IconButton Storybook contract', () => {
 
 const favouriteRecords = phase3Families[2].records;
 
-describe('Favourite source and controlled contract', () => {
-  it('retains Selected then Default and completes all 17 action records in source order', () => {
-    expect(phase3Families[2]).toEqual(expect.objectContaining({
-      key: 'favourite',
-      recordCount: 2,
-      sourceId: 'ab02a31f-1852-80be-8008-a6fb4b80c769',
-    }));
-    expect(favouriteRecords.map((record) => ({
-      id: record.id,
-      normalizedTuple: record.normalizedTuple,
-      originalTuple: record.originalTuple,
-    }))).toEqual([
-      {
-        id: 'ab02a31f-1852-80be-8008-a6fb4b70487f',
-        normalizedTuple: { checked: true },
-        originalTuple: { 'Property 1': 'Selected' },
-      },
-      {
-        id: 'ab02a31f-1852-80be-8008-a6fb4b6d6c28',
-        normalizedTuple: { checked: false },
-        originalTuple: { 'Property 1': 'Default' },
-      },
-    ]);
-    expect([
-      ...buttonRecords,
-      ...iconButtonRecords,
-      ...favouriteRecords,
-    ]).toHaveLength(17);
-  });
-
-  it('emits the opposite checked value once and remains controlled until rerender', async () => {
+describe('Favourite source and controlled contract', () => {  it('emits the opposite checked value once and remains controlled until rerender', async () => {
     const onCheckedChange = jest.fn();
     const user = userEvent.setup();
     const screen = await render(

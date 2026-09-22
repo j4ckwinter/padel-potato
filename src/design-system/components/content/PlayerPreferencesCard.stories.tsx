@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families, phase4SourceIdentity } from '../phase4SourceRegistry';
+import { phase4Families } from '../../stories/componentFixtures';
 import {
   PlayerPreferencesCard,
   type PlayerPreferencesCardProps,
@@ -17,8 +17,7 @@ const values = {
   timeOfDay: 'Afternoons',
 } as const;
 
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set ab02a31f-1852-80be-8008-a6fde66e54b7 / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Content/Player Preferences Card',

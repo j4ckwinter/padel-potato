@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families, phase4SourceIdentity } from '../phase4SourceRegistry';
+import { phase4Families } from '../../stories/componentFixtures';
 import {
   IllustratedCard,
   type IllustratedCardParticipant,
@@ -17,8 +17,7 @@ const participants = [
   { initials: 'SK', name: 'Sam Kim', slot: 3 },
   { initials: 'RB', name: 'Riley Brown', slot: 4 },
 ] as const satisfies readonly IllustratedCardParticipant[];
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a6187034754b / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Cards/Illustrated Card',

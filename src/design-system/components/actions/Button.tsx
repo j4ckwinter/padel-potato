@@ -4,7 +4,14 @@ import { StyleSheet, View } from 'react-native';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
-import { buttonSizes, buttonStyles } from '../sourceRegistry';
+
+const buttonStyles = Object.freeze([
+  'primary',
+  'secondary',
+  'destructive',
+  'ghost',
+] as const);
+const buttonSizes = Object.freeze([40, 48] as const);
 
 export type ButtonStyle = (typeof buttonStyles)[number];
 export type ButtonSize = (typeof buttonSizes)[number];
@@ -98,11 +105,11 @@ function validateButtonProps(props: ButtonProps) {
     throw new Error('Unsupported Button state: disabled and loading cannot both be true.');
   }
   if (size === 40 && props.style !== 'primary') {
-    throw new Error(`Unsupported Button combination: ${props.style}/40 has no revision-296 source record.`);
+    throw new Error(`Unsupported Button configuration: ${props.style}/40.`);
   }
   if ((props.disabled || props.loading) && (props.style !== 'primary' || size !== 48)) {
     throw new Error(
-      `Unsupported Button combination: ${props.style}/${size}/${props.loading ? 'loading' : 'disabled'} has no revision-296 source record.`,
+      `Unsupported Button configuration: ${props.style}/${size}/${props.loading ? 'loading' : 'disabled'}.`,
     );
   }
 }

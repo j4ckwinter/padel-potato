@@ -51,21 +51,21 @@ export function AppleProviderArtwork() {
 }
 
 export function WaveHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../../../design-spec/assets/phase-3/mascot-wave.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-wave" />;
+  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-wave.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-wave" />;
 }
 
 export function SearchHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../../../design-spec/assets/phase-3/mascot-search.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-search" />;
+  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-search.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-search" />;
 }
 
 export function CreateHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../../../design-spec/assets/phase-3/mascot-create.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-create" />;
+  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-create.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-create" />;
 }
 
 export function PlayersHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../../../design-spec/assets/phase-3/mascot-players.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-players" />;
+  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-players.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-players" />;
 }
 
 export function ProfileHeaderMascot() {
-  return <Image {...decorative} resizeMode="contain" source={require('../../../../design-spec/assets/phase-3/mascot-profile.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-profile" />;
+  return <Image {...decorative} resizeMode="contain" source={require('../../assets/media/mascot-profile.webp')} style={{ height: 64, width: 64 }} testID="phase3-artwork-profile" />;
 }

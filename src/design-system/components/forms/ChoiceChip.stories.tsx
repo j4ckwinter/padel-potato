@@ -4,7 +4,7 @@ import { Fragment, useState } from 'react';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
+import { phase3Families } from '../../stories/componentFixtures';
 import {
   ChoiceChip,
   choiceChipTypes,
@@ -15,8 +15,7 @@ import {
 const choiceChipFamily = phase3Families[4];
 const choiceChipRecords = choiceChipFamily.records;
 const noop = () => undefined;
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set ${choiceChipFamily.sourceId} / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Forms/Choice Chip',

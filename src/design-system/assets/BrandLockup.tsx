@@ -36,7 +36,7 @@ export function BrandLockup(props: BrandLockupProps) {
       accessibilityRole="image"
       accessible
       resizeMode="contain"
-      source={require('../../../design-spec/assets/normalized/brand-lockup.png')}
+      source={require('./media/brand-lockup.png')}
       style={{ height: props.width * (6 / 25), width: props.width }}
       testID={props.testID}
     />

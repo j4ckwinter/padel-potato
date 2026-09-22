@@ -1,11 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 
 import * as designSystem from '../src/design-system';
-import { phase3SourceEvidence } from '../src/design-system/components/sourceRegistry';
 import {
   phase3Backstops,
   phase3StoryContracts,
-  phase3StorySources,
   storyTaxonomy,
 } from '../src/design-system/stories/storyContract';
 
@@ -38,23 +36,6 @@ describe('Phase 3 Storybook catalogue contract', () => {
         expect(entry.status === 'story' ? entry.story : entry.reason).not.toHaveLength(0);
       }
     }
-  });
-
-  it('binds revision-296 provenance and all 75 records in source order', () => {
-    expect(phase3SourceEvidence.recordCount).toBe(75);
-    expect(Object.keys(phase3StorySources)).toEqual(expectedExports);
-    for (const contract of Object.values(phase3StoryContracts)) {
-      const family = phase3SourceEvidence.families.find(({ key }) => key === contract.familyKey);
-      expect(family).toBeDefined();
-      expect(contract.recordIds).toEqual(family?.records.map(({ id }) => id));
-      expect(phase3StorySources[contract.exportName]).toEqual({
-        fileId: phase3SourceEvidence.source.fileId,
-        pageId: phase3SourceEvidence.source.pageId,
-        revision: 296,
-        sourceId: family?.sourceId,
-      });
-    }
-    expect(Object.values(phase3StoryContracts).flatMap(({ recordIds }) => recordIds)).toHaveLength(75);
   });
 
   it('permits only closed persistent controls and real callbacks', () => {

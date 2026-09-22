@@ -2,13 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-native';
 
 import { Stack } from '../primitives/Stack';
 import { Text } from '../primitives/Text';
-import {
-  formatStorySourceIdentity,
-  phase2StorySources,
-} from '../stories/storyContract';
 import { colors } from '../tokens';
 import { Icon } from './Icon';
-import { iconNames } from './generated/iconRegistry';
+import { iconNames } from './iconDefinitions';
 
 const meta = {
   title: 'Assets/Icons',
@@ -29,7 +25,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <Icon {...args} />
       <Text color="textSecondary" variant="caption">
-        {formatStorySourceIdentity(phase2StorySources.Icon)}
+        Standalone icon contract
       </Text>
     </Stack>
   ),
@@ -65,4 +61,3 @@ export const Boundaries: Story = {
     </Stack>
   ),
 };
-

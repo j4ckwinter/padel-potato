@@ -3,10 +3,10 @@ import { SvgXml } from 'react-native-svg';
 
 import { colors, dimensions, type ColorToken } from '../tokens';
 import {
+  iconDefinitions,
   iconNames,
-  iconRegistry,
   type IconName,
-} from './generated/iconRegistry';
+} from './iconDefinitions';
 
 const own = (record: object, key: PropertyKey) =>
   Object.prototype.hasOwnProperty.call(record, key);
@@ -57,7 +57,7 @@ export function Icon(props: IconProps) {
     ...accessibilityProps
   } = props;
 
-  if (typeof name !== 'string' || !own(iconRegistry, name)) {
+  if (typeof name !== 'string' || !own(iconDefinitions, name)) {
     unsupported(name, iconNames);
   }
   if (typeof color !== 'string' || !own(colors, color)) {
@@ -72,8 +72,6 @@ export function Icon(props: IconProps) {
   }
 
   const labelled = accessibilityLabel !== undefined;
-  const record = iconRegistry[name];
-
   return (
     <SvgXml
       {...accessibilityProps}
@@ -85,9 +83,9 @@ export function Icon(props: IconProps) {
       height={dimensions.iconSize20}
       importantForAccessibility={labelled ? 'yes' : 'no-hide-descendants'}
       width={dimensions.iconSize20}
-      xml={record.xml}
+      xml={iconDefinitions[name]}
     />
   );
 }
 
-export type { IconName } from './generated/iconRegistry';
+export type { IconName } from './iconDefinitions';

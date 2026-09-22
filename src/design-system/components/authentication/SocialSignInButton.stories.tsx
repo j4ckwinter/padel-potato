@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
+import { phase3Families } from '../../stories/componentFixtures';
 import {
   SocialSignInButton,
   socialSignInProviders,
@@ -12,8 +12,7 @@ import {
 
 const family = phase3Families[7];
 const records = family.records;
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set ${family.sourceId} / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Authentication/Social Sign-In Button',

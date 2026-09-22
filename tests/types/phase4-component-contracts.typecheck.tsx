@@ -58,8 +58,6 @@ const phase4PublicFamilies = [
   'IllustratedCard',
 ] as const satisfies readonly (keyof typeof DesignSystem)[];
 
-// @ts-expect-error Generated source evidence remains private.
-const privateSourceRegistry = DesignSystem.phase4SourceRegistry;
 // @ts-expect-error Generated artwork renderers remain private.
 const privateArtworkRenderer = DesignSystem.NextGameIllustratedCardArtwork;
 // @ts-expect-error Story-only fixture helpers remain private.
@@ -229,7 +227,7 @@ const invalidIllustratedCardCallback: IllustratedCardProps = { detailPrimary: 'W
 
 void validContracts;
 void phase4PublicFamilies;
-void [privateSourceRegistry, privateArtworkRenderer, privateStoryFixture];
+void [privateArtworkRenderer, privateStoryFixture];
 void [
   invalidAvatarTuple,
   invalidAvatarSemantics,

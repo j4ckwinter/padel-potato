@@ -6,14 +6,11 @@ import {
 } from 'react-native';
 
 import { Text } from '../../primitives/Text';
-import {
-  avatarPresences,
-  avatarRecords,
-  avatarSizes,
-} from '../phase4SourceRegistry';
+import { colors } from '../../tokens';
 import { isLocalImageSource } from '../localImageSource';
 
-export { avatarPresences, avatarSizes };
+export const avatarSizes = Object.freeze([32, 40, 48, 56] as const);
+export const avatarPresences = Object.freeze(['online', 'away', 'offline'] as const);
 
 export type AvatarSize = (typeof avatarSizes)[number];
 export type AvatarPresence = (typeof avatarPresences)[number];
@@ -50,6 +47,20 @@ const supportedTuples = Object.freeze([
   '48/offline',
   '56/online',
 ] as const);
+
+const avatarConfigurations = Object.freeze({
+  '32/online': Object.freeze({ diameter: 32, indicatorDiameter: 8, indicatorOffset: 25 }),
+  '40/online': Object.freeze({ diameter: 40, indicatorDiameter: 10, indicatorOffset: 31 }),
+  '48/away': Object.freeze({ diameter: 48, indicatorDiameter: 12, indicatorOffset: 37 }),
+  '48/offline': Object.freeze({ diameter: 48, indicatorDiameter: 12, indicatorOffset: 37 }),
+  '56/online': Object.freeze({ diameter: 56, indicatorDiameter: 12, indicatorOffset: 45 }),
+} as const);
+
+const presenceColors = Object.freeze({
+  away: colors.warning,
+  offline: colors.muted,
+  online: colors.accent,
+} as const);
 
 function unsupportedConfiguration(tuple: string): never {
   throw new Error(
@@ -107,17 +118,13 @@ function validateAvatarProps(props: AvatarProps) {
 export function Avatar(props: AvatarProps) {
   validateAvatarProps(props);
   const { presence, size } = props;
-  const record = avatarRecords.find(
-    ({ normalizedTuple }) => normalizedTuple.size === size
-      && normalizedTuple.presence === presence,
-  );
-  if (!record) unsupportedConfiguration(`${size}/${presence}`);
+  const tuple = `${size}/${presence}` as keyof typeof avatarConfigurations;
+  const configuration = avatarConfigurations[tuple];
+  if (!configuration) unsupportedConfiguration(tuple);
 
-  const diameter = record.metrics.avatar.normalized.width;
-  const indicatorDiameter = record.metrics.presence.normalized.width;
-  const backgroundColor = record.metrics.avatar.fills[0]?.fillColor;
-  const indicatorColor = record.metrics.presence.fills[0]?.fillColor;
-  const indicatorStroke = record.metrics.presence.strokes[0];
+  const { diameter, indicatorDiameter, indicatorOffset } = configuration;
+  const backgroundColor = colors.info;
+  const indicatorColor = presenceColors[presence];
   const decorative = props.decorative === true;
 
   return (
@@ -175,12 +182,12 @@ export function Avatar(props: AvatarProps) {
           styles.presence,
           {
             backgroundColor: indicatorColor,
-            borderColor: indicatorStroke?.strokeColor,
+            borderColor: colors.surface,
             borderRadius: indicatorDiameter / 2,
-            borderWidth: indicatorStroke?.strokeWidth ?? 0,
+            borderWidth: 2,
             height: indicatorDiameter,
-            left: record.metrics.presence.offsetFromAvatar.x,
-            top: record.metrics.presence.offsetFromAvatar.y,
+            left: indicatorOffset,
+            top: indicatorOffset,
             width: indicatorDiameter,
           },
         ]}

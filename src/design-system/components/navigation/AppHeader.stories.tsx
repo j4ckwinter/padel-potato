@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
+import { phase3Families } from '../../stories/componentFixtures';
 import {
   AppHeader,
   appHeaderPages,
@@ -14,8 +14,7 @@ import {
 const family = phase3Families[11];
 const records = family.records;
 const noop = () => undefined;
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set ${family.sourceId} / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const storyProps = (page: AppHeaderPage): AppHeaderProps => {
   if (page === 'home' || page === 'games' || page === 'create' || page === 'players') {

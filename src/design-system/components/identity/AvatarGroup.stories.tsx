@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase4Families, phase4SourceIdentity } from '../phase4SourceRegistry';
+import { phase4Families } from '../../stories/componentFixtures';
 import {
   AvatarGroup,
   type AvatarGroupIdentity,
@@ -18,8 +18,7 @@ const players = [
   { initials: 'RB', name: 'Riley Brown', presence: 'online' },
 ] as const satisfies readonly AvatarGroupIdentity[];
 
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a60f7e527b9d / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Identity/Avatar Group',

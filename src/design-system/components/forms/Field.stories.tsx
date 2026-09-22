@@ -3,7 +3,7 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
+import { phase3Families } from '../../stories/componentFixtures';
 import {
   Field,
   fieldStatuses,
@@ -14,8 +14,7 @@ import {
 const fieldFamily = phase3Families[3];
 const fieldRecords = fieldFamily.records;
 const noop = () => undefined;
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set ${fieldFamily.sourceId} / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const safeArgs = (args: Partial<FieldProps>): FieldProps => {
   const type = fieldTypes.includes(args.type as (typeof fieldTypes)[number])
@@ -171,7 +170,7 @@ export const States: Story = {
       <Field label="Search" message="Check this value" onChangeText={noop} status="error" type="search" value="Search players" />
       <Field label="Players" message="Looks good" onDecrement={noop} onIncrement={noop} status="success" type="stepper" value="4 players" />
       <Text color="textSecondary" variant="caption">
-        Press and keyboard focus drive transient styling; focused source records are not persistent props.
+        Press and keyboard focus drive transient styling; focused states are not persistent props.
       </Text>
     </Stack>
   ),

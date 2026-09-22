@@ -5,7 +5,6 @@ import { Children, type ReactElement, type ReactNode } from 'react';
 import {
   phase2Backstops,
   phase2StoryContracts,
-  phase2StorySources,
   storyTaxonomy,
 } from '../src/design-system/stories/storyContract';
 import brandMeta, {
@@ -18,7 +17,7 @@ import iconsMeta, {
   Canonical as IconCanonical,
   Variants as IconVariants,
 } from '../src/design-system/assets/Icon.stories';
-import { iconNames } from '../src/design-system/assets/generated/iconRegistry';
+import { iconNames } from '../src/design-system/assets/iconDefinitions';
 import layoutMeta, {
   Boundaries as LayoutBoundaries,
   Canonical as LayoutCanonical,
@@ -149,27 +148,6 @@ describe('Phase 2 Storybook contract', () => {
         PressableInteractive,
       ].every((story) => typeof story.render === 'function'),
     ).toBe(true);
-  });
-
-  it('renders exact retained Penpot identity in every primitive Canonical story', async () => {
-    const canonicalStories = [
-      ['Text', TextCanonical],
-      ['Stack', LayoutCanonical],
-      ['Inline', LayoutCanonical],
-      ['Surface', SurfaceCanonical],
-      ['Pressable', PressableCanonical],
-    ] as const;
-
-    for (const [exportName, story] of canonicalStories) {
-      const screen = await renderStory(story);
-      const source = phase2StorySources[exportName];
-      expect(
-        screen.getByText(
-          `Penpot ${source.fileId} / ${source.pageId} / revision ${source.revision} / source ${source.sourceId}`,
-        ),
-      ).toBeVisible();
-      await screen.unmount();
-    }
   });
 
   it('renders constrained zero, one, many, Unicode wrapping, and explicit truncation witnesses', async () => {
@@ -303,27 +281,6 @@ describe('Phase 2 Storybook contract', () => {
     expect(screen.getAllByRole('image', { name: 'Padel Potato' })).toHaveLength(
       2,
     );
-  });
-
-  it('renders exact retained Penpot identity in both asset Canonical stories', async () => {
-    const iconScreen = await renderStory(IconCanonical);
-    const iconSource = phase2StorySources.Icon;
-    expect(
-      iconScreen.getByText(
-        `Penpot ${iconSource.fileId} / ${iconSource.pageId} / revision ${iconSource.revision} / source ${iconSource.sourceId}`,
-      ),
-    ).toBeVisible();
-    await iconScreen.unmount();
-
-    const brandScreen = await renderStory(BrandCanonical);
-    for (const exportName of ['BrandLockup', 'BrandLockupStacked'] as const) {
-      const source = phase2StorySources[exportName];
-      expect(
-        brandScreen.getByText(
-          `Penpot ${source.fileId} / ${source.pageId} / revision ${source.revision} / source ${source.sourceId}`,
-        ),
-      ).toBeVisible();
-    }
   });
 
   it('distinguishes decorative and labelled icons and scales local assets by authored ratios', async () => {

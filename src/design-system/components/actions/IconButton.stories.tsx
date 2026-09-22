@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { Fragment, useState } from 'react';
 
-import { iconNames } from '../../assets/generated/iconRegistry';
+import { iconNames } from '../../assets/iconDefinitions';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
+import { phase3Families } from '../../stories/componentFixtures';
 import {
   IconButton,
   iconButtonSizes,
@@ -14,8 +14,7 @@ import {
 
 const iconButtonFamily = phase3Families[1];
 const iconButtonRecords = iconButtonFamily.records;
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set ${iconButtonFamily.sourceId} / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Actions/Icon Button',

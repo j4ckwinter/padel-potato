@@ -2,10 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-native';
 
 import { Stack } from '../primitives/Stack';
 import { Text } from '../primitives/Text';
-import {
-  formatStorySourceIdentity,
-  phase2StorySources,
-} from '../stories/storyContract';
 import { BrandLockup } from './BrandLockup';
 import { BrandLockupStacked } from './BrandLockupStacked';
 
@@ -32,10 +28,10 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <BrandCatalogue />
       <Text color="textSecondary" variant="caption">
-        {formatStorySourceIdentity(phase2StorySources.BrandLockup)}
+        Horizontal brand lockup
       </Text>
       <Text color="textSecondary" variant="caption">
-        {formatStorySourceIdentity(phase2StorySources.BrandLockupStacked)}
+        Stacked brand lockup
       </Text>
     </Stack>
   ),

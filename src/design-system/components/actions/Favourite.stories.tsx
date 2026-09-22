@@ -4,13 +4,12 @@ import { Fragment, useState } from 'react';
 import { Inline } from '../../primitives/Inline';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { phase3Families, phase3SourceIdentity } from '../sourceRegistry';
+import { phase3Families } from '../../stories/componentFixtures';
 import { Favourite, type FavouriteProps } from './Favourite';
 
 const favouriteFamily = phase3Families[2];
 const favouriteRecords = favouriteFamily.records;
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set ${favouriteFamily.sourceId} / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Actions/Favourite',

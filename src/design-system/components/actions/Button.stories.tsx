@@ -7,12 +7,10 @@ import {
   buttonRecords,
   buttonSizes,
   buttonStyles,
-  phase3SourceIdentity,
-} from '../sourceRegistry';
+} from '../../stories/componentFixtures';
 import { Button, type ButtonProps } from './Button';
 
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase3SourceIdentity.fileId} / ${phase3SourceIdentity.pageId} / revision ${phase3SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a60ea01107a5 / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 const meta = {
   title: 'Actions/Button',

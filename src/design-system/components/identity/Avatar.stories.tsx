@@ -5,14 +5,12 @@ import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
 import {
   avatarRecords,
-  phase4SourceIdentity,
-} from '../phase4SourceRegistry';
+} from '../../stories/componentFixtures';
 import { Avatar, type AvatarProps } from './Avatar';
 
-const storyPhoto = require('../../../../design-spec/assets/phase-3/mascot-profile.webp');
+const storyPhoto = require('../../assets/media/mascot-profile.webp');
 
-const sourceLabel = (recordId: string) =>
-  `Penpot ${phase4SourceIdentity.fileId} / ${phase4SourceIdentity.pageId} / revision ${phase4SourceIdentity.revision} / set 482a7222-5a3b-8086-8008-a60fcc2bf6a2 / record ${recordId}`;
+const sourceLabel = (fixtureId: string) => `Fixture ${fixtureId}`;
 
 type AvatarStoryArgs = Readonly<{
   accessibilityLabel?: unknown;
@@ -106,7 +104,7 @@ export const States: Story = {
       <Avatar accessibilityLabel="Alex Morgan, offline" initials="AM" presence="offline" size={48} />
       <Avatar accessibilityLabel="Local photo fixture, online" presence="online" size={40} source={storyPhoto} />
       <Text color="textSecondary" variant="caption">
-        The photo is a deterministic local story fixture, not claimed Penpot Avatar artwork.
+        The photo is a deterministic local story fixture.
       </Text>
     </Stack>
   ),

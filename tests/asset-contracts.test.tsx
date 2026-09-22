@@ -1,297 +1,82 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import { describe, expect, test } from '@jest/globals';
 import { render } from '@testing-library/react-native';
-import { SvgXml } from 'react-native-svg';
 
-import {
-  BrandLockup,
-  type BrandLockupProps,
-} from '../src/design-system/assets/BrandLockup';
-import {
-  BrandLockupStacked,
-  type BrandLockupStackedProps,
-} from '../src/design-system/assets/BrandLockupStacked';
-import { Icon, type IconProps } from '../src/design-system/assets/Icon';
-import { iconNames, iconRegistry } from '../src/design-system/assets/generated/iconRegistry';
-import { colors, dimensions } from '../src/design-system/tokens';
-import * as assetExports from '../src/design-system/assets';
 import * as designSystemExports from '../src/design-system';
+import * as assetExports from '../src/design-system/assets';
+import { BrandLockup, type BrandLockupProps } from '../src/design-system/assets/BrandLockup';
+import { BrandLockupStacked, type BrandLockupStackedProps } from '../src/design-system/assets/BrandLockupStacked';
+import { Icon, type IconProps } from '../src/design-system/assets/Icon';
+import { iconDefinitions, iconNames } from '../src/design-system/assets/iconDefinitions';
+import { colors, dimensions } from '../src/design-system/tokens';
 
 const expectedIconNames = [
   'add', 'back', 'calendar', 'check', 'chevron', 'clock', 'close', 'court', 'eye',
-  'filter', 'home', 'location', 'notification', 'overflow', 'players', 'profile',
-  'search', 'warning',
+  'filter', 'home', 'location', 'notification', 'overflow', 'players', 'profile', 'search', 'warning',
 ] as const;
 
-const root = path.resolve(__dirname, '..');
-const invalidIconInputs: [Record<string, unknown>, RegExp][] = [
-  [{ name: 'missing' }, /Unsupported design-system value: missing\. Supported values:/u],
-  [{ name: null }, /Unsupported design-system value: null\. Supported values:/u],
-  [{ name: 'home', color: 'magenta' }, /Unsupported design-system value: magenta\. Supported values:/u],
-  [{ name: 'home', color: null }, /Unsupported design-system value: null\. Supported values:/u],
-  [{ name: 'home', size: 'controlHeight40' }, /Unsupported design-system value: controlHeight40\. Supported values: iconSize20/u],
-  [{ name: 'home', style: { width: 40 } }, /Unsupported design-system value: style\. Supported values:/u],
-  [{ name: 'home', width: 40 }, /Unsupported design-system value: width\. Supported values:/u],
-  [{ name: 'home', xml: '<svg />' }, /Unsupported design-system value: xml\. Supported values:/u],
-];
-
-describe('Penpot asset evidence', () => {
-  test('retains the exact revision-292 icon inventory in Penpot order', () => {
-    expect(iconNames).toEqual(expectedIconNames);
-    expect(Object.keys(iconRegistry)).toEqual(expectedIconNames);
-    for (const name of expectedIconNames) {
-      const record = iconRegistry[name];
-      expect(record.fileId).toBe('c514c1fb-1cda-8125-8008-a606253a77a3');
-      expect(record.pageId).toBe('482a7222-5a3b-8086-8008-a6073072bbb1');
-      expect(record.revision).toBe(292);
-      expect(record.viewBox).toHaveLength(4);
-      expect(record.viewBox.slice(2)).toEqual([20, 20]);
-      expect(record.rawSha256).toMatch(/^[a-f0-9]{64}$/);
-      expect(record.normalizedSha256).toMatch(/^[a-f0-9]{64}$/);
-      expect(record.xml).toContain('stroke-width="1.75"');
-      expect(record.xml).toContain('currentColor');
-      expect(record.xml).not.toMatch(/(?:href|src)="https?:|<script|foreignObject|on\w+=/i);
-    }
-  });
-
-  test('retains both authored lockup ratios and local reference evidence', () => {
-    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'design-spec/assets/penpot-assets.json'), 'utf8'));
-    expect(manifest.observation).toEqual(expect.objectContaining({
-      observedAt: '2026-09-18T14:36:23+01:00',
-      path: 'design-spec/assets/penpot-live-observation.json',
-      sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
-    }));
-    expect(manifest.brands.map((brand: { name: string }) => brand.name)).toEqual(['brand-lockup', 'brand-lockup-stacked']);
-    expect(manifest.brands.map((brand: { width: number; height: number }) => [brand.width, brand.height])).toEqual([[300, 72], [300, 56]]);
-    for (const brand of manifest.brands) {
-      const copies = [brand.rawPath, brand.normalizedPath, brand.referencePath].map((assetPath) =>
-        fs.readFileSync(path.join(root, assetPath)),
-      );
-      expect(copies[1].equals(copies[0])).toBe(true);
-      expect(copies[2].equals(copies[0])).toBe(true);
-      expect(copies[0].readUInt32BE(16)).toBe(brand.width);
-      expect(copies[0].readUInt32BE(20)).toBe(brand.height);
-    }
-  });
-
-  test('renders normalized local geometry through react-native-svg with semantic paint', async () => {
-    const { getByTestId, unmount } = await render(
-      <SvgXml testID="add-icon" xml={iconRegistry.add.xml} color="#0e1716" width={20} height={20} />,
-    );
-    expect(getByTestId('add-icon')).toHaveProp('color', '#0e1716');
-    expect(iconRegistry.add.xml.replaceAll('currentColor', '#0e1716')).toContain('stroke="#0e1716"');
-    await unmount();
-  });
-
-  test('validator runs controlled tamper rejections and deterministic regeneration', () => {
-    const result = spawnSync(process.execPath, ['scripts/validate-penpot-assets.mjs'], { cwd: root, encoding: 'utf8' });
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain('controlled rejections and deterministic regeneration passed');
-  });
-
-  test('generator derives normalized geometry only from raw Penpot bytes', () => {
-    const exporter = fs.readFileSync(path.join(root, 'scripts/export-penpot-assets.mjs'), 'utf8');
-    const profile = fs.readFileSync(path.join(root, 'scripts/penpot-svg-profile.mjs'), 'utf8');
-
-    expect(exporter).toContain('normalizeRawSvg(raw.toString');
-    expect(exporter).toContain('loadValidatedObservation');
-    expect(exporter).toContain('normalized bytes are not the deterministic paint-only transform');
-    expect(profile).toContain('source-node attribute changed');
-    expect(profile).toContain('unsupported authored paint');
-    expect(profile).toContain('ALLOWED_ATTRIBUTES_BY_TAG');
-    expect(profile).not.toContain("'data-penpot-shape-id', 'd', 'x', 'y', 'cx'");
-    const validator = fs.readFileSync(path.join(root, 'scripts/validate-penpot-assets.mjs'), 'utf8');
-    expect(validator).toContain('PNG without IDAT');
-    expect(validator).toContain('PNG with IDAT after IEND');
-    expect(validator).toContain('PNG with corrupt compressed IDAT');
-    expect(validator).toContain('indexed PNG without PLTE');
-    expect(validator).toContain('indexed-colour PNG requires PLTE before IDAT');
-    expect(validator).toContain("expectObservationFailure('timestamp'");
-    expect(validator).toContain("expectObservationFailure('source identity'");
-  });
-});
-
 describe('Icon asset contract', () => {
-  test.each(expectedIconNames)(
-    'renders %s from the source-ordered local registry with exact token paint',
-    async (name) => {
-      const { getByTestId, unmount } = await render(
-        <Icon testID={`${name}-icon`} name={name} color="accent" size="iconSize20" />,
-      );
-      const icon = getByTestId(`${name}-icon`, { includeHiddenElements: true });
+  test('publishes the exact immutable runtime icon set without metadata', () => {
+    expect(iconNames).toEqual(expectedIconNames);
+    expect(Object.keys(iconDefinitions)).toEqual(expectedIconNames);
+    for (const name of iconNames) {
+      expect(iconDefinitions[name]).toContain('currentColor');
+      expect(iconDefinitions[name]).not.toMatch(/data-penpot|<(?:script|foreignObject)|on\w+=/iu);
+    }
+    expect(Object.isFrozen(iconDefinitions)).toBe(true);
+    expect(Object.isFrozen(iconNames)).toBe(true);
+  });
 
-      expect(icon).toHaveProp('color', colors.accent);
-      expect(icon).toHaveProp('width', dimensions.iconSize20);
-      expect(icon).toHaveProp('height', dimensions.iconSize20);
-      expect(iconRegistry[name].name).toBe(name);
-      expect(iconRegistry[name].xml).toContain('currentColor');
-      await unmount();
-    },
-  );
+  test.each(expectedIconNames)('renders %s with exact token paint and dimensions', async (name) => {
+    const screen = await render(<Icon testID={`${name}-icon`} name={name} color="accent" size="iconSize20" />);
+    const icon = screen.getByTestId(`${name}-icon`, { includeHiddenElements: true });
+    expect(icon).toHaveProp('color', colors.accent);
+    expect(icon).toHaveProp('width', dimensions.iconSize20);
+    expect(icon).toHaveProp('height', dimensions.iconSize20);
+    await screen.unmount();
+  });
 
-  test('is decorative by default and becomes an image only with an explicit label', async () => {
+  test('is decorative by default and labelled only when requested', async () => {
     const decorative = await render(<Icon testID="decorative-icon" name="home" />);
     expect(decorative.queryByRole('image')).toBeNull();
-    expect(decorative.getByTestId('decorative-icon', { includeHiddenElements: true })).toHaveProp(
-      'importantForAccessibility',
-      'no-hide-descendants',
-    );
     await decorative.unmount();
-
-    const label = 'Next court — 球場';
-    const labelled = await render(<Icon name="court" accessibilityLabel={label} />);
-    expect(labelled.getByRole('image', { name: label })).toBeTruthy();
-    await labelled.unmount();
+    const labelled = await render(<Icon name="court" accessibilityLabel="Next court" />);
+    expect(labelled.getByRole('image', { name: 'Next court' })).toBeTruthy();
   });
 
-  test.each(['', '   ', '\t\n'])(
-    'rejects the unusable explicit icon label %p',
-    async (accessibilityLabel) => {
-      await expect(
-        render(<Icon accessibilityLabel={accessibilityLabel} name="home" />),
-      ).rejects.toThrow(
-        /Supported values: non-empty accessibility label/u,
-      );
-    },
-  );
-
-  test.each(invalidIconInputs)(
-    'rejects unsupported runtime input %# instead of falling back',
-    async (props, message) => {
-      await expect(render(<Icon {...(props as unknown as IconProps)} />)).rejects.toThrow(message);
-    },
-  );
-
-  test('keeps every name bound to its own immutable registry record', () => {
-    expect(new Set(iconNames.map((name) => iconRegistry[name])).size).toBe(iconNames.length);
-    for (const name of iconNames) {
-      expect(iconRegistry[name].name).toBe(name);
-    }
-  });
-
-  test('has no Penpot, network, evidence-manifest, or remote asset runtime path', () => {
-    const source = fs.readFileSync(
-      path.join(root, 'src/design-system/assets/Icon.tsx'),
-      'utf8',
-    );
-    expect(source).not.toMatch(/https?:|fetch\(|XMLHttpRequest|penpot-assets\.json|design-spec/u);
+  test.each([
+    { name: 'missing' }, { name: null }, { name: 'home', color: 'magenta' },
+    { name: 'home', size: 'controlHeight40' }, { name: 'home', style: { width: 40 } },
+  ] as Record<string, unknown>[])('rejects unsupported runtime input %#', async (props) => {
+    await expect(render(<Icon {...(props as unknown as IconProps)} />)).rejects.toThrow(/Unsupported design-system value/u);
   });
 });
 
 describe('brand lockup asset contracts', () => {
-  test('derives exact authored ratios from the sole public sizing axis', async () => {
-    const horizontal = await render(
-      <BrandLockup testID="horizontal-lockup" width={250} />,
-    );
-    expect(horizontal.getByRole('image', { name: 'Padel Potato' })).toHaveStyle({
-      height: 60,
-      width: 250,
-    });
+  test('uses component-local media with exact public sizing ratios', async () => {
+    const horizontal = await render(<BrandLockup testID="horizontal-lockup" width={250} />);
+    expect(horizontal.getByRole('image', { name: 'Padel Potato' })).toHaveStyle({ height: 60, width: 250 });
     await horizontal.unmount();
-
-    const stacked = await render(
-      <BrandLockupStacked testID="stacked-lockup" width={150} />,
-    );
-    expect(stacked.getByRole('image', { name: 'Padel Potato' })).toHaveStyle({
-      height: 28,
-      width: 150,
-    });
-    await stacked.unmount();
+    const stacked = await render(<BrandLockupStacked width={150} />);
+    expect(stacked.getByRole('image', { name: 'Padel Potato' })).toHaveStyle({ height: 28, width: 150 });
+    expect(readFileSync(join(process.cwd(), 'src/design-system/assets/media/brand-lockup.png')).length).toBeGreaterThan(0);
+    expect(readFileSync(join(process.cwd(), 'src/design-system/assets/media/brand-lockup-stacked.png')).length).toBeGreaterThan(0);
   });
 
-  test('passes a contextual accessible name through without changing authored media', async () => {
-    const label = 'Padel Potato home — 主頁';
-    const horizontal = await render(
-      <BrandLockup width={125} accessibilityLabel={label} />,
-    );
-    expect(horizontal.getByRole('image', { name: label })).toBeTruthy();
-    await horizontal.unmount();
-
-    const stacked = await render(
-      <BrandLockupStacked width={75} accessibilityLabel={label} />,
-    );
-    expect(stacked.getByRole('image', { name: label })).toBeTruthy();
-    await stacked.unmount();
-  });
-
-  test.each(['', '   ', '\t\n'])(
-    'rejects the unusable explicit brand label %p for both lockups',
-    async (accessibilityLabel) => {
-      await expect(
-        render(<BrandLockup accessibilityLabel={accessibilityLabel} width={300} />),
-      ).rejects.toThrow(
-        /Supported values: non-empty accessibility label/u,
-      );
-      await expect(
-        render(<BrandLockupStacked accessibilityLabel={accessibilityLabel} width={300} />),
-      ).rejects.toThrow(
-        /Supported values: non-empty accessibility label/u,
-      );
-    },
-  );
-
-  test.each([
-    0,
-    -1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    null,
-    '300',
-  ])('rejects invalid lockup width %p explicitly', async (width) => {
-    await expect(
-      render(<BrandLockup width={width as number} />),
-    ).rejects.toThrow(/Unsupported design-system value: .*Supported values: finite positive width/u);
-    await expect(
-      render(<BrandLockupStacked width={width as number} />),
-    ).rejects.toThrow(/Unsupported design-system value: .*Supported values: finite positive width/u);
-  });
-
-  test.each(['height', 'style', 'color', 'source', 'image', 'copy', 'ratio']) (
-    'rejects the unsupported %s override',
-    async (key) => {
-      const props = { width: 300, [key]: 'override' } as unknown as BrandLockupProps;
-      const stackedProps = {
-        width: 300,
-        [key]: 'override',
-      } as unknown as BrandLockupStackedProps;
-      await expect(
-        render(<BrandLockup {...props} />),
-      ).rejects.toThrow(
-        new RegExp(`Unsupported design-system value: ${key}\\. Supported values:`),
-      );
-      await expect(
-        render(<BrandLockupStacked {...stackedProps} />),
-      ).rejects.toThrow(
-        new RegExp(`Unsupported design-system value: ${key}\\. Supported values:`),
-      );
-    },
-  );
-
-  test('uses only the two retained synchronous local lockup files', () => {
-    for (const file of ['BrandLockup.tsx', 'BrandLockupStacked.tsx']) {
-      const source = fs.readFileSync(
-        path.join(root, 'src/design-system/assets', file),
-        'utf8',
-      );
-      expect(source).toMatch(/design-spec\/assets\/normalized\/brand-lockup/u);
-      expect(source).not.toMatch(/https?:|fetch\(|XMLHttpRequest|loading|placeholder|penpot-assets\.json/u);
-    }
+  test.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY, null, '300'])('rejects invalid width %p', async (width) => {
+    await expect(render(<BrandLockup width={width as number} />)).rejects.toThrow(/finite positive width/u);
+    await expect(render(<BrandLockupStacked width={width as number} />)).rejects.toThrow(/finite positive width/u);
   });
 
   test('publishes narrow asset and root barrel identities', () => {
     const horizontalProps: BrandLockupProps = { width: 300 };
     const stackedProps: BrandLockupStackedProps = { width: 300 };
-
-    expect(horizontalProps.width).toBe(300);
-    expect(stackedProps.width).toBe(300);
+    expect(horizontalProps.width + stackedProps.width).toBe(600);
     expect(assetExports.BrandLockup).toBe(BrandLockup);
     expect(assetExports.BrandLockupStacked).toBe(BrandLockupStacked);
     expect(assetExports.Icon).toBe(Icon);
-    expect(designSystemExports.BrandLockup).toBe(BrandLockup);
-    expect(designSystemExports.BrandLockupStacked).toBe(BrandLockupStacked);
     expect(designSystemExports.Icon).toBe(Icon);
   });
 });

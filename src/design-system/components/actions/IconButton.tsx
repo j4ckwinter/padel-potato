@@ -2,7 +2,7 @@ import type { GestureResponderEvent } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { Icon, type IconName } from '../../assets/Icon';
-import { iconNames } from '../../assets/generated/iconRegistry';
+import { iconNames } from '../../assets/iconDefinitions';
 import { Pressable } from '../../primitives/Pressable';
 import { colors } from '../../tokens';
 

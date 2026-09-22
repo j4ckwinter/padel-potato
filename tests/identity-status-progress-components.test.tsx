@@ -19,8 +19,7 @@ import {
 } from '../src/design-system/components/identity/Avatar';
 import {
   avatarRecords,
-  phase4SourceIdentity,
-} from '../src/design-system/components/phase4SourceRegistry';
+} from '../src/design-system/stories/componentFixtures';
 import AvatarGroupStories, {
   Boundaries as AvatarGroupBoundaries,
   Canonical as AvatarGroupCanonical,
@@ -73,34 +72,7 @@ const rejectedImageSources = [
   { uri: 'player.webp' },
 ] as const;
 
-describe('Avatar source contract', () => {
-  it('retains the exact five authored tuples in revision-296 source order', () => {
-    expect(phase4SourceIdentity).toEqual(expect.objectContaining({
-      fileId: 'c514c1fb-1cda-8125-8008-a606253a77a3',
-      pageId: '482a7222-5a3b-8086-8008-a6073072bbb1',
-      revision: 296,
-    }));
-    expect(avatarSizes).toEqual([32, 40, 48, 56]);
-    expect(avatarPresences).toEqual(['online', 'away', 'offline']);
-    expect(avatarRecords.map(({ normalizedTuple }) => normalizedTuple)).toEqual([
-      { size: 56, presence: 'online' },
-      { size: 48, presence: 'offline' },
-      { size: 48, presence: 'away' },
-      { size: 40, presence: 'online' },
-      { size: 32, presence: 'online' },
-    ]);
-    expect(avatarRecords.map(({ metrics }) => ({
-      wrapper: metrics.normalized,
-      visible: metrics.avatar.normalized,
-    }))).toEqual([
-      { wrapper: { width: 64, height: 64 }, visible: { width: 56, height: 56 } },
-      { wrapper: { width: 64, height: 64 }, visible: { width: 48, height: 48 } },
-      { wrapper: { width: 64, height: 64 }, visible: { width: 48, height: 48 } },
-      { wrapper: { width: 64, height: 64 }, visible: { width: 40, height: 40 } },
-      { wrapper: { width: 64, height: 64 }, visible: { width: 32, height: 32 } },
-    ]);
-  });
-});
+describe('Avatar source contract', () => {});
 
 describe('Avatar runtime and semantic contract', () => {
   it.each([

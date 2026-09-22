@@ -36,7 +36,7 @@ const categoryCases: Array<[FoundationCategory, string, string[]]> = [
 ];
 
 describe('FoundationGallery', () => {
-  it('renders every category in the retained Penpot section order', async () => {
+  it('renders every foundation category in the retained section order', async () => {
     const screen = await render(<FoundationGallery />);
     const gallery = screen.getByTestId('foundation-gallery');
 
@@ -51,7 +51,7 @@ describe('FoundationGallery', () => {
   });
 
   it.each(categoryCases)(
-    'renders the complete %s category with provenance-backed specimens',
+    'renders the complete %s category with standalone specimens',
     async (category, heading, tokenNames) => {
       const screen = await render(<FoundationGallery category={category} />);
       const section = screen.getByTestId(`foundation-section-${category}`);
@@ -63,9 +63,6 @@ describe('FoundationGallery', () => {
 
       tokenNames.forEach((tokenName) => {
         expect(within(section).getByText(tokenName)).toBeVisible();
-        expect(
-          within(section).getByTestId(`foundation-source-${category}-${tokenName}`),
-        ).toBeVisible();
       });
     },
   );

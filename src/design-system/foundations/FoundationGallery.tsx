@@ -10,19 +10,12 @@ import {
 
 import {
   borders,
-  borderSources,
   colors,
-  colorSources,
   dimensions,
-  dimensionSources,
   opacity,
-  opacitySources,
   radii,
-  radiusSources,
   spacing,
-  spacingSources,
   typography,
-  typographySources,
 } from '../tokens';
 
 export type FoundationCategory =
@@ -36,12 +29,6 @@ export type FoundationCategory =
 
 type FoundationGalleryProps = {
   category?: FoundationCategory;
-};
-
-type SourceRecord = {
-  designName: string;
-  sourceId: string;
-  revision: number;
 };
 
 export const foundationCategories = Object.freeze([
@@ -63,10 +50,6 @@ const categoryHeadings: Readonly<Record<FoundationCategory, string>> = {
   borders: 'Borders',
   opacity: 'Opacity',
 };
-
-function provenance(source: SourceRecord) {
-  return `Penpot r${source.revision} · ${source.designName} · ${source.sourceId}`;
-}
 
 function Section({
   category,
@@ -96,26 +79,6 @@ function TokenText({ children }: { children: ReactNode }) {
   return <Text style={styles.tokenName}>{children}</Text>;
 }
 
-function SourceText({
-  category,
-  source,
-  tokenName,
-}: {
-  category: FoundationCategory;
-  source: SourceRecord;
-  tokenName: string;
-}) {
-  return (
-    <Text
-      numberOfLines={1}
-      style={styles.source}
-      testID={`foundation-source-${category}-${tokenName}`}
-    >
-      {provenance(source)}
-    </Text>
-  );
-}
-
 function ColorSpecimens() {
   return (
     <View style={styles.wrapRow}>
@@ -131,11 +94,6 @@ function ColorSpecimens() {
           />
           <TokenText>{tokenName}</TokenText>
           <Text style={styles.value}>{colors[tokenName]}</Text>
-          <SourceText
-            category="colors"
-            source={colorSources[tokenName]}
-            tokenName={tokenName}
-          />
         </View>
       ))}
     </View>
@@ -157,17 +115,12 @@ function TypographySpecimens() {
               <Text style={[styles.specimenText, token as TextStyle]}>
                 {tokenName === 'display'
                   ? 'Same court. Better people.'
-                  : typographySources[tokenName].designName}
+                  : 'Padel Potato'}
               </Text>
               <TokenText>{tokenName}</TokenText>
               <Text style={styles.value}>
                 {`${token.fontSize}px / ${token.lineHeight}px · ${token.fontWeight}`}
               </Text>
-              <SourceText
-                category="typography"
-                source={typographySources[tokenName]}
-                tokenName={tokenName}
-              />
             </View>
           );
         },
@@ -180,7 +133,6 @@ type ScalarCategory = Exclude<FoundationCategory, 'colors' | 'typography'>;
 
 type ScalarSpecimensProps = {
   category: ScalarCategory;
-  sources: Readonly<Record<string, SourceRecord>>;
   tokens: Readonly<Record<string, number>>;
 };
 
@@ -214,7 +166,7 @@ function scalarVisual(category: ScalarCategory, value: number): ViewStyle {
   }
 }
 
-function ScalarSpecimens({ category, sources, tokens }: ScalarSpecimensProps) {
+function ScalarSpecimens({ category, tokens }: ScalarSpecimensProps) {
   return (
     <View style={styles.stack}>
       {Object.entries(tokens).map(([tokenName, value]) => (
@@ -232,11 +184,6 @@ function ScalarSpecimens({ category, sources, tokens }: ScalarSpecimensProps) {
             <Text style={styles.value}>
               {category === 'opacity' ? value : `${value} px`}
             </Text>
-            <SourceText
-              category={category}
-              source={sources[tokenName]}
-              tokenName={tokenName}
-            />
           </View>
         </View>
       ))}
@@ -261,13 +208,13 @@ function FoundationSection({ category }: { category: FoundationCategory }) {
     case 'spacing':
       return (
         <Section category={category}>
-          <ScalarSpecimens category={category} sources={spacingSources} tokens={spacing} />
+          <ScalarSpecimens category={category} tokens={spacing} />
         </Section>
       );
     case 'radii':
       return (
         <Section category={category}>
-          <ScalarSpecimens category={category} sources={radiusSources} tokens={radii} />
+          <ScalarSpecimens category={category} tokens={radii} />
         </Section>
       );
     case 'dimensions':
@@ -275,7 +222,6 @@ function FoundationSection({ category }: { category: FoundationCategory }) {
         <Section category={category}>
           <ScalarSpecimens
             category={category}
-            sources={dimensionSources}
             tokens={dimensions}
           />
         </Section>
@@ -283,13 +229,13 @@ function FoundationSection({ category }: { category: FoundationCategory }) {
     case 'borders':
       return (
         <Section category={category}>
-          <ScalarSpecimens category={category} sources={borderSources} tokens={borders} />
+          <ScalarSpecimens category={category} tokens={borders} />
         </Section>
       );
     case 'opacity':
       return (
         <Section category={category}>
-          <ScalarSpecimens category={category} sources={opacitySources} tokens={opacity} />
+          <ScalarSpecimens category={category} tokens={opacity} />
         </Section>
       );
   }
@@ -313,7 +259,7 @@ export function FoundationGallery({ category }: FoundationGalleryProps = {}) {
           Padel Potato Foundations
         </Text>
         <Text style={styles.subtitle}>
-          Extracted directly from the preferred imported Home screen.
+          Shared runtime tokens used by every design-system component.
         </Text>
       </View>
       {visibleCategories.map((visibleCategory) => (
@@ -386,10 +332,6 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.textSecondary,
     textTransform: 'uppercase',
-  },
-  source: {
-    ...typography.micro,
-    color: colors.muted,
   },
   scalarRow: {
     alignItems: 'center',

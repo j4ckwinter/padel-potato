@@ -1,10 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 
 import { colors, typography } from '../tokens';
-import {
-  formatStorySourceIdentity,
-  phase2StorySources,
-} from '../stories/storyContract';
 import { Stack } from './Stack';
 import { Text } from './Text';
 
@@ -29,7 +25,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <Text {...args} />
       <Text color="textSecondary" variant="caption">
-        {formatStorySourceIdentity(phase2StorySources.Text)}
+        Standalone typography primitive
       </Text>
     </Stack>
   ),
@@ -67,4 +63,3 @@ export const Boundaries: Story = {
     </Stack>
   ),
 };
-

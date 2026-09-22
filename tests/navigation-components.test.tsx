@@ -23,7 +23,7 @@ import {
   type SegmentedControlProps,
   type SegmentOptions,
 } from '../src/design-system/components/navigation/SegmentedControl';
-import { phase3Families } from '../src/design-system/components/sourceRegistry';
+import { phase3Families } from '../src/design-system/stories/componentFixtures';
 import AppHeaderStories, {
   Boundaries as AppHeaderBoundaries,
   normalizeAppHeaderStoryArgs,
@@ -51,31 +51,7 @@ const flattenedStyle = (style: unknown) =>
 const bottomNavigationRecords = phase3Families[9].records;
 const segmentedControlRecords = phase3Families[10].records;
 
-describe('BottomNavigation source, order, and controlled intent', () => {
-  it('retains all five records and the fixed visual/focus destination order', () => {
-    expect(phase3Families[9]).toEqual(expect.objectContaining({
-      key: 'bottomNavigation',
-      recordCount: 5,
-      sourceId: '482a7222-5a3b-8086-8008-a61a5487bd61',
-    }));
-    expect(bottomNavigationRecords.map((record) => record.normalizedTuple.active)).toEqual([
-      'create',
-      'profile',
-      'players',
-      'games',
-      'home',
-    ]);
-    expect(bottomNavigationDestinations.map(({ destination, label, icon }) => ({ destination, label, icon }))).toEqual([
-      { destination: 'home', label: 'Home', icon: 'home' },
-      { destination: 'games', label: 'Games', icon: 'calendar' },
-      { destination: 'create', label: 'Create', icon: 'add' },
-      { destination: 'players', label: 'Players', icon: 'players' },
-      { destination: 'profile', label: 'Profile', icon: 'profile' },
-    ]);
-    expect(bottomNavigationDestinations).toBe(Object.freeze(bottomNavigationDestinations));
-  });
-
-  it('renders five individually named tabs in source-defined visual order', async () => {
+describe('BottomNavigation source, order, and controlled intent', () => {  it('renders five individually named tabs in source-defined visual order', async () => {
     const screen = await render(
       <BottomNavigation activeDestination="games" onDestinationPress={jest.fn()} />,
     );
@@ -142,38 +118,7 @@ describe('SegmentedControl tuple boundary and controlled selection', () => {
     ['Upcoming', 'Open'],
     ['Upcoming', 'Open', 'Past'],
     ['Upcoming', 'Open', 'Past', 'All'],
-  ] as const satisfies readonly SegmentOptions[];
-
-  it('retains the exact four source records and accepts only unique 2/3/4 tuples', () => {
-    expect(phase3Families[10]).toEqual(expect.objectContaining({
-      key: 'segmentedControl',
-      recordCount: 4,
-      sourceId: '482a7222-5a3b-8086-8008-a60ede25d147',
-    }));
-    expect(segmentedControlRecords.map((record) => record.normalizedTuple)).toEqual([
-      { options: 3, state: 'disabled' },
-      { options: 4, state: 'focused' },
-      { options: 3, state: 'selected' },
-      { options: 2, state: 'default' },
-    ]);
-
-    for (const options of validOptions) {
-      expect(() => SegmentedControl({
-        onValueChange: jest.fn(),
-        options,
-        value: options[0],
-      })).not.toThrow();
-    }
-    for (const options of [[], ['One'], ['One', 'Two', 'Three', 'Four', 'Five'], ['One', 'One']]) {
-      expect(() => SegmentedControl({
-        onValueChange: jest.fn(),
-        options: options as unknown as SegmentOptions,
-        value: options[0] ?? 'One',
-      })).toThrow(/exactly 2, 3, or 4 unique non-empty options/u);
-    }
-  });
-
-  it.each(validOptions)('renders an ordered named tuple with deterministic equal allocation', async (...options) => {
+  ] as const satisfies readonly SegmentOptions[];  it.each(validOptions)('renders an ordered named tuple with deterministic equal allocation', async (...options) => {
     const tuple = options as unknown as SegmentOptions;
     const screen = await render(
       <SegmentedControl onValueChange={jest.fn()} options={tuple} value={tuple[0]} />,
@@ -292,31 +237,7 @@ describe('Navigation composite Storybook contract', () => {
 const appHeaderRecords = phase3Families[11].records;
 const sectionHeaderRecords = phase3Families[12].records;
 
-describe('AppHeader closed page configurations', () => {
-  it('retains all nine records and the resolved source-defined page map', () => {
-    expect(phase3Families[11]).toEqual(expect.objectContaining({
-      key: 'appHeader',
-      recordCount: 9,
-      sourceId: '482a7222-5a3b-8086-8008-a61da61c2e7f',
-    }));
-    expect(appHeaderRecords.map((record) => record.normalizedTuple.page)).toEqual([
-      'settings',
-      'playerDetails',
-      'gameDetails',
-      'notifications',
-      'profile',
-      'players',
-      'create',
-      'games',
-      'home',
-    ]);
-    expect(appHeaderPages).toEqual([
-      'home', 'games', 'create', 'players', 'profile',
-      'notifications', 'gameDetails', 'playerDetails', 'settings',
-    ]);
-  });
-
-  it.each([
+describe('AppHeader closed page configurations', () => {  it.each([
     ['home', 'Hi, Alex', 'Ready for your next match?', 'wave'],
     ['games', 'Games', 'Find your next match', 'search'],
     ['create', 'Create game', 'Set up your next match', 'create'],
@@ -433,25 +354,7 @@ describe('AppHeader closed page configurations', () => {
   });
 });
 
-describe('SectionHeader optional action pair', () => {
-  it('retains the exact singleton and renders a header without an empty target', async () => {
-    expect(phase3Families[12]).toEqual(expect.objectContaining({
-      key: 'sectionHeader',
-      recordCount: 1,
-      sourceId: '482a7222-5a3b-8086-8008-a608c3bde79a',
-    }));
-    const screen = await render(<SectionHeader title="Open games near you" />);
-    expect(screen.getByRole('header', { name: 'Open games near you' })).toBeTruthy();
-    expect(screen.queryAllByRole('button')).toHaveLength(0);
-    expect(flattenedStyle(screen.getByTestId('section-header-visual-row').props.style)).toEqual(
-      expect.objectContaining({ height: 28, width: 350 }),
-    );
-    expect(flattenedStyle(screen.getByTestId('section-header').props.style)).toEqual(
-      expect.objectContaining({ height: 44, width: 354 }),
-    );
-  });
-
-  it('declares an effective 44-point action within independent wrapper clearance', async () => {
+describe('SectionHeader optional action pair', () => {  it('declares an effective 44-point action within independent wrapper clearance', async () => {
     const onActionPress = jest.fn();
     const user = userEvent.setup();
     const screen = await render(

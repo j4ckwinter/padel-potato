@@ -24,7 +24,7 @@ import {
   type AuthDividerProps,
 } from '../src/design-system/components/authentication/AuthDivider';
 import * as authentication from '../src/design-system/components/authentication';
-import { phase3Families } from '../src/design-system/components/sourceRegistry';
+import { phase3Families } from '../src/design-system/stories/componentFixtures';
 import { colors } from '../src/design-system/tokens';
 
 const flattenedStyle = (style: unknown) =>
@@ -34,32 +34,7 @@ const flattenedStyle = (style: unknown) =>
 
 const socialRecords = phase3Families[7].records;
 
-describe('SocialSignInButton source and public contract', () => {
-  it('retains all eight provider records in exact revision-296 source order', () => {
-    expect(phase3Families[7]).toEqual(expect.objectContaining({
-      key: 'socialSignInButton',
-      recordCount: 8,
-      sourceId: '482a7222-5a3b-8086-8008-a61e90365f95',
-    }));
-    expect(socialRecords.map((record) => ({
-      id: record.id,
-      normalizedTuple: record.normalizedTuple,
-    }))).toEqual([
-      { id: '482a7222-5a3b-8086-8008-a61e902c685a', normalizedTuple: { provider: 'apple', state: 'disabled' } },
-      { id: '482a7222-5a3b-8086-8008-a61e8fbc12cc', normalizedTuple: { provider: 'apple', state: 'focused' } },
-      { id: '482a7222-5a3b-8086-8008-a61e8f4a29d0', normalizedTuple: { provider: 'apple', state: 'pressed' } },
-      { id: '482a7222-5a3b-8086-8008-a61e8ebdd214', normalizedTuple: { provider: 'apple', state: 'default' } },
-      { id: '482a7222-5a3b-8086-8008-a61e8e15b0be', normalizedTuple: { provider: 'google', state: 'disabled' } },
-      { id: '482a7222-5a3b-8086-8008-a61e8d8f8695', normalizedTuple: { provider: 'google', state: 'focused' } },
-      { id: '482a7222-5a3b-8086-8008-a61e8d34ebc3', normalizedTuple: { provider: 'google', state: 'pressed' } },
-      { id: '482a7222-5a3b-8086-8008-a61e8cd600f5', normalizedTuple: { provider: 'google', state: 'default' } },
-    ]);
-    expect(socialRecords.every((record) =>
-      record.metrics.normalized.width === 352 && record.metrics.normalized.height === 48,
-    )).toBe(true);
-  });
-
-  it('exposes only the two closed providers and no service-shaped props', () => {
+describe('SocialSignInButton source and public contract', () => {  it('exposes only the two closed providers and no service-shaped props', () => {
     const providers: SocialSignInProvider[] = ['google', 'apple'];
     type ServiceEscape = Extract<
       'accessToken' | 'credential' | 'oauth' | 'session' | 'storage',
@@ -173,23 +148,7 @@ describe('SocialSignInButton Storybook contract', () => {
 
 const authDividerRecords = phase3Families[8].records;
 
-describe('AuthDivider source and static contract', () => {
-  it('retains the exact singleton after all eight provider records', () => {
-    expect(phase3Families[8]).toEqual(expect.objectContaining({
-      key: 'authDivider',
-      recordCount: 1,
-      sourceId: '482a7222-5a3b-8086-8008-a61e93b191ff',
-    }));
-    expect(authDividerRecords).toHaveLength(1);
-    expect(authDividerRecords[0]).toEqual(expect.objectContaining({
-      id: '482a7222-5a3b-8086-8008-a61e93b191ff',
-      normalizedTuple: {},
-      originalTuple: {},
-    }));
-    expect([...socialRecords, ...authDividerRecords]).toHaveLength(9);
-  });
-
-  it('renders readable default or custom content at exact geometry with hidden rules', async () => {
+describe('AuthDivider source and static contract', () => {  it('renders readable default or custom content at exact geometry with hidden rules', async () => {
     const screen = await render(<AuthDivider />);
     const label = screen.getByText('or');
     const container = screen.getByTestId('auth-divider');
@@ -234,19 +193,7 @@ describe('Authentication publication and Storybook contract', () => {
       'AuthDivider',
       'SocialSignInButton',
     ]);
-  });
-
-  it('publishes exact Auth Divider title, singleton variant, and provenance', () => {
-    expect(AuthDividerStories.title).toBe('Authentication/Auth Divider');
-    expect(AuthDividerStories.argTypes).toEqual({ label: { control: 'text' } });
-    const variants = AuthDividerVariants.render?.({} as never, {} as never) as React.ReactElement<{
-      children: React.ReactNode;
-    }>;
-    expect(Children.toArray(variants.props.children)).toHaveLength(authDividerRecords.length);
-    expect(JSON.stringify(variants)).toContain('482a7222-5a3b-8086-8008-a61e93b191ff');
-  });
-
-  it('marks transient states and interaction explicitly inapplicable with no callback control', () => {
+  });  it('marks transient states and interaction explicitly inapplicable with no callback control', () => {
     expect(authDividerStoryApplicability.States).toEqual(expect.objectContaining({
       status: 'inapplicable',
       reason: expect.stringMatching(/static|no authored transient state/iu),

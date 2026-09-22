@@ -21,11 +21,9 @@ import * as PlayerPreferencesCardStories from '../src/design-system/components/c
 import * as BannerToastStories from '../src/design-system/components/feedback/BannerToast.stories';
 import * as EmptyStateStories from '../src/design-system/components/feedback/EmptyState.stories';
 import * as IllustratedCardStories from '../src/design-system/components/cards/IllustratedCard.stories';
-import { phase4SourceEvidence } from '../src/design-system/components/phase4SourceRegistry';
 import {
   phase4Backstops,
   phase4StoryContracts,
-  phase4StorySources,
   storyTaxonomy,
 } from '../src/design-system/stories/storyContract';
 
@@ -129,22 +127,8 @@ const phase4StoryFiles = [
   'cards/IllustratedCard.stories.tsx',
 ] as const;
 
-type EdgeProbe = Readonly<{
-  id: string;
-  requirement: string;
-  probeClass: string;
-  statement: string;
-  disposition: 'resolved' | 'backstop' | 'flagged-assumption';
-  checkPath?: string;
-  rationale: string;
-}>;
-
-const edgeLedger = JSON.parse(
-  fs.readFileSync(path.resolve('design-spec/phase-4-edge-coverage.json'), 'utf8'),
-) as Readonly<{ source: Readonly<{ revision: number; expectedProbeCount: number }>; probes: EdgeProbe[] }>;
-
 describe('Phase 4 Storybook catalogue contract', () => {
-  it('publishes exactly the 15 source-backed family contracts and titles', () => {
+  it('publishes exactly the 15 component family contracts and titles', () => {
     const expectedExports = expectedDefinitions.map(([exportName]) => exportName);
     expect(Object.keys(phase4StoryContracts)).toEqual(expectedExports);
     expect(Object.values(phase4StoryContracts).map(({ title }) => title)).toEqual(
@@ -175,26 +159,6 @@ describe('Phase 4 Storybook catalogue contract', () => {
         status: 'inapplicable',
       });
     }
-  });
-
-  it('binds visible revision-296 provenance and all 76 active records once in source order', () => {
-    expect(phase4SourceEvidence.recordCount).toBe(76);
-    expect(Object.keys(phase4StorySources)).toEqual(expectedDefinitions.map(([name]) => name));
-    for (const [exportName, familyKey] of expectedDefinitions) {
-      const family = phase4SourceEvidence.families.find(({ key }) => key === familyKey);
-      const contract = phase4StoryContracts[exportName];
-      expect(family).toBeDefined();
-      expect(contract.recordIds).toEqual(family?.records.map(({ id }) => id));
-      expect(phase4StorySources[exportName]).toEqual({
-        fileId: phase4SourceEvidence.source.fileId,
-        pageId: phase4SourceEvidence.source.pageId,
-        revision: 296,
-        sourceId: family?.sourceId,
-      });
-    }
-    const recordIds = Object.values(phase4StoryContracts).flatMap(({ recordIds }) => recordIds);
-    expect(recordIds).toHaveLength(76);
-    expect(new Set(recordIds).size).toBe(76);
   });
 
   it('permits only bounded persistent controls and callbacks owned by real branches', () => {
@@ -442,36 +406,5 @@ describe('Phase 4 rendered edge witnesses', () => {
         expect.objectContaining({ height: 44, width: 44 }),
       );
     }
-  });
-});
-
-describe('Phase 4 deterministic edge ledger', () => {
-  it('accounts for exactly 47 stable, unique probes from revision 296', () => {
-    expect(edgeLedger.source).toMatchObject({ revision: 296, expectedProbeCount: 47 });
-    expect(edgeLedger.probes).toHaveLength(47);
-    expect(new Set(edgeLedger.probes.map(({ id }) => id)).size).toBe(47);
-    expect(edgeLedger.probes.map(({ id }) => id)).toEqual(
-      [...edgeLedger.probes.map(({ id }) => id)].sort(),
-    );
-  });
-
-  it('uses only named classes and honest resolved/backstop/assumption dispositions', () => {
-    const classes = ['adjacency', 'empty', 'singleton', 'null', 'stable-order', 'boundary', 'precision', 'ties'];
-    const dispositions = ['resolved', 'backstop', 'flagged-assumption'];
-    for (const probe of edgeLedger.probes) {
-      expect(probe.requirement).toMatch(/^(?:IDEN|STAT|PROG|CONT|FDBK|CARD)-\d{2}$/u);
-      expect(classes).toContain(probe.probeClass);
-      expect(dispositions).toContain(probe.disposition);
-      expect(probe.statement).not.toHaveLength(0);
-      expect(probe.rationale).not.toHaveLength(0);
-      if (probe.disposition === 'flagged-assumption') {
-        expect(probe.checkPath).toBeUndefined();
-      } else {
-        expect(probe.checkPath).toMatch(/^(?:tests|src)\//u);
-      }
-    }
-    expect(edgeLedger.probes.some(({ disposition }) => disposition === 'resolved')).toBe(true);
-    expect(edgeLedger.probes.some(({ disposition }) => disposition === 'backstop')).toBe(true);
-    expect(edgeLedger.probes.some(({ disposition }) => disposition === 'flagged-assumption')).toBe(true);
   });
 });
