@@ -53,6 +53,15 @@ describe('Status Chip runtime and semantic contract', () => {
     expect(chip).toBeDisabled();
   });
 
+  it('does not render a redundant visual style name', async () => {
+    const screen = await render(
+      <StatusChip label="Available" style="info" variant="default" />,
+    );
+
+    expect(screen.getByText('Available')).toBeTruthy();
+    expect(screen.queryByText('Info')).toBeNull();
+  });
+
   it.each([
     { label: 'Wrong', style: 'warning', variant: 'selectable' },
     {

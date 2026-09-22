@@ -107,15 +107,14 @@ const presentation: Readonly<
     {
       background: ColorToken;
       icon: IconName;
-      text: string;
     }
   >
 > = {
-  neutral: { background: 'surfaceMuted', icon: 'profile', text: 'Neutral' },
-  success: { background: 'surfaceAccent', icon: 'check', text: 'Success' },
-  warning: { background: 'warning', icon: 'warning', text: 'Warning' },
-  info: { background: 'info', icon: 'notification', text: 'Info' },
-  error: { background: 'danger', icon: 'close', text: 'Error' },
+  neutral: { background: 'surfaceMuted', icon: 'profile' },
+  success: { background: 'surfaceAccent', icon: 'check' },
+  warning: { background: 'warning', icon: 'warning' },
+  info: { background: 'info', icon: 'notification' },
+  error: { background: 'danger', icon: 'close' },
 };
 
 function Content({
@@ -135,9 +134,6 @@ function Content({
       <Icon name={visual.icon} />
       <Text numberOfLines={1} variant="label">
         {label}
-      </Text>
-      <Text style={stylesSheet.semanticText} variant="micro">
-        {visual.text}
       </Text>
     </View>
   );
@@ -187,11 +183,6 @@ const stylesSheet = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 8,
     width: 132,
-  },
-  semanticText: {
-    height: 1,
-    position: 'absolute',
-    width: 1,
   },
   target: { width: 132 },
 });
