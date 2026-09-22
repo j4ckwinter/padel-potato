@@ -19,16 +19,20 @@ type StoryArgs = Readonly<{
 export const settingsRowStoryConfigurations = Object.freeze(
   fixtures
     .filter(({ configuration }) => configuration.state !== 'pressed')
-    .map(({ configuration }) => (
-      `${configuration.type}/${configuration.icon}/${configuration.state}`
-    )),
+    .map(
+      ({ configuration }) =>
+        `${configuration.type}/${configuration.icon}/${configuration.state}`,
+    ),
 );
 
 const meta = {
   title: 'Content/Settings Row',
   excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
-    configuration: { control: 'select', options: settingsRowStoryConfigurations },
+    configuration: {
+      control: 'select',
+      options: settingsRowStoryConfigurations,
+    },
     onCheckedChange: { action: 'checked changed' },
     onPress: { action: 'settings row pressed' },
   },
@@ -38,44 +42,67 @@ const meta = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
-export function normalizeSettingsRowStoryArgs(args: StoryArgs): SettingsRowProps {
-  if (!settingsRowStoryConfigurations.includes(
-    args.configuration as (typeof settingsRowStoryConfigurations)[number],
-  )) {
-    throw new Error(`Unsupported Settings Row story configuration: ${String(args.configuration)}.`);
+export function normalizeSettingsRowStoryArgs(
+  args: StoryArgs,
+): SettingsRowProps {
+  if (
+    !settingsRowStoryConfigurations.includes(
+      args.configuration as (typeof settingsRowStoryConfigurations)[number],
+    )
+  ) {
+    throw new Error(
+      `Unsupported Settings Row story configuration: ${String(args.configuration)}.`,
+    );
   }
-  const onPress = typeof args.onPress === 'function'
-    ? args.onPress as () => void
-    : () => undefined;
-  const onCheckedChange = typeof args.onCheckedChange === 'function'
-    ? args.onCheckedChange as (checked: boolean) => void
-    : () => undefined;
+  const onPress =
+    typeof args.onPress === 'function'
+      ? (args.onPress as () => void)
+      : () => undefined;
+  const onCheckedChange =
+    typeof args.onCheckedChange === 'function'
+      ? (args.onCheckedChange as (checked: boolean) => void)
+      : () => undefined;
   if (args.configuration === 'destructive/close/default') {
     return { icon: 'close', onPress, variant: 'destructive' };
   }
   if (args.configuration === 'value/location/default') {
     return {
       icon: 'location',
-      label: typeof args.label === 'string' && args.label.trim() ? args.label : 'Location',
+      label:
+        typeof args.label === 'string' && args.label.trim()
+          ? args.label
+          : 'Location',
       onPress,
-      value: typeof args.value === 'string' && args.value.trim() ? args.value : 'London',
+      value:
+        typeof args.value === 'string' && args.value.trim()
+          ? args.value
+          : 'London',
       variant: 'value',
     };
   }
-  if (typeof args.configuration === 'string' && args.configuration.startsWith('toggle/')) {
+  if (
+    typeof args.configuration === 'string' &&
+    args.configuration.startsWith('toggle/')
+  ) {
     return {
       checked: args.configuration === 'toggle/notification/on',
       disabled: args.configuration === 'toggle/notification/disabled',
       icon: 'notification',
-      label: typeof args.label === 'string' && args.label.trim() ? args.label : 'Notifications',
+      label:
+        typeof args.label === 'string' && args.label.trim()
+          ? args.label
+          : 'Notifications',
       onCheckedChange,
       variant: 'toggle',
     };
   }
   const court = args.configuration === 'navigation/court/default';
-  const label = typeof args.label === 'string' && args.label.trim()
-    ? args.label
-    : court ? 'Courts' : 'Account';
+  const label =
+    typeof args.label === 'string' && args.label.trim()
+      ? args.label
+      : court
+        ? 'Courts'
+        : 'Account';
   return court
     ? { disabled: false, icon: 'court', label, onPress, variant: 'navigation' }
     : {
@@ -89,9 +116,16 @@ export function normalizeSettingsRowStoryArgs(args: StoryArgs): SettingsRowProps
 
 function fixtureProps(fixture: (typeof fixtures)[number]): SettingsRowProps {
   const { icon, state, type } = fixture.configuration;
-  if (type === 'destructive') return { icon: 'close', onPress: () => undefined, variant: 'destructive' };
+  if (type === 'destructive')
+    return { icon: 'close', onPress: () => undefined, variant: 'destructive' };
   if (type === 'value') {
-    return { icon: 'location', label: 'Location', onPress: () => undefined, value: 'London', variant: 'value' };
+    return {
+      icon: 'location',
+      label: 'Location',
+      onPress: () => undefined,
+      value: 'London',
+      variant: 'value',
+    };
   }
   if (type === 'toggle') {
     return {
@@ -113,11 +147,17 @@ function fixtureProps(fixture: (typeof fixtures)[number]): SettingsRowProps {
 }
 
 export const Canonical: Story = {
-  args: { configuration: 'navigation/profile/default', label: 'Account', onPress: () => undefined },
+  args: {
+    configuration: 'navigation/profile/default',
+    label: 'Account',
+    onPress: () => undefined,
+  },
   render: (args) => (
     <Stack gap="space8">
       <SettingsRow {...normalizeSettingsRowStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[8].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[8].label}
+      </Text>
     </Stack>
   ),
 };
@@ -143,7 +183,9 @@ export const States: Story = {
   render: () => (
     <Stack gap="space16">
       <SettingsRow {...fixtureProps(fixtures[8])} />
-      <Text color="textSecondary" variant="caption">Hold Account to inspect the native-driven pressed state.</Text>
+      <Text color="textSecondary" variant="caption">
+        Hold Account to inspect the native-driven pressed state.
+      </Text>
       <SettingsRow {...fixtureProps(fixtures[6])} />
       <SettingsRow {...fixtureProps(fixtures[4])} />
       <SettingsRow {...fixtureProps(fixtures[3])} />
@@ -164,19 +206,23 @@ export const Boundaries: Story = {
         variant="value"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full label and value semantics remain available. Native 200% font-scale review remains a Phase 5 backstop.
+        Full label and value semantics remain available. Native 200% font-scale
+        review remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),
 };
 
-function InteractiveHarness(props: Readonly<{
-  onCheckedChange?: unknown;
-}>) {
+function InteractiveHarness(
+  props: Readonly<{
+    onCheckedChange?: unknown;
+  }>,
+) {
   const [checked, setChecked] = useState(false);
-  const onCheckedChange = typeof props.onCheckedChange === 'function'
-    ? props.onCheckedChange as (next: boolean) => void
-    : undefined;
+  const onCheckedChange =
+    typeof props.onCheckedChange === 'function'
+      ? (props.onCheckedChange as (next: boolean) => void)
+      : undefined;
   return (
     <SettingsRow
       checked={checked}
@@ -197,7 +243,9 @@ export const Interactive: Story = {
   parameters: { controls: { include: ['onCheckedChange'] } },
   render: (args) => (
     <InteractiveHarness
-      onCheckedChange={'onCheckedChange' in args ? args.onCheckedChange : undefined}
+      onCheckedChange={
+        'onCheckedChange' in args ? args.onCheckedChange : undefined
+      }
     />
   ),
 };

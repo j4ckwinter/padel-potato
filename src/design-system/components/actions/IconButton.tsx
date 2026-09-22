@@ -5,7 +5,12 @@ import { Icon, type IconName } from '../../assets/Icon';
 import { iconNames } from '../../assets/iconDefinitions';
 import { Pressable } from '../../primitives/Pressable';
 import { colors } from '../../tokens';
-import { assertOnlyKeys, isCallback, isNonEmptyString, unsupportedValue } from '../../internal/validation';
+import {
+  assertOnlyKeys,
+  isCallback,
+  isNonEmptyString,
+  unsupportedValue,
+} from '../../internal/validation';
 
 export const iconButtonSizes = Object.freeze([40, 44] as const);
 
@@ -30,13 +35,18 @@ const supportedRuntimeProps = Object.freeze([
 function validateIconButtonProps(props: IconButtonProps) {
   assertOnlyKeys(props, supportedRuntimeProps);
   if (!isNonEmptyString(props.accessibilityLabel)) {
-    unsupportedValue(props.accessibilityLabel, ['non-empty accessibility label']);
+    unsupportedValue(props.accessibilityLabel, [
+      'non-empty accessibility label',
+    ]);
   }
   if (!iconNames.includes(props.icon)) unsupportedValue(props.icon, iconNames);
   if (!iconButtonSizes.includes(props.size ?? 40)) {
     unsupportedValue(props.size, iconButtonSizes);
   }
-  if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
+  if (
+    typeof props.disabled !== 'undefined' &&
+    typeof props.disabled !== 'boolean'
+  ) {
     unsupportedValue(props.disabled, [true, false]);
   }
   if (typeof props.onPress !== 'undefined' && !isCallback(props.onPress)) {

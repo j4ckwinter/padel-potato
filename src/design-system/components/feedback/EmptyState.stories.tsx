@@ -13,9 +13,18 @@ const meta = {
   excludeStories: /^normalize/u,
   component: EmptyState,
   argTypes: {
-    content: { control: 'select', options: ['noGames', 'noNotifications', 'noPlayers'] },
-    onCreateGame: { action: 'create game', if: { arg: 'content', eq: 'noGames' } },
-    onInvitePlayers: { action: 'invite players', if: { arg: 'content', eq: 'noPlayers' } },
+    content: {
+      control: 'select',
+      options: ['noGames', 'noNotifications', 'noPlayers'],
+    },
+    onCreateGame: {
+      action: 'create game',
+      if: { arg: 'content', eq: 'noGames' },
+    },
+    onInvitePlayers: {
+      action: 'invite players',
+      if: { arg: 'content', eq: 'noPlayers' },
+    },
   },
 } satisfies Meta<typeof EmptyState>;
 
@@ -33,24 +42,29 @@ export function normalizeEmptyStateStoryArgs(args: StoryArgs): EmptyStateProps {
   if (args.content === 'noPlayers') {
     return {
       content: 'noPlayers',
-      onInvitePlayers: typeof args.onInvitePlayers === 'function'
-        ? args.onInvitePlayers as () => void
-        : () => undefined,
+      onInvitePlayers:
+        typeof args.onInvitePlayers === 'function'
+          ? (args.onInvitePlayers as () => void)
+          : () => undefined,
     };
   }
   return {
     content: 'noGames',
-    onCreateGame: typeof args.onCreateGame === 'function'
-      ? args.onCreateGame as () => void
-      : () => undefined,
+    onCreateGame:
+      typeof args.onCreateGame === 'function'
+        ? (args.onCreateGame as () => void)
+        : () => undefined,
   };
 }
 
 function fixtureProps(fixture: (typeof fixtures)[number]): EmptyStateProps {
   switch (fixture.configuration.content) {
-    case 'noNotifications': return { content: 'noNotifications' };
-    case 'noPlayers': return { content: 'noPlayers', onInvitePlayers: () => undefined };
-    default: return { content: 'noGames', onCreateGame: () => undefined };
+    case 'noNotifications':
+      return { content: 'noNotifications' };
+    case 'noPlayers':
+      return { content: 'noPlayers', onInvitePlayers: () => undefined };
+    default:
+      return { content: 'noGames', onCreateGame: () => undefined };
   }
 }
 
@@ -59,7 +73,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <EmptyState {...normalizeEmptyStateStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[2].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[2].label}
+      </Text>
     </Stack>
   ),
 };
@@ -84,7 +100,9 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {fixtures.map((fixture) => <EmptyState key={fixture.label} {...fixtureProps(fixture)} />)}
+      {fixtures.map((fixture) => (
+        <EmptyState key={fixture.label} {...fixtureProps(fixture)} />
+      ))}
     </Stack>
   ),
 };
@@ -95,7 +113,8 @@ export const Boundaries: Story = {
     <Stack gap="space8" style={{ width: 352 }}>
       <EmptyState content="noGames" onCreateGame={() => undefined} />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        You don’t have any games scheduled yet. Create game remains reachable at 200% host scaling. Native measurement remains a Phase 5 backstop.
+        You don’t have any games scheduled yet. Create game remains reachable at
+        200% host scaling. Native measurement remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),
@@ -103,23 +122,24 @@ export const Boundaries: Story = {
 
 function InteractiveEmptyStateHarness(props: EmptyStateProps) {
   const [activations, setActivations] = useState(0);
-  const interactiveProps: EmptyStateProps = props.content === 'noGames'
-    ? {
-        content: props.content,
-        onCreateGame: () => {
-          setActivations((count) => count + 1);
-          props.onCreateGame();
-        },
-      }
-    : props.content === 'noPlayers'
+  const interactiveProps: EmptyStateProps =
+    props.content === 'noGames'
       ? {
           content: props.content,
-          onInvitePlayers: () => {
+          onCreateGame: () => {
             setActivations((count) => count + 1);
-            props.onInvitePlayers();
+            props.onCreateGame();
           },
         }
-      : { content: props.content };
+      : props.content === 'noPlayers'
+        ? {
+            content: props.content,
+            onInvitePlayers: () => {
+              setActivations((count) => count + 1);
+              props.onInvitePlayers();
+            },
+          }
+        : { content: props.content };
   return (
     <Stack gap="space8">
       <EmptyState {...interactiveProps} />
@@ -130,5 +150,7 @@ function InteractiveEmptyStateHarness(props: EmptyStateProps) {
 
 export const Interactive: Story = {
   args: Canonical.args,
-  render: (args) => <InteractiveEmptyStateHarness {...normalizeEmptyStateStoryArgs(args)} />,
+  render: (args) => (
+    <InteractiveEmptyStateHarness {...normalizeEmptyStateStoryArgs(args)} />
+  ),
 };

@@ -60,17 +60,19 @@ function verifyStorybookActionEnhancer(
       resolvedType: typeof ComposedStory.args[callback],
     }));
   `;
-  return JSON.parse(execFileSync(
-    process.execPath,
-    ['--input-type=module', '-e', probe],
-    {
+  return JSON.parse(
+    execFileSync(process.execPath, ['--input-type=module', '-e', probe], {
       encoding: 'utf8',
       env: {
         ...process.env,
-        PADEL_STORYBOOK_ACTION_CASE: JSON.stringify({ actionName, callback, initialArgs }),
+        PADEL_STORYBOOK_ACTION_CASE: JSON.stringify({
+          actionName,
+          callback,
+          initialArgs,
+        }),
       },
-    },
-  )) as Readonly<{ eventName: string; isAction: boolean; resolvedType: string }>;
+    }),
+  ) as Readonly<{ eventName: string; isAction: boolean; resolvedType: string }>;
 }
 
 const expectedDefinitions = [
@@ -85,7 +87,11 @@ const expectedDefinitions = [
   ['SettingsRow', 'settingsRow', 'Content/Settings Row'],
   ['StatTile', 'statTile', 'Content/Stat Tile'],
   ['ScoreResultBlock', 'scoreResultBlock', 'Content/Score Result Block'],
-  ['PlayerPreferencesCard', 'playerPreferencesCard', 'Content/Player Preferences Card'],
+  [
+    'PlayerPreferencesCard',
+    'playerPreferencesCard',
+    'Content/Player Preferences Card',
+  ],
   ['BannerToast', 'bannerToast', 'Feedback/Banner Toast'],
   ['EmptyState', 'emptyState', 'Feedback/Empty State'],
   ['IllustratedCard', 'illustratedCard', 'Cards/Illustrated Card'],
@@ -133,11 +139,13 @@ const componentStoryContracts = Object.fromEntries(
 
 describe('identity, content, and feedback Storybook catalogue contract', () => {
   it('publishes exactly the 15 component family contracts and titles', () => {
-    const expectedExports = expectedDefinitions.map(([exportName]) => exportName);
-    expect(Object.keys(componentStoryContracts)).toEqual(expectedExports);
-    expect(Object.values(componentStoryContracts).map(({ title }) => title)).toEqual(
-      expectedDefinitions.map(([, , title]) => title),
+    const expectedExports = expectedDefinitions.map(
+      ([exportName]) => exportName,
     );
+    expect(Object.keys(componentStoryContracts)).toEqual(expectedExports);
+    expect(
+      Object.values(componentStoryContracts).map(({ title }) => title),
+    ).toEqual(expectedDefinitions.map(([, , title]) => title));
     for (const name of expectedExports) {
       expect(designSystem[name]).toEqual(expect.any(Function));
     }
@@ -146,19 +154,34 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
   it('matches every real story module to the exact title and five named exports', () => {
     storyModules.forEach((module, index) => {
       expect(module.default.title).toBe(expectedDefinitions[index][2]);
-      for (const category of storyTaxonomy) expect(module[category]).toBeDefined();
+      for (const category of storyTaxonomy)
+        expect(module[category]).toBeDefined();
     });
   });
 
   it('accounts for the ordered taxonomy with a story or an inherent non-empty reason', () => {
-    expect(storyTaxonomy).toEqual(['Canonical', 'Variants', 'States', 'Boundaries', 'Interactive']);
+    expect(storyTaxonomy).toEqual([
+      'Canonical',
+      'Variants',
+      'States',
+      'Boundaries',
+      'Interactive',
+    ]);
     for (const contract of Object.values(componentStoryContracts)) {
       expect(Object.keys(contract.categories)).toEqual(storyTaxonomy);
       for (const entry of Object.values(contract.categories)) {
-        expect(entry.status === 'story' ? entry.story : entry.reason).not.toHaveLength(0);
+        expect(
+          entry.status === 'story' ? entry.story : entry.reason,
+        ).not.toHaveLength(0);
       }
     }
-    for (const name of ['Avatar', 'StepProgress', 'StatTile', 'ScoreResultBlock', 'PlayerPreferencesCard'] as const) {
+    for (const name of [
+      'Avatar',
+      'StepProgress',
+      'StatTile',
+      'ScoreResultBlock',
+      'PlayerPreferencesCard',
+    ] as const) {
       expect(storyContracts[name].categories.Interactive).toMatchObject({
         status: 'inapplicable',
       });
@@ -167,14 +190,33 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
 
   it('permits only bounded persistent controls and callbacks owned by real branches', () => {
     const prohibited = [
-      'pressed', 'focused', 'color', 'width', 'height', 'artwork', 'children',
-      'router', 'route', 'timer', 'remoteSource', 'upload', 'storage', 'persistence',
+      'pressed',
+      'focused',
+      'color',
+      'width',
+      'height',
+      'artwork',
+      'children',
+      'router',
+      'route',
+      'timer',
+      'remoteSource',
+      'upload',
+      'storage',
+      'persistence',
     ];
     for (const contract of Object.values(componentStoryContracts)) {
-      expect(contract.controls.every((control) => !prohibited.includes(control))).toBe(true);
-      expect(contract.actions.every((action) => action.startsWith('on'))).toBe(true);
+      expect(
+        contract.controls.every((control) => !prohibited.includes(control)),
+      ).toBe(true);
+      expect(contract.actions.every((action) => action.startsWith('on'))).toBe(
+        true,
+      );
     }
-    expect(storyContracts.EmptyState.actions).toEqual(['onCreateGame', 'onInvitePlayers']);
+    expect(storyContracts.EmptyState.actions).toEqual([
+      'onCreateGame',
+      'onInvitePlayers',
+    ]);
     expect(storyContracts.StepProgress.actions).toEqual([]);
     expect(storyContracts.IllustratedCard.controls).toEqual(['type']);
     for (const name of [
@@ -192,51 +234,82 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
 
   it('maps every selectable sparse-family configuration to the same authored tuple', () => {
     const expectConfigurationControl = (
-      storyModule: Readonly<{ default: Readonly<{ argTypes?: Record<string, unknown> }> }>,
+      storyModule: Readonly<{
+        default: Readonly<{ argTypes?: Record<string, unknown> }>;
+      }>,
       configurations: readonly string[],
     ) => {
       const argTypes = storyModule.default.argTypes ?? {};
-      expect((argTypes.configuration as { control: string }).control).toBe('select');
-      expect((argTypes.configuration as { options: readonly string[] }).options)
-        .toEqual(configurations);
+      expect((argTypes.configuration as { control: string }).control).toBe(
+        'select',
+      );
+      expect(
+        (argTypes.configuration as { options: readonly string[] }).options,
+      ).toEqual(configurations);
       for (const [name, argType] of Object.entries(argTypes)) {
-        if (name !== 'configuration') expect(argType).toEqual(expect.objectContaining({ action: expect.any(String) }));
+        if (name !== 'configuration')
+          expect(argType).toEqual(
+            expect.objectContaining({ action: expect.any(String) }),
+          );
       }
     };
 
-    expectConfigurationControl(AvatarStories, AvatarStories.avatarStoryConfigurations);
+    expectConfigurationControl(
+      AvatarStories,
+      AvatarStories.avatarStoryConfigurations,
+    );
     for (const configuration of AvatarStories.avatarStoryConfigurations) {
       const props = AvatarStories.normalizeAvatarStoryArgs({ configuration });
       expect(`${props.size}/${props.presence}`).toBe(configuration);
     }
 
-    expectConfigurationControl(StatusChipStories, StatusChipStories.statusChipStoryConfigurations);
+    expectConfigurationControl(
+      StatusChipStories,
+      StatusChipStories.statusChipStoryConfigurations,
+    );
     for (const configuration of StatusChipStories.statusChipStoryConfigurations) {
-      const props = StatusChipStories.normalizeStatusChipStoryArgs({ configuration });
-      const state = props.variant === 'selectable'
-        ? 'selected'
-        : props.variant === 'disabled' ? 'disabled' : 'default';
+      const props = StatusChipStories.normalizeStatusChipStoryArgs({
+        configuration,
+      });
+      const state =
+        props.variant === 'selectable'
+          ? 'selected'
+          : props.variant === 'disabled'
+            ? 'disabled'
+            : 'default';
       expect(`${props.style}/${state}`).toBe(configuration);
     }
 
-    expectConfigurationControl(PlayerItemStories, PlayerItemStories.playerItemStoryConfigurations);
+    expectConfigurationControl(
+      PlayerItemStories,
+      PlayerItemStories.playerItemStoryConfigurations,
+    );
     for (const configuration of PlayerItemStories.playerItemStoryConfigurations) {
-      const props = PlayerItemStories.normalizePlayerItemStoryArgs({ configuration });
-      const tuple = props.variant === 'list'
-        ? `list/${props.selected ? 'selected' : 'default'}`
-        : props.variant === 'game-slot'
-          ? 'gameSlot/default'
-          : props.variant === 'empty-game-slot'
-            ? 'gameSlot/empty'
-            : `inviteResult/${props.disabled ? 'disabled' : 'default'}`;
+      const props = PlayerItemStories.normalizePlayerItemStoryArgs({
+        configuration,
+      });
+      const tuple =
+        props.variant === 'list'
+          ? `list/${props.selected ? 'selected' : 'default'}`
+          : props.variant === 'game-slot'
+            ? 'gameSlot/default'
+            : props.variant === 'empty-game-slot'
+              ? 'gameSlot/empty'
+              : `inviteResult/${props.disabled ? 'disabled' : 'default'}`;
       expect(tuple).toBe(configuration);
     }
 
-    expectConfigurationControl(GameCardStories, GameCardStories.gameCardStoryConfigurations);
+    expectConfigurationControl(
+      GameCardStories,
+      GameCardStories.gameCardStoryConfigurations,
+    );
     for (const configuration of GameCardStories.gameCardStoryConfigurations) {
-      const props = GameCardStories.normalizeGameCardStoryArgs({ configuration });
-      expect(`${props.variant}/${props.variant === 'open' && props.full ? 'full' : 'default'}`)
-        .toBe(configuration);
+      const props = GameCardStories.normalizeGameCardStoryArgs({
+        configuration,
+      });
+      expect(
+        `${props.variant}/${props.variant === 'open' && props.full ? 'full' : 'default'}`,
+      ).toBe(configuration);
     }
 
     expectConfigurationControl(
@@ -244,34 +317,83 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
       NotificationRowStories.notificationRowStoryConfigurations,
     );
     for (const configuration of NotificationRowStories.notificationRowStoryConfigurations) {
-      const props = NotificationRowStories.normalizeNotificationRowStoryArgs({ configuration });
-      expect(`${props.type}/${props.read ? 'read' : 'unread'}`).toBe(configuration);
+      const props = NotificationRowStories.normalizeNotificationRowStoryArgs({
+        configuration,
+      });
+      expect(`${props.type}/${props.read ? 'read' : 'unread'}`).toBe(
+        configuration,
+      );
     }
 
-    expectConfigurationControl(SettingsRowStories, SettingsRowStories.settingsRowStoryConfigurations);
+    expectConfigurationControl(
+      SettingsRowStories,
+      SettingsRowStories.settingsRowStoryConfigurations,
+    );
     for (const configuration of SettingsRowStories.settingsRowStoryConfigurations) {
-      const props = SettingsRowStories.normalizeSettingsRowStoryArgs({ configuration });
-      const state = props.variant === 'toggle'
-        ? props.disabled ? 'disabled' : props.checked ? 'on' : 'off'
-        : props.variant === 'navigation' && props.disabled ? 'disabled' : 'default';
+      const props = SettingsRowStories.normalizeSettingsRowStoryArgs({
+        configuration,
+      });
+      const state =
+        props.variant === 'toggle'
+          ? props.disabled
+            ? 'disabled'
+            : props.checked
+              ? 'on'
+              : 'off'
+          : props.variant === 'navigation' && props.disabled
+            ? 'disabled'
+            : 'default';
       expect(`${props.variant}/${props.icon}/${state}`).toBe(configuration);
     }
 
-    expectConfigurationControl(StatTileStories, StatTileStories.statTileStoryConfigurations);
+    expectConfigurationControl(
+      StatTileStories,
+      StatTileStories.statTileStoryConfigurations,
+    );
     for (const configuration of StatTileStories.statTileStoryConfigurations) {
-      const props = StatTileStories.normalizeStatTileStoryArgs({ configuration });
-      expect(`${props.type}/${props.content}/${props.state}`).toBe(configuration);
+      const props = StatTileStories.normalizeStatTileStoryArgs({
+        configuration,
+      });
+      expect(`${props.type}/${props.content}/${props.state}`).toBe(
+        configuration,
+      );
     }
   });
 
   it('fails closed for non-selectable story configurations and scopes branch actions', () => {
-    expect(() => AvatarStories.normalizeAvatarStoryArgs({ configuration: '32/away' })).toThrow();
-    expect(() => StatusChipStories.normalizeStatusChipStoryArgs({ configuration: 'warning/selected' })).toThrow();
-    expect(() => PlayerItemStories.normalizePlayerItemStoryArgs({ configuration: 'list/disabled' })).toThrow();
-    expect(() => GameCardStories.normalizeGameCardStoryArgs({ configuration: 'compact/full' })).toThrow();
-    expect(() => NotificationRowStories.normalizeNotificationRowStoryArgs({ configuration: 'booking/read' })).toThrow();
-    expect(() => SettingsRowStories.normalizeSettingsRowStoryArgs({ configuration: 'value/profile/default' })).toThrow();
-    expect(() => StatTileStories.normalizeStatTileStoryArgs({ configuration: 'featured/gamesPlayed/neutral' })).toThrow();
+    expect(() =>
+      AvatarStories.normalizeAvatarStoryArgs({ configuration: '32/away' }),
+    ).toThrow();
+    expect(() =>
+      StatusChipStories.normalizeStatusChipStoryArgs({
+        configuration: 'warning/selected',
+      }),
+    ).toThrow();
+    expect(() =>
+      PlayerItemStories.normalizePlayerItemStoryArgs({
+        configuration: 'list/disabled',
+      }),
+    ).toThrow();
+    expect(() =>
+      GameCardStories.normalizeGameCardStoryArgs({
+        configuration: 'compact/full',
+      }),
+    ).toThrow();
+    expect(() =>
+      NotificationRowStories.normalizeNotificationRowStoryArgs({
+        configuration: 'booking/read',
+      }),
+    ).toThrow();
+    expect(() =>
+      SettingsRowStories.normalizeSettingsRowStoryArgs({
+        configuration: 'value/profile/default',
+      }),
+    ).toThrow();
+    expect(() =>
+      StatTileStories.normalizeStatTileStoryArgs({
+        configuration: 'featured/gamesPlayed/neutral',
+      }),
+    ).toThrow();
 
     expect(StatusChipStories.default.argTypes?.onSelectedChange?.if).toEqual({
       arg: 'configuration',
@@ -281,28 +403,89 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
     expect(GameCardStories.default.argTypes).not.toHaveProperty('onAction');
     expect(SettingsRowStories.default.argTypes).not.toHaveProperty('onAction');
 
-    expect(EmptyStateStories.default.argTypes?.onCreateGame?.if).toEqual({ arg: 'content', eq: 'noGames' });
-    expect(EmptyStateStories.default.argTypes?.onInvitePlayers?.if).toEqual({ arg: 'content', eq: 'noPlayers' });
-    expect(IllustratedCardStories.default.argTypes?.onViewGame?.if).toEqual({ arg: 'type', eq: 'nextGame' });
-    expect(IllustratedCardStories.default.argTypes?.onViewResults?.if).toEqual({ arg: 'type', eq: 'matchResult' });
-    expect(IllustratedCardStories.default.argTypes?.onInvitePlayers?.if).toEqual({ arg: 'type', eq: 'invitePlayers' });
-    expect(IllustratedCardStories.default.argTypes?.onShareGame?.if).toEqual({ arg: 'type', eq: 'gameCreated' });
+    expect(EmptyStateStories.default.argTypes?.onCreateGame?.if).toEqual({
+      arg: 'content',
+      eq: 'noGames',
+    });
+    expect(EmptyStateStories.default.argTypes?.onInvitePlayers?.if).toEqual({
+      arg: 'content',
+      eq: 'noPlayers',
+    });
+    expect(IllustratedCardStories.default.argTypes?.onViewGame?.if).toEqual({
+      arg: 'type',
+      eq: 'nextGame',
+    });
+    expect(IllustratedCardStories.default.argTypes?.onViewResults?.if).toEqual({
+      arg: 'type',
+      eq: 'matchResult',
+    });
+    expect(
+      IllustratedCardStories.default.argTypes?.onInvitePlayers?.if,
+    ).toEqual({ arg: 'type', eq: 'invitePlayers' });
+    expect(IllustratedCardStories.default.argTypes?.onShareGame?.if).toEqual({
+      arg: 'type',
+      eq: 'gameCreated',
+    });
   });
 
   it.each([
-    { actionName: 'selected changed', callback: 'onSelectedChange', name: 'Player Item list', role: 'checkbox', story: PlayerItemStories.Interactive },
-    { actionName: 'view player', callback: 'onViewPlayer', name: 'Player Item game slot', role: 'button', story: PlayerItemStories.ViewPlayerInteraction },
-    { actionName: 'invite player', callback: 'onInvite', name: 'Player Item empty slot', role: 'button', story: PlayerItemStories.InviteInteraction },
-    { actionName: 'view game', callback: 'onViewGame', name: 'Game Card game', role: 'button', story: GameCardStories.Interactive },
-    { actionName: 'view results', callback: 'onViewResults', name: 'Game Card results', role: 'button', story: GameCardStories.ViewResultsInteraction },
-    { actionName: 'checked changed', callback: 'onCheckedChange', name: 'Settings Row toggle', role: 'switch', story: SettingsRowStories.Interactive },
-    { actionName: 'settings row pressed', callback: 'onPress', name: 'Settings Row press', role: 'button', story: SettingsRowStories.PressInteraction },
+    {
+      actionName: 'selected changed',
+      callback: 'onSelectedChange',
+      name: 'Player Item list',
+      role: 'checkbox',
+      story: PlayerItemStories.Interactive,
+    },
+    {
+      actionName: 'view player',
+      callback: 'onViewPlayer',
+      name: 'Player Item game slot',
+      role: 'button',
+      story: PlayerItemStories.ViewPlayerInteraction,
+    },
+    {
+      actionName: 'invite player',
+      callback: 'onInvite',
+      name: 'Player Item empty slot',
+      role: 'button',
+      story: PlayerItemStories.InviteInteraction,
+    },
+    {
+      actionName: 'view game',
+      callback: 'onViewGame',
+      name: 'Game Card game',
+      role: 'button',
+      story: GameCardStories.Interactive,
+    },
+    {
+      actionName: 'view results',
+      callback: 'onViewResults',
+      name: 'Game Card results',
+      role: 'button',
+      story: GameCardStories.ViewResultsInteraction,
+    },
+    {
+      actionName: 'checked changed',
+      callback: 'onCheckedChange',
+      name: 'Settings Row toggle',
+      role: 'switch',
+      story: SettingsRowStories.Interactive,
+    },
+    {
+      actionName: 'settings row pressed',
+      callback: 'onPress',
+      name: 'Settings Row press',
+      role: 'button',
+      story: SettingsRowStories.PressInteraction,
+    },
   ])(
     'wires the $name action enhancer through the composed Storybook callback',
     async ({ actionName, callback, role, story }) => {
       expect(story.parameters?.controls?.include).toEqual([callback]);
       expect(story.args).not.toHaveProperty(callback);
-      expect(verifyStorybookActionEnhancer(callback, actionName, story.args ?? {})).toEqual({
+      expect(
+        verifyStorybookActionEnhancer(callback, actionName, story.args ?? {}),
+      ).toEqual({
         eventName: actionName,
         isAction: true,
         resolvedType: 'function',
@@ -331,7 +514,10 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
 
   it('retains host backstops and explicitly defers every native acceptance lane', () => {
     expect(storybookBackstops.contentComponents).toMatchObject({
-      longContent: { status: 'host-contract', nativeStatus: 'deferred-to-native-review' },
+      longContent: {
+        status: 'host-contract',
+        nativeStatus: 'deferred-to-native-review',
+      },
       overflow: { status: 'host-contract' },
       cardinality: { status: 'host-contract' },
       targetClearance: { minimumEffectiveTarget: 44, status: 'host-contract' },
@@ -361,7 +547,11 @@ describe('identity, content, and feedback rendered edge witnesses', () => {
 
   it('preserves overflow meaning and stable identity order', async () => {
     const screen = await render(
-      <designSystem.AvatarGroup identities={players} overflow={3} variant="overflow" />,
+      <designSystem.AvatarGroup
+        identities={players}
+        overflow={3}
+        variant="overflow"
+      />,
     );
     expect(screen.getByRole('summary')).toHaveAccessibilityValue({
       text: 'Alex, Bea, Cam, Dev, plus 3 more',
@@ -369,8 +559,10 @@ describe('identity, content, and feedback rendered edge witnesses', () => {
   });
 
   it('keeps long semantic copy and the action reachable at the constrained boundary', async () => {
-    const title = 'An exceptionally long international game update for every invited player';
-    const message = 'The venue and court assignment changed while preserving the complete announcement.';
+    const title =
+      'An exceptionally long international game update for every invited player';
+    const message =
+      'The venue and court assignment changed while preserving the complete announcement.';
     const screen = await render(
       <designSystem.NotificationRow
         message={message}
@@ -381,28 +573,44 @@ describe('identity, content, and feedback rendered edge witnesses', () => {
         type="game"
       />,
     );
-    expect(screen.getByRole('button', {
-      name: `${title}, ${message}, 2 minutes ago, unread`,
-    })).toBeTruthy();
+    expect(
+      screen.getByRole('button', {
+        name: `${title}, ${message}, 2 minutes ago, unread`,
+      }),
+    ).toBeTruthy();
   });
 
   it('preserves caller-formatted score precision and deterministic team/set order', async () => {
     const screen = await render(
-      <designSystem.ScoreResultBlock state="won" teams={teams} type="compact" />,
+      <designSystem.ScoreResultBlock
+        state="won"
+        teams={teams}
+        type="compact"
+      />,
     );
-    expect(screen.getByRole('summary', {
-      name: 'YOU WON, Alex and Bea, set 1 6.000, set 2 0006, winner, Cam and Dev, set 1 04, set 2 3.0',
-    })).toBeTruthy();
+    expect(
+      screen.getByRole('summary', {
+        name: 'YOU WON, Alex and Bea, set 1 6.000, set 2 0006, winner, Cam and Dev, set 1 04, set 2 3.0',
+      }),
+    ).toBeTruthy();
   });
 
   it('rejects unauthored singleton cardinality rather than filling a slot', () => {
-    expect(() => designSystem.AvatarGroup({ identities: [players[0]], variant: '2-players' } as never))
-      .toThrow(/Unsupported Avatar Group/u);
+    expect(() =>
+      designSystem.AvatarGroup({
+        identities: [players[0]],
+        variant: '2-players',
+      } as never),
+    ).toThrow(/Unsupported Avatar Group/u);
   });
 
   it('retains separate 44-point empty-slot targets', async () => {
     const screen = await render(
-      <designSystem.AvatarGroup onAddPlayer1={jest.fn()} onAddPlayer2={jest.fn()} variant="empty" />,
+      <designSystem.AvatarGroup
+        onAddPlayer1={jest.fn()}
+        onAddPlayer2={jest.fn()}
+        variant="empty"
+      />,
     );
     for (const name of ['Add player 1', 'Add player 2']) {
       const action = screen.getByRole('button', { name });

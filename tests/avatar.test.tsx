@@ -23,7 +23,7 @@ import {
   type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
 
-import {  } from '../src/design-system/stories/fixtures';
+import {} from '../src/design-system/stories/fixtures';
 
 import AvatarGroupStories, {
   Boundaries as AvatarGroupBoundaries,
@@ -88,24 +88,35 @@ describe('Avatar runtime and semantic contract', () => {
     [48, 'away'],
     [48, 'offline'],
     [56, 'online'],
-  ] as Array<[AvatarSize, AvatarPresence]>)('renders the authored %i/%s tuple at its named-child diameter', async (size, presence) => {
-    const screen = await render(
-      <Avatar {...({
-        accessibilityLabel: `Alex Morgan, ${presence}`,
-        initials: 'AM',
-        presence,
-        size,
-      } as AvatarProps)} />,
-    );
+  ] as Array<[AvatarSize, AvatarPresence]>)(
+    'renders the authored %i/%s tuple at its named-child diameter',
+    async (size, presence) => {
+      const screen = await render(
+        <Avatar
+          {...({
+            accessibilityLabel: `Alex Morgan, ${presence}`,
+            initials: 'AM',
+            presence,
+            size,
+          } as AvatarProps)}
+        />,
+      );
 
-    const image = screen.getByRole('image', { name: `Alex Morgan, ${presence}` });
-    expect(flattenedStyle(image.props.style)).toEqual(expect.objectContaining({
-      borderRadius: size / 2,
-      height: size,
-      width: size,
-    }));
-    expect(screen.getByTestId('avatar-presence', { includeHiddenElements: true })).toBeTruthy();
-  });
+      const image = screen.getByRole('image', {
+        name: `Alex Morgan, ${presence}`,
+      });
+      expect(flattenedStyle(image.props.style)).toEqual(
+        expect.objectContaining({
+          borderRadius: size / 2,
+          height: size,
+          width: size,
+        }),
+      );
+      expect(
+        screen.getByTestId('avatar-presence', { includeHiddenElements: true }),
+      ).toBeTruthy();
+    },
+  );
 
   it.each([
     [32, 'away'],
@@ -114,34 +125,46 @@ describe('Avatar runtime and semantic contract', () => {
     [40, 'offline'],
     [56, 'away'],
     [56, 'offline'],
-  ] as Array<[32 | 40 | 56, 'away' | 'offline']>)('rejects the unauthored %i/%s tuple', (size, presence) => {
-    expect(() => Avatar({
-      accessibilityLabel: 'Unsupported avatar',
-      initials: 'UA',
-      presence,
-      size,
-    } as never)).toThrow(
-      `Unsupported Avatar configuration: ${size}/${presence}. Supported configurations: 32/online, 40/online, 48/away, 48/offline, 56/online.`,
-    );
-  });
+  ] as Array<[32 | 40 | 56, 'away' | 'offline']>)(
+    'rejects the unauthored %i/%s tuple',
+    (size, presence) => {
+      expect(() =>
+        Avatar({
+          accessibilityLabel: 'Unsupported avatar',
+          initials: 'UA',
+          presence,
+          size,
+        } as never),
+      ).toThrow(
+        `Unsupported Avatar configuration: ${size}/${presence}. Supported configurations: 32/online, 40/online, 48/away, 48/offline, 56/online.`,
+      );
+    },
+  );
 
   it('rejects null identity content rather than inventing a fallback', () => {
-    expect(() => Avatar({
-      accessibilityLabel: 'Missing identity',
-      initials: null,
-      presence: 'online',
-      size: 32,
-    } as never)).toThrow(/Unsupported Avatar identity content/u);
+    expect(() =>
+      Avatar({
+        accessibilityLabel: 'Missing identity',
+        initials: null,
+        presence: 'online',
+        size: 32,
+      } as never),
+    ).toThrow(/Unsupported Avatar identity content/u);
   });
 
-  it.each(rejectedImageSources)('rejects non-local image source %#', (source) => {
-    expect(() => Avatar({
-      accessibilityLabel: 'Remote identity',
-      presence: 'online',
-      size: 40,
-      source,
-    } as never)).toThrow(/bundled or local React Native image source/u);
-  });
+  it.each(rejectedImageSources)(
+    'rejects non-local image source %#',
+    (source) => {
+      expect(() =>
+        Avatar({
+          accessibilityLabel: 'Remote identity',
+          presence: 'online',
+          size: 40,
+          source,
+        } as never),
+      ).toThrow(/bundled or local React Native image source/u);
+    },
+  );
 
   it('exposes one image semantic when labelled and none when decorative', async () => {
     const labelled = await render(
@@ -153,7 +176,9 @@ describe('Avatar runtime and semantic contract', () => {
       />,
     );
     expect(labelled.getAllByRole('image')).toHaveLength(1);
-    expect(labelled.getByText('AM', { includeHiddenElements: true })).toBeTruthy();
+    expect(
+      labelled.getByText('AM', { includeHiddenElements: true }),
+    ).toBeTruthy();
 
     const decorative = await render(
       <Avatar decorative initials="AM" presence="online" size={40} />,
@@ -165,10 +190,14 @@ describe('Avatar runtime and semantic contract', () => {
 describe('Avatar Storybook contract', () => {
   it('accounts for the complete five-category Identity/Avatar taxonomy', () => {
     expect(AvatarStories.title).toBe('Identity/Avatar');
-    expect([Canonical, Variants, States, Boundaries, Interactive]).toHaveLength(5);
+    expect([Canonical, Variants, States, Boundaries, Interactive]).toHaveLength(
+      5,
+    );
     expect(Variants.render).toBeDefined();
-    expect(Interactive.parameters).toEqual(expect.objectContaining({
-      applicability: expect.stringMatching(/presentational/u),
-    }));
+    expect(Interactive.parameters).toEqual(
+      expect.objectContaining({
+        applicability: expect.stringMatching(/presentational/u),
+      }),
+    );
   });
 });

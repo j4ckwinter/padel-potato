@@ -68,7 +68,8 @@ export const Boundaries: Story = {
     <Stack gap="space8" style={{ width: 352 }}>
       <AuthDivider label="or continue with a deliberately long static alternative" />
       <Text color="textSecondary" variant="caption">
-        A blank label is rejected. Long static content and 200% font-scale intent are host witnesses; native measurement remains Phase 5.
+        A blank label is rejected. Long static content and 200% font-scale
+        intent are host witnesses; native measurement remains Phase 5.
       </Text>
     </Stack>
   ),

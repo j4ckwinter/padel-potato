@@ -13,7 +13,12 @@ type LayoutStoryProps = {
   wrap: boolean;
 };
 
-const alignments: readonly LayoutAlignment[] = ['start', 'center', 'end', 'stretch'];
+const alignments: readonly LayoutAlignment[] = [
+  'start',
+  'center',
+  'end',
+  'stretch',
+];
 const justifications: readonly LayoutJustification[] = [
   'start',
   'center',
@@ -31,7 +36,13 @@ function LayoutStory({ align, gap, justify, padding, wrap }: LayoutStoryProps) {
         <Text variant="body">Stack item one</Text>
         <Text variant="body">Stack item two</Text>
       </Stack>
-      <Inline align={align} gap={gap} justify={justify} padding={padding} wrap={wrap}>
+      <Inline
+        align={align}
+        gap={gap}
+        justify={justify}
+        padding={padding}
+        wrap={wrap}
+      >
         <Text variant="body">Inline item one</Text>
         <Text variant="body">Inline item two</Text>
       </Inline>
@@ -55,7 +66,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Canonical: Story = {
-  args: { align: 'stretch', gap: 'space16', justify: 'start', padding: 'space16', wrap: false },
+  args: {
+    align: 'stretch',
+    gap: 'space16',
+    justify: 'start',
+    padding: 'space16',
+    wrap: false,
+  },
   render: (args) => (
     <Stack gap="space8">
       <LayoutStory {...args} />
@@ -70,23 +87,48 @@ export const Canonical: Story = {
 };
 
 export const Variants: Story = {
-  args: { align: 'center', gap: 'space8', justify: 'spaceBetween', padding: 'space16', wrap: true },
+  args: {
+    align: 'center',
+    gap: 'space8',
+    justify: 'spaceBetween',
+    padding: 'space16',
+    wrap: true,
+  },
   render: (args) => <LayoutStory {...args} />,
 };
 
 export const Boundaries: Story = {
-  args: { align: 'stretch', gap: 'space8', justify: 'start', padding: 'space8', wrap: true },
+  args: {
+    align: 'stretch',
+    gap: 'space8',
+    justify: 'start',
+    padding: 'space8',
+    wrap: true,
+  },
   render: () => (
-    <Stack gap="space8" style={{ width: 220 }} testID="boundary-constrained-width">
+    <Stack
+      gap="space8"
+      style={{ width: 220 }}
+      testID="boundary-constrained-width"
+    >
       <Stack testID="boundary-zero" />
-      <Stack testID="boundary-one"><Text variant="body">One</Text></Stack>
+      <Stack testID="boundary-one">
+        <Text variant="body">One</Text>
+      </Stack>
       <Inline gap="space4" testID="boundary-many" wrap>
-        <Text variant="body">One</Text><Text variant="body">Two</Text><Text variant="body">Three</Text>
+        <Text variant="body">One</Text>
+        <Text variant="body">Two</Text>
+        <Text variant="body">Three</Text>
       </Inline>
       <Inline gap="space4" testID="boundary-required-content" wrap>
         <Text variant="body">{longUnicode}</Text>
       </Inline>
-      <Text ellipsizeMode="tail" numberOfLines={1} testID="boundary-explicit-truncation" variant="body">
+      <Text
+        ellipsizeMode="tail"
+        numberOfLines={1}
+        testID="boundary-explicit-truncation"
+        variant="body"
+      >
         Consumer-authored optional truncation: {longUnicode}
       </Text>
     </Stack>

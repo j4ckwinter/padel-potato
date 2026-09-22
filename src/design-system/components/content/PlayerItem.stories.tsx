@@ -18,7 +18,6 @@ const player = {
   supportingText: 'Intermediate · Rating 4.6',
 } as const satisfies PlayerItemIdentity;
 
-
 type StoryArgs = Readonly<{
   configuration?: unknown;
   onInvite?: unknown;
@@ -27,16 +26,19 @@ type StoryArgs = Readonly<{
 }>;
 
 export const playerItemStoryConfigurations = Object.freeze(
-  fixtures.map(({ configuration }) => (
-    `${configuration.type}/${configuration.state}`
-  )),
+  fixtures.map(
+    ({ configuration }) => `${configuration.type}/${configuration.state}`,
+  ),
 );
 
 const meta = {
   title: 'Content/Player Item',
   excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
-    configuration: { control: 'select', options: playerItemStoryConfigurations },
+    configuration: {
+      control: 'select',
+      options: playerItemStoryConfigurations,
+    },
     onInvite: { action: 'invite player' },
     onSelectedChange: { action: 'selected changed' },
     onViewPlayer: { action: 'view player' },
@@ -48,41 +50,52 @@ export default meta;
 type Story = StoryObj<StoryArgs>;
 
 export function normalizePlayerItemStoryArgs(args: StoryArgs): PlayerItemProps {
-  const onInvite = typeof args.onInvite === 'function'
-    ? args.onInvite as () => void
-    : () => undefined;
-  const onSelectedChange = typeof args.onSelectedChange === 'function'
-    ? args.onSelectedChange as (selected: boolean) => void
-    : () => undefined;
-  const onViewPlayer = typeof args.onViewPlayer === 'function'
-    ? args.onViewPlayer as () => void
-    : () => undefined;
+  const onInvite =
+    typeof args.onInvite === 'function'
+      ? (args.onInvite as () => void)
+      : () => undefined;
+  const onSelectedChange =
+    typeof args.onSelectedChange === 'function'
+      ? (args.onSelectedChange as (selected: boolean) => void)
+      : () => undefined;
+  const onViewPlayer =
+    typeof args.onViewPlayer === 'function'
+      ? (args.onViewPlayer as () => void)
+      : () => undefined;
   switch (args.configuration) {
-    case 'gameSlot/empty': return { onInvite, variant: 'empty-game-slot' };
-    case 'gameSlot/default': return {
-      identity: { ...player, supportingText: 'Confirmed · Intermediate' },
-      onViewPlayer,
-      variant: 'game-slot',
-    };
-    case 'inviteResult/default': return {
-      disabled: false,
-      identity: player,
-      onInvite,
-      variant: 'invite-result',
-    };
-    case 'inviteResult/disabled': return {
-      disabled: true,
-      identity: player,
-      variant: 'invite-result',
-    };
+    case 'gameSlot/empty':
+      return { onInvite, variant: 'empty-game-slot' };
+    case 'gameSlot/default':
+      return {
+        identity: { ...player, supportingText: 'Confirmed · Intermediate' },
+        onViewPlayer,
+        variant: 'game-slot',
+      };
+    case 'inviteResult/default':
+      return {
+        disabled: false,
+        identity: player,
+        onInvite,
+        variant: 'invite-result',
+      };
+    case 'inviteResult/disabled':
+      return {
+        disabled: true,
+        identity: player,
+        variant: 'invite-result',
+      };
     case 'list/default':
-    case 'list/selected': return {
-      identity: player,
-      onSelectedChange,
-      selected: args.configuration === 'list/selected',
-      variant: 'list',
-    };
-    default: throw new Error(`Unsupported Player Item story configuration: ${String(args.configuration)}.`);
+    case 'list/selected':
+      return {
+        identity: player,
+        onSelectedChange,
+        selected: args.configuration === 'list/selected',
+        variant: 'list',
+      };
+    default:
+      throw new Error(
+        `Unsupported Player Item story configuration: ${String(args.configuration)}.`,
+      );
   }
 }
 
@@ -101,7 +114,12 @@ function fixtureProps(fixture: (typeof fixtures)[number]): PlayerItemProps {
   if (type === 'inviteResult') {
     return state === 'disabled'
       ? { disabled: true, identity: player, variant: 'invite-result' }
-      : { disabled: false, identity: player, onInvite: () => undefined, variant: 'invite-result' };
+      : {
+          disabled: false,
+          identity: player,
+          onInvite: () => undefined,
+          variant: 'invite-result',
+        };
   }
   return {
     identity: player,
@@ -119,7 +137,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <PlayerItem {...normalizePlayerItemStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[5].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[5].label}
+      </Text>
     </Stack>
   ),
 };
@@ -144,7 +164,12 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      <PlayerItem identity={player} onSelectedChange={() => undefined} selected variant="list" />
+      <PlayerItem
+        identity={player}
+        onSelectedChange={() => undefined}
+        selected
+        variant="list"
+      />
       <PlayerItem disabled identity={player} variant="invite-result" />
       <PlayerItem onInvite={() => undefined} variant="empty-game-slot" />
     </Stack>
@@ -160,19 +185,23 @@ export const Boundaries: Story = {
           initials: 'ŁN',
           name: 'Łucía Nguyễn from 東京',
           presence: 'away',
-          supportingText: 'Intermediate player with a deliberately long supporting description',
+          supportingText:
+            'Intermediate player with a deliberately long supporting description',
         }}
         onViewPlayer={() => undefined}
         variant="game-slot"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full Unicode semantics remain available. Native 200% font-scale review remains a Phase 5 backstop.
+        Full Unicode semantics remain available. Native 200% font-scale review
+        remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),
 };
 
-function InteractiveHarness(props: Readonly<{ onSelectedChange?: (selected: boolean) => void }>) {
+function InteractiveHarness(
+  props: Readonly<{ onSelectedChange?: (selected: boolean) => void }>,
+) {
   const [selected, setSelected] = useState(false);
   return (
     <PlayerItem
@@ -192,9 +221,11 @@ export const Interactive: Story = {
   parameters: { controls: { include: ['onSelectedChange'] } },
   render: (args) => (
     <InteractiveHarness
-      onSelectedChange={typeof args.onSelectedChange === 'function'
-        ? args.onSelectedChange as (selected: boolean) => void
-        : undefined}
+      onSelectedChange={
+        typeof args.onSelectedChange === 'function'
+          ? (args.onSelectedChange as (selected: boolean) => void)
+          : undefined
+      }
     />
   ),
 };

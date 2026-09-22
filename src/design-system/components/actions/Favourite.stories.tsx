@@ -7,7 +7,6 @@ import { Text } from '../../primitives/Text';
 import { favouriteFixtures } from '../../stories/fixtures';
 import { Favourite, type FavouriteProps } from './Favourite';
 
-
 const meta = {
   title: 'Actions/Favourite',
   component: Favourite,
@@ -69,9 +68,22 @@ export const States: Story = {
   },
   render: () => (
     <Inline gap="space8">
-      <Favourite accessibilityLabel="Alex favourite" checked={false} onCheckedChange={() => undefined} />
-      <Favourite accessibilityLabel="Alex favourite" checked onCheckedChange={() => undefined} />
-      <Favourite accessibilityLabel="Alex favourite" checked={false} disabled onCheckedChange={() => undefined} />
+      <Favourite
+        accessibilityLabel="Alex favourite"
+        checked={false}
+        onCheckedChange={() => undefined}
+      />
+      <Favourite
+        accessibilityLabel="Alex favourite"
+        checked
+        onCheckedChange={() => undefined}
+      />
+      <Favourite
+        accessibilityLabel="Alex favourite"
+        checked={false}
+        disabled
+        onCheckedChange={() => undefined}
+      />
     </Inline>
   ),
 };
@@ -97,13 +109,16 @@ export const Boundaries: Story = {
         />
       </Inline>
       <Text color="textSecondary" variant="caption">
-        Full names remain available at 200%; adjacent controls each retain a 44-point target. Native assistive review remains Phase 5.
+        Full names remain available at 200%; adjacent controls each retain a
+        44-point target. Native assistive review remains Phase 5.
       </Text>
     </Stack>
   ),
 };
 
-function InteractiveHarness({ onCheckedChange }: Pick<FavouriteProps, 'onCheckedChange'>) {
+function InteractiveHarness({
+  onCheckedChange,
+}: Pick<FavouriteProps, 'onCheckedChange'>) {
   const [checked, setChecked] = useState(false);
   return (
     <Stack gap="space8">
@@ -126,5 +141,7 @@ export const Interactive: Story = {
     checked: false,
     onCheckedChange: () => undefined,
   },
-  render: (args) => <InteractiveHarness onCheckedChange={args.onCheckedChange} />,
+  render: (args) => (
+    <InteractiveHarness onCheckedChange={args.onCheckedChange} />
+  ),
 };

@@ -1,15 +1,14 @@
-import {
-  StyleSheet,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 
 type NamedValues = Readonly<Record<string, unknown>>;
 
 const own = (record: NamedValues, key: PropertyKey) =>
   Object.prototype.hasOwnProperty.call(record, key);
 
-const unsupported = (value: unknown, supportedValues: readonly string[]): never => {
+const unsupported = (
+  value: unknown,
+  supportedValues: readonly string[],
+): never => {
   throw new Error(
     `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
   );
@@ -88,7 +87,8 @@ export const guardStyle = <Style extends object>(
 ) => {
   if (style == null || process.env.NODE_ENV === 'production') return;
 
-  const flattened = StyleSheet.flatten(style) as Record<string, unknown> | undefined;
+  const flattened = StyleSheet.flatten(style) as
+    Record<string, unknown> | undefined;
   if (flattened == null) return;
 
   for (const key of Object.keys(flattened)) {

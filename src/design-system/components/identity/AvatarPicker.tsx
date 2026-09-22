@@ -11,12 +11,26 @@ import { Avatar } from './Avatar';
 export type AvatarPickerProps =
   | Readonly<{ onPress: () => void; variant: 'empty' }>
   | Readonly<{ initials: string; onPress: () => void; variant: 'initials' }>
-  | Readonly<{ onPress: () => void; source: ImageSourcePropType; variant: 'photo' }>
+  | Readonly<{
+      onPress: () => void;
+      source: ImageSourcePropType;
+      variant: 'photo';
+    }>
   | Readonly<{ onPress: () => void; variant: 'error' }>;
 
 const errorMessage = 'Choose a JPG or PNG under 5 MB';
-const supportedProps = Object.freeze(['initials', 'onPress', 'source', 'variant'] as const);
-const variants = Object.freeze(['empty', 'initials', 'photo', 'error'] as const);
+const supportedProps = Object.freeze([
+  'initials',
+  'onPress',
+  'source',
+  'variant',
+] as const);
+const variants = Object.freeze([
+  'empty',
+  'initials',
+  'photo',
+  'error',
+] as const);
 
 function unsupported(reason: string): never {
   throw new Error(
@@ -34,22 +48,30 @@ function validateAvatarPickerProps(props: AvatarPickerProps) {
   if (!variants.includes(runtime.variant as (typeof variants)[number])) {
     unsupported(`unknown variant ${String(runtime.variant)}`);
   }
-  if (typeof runtime.onPress !== 'function') unsupported('onPress must be a function');
+  if (typeof runtime.onPress !== 'function')
+    unsupported('onPress must be a function');
   if (runtime.variant === 'initials') {
     if (
-      typeof runtime.initials !== 'string'
-      || runtime.initials.trim().length < 1
-      || runtime.initials.trim().length > 3
-      || Object.prototype.hasOwnProperty.call(runtime, 'source')
-    ) unsupported('initials/default requires one to three initials only');
+      typeof runtime.initials !== 'string' ||
+      runtime.initials.trim().length < 1 ||
+      runtime.initials.trim().length > 3 ||
+      Object.prototype.hasOwnProperty.call(runtime, 'source')
+    )
+      unsupported('initials/default requires one to three initials only');
   } else if (runtime.variant === 'photo') {
-    if (!isLocalImageSource(runtime.source) || Object.prototype.hasOwnProperty.call(runtime, 'initials')) {
-      unsupported('photo/selected requires one bundled or local image source only');
+    if (
+      !isLocalImageSource(runtime.source) ||
+      Object.prototype.hasOwnProperty.call(runtime, 'initials')
+    ) {
+      unsupported(
+        'photo/selected requires one bundled or local image source only',
+      );
     }
   } else if (
-    Object.prototype.hasOwnProperty.call(runtime, 'initials')
-    || Object.prototype.hasOwnProperty.call(runtime, 'source')
-  ) unsupported(`${String(runtime.variant)} cannot contain identity content`);
+    Object.prototype.hasOwnProperty.call(runtime, 'initials') ||
+    Object.prototype.hasOwnProperty.call(runtime, 'source')
+  )
+    unsupported(`${String(runtime.variant)} cannot contain identity content`);
 }
 
 export function AvatarPicker(props: AvatarPickerProps) {
@@ -71,17 +93,36 @@ export function AvatarPicker(props: AvatarPickerProps) {
         accessible={false}
         style={[styles.content, isError ? styles.errorContent : undefined]}
       >
-        <View style={[styles.avatarWell, isError ? styles.avatarWellError : undefined]}>
+        <View
+          style={[
+            styles.avatarWell,
+            isError ? styles.avatarWellError : undefined,
+          ]}
+        >
           {props.variant === 'initials' ? (
-            <Avatar decorative initials={props.initials} presence="online" size={56} />
+            <Avatar
+              decorative
+              initials={props.initials}
+              presence="online"
+              size={56}
+            />
           ) : props.variant === 'photo' ? (
-            <Avatar decorative presence="online" size={56} source={props.source} />
+            <Avatar
+              decorative
+              presence="online"
+              size={56}
+              source={props.source}
+            />
           ) : (
             <Icon name="add" />
           )}
         </View>
         <Text variant="label">{label}</Text>
-        {isError ? <Text color="muted" variant="caption">{errorMessage}</Text> : null}
+        {isError ? (
+          <Text color="muted" variant="caption">
+            {errorMessage}
+          </Text>
+        ) : null}
       </View>
     </Pressable>
   );

@@ -56,7 +56,9 @@ describe('FoundationGallery', () => {
       const screen = await render(<FoundationGallery category={category} />);
       const section = screen.getByTestId(`foundation-section-${category}`);
 
-      expect(within(section).getByRole('header', { name: heading })).toBeVisible();
+      expect(
+        within(section).getByRole('header', { name: heading }),
+      ).toBeVisible();
       expect(within(section).getAllByTestId(/^foundation-token-/)).toHaveLength(
         tokenNames.length,
       );
@@ -106,7 +108,9 @@ describe('Foundations/Overview stories', () => {
       const screen = await render(<FoundationGallery {...story.args} />);
 
       expect(screen.getByText('Padel Potato Foundations')).toBeVisible();
-      expect(screen.getAllByTestId(/^foundation-token-/).length).toBeGreaterThan(0);
+      expect(
+        screen.getAllByTestId(/^foundation-token-/).length,
+      ).toBeGreaterThan(0);
     },
   );
 

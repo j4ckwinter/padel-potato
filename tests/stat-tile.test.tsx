@@ -100,7 +100,15 @@ import {
   type PlayerItemProps,
 } from '../src/design-system/components/content/PlayerItem';
 
-import { playerItemFixtures, gameCardFixtures, notificationRowFixtures, settingsRowFixtures, statTileFixtures, scoreResultBlockFixtures, playerPreferencesCardFixtures } from '../src/design-system/stories/fixtures';
+import {
+  playerItemFixtures,
+  gameCardFixtures,
+  notificationRowFixtures,
+  settingsRowFixtures,
+  statTileFixtures,
+  scoreResultBlockFixtures,
+  playerPreferencesCardFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import * as ContentComponents from '../src/design-system/components/content';
 
@@ -116,26 +124,104 @@ describe('Stat Tile public contract', () => {});
 
 describe('Stat Tile runtime and semantic contract', () => {
   it.each([
-    ['compact/games played/neutral', { ...statContent, content: 'gamesPlayed', label: 'Games played', state: 'neutral', supportingText: 'All time', type: 'compact', value: '24' }],
-    ['compact/win rate/positive', { ...statContent, content: 'winRate', state: 'positive', type: 'compact' }],
-    ['compact/rating/neutral', { ...statContent, content: 'rating', label: 'Rating', state: 'neutral', supportingText: 'Intermediate', type: 'compact', value: '4.6' }],
-    ['compact/streak/positive', { ...statContent, content: 'streak', label: 'Streak', state: 'positive', supportingText: 'Weeks active', type: 'compact', value: '5' }],
-    ['featured/rating/positive', { ...statContent, content: 'rating', label: 'Rating', state: 'positive', supportingText: 'Top 18% of players', type: 'featured', value: '4.6' }],
-    ['featured/streak/positive', { ...statContent, content: 'streak', label: 'Streak', state: 'positive', supportingText: 'Personal best', type: 'featured', value: '5 weeks' }],
-  ] as Array<[string, StatTileProps]>)('renders the authored %s branch', async (_tuple, props) => {
-    const screen = await render(<StatTile {...props} />);
-    expect(flattenedStyle(screen.getByTestId('stat-tile').props.style)).toEqual(
-      expect.objectContaining({ height: 112, width: props.type === 'featured' ? 328 : 160 }),
-    );
-  });
+    [
+      'compact/games played/neutral',
+      {
+        ...statContent,
+        content: 'gamesPlayed',
+        label: 'Games played',
+        state: 'neutral',
+        supportingText: 'All time',
+        type: 'compact',
+        value: '24',
+      },
+    ],
+    [
+      'compact/win rate/positive',
+      {
+        ...statContent,
+        content: 'winRate',
+        state: 'positive',
+        type: 'compact',
+      },
+    ],
+    [
+      'compact/rating/neutral',
+      {
+        ...statContent,
+        content: 'rating',
+        label: 'Rating',
+        state: 'neutral',
+        supportingText: 'Intermediate',
+        type: 'compact',
+        value: '4.6',
+      },
+    ],
+    [
+      'compact/streak/positive',
+      {
+        ...statContent,
+        content: 'streak',
+        label: 'Streak',
+        state: 'positive',
+        supportingText: 'Weeks active',
+        type: 'compact',
+        value: '5',
+      },
+    ],
+    [
+      'featured/rating/positive',
+      {
+        ...statContent,
+        content: 'rating',
+        label: 'Rating',
+        state: 'positive',
+        supportingText: 'Top 18% of players',
+        type: 'featured',
+        value: '4.6',
+      },
+    ],
+    [
+      'featured/streak/positive',
+      {
+        ...statContent,
+        content: 'streak',
+        label: 'Streak',
+        state: 'positive',
+        supportingText: 'Personal best',
+        type: 'featured',
+        value: '5 weeks',
+      },
+    ],
+  ] as Array<[string, StatTileProps]>)(
+    'renders the authored %s branch',
+    async (_tuple, props) => {
+      const screen = await render(<StatTile {...props} />);
+      expect(
+        flattenedStyle(screen.getByTestId('stat-tile').props.style),
+      ).toEqual(
+        expect.objectContaining({
+          height: 112,
+          width: props.type === 'featured' ? 328 : 160,
+        }),
+      );
+    },
+  );
 
   it('reads positive meaning with label/value/supporting content and exposes no action', async () => {
     const screen = await render(
-      <StatTile {...statContent} content="winRate" state="positive" type="compact" />,
+      <StatTile
+        {...statContent}
+        content="winRate"
+        state="positive"
+        type="compact"
+      />,
     );
-    expect(screen.getByRole('summary', {
-      name: 'Win rate, 68%, +8% this month, positive trend',
-    })).toBeTruthy();
+    expect(
+      screen.getByRole('summary', {
+        name: 'Win rate, 68%, +8% this month, positive trend',
+      }),
+    ).toBeTruthy();
     expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(screen.queryAllByRole('image')).toHaveLength(0);
   });
@@ -151,22 +237,54 @@ describe('Stat Tile runtime and semantic contract', () => {
         value="999%"
       />,
     );
-    expect(screen.getByRole('summary', {
-      name: 'Games played, 999%, +200 this month',
-    })).toBeTruthy();
+    expect(
+      screen.getByRole('summary', {
+        name: 'Games played, 999%, +200 this month',
+      }),
+    ).toBeTruthy();
     expect(screen.queryByText('Positive trend')).toBeNull();
   });
 
   it.each([
-    { ...statContent, content: 'gamesPlayed', state: 'positive', type: 'compact' },
+    {
+      ...statContent,
+      content: 'gamesPlayed',
+      state: 'positive',
+      type: 'compact',
+    },
     { ...statContent, content: 'winRate', state: 'neutral', type: 'compact' },
-    { ...statContent, content: 'gamesPlayed', state: 'neutral', type: 'featured' },
-    { ...statContent, content: 'winRate', onPress: jest.fn(), state: 'positive', type: 'compact' },
+    {
+      ...statContent,
+      content: 'gamesPlayed',
+      state: 'neutral',
+      type: 'featured',
+    },
+    {
+      ...statContent,
+      content: 'winRate',
+      onPress: jest.fn(),
+      state: 'positive',
+      type: 'compact',
+    },
     { ...statContent, content: 'winRate', state: 'positive', type: 'unknown' },
-    { ...statContent, content: 'winRate', label: '', state: 'positive', type: 'compact' },
-    { ...statContent, content: 'winRate', state: 'positive', type: 'compact', value: Number.NaN },
+    {
+      ...statContent,
+      content: 'winRate',
+      label: '',
+      state: 'positive',
+      type: 'compact',
+    },
+    {
+      ...statContent,
+      content: 'winRate',
+      state: 'positive',
+      type: 'compact',
+      value: Number.NaN,
+    },
   ])('rejects unsupported tuples, callbacks, or scalar content %#', (props) => {
-    expect(() => StatTile(invalidProps(props))).toThrow(/Unsupported Stat Tile/u);
+    expect(() => StatTile(invalidProps(props))).toThrow(
+      /Unsupported Stat Tile/u,
+    );
   });
 
   it('retains a long textual numeric witness in stable semantic order', async () => {
@@ -180,9 +298,11 @@ describe('Stat Tile runtime and semantic contract', () => {
         value="4.6000000000000000"
       />,
     );
-    expect(screen.getByRole('summary', {
-      name: 'International tournament rating for Łucía Nguyễn, 4.6000000000000000, Top 18% of players from 東京 and beyond, positive trend',
-    })).toBeTruthy();
+    expect(
+      screen.getByRole('summary', {
+        name: 'International tournament rating for Łucía Nguyễn, 4.6000000000000000, Top 18% of players from 東京 and beyond, positive trend',
+      }),
+    ).toBeTruthy();
   });
 });
 
@@ -198,6 +318,8 @@ describe('Stat Tile Storybook contract', () => {
     ]).toHaveLength(5);
     expect(StatTileVariants.render).toBeDefined();
     expect(StatTileBoundaries.render).toBeDefined();
-    expect(StatTileInteractive.parameters?.applicability).toMatch(/presentational|inapplicable/iu);
+    expect(StatTileInteractive.parameters?.applicability).toMatch(
+      /presentational|inapplicable/iu,
+    );
   });
 });

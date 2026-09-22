@@ -16,7 +16,8 @@ export function fieldAccessibilityHint(props: FieldProps) {
   if ('readOnly' in props && props.readOnly) parts.push('Read only');
   if (props.status === 'error') parts.push(`Error: ${props.message}`);
   if (props.status === 'success') parts.push(`Success: ${props.message}`);
-  if ((props.status ?? 'default') === 'default' && props.helperText) parts.push(props.helperText);
+  if ((props.status ?? 'default') === 'default' && props.helperText)
+    parts.push(props.helperText);
   return parts.length > 0 ? parts.join('. ') : undefined;
 }
 
@@ -30,9 +31,10 @@ export function FieldShell({
   children,
   props,
 }: Readonly<{ children: React.ReactNode; props: FieldProps }>) {
-  const supportingText = props.status === 'default' || props.status === undefined
-    ? props.helperText
-    : props.message;
+  const supportingText =
+    props.status === 'default' || props.status === undefined
+      ? props.helperText
+      : props.message;
 
   return (
     <View
@@ -53,7 +55,9 @@ export function FieldShell({
       {supportingText ? (
         <View style={fieldStyles.supportingRow}>
           <Text
-            accessibilityLiveRegion={props.status === 'error' ? 'assertive' : 'polite'}
+            accessibilityLiveRegion={
+              props.status === 'error' ? 'assertive' : 'polite'
+            }
             variant="caption"
           >
             {supportingText}

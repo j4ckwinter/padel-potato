@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 
-import {
-  FoundationGallery,
-  foundationCategories,
-} from './FoundationGallery';
+import { FoundationGallery, foundationCategories } from './FoundationGallery';
 
 const meta = {
   title: 'Foundations/Overview',

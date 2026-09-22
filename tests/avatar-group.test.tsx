@@ -23,7 +23,7 @@ import {
   type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
 
-import {  } from '../src/design-system/stories/fixtures';
+import {} from '../src/design-system/stories/fixtures';
 
 import AvatarGroupStories, {
   Boundaries as AvatarGroupBoundaries,
@@ -87,22 +87,48 @@ const groupPlayers = [
 ] as const satisfies readonly AvatarGroupIdentity[];
 
 describe('Avatar Group runtime and semantic contract', () => {
-  type PopulatedAvatarGroupProps = Exclude<Parameters<typeof AvatarGroup>[0], { variant: 'empty' }>;
+  type PopulatedAvatarGroupProps = Exclude<
+    Parameters<typeof AvatarGroup>[0],
+    { variant: 'empty' }
+  >;
   it.each([
-    ['2 players/default', { identities: [groupPlayers[0], groupPlayers[1]], variant: '2-players' }],
-    ['3 players/default', { identities: [groupPlayers[0], groupPlayers[1], groupPlayers[2]], variant: '3-players' }],
+    [
+      '2 players/default',
+      { identities: [groupPlayers[0], groupPlayers[1]], variant: '2-players' },
+    ],
+    [
+      '3 players/default',
+      {
+        identities: [groupPlayers[0], groupPlayers[1], groupPlayers[2]],
+        variant: '3-players',
+      },
+    ],
     ['4 players/default', { identities: groupPlayers, variant: '4-players' }],
-    ['4 players/overflow', { identities: groupPlayers, overflow: 3, variant: 'overflow' }],
-  ] as Array<[string, PopulatedAvatarGroupProps]>)('renders the authored %s branch in supplied order', async (_tuple, props) => {
-    const screen = await render(<AvatarGroup {...props} />);
-    const group = screen.getByRole('summary');
-    const expected = groupPlayers.slice(0, props.identities.length).map(({ name }) => name).join(', ');
+    [
+      '4 players/overflow',
+      { identities: groupPlayers, overflow: 3, variant: 'overflow' },
+    ],
+  ] as Array<[string, PopulatedAvatarGroupProps]>)(
+    'renders the authored %s branch in supplied order',
+    async (_tuple, props) => {
+      const screen = await render(<AvatarGroup {...props} />);
+      const group = screen.getByRole('summary');
+      const expected = groupPlayers
+        .slice(0, props.identities.length)
+        .map(({ name }) => name)
+        .join(', ');
 
-    expect(group).toHaveAccessibilityValue({ text: 'overflow' in props ? `${expected}, plus 3 more` : expected });
-    expect(screen.queryAllByRole('image')).toHaveLength(0);
-    expect(screen.getAllByTestId('avatar-group-identity', { includeHiddenElements: true }))
-      .toHaveLength(props.identities.length);
-  });
+      expect(group).toHaveAccessibilityValue({
+        text: 'overflow' in props ? `${expected}, plus 3 more` : expected,
+      });
+      expect(screen.queryAllByRole('image')).toHaveLength(0);
+      expect(
+        screen.getAllByTestId('avatar-group-identity', {
+          includeHiddenElements: true,
+        }),
+      ).toHaveLength(props.identities.length);
+    },
+  );
 
   it('keeps two empty-slot actions independent', async () => {
     const onAddPlayer1 = jest.fn();
@@ -148,16 +174,23 @@ describe('Avatar Group runtime and semantic contract', () => {
       variant: 'overflow',
     },
   ])('rejects an unsupported collection %#', (props) => {
-    expect(() => AvatarGroup(invalidProps(props))).toThrow(/Unsupported Avatar Group/u);
+    expect(() => AvatarGroup(invalidProps(props))).toThrow(
+      /Unsupported Avatar Group/u,
+    );
   });
 
-  it.each(rejectedImageSources)('rejects a non-local nested image source %#', (source) => {
-    expect(() => AvatarGroup({
-      identities: [
-        { name: 'Remote player', presence: 'online', source },
-        groupPlayers[1],
-      ],
-      variant: '2-players',
-    } as never)).toThrow(/source must be bundled or local/u);
-  });
+  it.each(rejectedImageSources)(
+    'rejects a non-local nested image source %#',
+    (source) => {
+      expect(() =>
+        AvatarGroup({
+          identities: [
+            { name: 'Remote player', presence: 'online', source },
+            groupPlayers[1],
+          ],
+          variant: '2-players',
+        } as never),
+      ).toThrow(/source must be bundled or local/u);
+    },
+  );
 });

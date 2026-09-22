@@ -22,9 +22,14 @@ describe('action, provider, and header artwork', () => {
   ])('renders %s as fixed decorative vector artwork', async (name, Artwork) => {
     const screen = await render(<Artwork />);
     expect(screen.queryByRole('image')).toBeNull();
-    const hidden = screen.getByTestId(`phase3-artwork-${name}`, { includeHiddenElements: true });
+    const hidden = screen.getByTestId(`phase3-artwork-${name}`, {
+      includeHiddenElements: true,
+    });
     expect(hidden).toHaveProp('accessible', false);
-    expect(hidden).toHaveProp('importantForAccessibility', 'no-hide-descendants');
+    expect(hidden).toHaveProp(
+      'importantForAccessibility',
+      'no-hide-descendants',
+    );
     await screen.unmount();
   });
 
@@ -33,16 +38,24 @@ describe('action, provider, and header artwork', () => {
     async (name: HeaderMascotName) => {
       const screen = await render(<HeaderMascot name={name} />);
       expect(screen.queryByRole('image')).toBeNull();
-      const hidden = screen.getByTestId(`phase3-artwork-${name}`, { includeHiddenElements: true });
+      const hidden = screen.getByTestId(`phase3-artwork-${name}`, {
+        includeHiddenElements: true,
+      });
       expect(hidden).toHaveProp('accessible', false);
-      expect(hidden).toHaveProp('importantForAccessibility', 'no-hide-descendants');
+      expect(hidden).toHaveProp(
+        'importantForAccessibility',
+        'no-hide-descendants',
+      );
       await screen.unmount();
     },
   );
 
   it('uses only fixed local media paths and DOM-safe vector props', () => {
     const vectorSource = readFileSync(
-      join(process.cwd(), 'src/design-system/assets/artwork/actionProviderArtwork.tsx'),
+      join(
+        process.cwd(),
+        'src/design-system/assets/artwork/actionProviderArtwork.tsx',
+      ),
       'utf8',
     );
     const mascotSource = readFileSync(
@@ -52,8 +65,12 @@ describe('action, provider, and header artwork', () => {
     expect(`${vectorSource}${mascotSource}`).not.toMatch(
       /https?:|fetch\(|XMLHttpRequest|design-spec|design-source|data-penpot/iu,
     );
-    expect(mascotSource.match(/require\('\.\.\/media\/mascot-[a-z]+\.webp'\)/gu)).toHaveLength(5);
+    expect(
+      mascotSource.match(/require\('\.\.\/media\/mascot-[a-z]+\.webp'\)/gu),
+    ).toHaveLength(5);
     expect(vectorSource).toContain("'aria-hidden': true");
-    expect(vectorSource.match(/<Svg \{\.\.\.decorativeVector\}/gu)).toHaveLength(3);
+    expect(
+      vectorSource.match(/<Svg \{\.\.\.decorativeVector\}/gu),
+    ).toHaveLength(3);
   });
 });

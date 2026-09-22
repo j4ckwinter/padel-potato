@@ -25,7 +25,11 @@ type PhotoIdentity = Readonly<{
 export type AvatarGroupIdentity = InitialsIdentity | PhotoIdentity;
 
 type Pair = readonly [AvatarGroupIdentity, AvatarGroupIdentity];
-type Trio = readonly [AvatarGroupIdentity, AvatarGroupIdentity, AvatarGroupIdentity];
+type Trio = readonly [
+  AvatarGroupIdentity,
+  AvatarGroupIdentity,
+  AvatarGroupIdentity,
+];
 type Quartet = readonly [
   AvatarGroupIdentity,
   AvatarGroupIdentity,
@@ -65,29 +69,46 @@ function unsupported(reason: string): never {
   );
 }
 
-function validateIdentity(value: unknown, index: number): asserts value is AvatarGroupIdentity {
+function validateIdentity(
+  value: unknown,
+  index: number,
+): asserts value is AvatarGroupIdentity {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     unsupported(`identity ${index + 1} must be a player identity`);
   }
   const identity = value as Record<string, unknown>;
   const keys = Object.keys(identity);
-  if (keys.some((key) => !['initials', 'name', 'presence', 'source'].includes(key))) {
+  if (
+    keys.some(
+      (key) => !['initials', 'name', 'presence', 'source'].includes(key),
+    )
+  ) {
     unsupported(`identity ${index + 1} contains an unsupported property`);
   }
   if (typeof identity.name !== 'string' || identity.name.trim().length === 0) {
     unsupported(`identity ${index + 1} requires a non-empty name`);
   }
   if (identity.presence !== 'online') {
-    unsupported(`identity ${index + 1} must use the authored 40/online Avatar tuple`);
+    unsupported(
+      `identity ${index + 1} must use the authored 40/online Avatar tuple`,
+    );
   }
-  const hasInitials = Object.prototype.hasOwnProperty.call(identity, 'initials');
+  const hasInitials = Object.prototype.hasOwnProperty.call(
+    identity,
+    'initials',
+  );
   const hasSource = Object.prototype.hasOwnProperty.call(identity, 'source');
-  if (hasInitials === hasSource) unsupported(`identity ${index + 1} requires exactly one visual source`);
-  if (hasInitials && (
-    typeof identity.initials !== 'string'
-    || identity.initials.trim().length < 1
-    || identity.initials.trim().length > 3
-  )) unsupported(`identity ${index + 1} initials must contain one to three characters`);
+  if (hasInitials === hasSource)
+    unsupported(`identity ${index + 1} requires exactly one visual source`);
+  if (
+    hasInitials &&
+    (typeof identity.initials !== 'string' ||
+      identity.initials.trim().length < 1 ||
+      identity.initials.trim().length > 3)
+  )
+    unsupported(
+      `identity ${index + 1} initials must contain one to three characters`,
+    );
   if (hasSource && !isLocalImageSource(identity.source)) {
     unsupported(`identity ${index + 1} source must be bundled or local`);
   }
@@ -96,41 +117,68 @@ function validateIdentity(value: unknown, index: number): asserts value is Avata
 function validateAvatarGroupProps(props: AvatarGroupProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(`unsupported property ${key}`);
     }
   }
-  if (!supportedVariants.includes(runtime.variant as (typeof supportedVariants)[number])) {
+  if (
+    !supportedVariants.includes(
+      runtime.variant as (typeof supportedVariants)[number],
+    )
+  ) {
     unsupported(`unknown variant ${String(runtime.variant)}`);
   }
   const keys = Object.keys(runtime).sort();
-  const expectedKeys = runtime.variant === 'empty'
-    ? ['onAddPlayer1', 'onAddPlayer2', 'variant']
-    : runtime.variant === 'overflow'
-      ? ['identities', 'overflow', 'variant']
-      : ['identities', 'variant'];
+  const expectedKeys =
+    runtime.variant === 'empty'
+      ? ['onAddPlayer1', 'onAddPlayer2', 'variant']
+      : runtime.variant === 'overflow'
+        ? ['identities', 'overflow', 'variant']
+        : ['identities', 'variant'];
   if (keys.join('|') !== expectedKeys.join('|')) {
-    unsupported(`${String(runtime.variant)} contains branch-incompatible properties`);
+    unsupported(
+      `${String(runtime.variant)} contains branch-incompatible properties`,
+    );
   }
   if (runtime.variant === 'empty') {
-    if (typeof runtime.onAddPlayer1 !== 'function' || typeof runtime.onAddPlayer2 !== 'function') {
+    if (
+      typeof runtime.onAddPlayer1 !== 'function' ||
+      typeof runtime.onAddPlayer2 !== 'function'
+    ) {
       unsupported('empty slots require two independently named callbacks');
     }
     return;
   }
-  if (!Array.isArray(runtime.identities)) unsupported(`${String(runtime.variant)} requires identities`);
+  if (!Array.isArray(runtime.identities))
+    unsupported(`${String(runtime.variant)} requires identities`);
   const identities = runtime.identities as unknown[];
-  const expected = runtime.variant === '2-players' ? 2 : runtime.variant === '3-players' ? 3 : 4;
-  if (identities.length !== expected) unsupported(`${String(runtime.variant)} requires ${expected} identities`);
+  const expected =
+    runtime.variant === '2-players'
+      ? 2
+      : runtime.variant === '3-players'
+        ? 3
+        : 4;
+  if (identities.length !== expected)
+    unsupported(`${String(runtime.variant)} requires ${expected} identities`);
   identities.forEach(validateIdentity);
   if (runtime.variant === 'overflow') {
-    if (!Number.isInteger(runtime.overflow) || (runtime.overflow as number) <= 0) {
+    if (
+      !Number.isInteger(runtime.overflow) ||
+      (runtime.overflow as number) <= 0
+    ) {
       unsupported('overflow must be a positive integer');
     }
   }
 }
 
-function EmptySlot({ label, onPress }: Readonly<{ label: string; onPress: () => void }>) {
+function EmptySlot({
+  label,
+  onPress,
+}: Readonly<{ label: string; onPress: () => void }>) {
   return (
     <Pressable
       accessibilityLabel={label}
@@ -164,9 +212,10 @@ export function AvatarGroup(props: AvatarGroupProps) {
   }
 
   const names = props.identities.map(({ name }) => name.trim()).join(', ');
-  const description = props.variant === 'overflow'
-    ? `${names}, plus ${props.overflow} more`
-    : names;
+  const description =
+    props.variant === 'overflow'
+      ? `${names}, plus ${props.overflow} more`
+      : names;
 
   return (
     <View
@@ -185,9 +234,19 @@ export function AvatarGroup(props: AvatarGroupProps) {
           testID="avatar-group-identity"
         >
           {'source' in identity && identity.source !== undefined ? (
-            <Avatar decorative presence="online" size={40} source={identity.source} />
+            <Avatar
+              decorative
+              presence="online"
+              size={40}
+              source={identity.source}
+            />
           ) : (
-            <Avatar decorative initials={identity.initials} presence="online" size={40} />
+            <Avatar
+              decorative
+              initials={identity.initials}
+              presence="online"
+              size={40}
+            />
           )}
         </View>
       ))}

@@ -47,7 +47,8 @@ export const Boundaries: Story = {
       <BrandLockup testID="brand-boundary-horizontal" width={120} />
       <BrandLockupStacked testID="brand-boundary-stacked" width={120} />
       <Text variant="caption">
-        Width-only scaling preserves the authored 25:6 and 75:14 ratios. Visible brand copy and colourways are fixed artwork.
+        Width-only scaling preserves the authored 25:6 and 75:14 ratios. Visible
+        brand copy and colourways are fixed artwork.
       </Text>
     </Stack>
   ),

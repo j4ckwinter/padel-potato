@@ -4,31 +4,33 @@ import { Fragment, useState } from 'react';
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
 import { fieldFixtures } from '../../stories/fixtures';
-import {
-  Field,
-  fieldStatuses,
-  fieldTypes,
-  type FieldProps,
-} from './Field';
+import { Field, fieldStatuses, fieldTypes, type FieldProps } from './Field';
 
 const noop = () => undefined;
 
 const safeArgs = (args: Partial<FieldProps>): FieldProps => {
   const type = fieldTypes.includes(args.type as (typeof fieldTypes)[number])
-    ? args.type as (typeof fieldTypes)[number]
+    ? (args.type as (typeof fieldTypes)[number])
     : 'text';
   const common = {
     disabled: typeof args.disabled === 'boolean' ? args.disabled : false,
-    label: typeof args.label === 'string' && args.label.trim() ? args.label : 'Game name',
+    label:
+      typeof args.label === 'string' && args.label.trim()
+        ? args.label
+        : 'Game name',
     required: typeof args.required === 'boolean' ? args.required : false,
     value: typeof args.value === 'string' ? args.value : '',
   };
   const status = fieldStatuses.includes(args.status ?? 'default')
-    ? args.status ?? 'default'
+    ? (args.status ?? 'default')
     : 'default';
-  const messageProps = status === 'default'
-    ? { status: 'default' as const }
-    : { message: status === 'error' ? 'Check this value' : 'Looks good', status };
+  const messageProps =
+    status === 'default'
+      ? { status: 'default' as const }
+      : {
+          message: status === 'error' ? 'Check this value' : 'Looks good',
+          status,
+        };
 
   if (type === 'stepper') {
     return {
@@ -53,9 +55,12 @@ const safeArgs = (args: Partial<FieldProps>): FieldProps => {
     ...common,
     ...messageProps,
     onChangeText: noop,
-    placeholder: type === 'search' ? 'Search games' : type === 'password'
-      ? 'Enter your password'
-      : 'Enter game name',
+    placeholder:
+      type === 'search'
+        ? 'Search games'
+        : type === 'password'
+          ? 'Enter your password'
+          : 'Enter game name',
     type,
   };
 };
@@ -117,25 +122,35 @@ const fixtureProps = (fixture: (typeof fieldFixtures)[number]): FieldProps => {
     };
   }
   const base = {
-    label: type === 'password' ? 'Password' : type === 'search' ? 'Search' : 'Game name',
+    label:
+      type === 'password'
+        ? 'Password'
+        : type === 'search'
+          ? 'Search'
+          : 'Game name',
     onChangeText: noop,
-    placeholder: type === 'password' ? 'Enter your password' : type === 'search'
-      ? 'Search games'
-      : 'Enter game name',
+    placeholder:
+      type === 'password'
+        ? 'Enter your password'
+        : type === 'search'
+          ? 'Search games'
+          : 'Enter game name',
     required: type === 'password' || (type === 'text' && state === 'default'),
     type,
-    value: state === 'filled'
-      ? 'secret12'
-      : state === 'readOnly'
-        ? 'Wednesday Evening Padel'
-        : state === 'error' && type === 'search'
-          ? 'Search players'
-          : '',
+    value:
+      state === 'filled'
+        ? 'secret12'
+        : state === 'readOnly'
+          ? 'Wednesday Evening Padel'
+          : state === 'error' && type === 'search'
+            ? 'Search players'
+            : '',
   } as const;
   if (state === 'error') {
     return {
       ...base,
-      message: type === 'password' ? 'Use at least 8 characters' : 'Check this value',
+      message:
+        type === 'password' ? 'Use at least 8 characters' : 'Check this value',
       status: 'error',
     };
   }
@@ -162,12 +177,34 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      <Field label="Generated game name" onChangeText={noop} readOnly type="text" value="Wednesday Evening Padel" />
+      <Field
+        label="Generated game name"
+        onChangeText={noop}
+        readOnly
+        type="text"
+        value="Wednesday Evening Padel"
+      />
       <Field disabled label="Time" onPress={noop} type="time" value="18:30" />
-      <Field label="Search" message="Check this value" onChangeText={noop} status="error" type="search" value="Search players" />
-      <Field label="Players" message="Looks good" onDecrement={noop} onIncrement={noop} status="success" type="stepper" value="4 players" />
+      <Field
+        label="Search"
+        message="Check this value"
+        onChangeText={noop}
+        status="error"
+        type="search"
+        value="Search players"
+      />
+      <Field
+        label="Players"
+        message="Looks good"
+        onDecrement={noop}
+        onIncrement={noop}
+        status="success"
+        type="stepper"
+        value="4 players"
+      />
       <Text color="textSecondary" variant="caption">
-        Press and keyboard focus drive transient styling; focused states are not persistent props.
+        Press and keyboard focus drive transient styling; focused states are not
+        persistent props.
       </Text>
     </Stack>
   ),
@@ -177,8 +214,21 @@ export const Boundaries: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12" style={{ width: 260 }}>
-      <Field label="Required empty value" onChangeText={noop} placeholder="Enter game name" required type="text" value="" />
-      <Field label="Empty trigger value" onPress={noop} placeholder="Choose level" type="select" value="" />
+      <Field
+        label="Required empty value"
+        onChangeText={noop}
+        placeholder="Enter game name"
+        required
+        type="text"
+        value=""
+      />
+      <Field
+        label="Empty trigger value"
+        onPress={noop}
+        placeholder="Choose level"
+        type="select"
+        value=""
+      />
       <Field
         label="A deliberately long password label that must wrap at constrained width"
         message="A long error remains visible and associated while the field demonstrates vertical growth"
@@ -194,9 +244,17 @@ export const Boundaries: Story = {
         type="text"
         value="Value"
       />
-      <Field label="Players" onDecrement={noop} onIncrement={noop} type="stepper" value="4 players" />
+      <Field
+        label="Players"
+        onDecrement={noop}
+        onIncrement={noop}
+        type="stepper"
+        value="4 players"
+      />
       <Text color="textSecondary" variant="caption">
-        Empty content, constrained width, long value/helper/error vertical growth, 200% font-scale intent, and nested target clearance are host witnesses only. Native measurement remains Phase 5.
+        Empty content, constrained width, long value/helper/error vertical
+        growth, 200% font-scale intent, and nested target clearance are host
+        witnesses only. Native measurement remains Phase 5.
       </Text>
     </Stack>
   ),
@@ -208,8 +266,21 @@ function InteractiveFieldHarness() {
   const [triggerCount, setTriggerCount] = useState(0);
   return (
     <Stack gap="space12">
-      <Field label="Game name" onChangeText={setName} placeholder="Enter game name" required type="text" value={name} />
-      <Field label="Level" onPress={() => setTriggerCount((count) => count + 1)} placeholder="Choose level" type="select" value="Intermediate" />
+      <Field
+        label="Game name"
+        onChangeText={setName}
+        placeholder="Enter game name"
+        required
+        type="text"
+        value={name}
+      />
+      <Field
+        label="Level"
+        onPress={() => setTriggerCount((count) => count + 1)}
+        placeholder="Choose level"
+        type="select"
+        value="Intermediate"
+      />
       <Field
         decrementDisabled={players <= 2}
         incrementDisabled={players >= 4}

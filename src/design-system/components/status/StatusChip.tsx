@@ -5,7 +5,8 @@ import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors, type ColorToken } from '../../tokens';
 
-export type StatusChipStyle = 'neutral' | 'success' | 'warning' | 'info' | 'error';
+export type StatusChipStyle =
+  'neutral' | 'success' | 'warning' | 'info' | 'error';
 
 type StaticStatusChipProps = Readonly<{
   label: string;
@@ -26,9 +27,7 @@ type DisabledStatusChipProps = Readonly<{
 }>;
 
 export type StatusChipProps =
-  | StaticStatusChipProps
-  | SelectableStatusChipProps
-  | DisabledStatusChipProps;
+  StaticStatusChipProps | SelectableStatusChipProps | DisabledStatusChipProps;
 
 const supportedProps = Object.freeze([
   'label',
@@ -37,7 +36,13 @@ const supportedProps = Object.freeze([
   'style',
   'variant',
 ] as const);
-const styles = Object.freeze(['neutral', 'success', 'warning', 'info', 'error'] as const);
+const styles = Object.freeze([
+  'neutral',
+  'success',
+  'warning',
+  'info',
+  'error',
+] as const);
 const tuples = Object.freeze([
   'neutral/default',
   'success/default',
@@ -69,32 +74,43 @@ function validateStatusChipProps(props: StatusChipProps) {
   }
   if (runtime.variant === 'selectable') {
     if (
-      runtime.style !== 'success'
-      || typeof runtime.selected !== 'boolean'
-      || typeof runtime.onSelectedChange !== 'function'
-    ) unsupported('selectable requires success style, selected boolean, and callback');
+      runtime.style !== 'success' ||
+      typeof runtime.selected !== 'boolean' ||
+      typeof runtime.onSelectedChange !== 'function'
+    )
+      unsupported(
+        'selectable requires success style, selected boolean, and callback',
+      );
     return;
   }
   if (runtime.variant === 'disabled') {
     if (
-      runtime.style !== 'neutral'
-      || Object.prototype.hasOwnProperty.call(runtime, 'selected')
-      || Object.prototype.hasOwnProperty.call(runtime, 'onSelectedChange')
-    ) unsupported('disabled is the callback-free neutral branch');
+      runtime.style !== 'neutral' ||
+      Object.prototype.hasOwnProperty.call(runtime, 'selected') ||
+      Object.prototype.hasOwnProperty.call(runtime, 'onSelectedChange')
+    )
+      unsupported('disabled is the callback-free neutral branch');
     return;
   }
-  if (runtime.variant !== 'default') unsupported(`unknown variant ${String(runtime.variant)}`);
+  if (runtime.variant !== 'default')
+    unsupported(`unknown variant ${String(runtime.variant)}`);
   if (
-    Object.prototype.hasOwnProperty.call(runtime, 'selected')
-    || Object.prototype.hasOwnProperty.call(runtime, 'onSelectedChange')
-  ) unsupported('default branches are static');
+    Object.prototype.hasOwnProperty.call(runtime, 'selected') ||
+    Object.prototype.hasOwnProperty.call(runtime, 'onSelectedChange')
+  )
+    unsupported('default branches are static');
 }
 
-const presentation: Readonly<Record<StatusChipStyle, {
-  background: ColorToken;
-  icon: IconName;
-  text: string;
-}>> = {
+const presentation: Readonly<
+  Record<
+    StatusChipStyle,
+    {
+      background: ColorToken;
+      icon: IconName;
+      text: string;
+    }
+  >
+> = {
   neutral: { background: 'surfaceMuted', icon: 'profile', text: 'Neutral' },
   success: { background: 'surfaceAccent', icon: 'check', text: 'Success' },
   warning: { background: 'warning', icon: 'warning', text: 'Warning' },
@@ -102,17 +118,27 @@ const presentation: Readonly<Record<StatusChipStyle, {
   error: { background: 'danger', icon: 'close', text: 'Error' },
 };
 
-function Content({ label, style }: Readonly<{ label: string; style: StatusChipStyle }>) {
+function Content({
+  label,
+  style,
+}: Readonly<{ label: string; style: StatusChipStyle }>) {
   const visual = presentation[style];
   return (
     <View
       accessible={false}
-      style={[stylesSheet.content, { backgroundColor: colors[visual.background] }]}
+      style={[
+        stylesSheet.content,
+        { backgroundColor: colors[visual.background] },
+      ]}
       testID="status-chip-content"
     >
       <Icon name={visual.icon} />
-      <Text numberOfLines={1} variant="label">{label}</Text>
-      <Text style={stylesSheet.semanticText} variant="micro">{visual.text}</Text>
+      <Text numberOfLines={1} variant="label">
+        {label}
+      </Text>
+      <Text style={stylesSheet.semanticText} variant="micro">
+        {visual.text}
+      </Text>
     </View>
   );
 }

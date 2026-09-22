@@ -38,7 +38,11 @@ import {
 
 import * as FeedbackComponents from '../src/design-system/components/feedback';
 
-import { bannerToastFixtures, emptyStateFixtures, illustratedCardFixtures } from '../src/design-system/stories/fixtures';
+import {
+  bannerToastFixtures,
+  emptyStateFixtures,
+  illustratedCardFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import IllustratedCardStories, {
   Boundaries as IllustratedCardBoundaries,
@@ -63,40 +67,65 @@ const emptyStateExamples = {
   noPlayers: { content: 'noPlayers', onInvitePlayers: jest.fn() },
 } as const satisfies Record<string, EmptyStateProps>;
 
-describe('Empty State approved-copy contract', () => {  it.each([
-    ['noGames', emptyStateExamples.noGames, 'No games', 'You don\u2019t have any games scheduled yet.', 'Create game', 'phase4-artwork-empty-state-no-games'],
-    ['noNotifications', emptyStateExamples.noNotifications, 'No notifications', 'You\u2019re all caught up. New updates will appear here.', null, 'phase4-artwork-empty-state-no-notifications'],
-    ['noPlayers', emptyStateExamples.noPlayers, 'No players', 'Invite friends to start building your padel group.', 'Invite players', 'phase4-artwork-empty-state-no-players'],
-  ] as Array<[string, EmptyStateProps, string, string, string | null, string]>)('renders exact approved %s copy, action, and decorative artwork', async (
-    _branch,
-    props,
-    heading,
-    body,
-    actionName,
-    artworkTestId,
-  ) => {
-    const screen = await render(<EmptyState {...props} />);
-    expect(flattenedStyle(screen.getByTestId('empty-state').props.style)).toEqual(
-      expect.objectContaining({ minHeight: 220, width: 352 }),
-    );
-    expect(screen.getByText(heading)).toBeTruthy();
-    expect(screen.getByText(body)).toBeTruthy();
-    expect(screen.getByTestId(artworkTestId, { includeHiddenElements: true })).toBeTruthy();
-    expect(screen.queryAllByRole('image')).toHaveLength(0);
-    if (actionName === null) {
-      expect(screen.queryAllByRole('button')).toHaveLength(0);
-    } else {
-      expect(screen.getByRole('button', { name: actionName })).toBeTruthy();
-    }
-  });
+describe('Empty State approved-copy contract', () => {
+  it.each([
+    [
+      'noGames',
+      emptyStateExamples.noGames,
+      'No games',
+      'You don\u2019t have any games scheduled yet.',
+      'Create game',
+      'phase4-artwork-empty-state-no-games',
+    ],
+    [
+      'noNotifications',
+      emptyStateExamples.noNotifications,
+      'No notifications',
+      'You\u2019re all caught up. New updates will appear here.',
+      null,
+      'phase4-artwork-empty-state-no-notifications',
+    ],
+    [
+      'noPlayers',
+      emptyStateExamples.noPlayers,
+      'No players',
+      'Invite friends to start building your padel group.',
+      'Invite players',
+      'phase4-artwork-empty-state-no-players',
+    ],
+  ] as Array<[string, EmptyStateProps, string, string, string | null, string]>)(
+    'renders exact approved %s copy, action, and decorative artwork',
+    async (_branch, props, heading, body, actionName, artworkTestId) => {
+      const screen = await render(<EmptyState {...props} />);
+      expect(
+        flattenedStyle(screen.getByTestId('empty-state').props.style),
+      ).toEqual(expect.objectContaining({ minHeight: 220, width: 352 }));
+      expect(screen.getByText(heading)).toBeTruthy();
+      expect(screen.getByText(body)).toBeTruthy();
+      expect(
+        screen.getByTestId(artworkTestId, { includeHiddenElements: true }),
+      ).toBeTruthy();
+      expect(screen.queryAllByRole('image')).toHaveLength(0);
+      if (actionName === null) {
+        expect(screen.queryAllByRole('button')).toHaveLength(0);
+      } else {
+        expect(screen.getByRole('button', { name: actionName })).toBeTruthy();
+      }
+    },
+  );
 
   it.each([
     [emptyStateExamples.noGames, 'Create game'],
     [emptyStateExamples.noPlayers, 'Invite players'],
-  ] as Array<[Extract<EmptyStateProps, { content: 'noGames' | 'noPlayers' }>, string]>)('emits only the exact branch action %s', async (props, actionName) => {
+  ] as Array<
+    [Extract<EmptyStateProps, { content: 'noGames' | 'noPlayers' }>, string]
+  >)('emits only the exact branch action %s', async (props, actionName) => {
     const screen = await render(<EmptyState {...props} />);
-    await userEvent.setup().press(screen.getByRole('button', { name: actionName }));
-    const callback = props.content === 'noGames' ? props.onCreateGame : props.onInvitePlayers;
+    await userEvent
+      .setup()
+      .press(screen.getByRole('button', { name: actionName }));
+    const callback =
+      props.content === 'noGames' ? props.onCreateGame : props.onInvitePlayers;
     expect(callback).toHaveBeenCalledTimes(1);
   });
 
@@ -111,9 +140,14 @@ describe('Empty State approved-copy contract', () => {  it.each([
     { content: 'noPlayers', onCreateGame: jest.fn() },
     { content: 'unknown' },
     { content: 'noGames', extra: true, onCreateGame: jest.fn() },
-  ])('rejects unsupported Empty State content or callback pairing %#', (props) => {
-    expect(() => EmptyState(invalidProps(props))).toThrow(/Unsupported Empty State/u);
-  });
+  ])(
+    'rejects unsupported Empty State content or callback pairing %#',
+    (props) => {
+      expect(() => EmptyState(invalidProps(props))).toThrow(
+        /Unsupported Empty State/u,
+      );
+    },
+  );
 });
 
 describe('Empty State Storybook contract', () => {
@@ -130,20 +164,31 @@ describe('Empty State Storybook contract', () => {
 
   it('normalizes controls to complete source-valid action branches', () => {
     expect(normalizeEmptyStateStoryArgs({ content: 'noGames' })).toEqual(
-      expect.objectContaining({ content: 'noGames', onCreateGame: expect.any(Function) }),
+      expect.objectContaining({
+        content: 'noGames',
+        onCreateGame: expect.any(Function),
+      }),
     );
-    expect(normalizeEmptyStateStoryArgs({
-      content: 'noNotifications',
-      onCreateGame: jest.fn(),
-      onInvitePlayers: jest.fn(),
-    })).toEqual({ content: 'noNotifications' });
+    expect(
+      normalizeEmptyStateStoryArgs({
+        content: 'noNotifications',
+        onCreateGame: jest.fn(),
+        onInvitePlayers: jest.fn(),
+      }),
+    ).toEqual({ content: 'noNotifications' });
     expect(normalizeEmptyStateStoryArgs({ content: 'noPlayers' })).toEqual(
-      expect.objectContaining({ content: 'noPlayers', onInvitePlayers: expect.any(Function) }),
+      expect.objectContaining({
+        content: 'noPlayers',
+        onInvitePlayers: expect.any(Function),
+      }),
     );
   });
 
   it('renders every supported configuration in order with readable labels', () => {
-    const variants = EmptyStateVariants.render?.({} as never, {} as never) as React.ReactElement;
+    const variants = EmptyStateVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
     const variantsJson = JSON.stringify(variants);
     let previousIndex = -1;
     for (const fixture of emptyStateFixtures) {
@@ -157,7 +202,9 @@ describe('Empty State Storybook contract', () => {
     const boundaryJson = JSON.stringify(
       EmptyStateBoundaries.render?.({} as never, {} as never),
     );
-    expect(boundaryJson).toContain('You don\u2019t have any games scheduled yet.');
+    expect(boundaryJson).toContain(
+      'You don\u2019t have any games scheduled yet.',
+    );
     expect(boundaryJson).toContain('200%');
     expect(boundaryJson).toContain('Phase 5');
     expect(boundaryJson).toContain('Create game');

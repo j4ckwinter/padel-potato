@@ -127,10 +127,7 @@ export function expectDecorativeIconHidden(
   expect(element.props.importantForAccessibility).toBe('no-hide-descendants');
 }
 
-export function expectLabelledIconImage(
-  queries: RoleQueries,
-  name: string,
-) {
+export function expectLabelledIconImage(queries: RoleQueries, name: string) {
   if (name.length === 0) {
     throw new Error('A labelled asset requires a non-empty expected name.');
   }

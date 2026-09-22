@@ -2,7 +2,12 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { flattenedStyle, invalidProps } from './helpers/componentTest';
 
-import { act, fireEvent, render, userEvent } from '@testing-library/react-native';
+import {
+  act,
+  fireEvent,
+  render,
+  userEvent,
+} from '@testing-library/react-native';
 
 import React from 'react';
 
@@ -59,11 +64,17 @@ import {
   type TriggerFieldProps,
 } from '../src/design-system/components/forms/Field';
 
-import { fieldFixtures, choiceChipFixtures, checkboxFixtures, dayTimeSelectorFixtures } from '../src/design-system/stories/fixtures';
+import {
+  fieldFixtures,
+  choiceChipFixtures,
+  checkboxFixtures,
+  dayTimeSelectorFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
-describe('DayTimeSelector controlled public contract', () => {  it('names each day option from visible day/date content and retains caller-owned selection', async () => {
+describe('DayTimeSelector controlled public contract', () => {
+  it('names each day option from visible day/date content and retains caller-owned selection', async () => {
     const onSelect = jest.fn();
     const screen = await render(
       <DayTimeSelector
@@ -74,10 +85,15 @@ describe('DayTimeSelector controlled public contract', () => {  it('names each d
         type="day"
       />,
     );
-    const option = screen.getByRole('radio', { checked: false, name: 'Tue, 17 Sep' });
+    const option = screen.getByRole('radio', {
+      checked: false,
+      name: 'Tue, 17 Sep',
+    });
     await userEvent.setup().press(option);
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(option.props.accessibilityState).toEqual(expect.objectContaining({ checked: false }));
+    expect(option.props.accessibilityState).toEqual(
+      expect.objectContaining({ checked: false }),
+    );
 
     await screen.rerender(
       <DayTimeSelector
@@ -88,7 +104,9 @@ describe('DayTimeSelector controlled public contract', () => {  it('names each d
         type="day"
       />,
     );
-    expect(screen.getByRole('radio', { checked: true, name: 'Tue, 17 Sep' })).toBeTruthy();
+    expect(
+      screen.getByRole('radio', { checked: true, name: 'Tue, 17 Sep' }),
+    ).toBeTruthy();
   });
 
   it('names each time option from visible time/availability content and emits once', async () => {
@@ -113,23 +131,45 @@ describe('DayTimeSelector controlled public contract', () => {  it('names each d
   it('keeps options individually named, in rendered order, and without overlapping targets', async () => {
     const screen = await render(
       <>
-        <DayTimeSelector date="16 Sep" day="Mon" onSelect={() => undefined} selected={false} type="day" />
-        <DayTimeSelector date="17 Sep" day="Tue" onSelect={() => undefined} selected type="day" />
-        <DayTimeSelector availability="3 spots" onSelect={() => undefined} selected={false} time="18:30" type="time" />
+        <DayTimeSelector
+          date="16 Sep"
+          day="Mon"
+          onSelect={() => undefined}
+          selected={false}
+          type="day"
+        />
+        <DayTimeSelector
+          date="17 Sep"
+          day="Tue"
+          onSelect={() => undefined}
+          selected
+          type="day"
+        />
+        <DayTimeSelector
+          availability="3 spots"
+          onSelect={() => undefined}
+          selected={false}
+          time="18:30"
+          type="time"
+        />
       </>,
     );
-    expect(screen.getAllByRole('radio').map((option) => option.props.accessibilityLabel)).toEqual([
-      'Mon, 16 Sep',
-      'Tue, 17 Sep',
-      '18:30, 3 spots',
-    ]);
-    expect(screen.getByRole('radio', { name: 'Mon, 16 Sep' }).props.hitSlop).toEqual({
+    expect(
+      screen
+        .getAllByRole('radio')
+        .map((option) => option.props.accessibilityLabel),
+    ).toEqual(['Mon, 16 Sep', 'Tue, 17 Sep', '18:30, 3 spots']);
+    expect(
+      screen.getByRole('radio', { name: 'Mon, 16 Sep' }).props.hitSlop,
+    ).toEqual({
       bottom: 0,
       left: 0,
       right: 0,
       top: 0,
     });
-    expect(screen.getByRole('radio', { name: 'Tue, 17 Sep' }).props.hitSlop).toEqual({
+    expect(
+      screen.getByRole('radio', { name: 'Tue, 17 Sep' }).props.hitSlop,
+    ).toEqual({
       bottom: 0,
       left: 0,
       right: 0,
@@ -140,7 +180,14 @@ describe('DayTimeSelector controlled public contract', () => {  it('names each d
   it('uses exact day/time geometry and the family-owned 0.55 disabled exception', async () => {
     const onSelect = jest.fn();
     const day = await render(
-      <DayTimeSelector date="18 Sep" day="Wed" disabled onSelect={onSelect} selected={false} type="day" />,
+      <DayTimeSelector
+        date="18 Sep"
+        day="Wed"
+        disabled
+        onSelect={onSelect}
+        selected={false}
+        type="day"
+      />,
     );
     const dayOption = day.getByRole('radio', {
       checked: false,
@@ -149,72 +196,103 @@ describe('DayTimeSelector controlled public contract', () => {  it('names each d
     });
     await userEvent.setup().press(dayOption);
     expect(onSelect).not.toHaveBeenCalled();
-    expect(flattenedStyle(dayOption.props.style)).toEqual(expect.objectContaining({
-      height: 72,
-      minHeight: 44,
-      minWidth: 44,
-      width: 104,
-    }));
-    expect(flattenedStyle(day.getByTestId('day-time-selector-root').props.style).opacity).toBe(0.55);
+    expect(flattenedStyle(dayOption.props.style)).toEqual(
+      expect.objectContaining({
+        height: 72,
+        minHeight: 44,
+        minWidth: 44,
+        width: 104,
+      }),
+    );
+    expect(
+      flattenedStyle(day.getByTestId('day-time-selector-root').props.style)
+        .opacity,
+    ).toBe(0.55);
 
     const time = await render(
-      <DayTimeSelector availability="3 spots" onSelect={() => undefined} selected={false} time="18:30" type="time" />,
+      <DayTimeSelector
+        availability="3 spots"
+        onSelect={() => undefined}
+        selected={false}
+        time="18:30"
+        type="time"
+      />,
     );
-    expect(flattenedStyle(time.getByRole('radio', { name: '18:30, 3 spots' }).props.style)).toEqual(
-      expect.objectContaining({ height: 56, width: 112 }),
-    );
-    expect(flattenedStyle(time.getByTestId(
-      'day-time-selector-content',
-      { includeHiddenElements: true },
-    ).props.style)).toEqual(expect.objectContaining({ borderRadius: 16 }));
+    expect(
+      flattenedStyle(
+        time.getByRole('radio', { name: '18:30, 3 spots' }).props.style,
+      ),
+    ).toEqual(expect.objectContaining({ height: 56, width: 112 }));
+    expect(
+      flattenedStyle(
+        time.getByTestId('day-time-selector-content', {
+          includeHiddenElements: true,
+        }).props.style,
+      ),
+    ).toEqual(expect.objectContaining({ borderRadius: 16 }));
   });
 
   it('rejects mixed content, unsupported tuples, empty copy, and unknown props', () => {
-    expect(() => DayTimeSelector({
-      date: '17 Sep',
-      day: 'Tue',
-      onSelect: () => undefined,
-      selected: true,
-      disabled: true,
-      type: 'day',
-    } as unknown as DayTimeSelectorProps)).toThrow(/Unsupported design-system value: selected\/disabled/u);
-    expect(() => DayTimeSelector({
-      availability: '3 spots',
-      date: '17 Sep',
-      onSelect: () => undefined,
-      selected: false,
-      time: '18:30',
-      type: 'time',
-    } as unknown as DayTimeSelectorProps)).toThrow(/Unsupported design-system value: date/u);
-    expect(() => DayTimeSelector({
-      date: '',
-      day: 'Tue',
-      onSelect: () => undefined,
-      selected: false,
-      type: 'day',
-    })).toThrow(/Supported values: non-empty date/u);
-    expect(() => DayTimeSelector({
-      availability: '3 spots',
-      onSelect: () => undefined,
-      selected: false,
-      time: '18:30',
-      type: 'slot',
-    } as unknown as DayTimeSelectorProps)).toThrow(/Unsupported design-system value: slot/u);
+    expect(() =>
+      DayTimeSelector({
+        date: '17 Sep',
+        day: 'Tue',
+        onSelect: () => undefined,
+        selected: true,
+        disabled: true,
+        type: 'day',
+      } as unknown as DayTimeSelectorProps),
+    ).toThrow(/Unsupported design-system value: selected\/disabled/u);
+    expect(() =>
+      DayTimeSelector({
+        availability: '3 spots',
+        date: '17 Sep',
+        onSelect: () => undefined,
+        selected: false,
+        time: '18:30',
+        type: 'time',
+      } as unknown as DayTimeSelectorProps),
+    ).toThrow(/Unsupported design-system value: date/u);
+    expect(() =>
+      DayTimeSelector({
+        date: '',
+        day: 'Tue',
+        onSelect: () => undefined,
+        selected: false,
+        type: 'day',
+      }),
+    ).toThrow(/Supported values: non-empty date/u);
+    expect(() =>
+      DayTimeSelector({
+        availability: '3 spots',
+        onSelect: () => undefined,
+        selected: false,
+        time: '18:30',
+        type: 'slot',
+      } as unknown as DayTimeSelectorProps),
+    ).toThrow(/Unsupported design-system value: slot/u);
   });
 });
 
 describe('DayTimeSelector Storybook and forms publication contract', () => {
   it('publishes Forms/Day Time Selector with closed controls and every source row', () => {
     expect(DayTimeSelectorStories.title).toBe('Forms/Day Time Selector');
-    expect(DayTimeSelectorStories.argTypes).toEqual(expect.objectContaining({
-      disabled: { control: 'boolean' },
-      selected: { control: 'boolean' },
-      type: { control: 'select', options: ['day', 'time'] },
-    }));
-    const variants = DayTimeSelectorVariants.render?.({} as never, {} as never) as React.ReactElement<{
+    expect(DayTimeSelectorStories.argTypes).toEqual(
+      expect.objectContaining({
+        disabled: { control: 'boolean' },
+        selected: { control: 'boolean' },
+        type: { control: 'select', options: ['day', 'time'] },
+      }),
+    );
+    const variants = DayTimeSelectorVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(React.Children.toArray(variants.props.children)).toHaveLength(dayTimeSelectorFixtures.length);
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(
+      dayTimeSelectorFixtures.length,
+    );
   });
 
   it('normalizes branch and state transitions without retaining incompatible content keys', async () => {
@@ -241,12 +319,21 @@ describe('DayTimeSelector Storybook and forms publication contract', () => {
   });
 
   it('records long-content, 200%-scale, target-clearance, and interactive witnesses', () => {
-    const boundaries = DayTimeSelectorBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const boundaries = DayTimeSelectorBoundaries.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
     const boundaryJson = JSON.stringify(boundaries);
     expect(boundaryJson).toContain('200%');
     expect(boundaryJson).toContain('long content');
     expect(boundaryJson).toContain('target clearance');
     expect(boundaryJson).toContain('Phase 5');
-    const interactive = DayTimeSelectorInteractive.render?.({} as never, {} as never) as React.ReactElement;
-    expect((interactive.type as { name?: string }).name).toBe('InteractiveDayTimeSelectorHarness');
-  });});
+    const interactive = DayTimeSelectorInteractive.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
+    expect((interactive.type as { name?: string }).name).toBe(
+      'InteractiveDayTimeSelectorHarness',
+    );
+  });
+});

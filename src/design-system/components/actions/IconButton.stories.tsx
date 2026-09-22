@@ -12,7 +12,6 @@ import {
   type IconButtonProps,
 } from './IconButton';
 
-
 const meta = {
   title: 'Actions/Icon Button',
   component: IconButton,
@@ -43,7 +42,9 @@ export const Canonical: Story = {
   ),
 };
 
-const fixtureProps = (fixture: (typeof iconButtonFixtures)[number]): IconButtonProps => ({
+const fixtureProps = (
+  fixture: (typeof iconButtonFixtures)[number],
+): IconButtonProps => ({
   accessibilityLabel: `Open notifications — ${fixture.label}`,
   disabled: fixture.configuration.state === 'disabled',
   icon: 'notification',
@@ -71,9 +72,14 @@ export const States: Story = {
   render: () => (
     <Stack gap="space8">
       <IconButton accessibilityLabel="Open notifications" icon="notification" />
-      <IconButton accessibilityLabel="Notifications unavailable" disabled icon="notification" />
+      <IconButton
+        accessibilityLabel="Notifications unavailable"
+        disabled
+        icon="notification"
+      />
       <Text color="textSecondary" variant="caption">
-        Hold the enabled control for its native pressed treatment; keyboard focus drives the native focus ring.
+        Hold the enabled control for its native pressed treatment; keyboard
+        focus drives the native focus ring.
       </Text>
     </Stack>
   ),
@@ -89,10 +95,15 @@ export const Boundaries: Story = {
           icon="notification"
           size={40}
         />
-        <IconButton accessibilityLabel="Open profile notifications" icon="notification" size={40} />
+        <IconButton
+          accessibilityLabel="Open profile notifications"
+          icon="notification"
+          size={40}
+        />
       </Inline>
       <Text color="textSecondary" variant="caption">
-        Two-point clearance preserves each 44-point target. Full names remain available at 200%; native clipping review remains Phase 5.
+        Two-point clearance preserves each 44-point target. Full names remain
+        available at 200%; native clipping review remains Phase 5.
       </Text>
     </Stack>
   ),

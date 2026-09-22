@@ -23,7 +23,7 @@ import {
   type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
 
-import {  } from '../src/design-system/stories/fixtures';
+import {} from '../src/design-system/stories/fixtures';
 
 import AvatarGroupStories, {
   Boundaries as AvatarGroupBoundaries,

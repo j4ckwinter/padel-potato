@@ -27,39 +27,40 @@ type ButtonCommonProps = Readonly<{
   onPress?: (event: GestureResponderEvent) => void;
 }>;
 
-type EnabledButtonProps = ButtonCommonProps & (
-  | Readonly<{
-      style: 'primary';
-      size?: 40 | 48;
-      disabled?: false;
-      loading?: false;
-    }>
-  | Readonly<{
-      style: 'secondary' | 'destructive' | 'ghost';
-      size?: 48;
-      disabled?: false;
-      loading?: false;
-    }>
-);
+type EnabledButtonProps = ButtonCommonProps &
+  (
+    | Readonly<{
+        style: 'primary';
+        size?: 40 | 48;
+        disabled?: false;
+        loading?: false;
+      }>
+    | Readonly<{
+        style: 'secondary' | 'destructive' | 'ghost';
+        size?: 48;
+        disabled?: false;
+        loading?: false;
+      }>
+  );
 
-type DisabledButtonProps = ButtonCommonProps & Readonly<{
-  style: 'primary';
-  size?: 48;
-  disabled: true;
-  loading?: false;
-}>;
+type DisabledButtonProps = ButtonCommonProps &
+  Readonly<{
+    style: 'primary';
+    size?: 48;
+    disabled: true;
+    loading?: false;
+  }>;
 
-type LoadingButtonProps = ButtonCommonProps & Readonly<{
-  style: 'primary';
-  size?: 48;
-  disabled?: false;
-  loading: true;
-}>;
+type LoadingButtonProps = ButtonCommonProps &
+  Readonly<{
+    style: 'primary';
+    size?: 48;
+    disabled?: false;
+    loading: true;
+  }>;
 
 export type ButtonProps =
-  | EnabledButtonProps
-  | DisabledButtonProps
-  | LoadingButtonProps;
+  EnabledButtonProps | DisabledButtonProps | LoadingButtonProps;
 
 const supportedRuntimeProps = Object.freeze([
   'disabled',
@@ -88,22 +89,33 @@ function validateButtonProps(props: ButtonProps) {
   }
   const size = props.size ?? 48;
   if (!buttonSizes.includes(size)) unsupportedValue(size, buttonSizes);
-  if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
+  if (
+    typeof props.disabled !== 'undefined' &&
+    typeof props.disabled !== 'boolean'
+  ) {
     unsupportedValue(props.disabled, [true, false]);
   }
-  if (typeof props.loading !== 'undefined' && typeof props.loading !== 'boolean') {
+  if (
+    typeof props.loading !== 'undefined' &&
+    typeof props.loading !== 'boolean'
+  ) {
     unsupportedValue(props.loading, [true, false]);
   }
   if (typeof props.onPress !== 'undefined' && !isCallback(props.onPress)) {
     unsupportedValue(props.onPress, ['function']);
   }
   if (props.disabled && props.loading) {
-    throw new Error('Unsupported Button state: disabled and loading cannot both be true.');
+    throw new Error(
+      'Unsupported Button state: disabled and loading cannot both be true.',
+    );
   }
   if (size === 40 && props.style !== 'primary') {
     throw new Error(`Unsupported Button configuration: ${props.style}/40.`);
   }
-  if ((props.disabled || props.loading) && (props.style !== 'primary' || size !== 48)) {
+  if (
+    (props.disabled || props.loading) &&
+    (props.style !== 'primary' || size !== 48)
+  ) {
     throw new Error(
       `Unsupported Button configuration: ${props.style}/${size}/${props.loading ? 'loading' : 'disabled'}.`,
     );

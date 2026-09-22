@@ -2,7 +2,11 @@ import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
-import { assertOnlyKeys, isNonEmptyString, unsupportedValue } from '../../internal/validation';
+import {
+  assertOnlyKeys,
+  isNonEmptyString,
+  unsupportedValue,
+} from '../../internal/validation';
 
 export type AuthDividerProps = Readonly<{
   label?: string;

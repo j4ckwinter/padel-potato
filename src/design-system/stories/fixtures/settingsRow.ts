@@ -1,103 +1,84 @@
 // Story-only data for settingsRow.
 export const settingsRowFixtures = [
   {
-    "label": "Navigation / Default / Court",
-    "configuration": {
-      "type": "navigation",
-      "state": "default",
-      "icon": "court"
+    label: 'Navigation / Default / Court',
+    configuration: {
+      type: 'navigation',
+      state: 'default',
+      icon: 'court',
     },
-    "copy": [
-      "Account"
-    ]
+    copy: ['Account'],
   },
   {
-    "label": "Destructive / Default / Close",
-    "configuration": {
-      "type": "destructive",
-      "state": "default",
-      "icon": "close"
+    label: 'Destructive / Default / Close',
+    configuration: {
+      type: 'destructive',
+      state: 'default',
+      icon: 'close',
     },
-    "copy": [
-      "Sign out"
-    ]
+    copy: ['Sign out'],
   },
   {
-    "label": "Toggle / Disabled / Notification",
-    "configuration": {
-      "type": "toggle",
-      "state": "disabled",
-      "icon": "notification"
+    label: 'Toggle / Disabled / Notification',
+    configuration: {
+      type: 'toggle',
+      state: 'disabled',
+      icon: 'notification',
     },
-    "copy": [
-      "Notifications"
-    ]
+    copy: ['Notifications'],
   },
   {
-    "label": "Toggle / On / Notification",
-    "configuration": {
-      "type": "toggle",
-      "state": "on",
-      "icon": "notification"
+    label: 'Toggle / On / Notification',
+    configuration: {
+      type: 'toggle',
+      state: 'on',
+      icon: 'notification',
     },
-    "copy": [
-      "Notifications"
-    ]
+    copy: ['Notifications'],
   },
   {
-    "label": "Toggle / Off / Notification",
-    "configuration": {
-      "type": "toggle",
-      "state": "off",
-      "icon": "notification"
+    label: 'Toggle / Off / Notification',
+    configuration: {
+      type: 'toggle',
+      state: 'off',
+      icon: 'notification',
     },
-    "copy": [
-      "Notifications"
-    ]
+    copy: ['Notifications'],
   },
   {
-    "label": "Value / Default / Location",
-    "configuration": {
-      "type": "value",
-      "state": "default",
-      "icon": "location"
+    label: 'Value / Default / Location',
+    configuration: {
+      type: 'value',
+      state: 'default',
+      icon: 'location',
     },
-    "copy": [
-      "Location",
-      "London"
-    ]
+    copy: ['Location', 'London'],
   },
   {
-    "label": "Navigation / Disabled / Profile",
-    "configuration": {
-      "type": "navigation",
-      "state": "disabled",
-      "icon": "profile"
+    label: 'Navigation / Disabled / Profile',
+    configuration: {
+      type: 'navigation',
+      state: 'disabled',
+      icon: 'profile',
     },
-    "copy": [
-      "Account"
-    ]
+    copy: ['Account'],
   },
   {
-    "label": "Navigation / Pressed / Profile",
-    "configuration": {
-      "type": "navigation",
-      "state": "pressed",
-      "icon": "profile"
+    label: 'Navigation / Pressed / Profile',
+    configuration: {
+      type: 'navigation',
+      state: 'pressed',
+      icon: 'profile',
     },
-    "copy": [
-      "Account"
-    ]
+    copy: ['Account'],
   },
   {
-    "label": "Navigation / Default / Profile",
-    "configuration": {
-      "type": "navigation",
-      "state": "default",
-      "icon": "profile"
+    label: 'Navigation / Default / Profile',
+    configuration: {
+      type: 'navigation',
+      state: 'default',
+      icon: 'profile',
     },
-    "copy": [
-      "Account"
-    ]
-  }
+    copy: ['Account'],
+  },
 ] as const;

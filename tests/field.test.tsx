@@ -2,7 +2,12 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { flattenedStyle, invalidProps } from './helpers/componentTest';
 
-import { act, fireEvent, render, userEvent } from '@testing-library/react-native';
+import {
+  act,
+  fireEvent,
+  render,
+  userEvent,
+} from '@testing-library/react-native';
 
 import React from 'react';
 
@@ -59,7 +64,12 @@ import {
   type TriggerFieldProps,
 } from '../src/design-system/components/forms/Field';
 
-import { fieldFixtures, choiceChipFixtures, checkboxFixtures, dayTimeSelectorFixtures } from '../src/design-system/stories/fixtures';
+import {
+  fieldFixtures,
+  choiceChipFixtures,
+  checkboxFixtures,
+  dayTimeSelectorFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
@@ -99,7 +109,9 @@ describe('Field editable branches', () => {
         value="Wednesday"
       />,
     );
-    expect(screen.getByLabelText('Game name, required').props.value).toBe('Wednesday');
+    expect(screen.getByLabelText('Game name, required').props.value).toBe(
+      'Wednesday',
+    );
   });
 
   it('keeps read-only distinct from disabled and suppresses native edits', async () => {
@@ -152,8 +164,12 @@ describe('Field editable branches', () => {
     );
     const passwordInput = password.getByLabelText('Password, required');
     expect(passwordInput.props.secureTextEntry).toBe(true);
-    await userEvent.setup().press(password.getByRole('button', { name: 'Show password' }));
-    expect(password.getByLabelText('Password, required').props.secureTextEntry).toBe(false);
+    await userEvent
+      .setup()
+      .press(password.getByRole('button', { name: 'Show password' }));
+    expect(
+      password.getByLabelText('Password, required').props.secureTextEntry,
+    ).toBe(false);
     expect(passwordChange).not.toHaveBeenCalled();
 
     const searchChange = jest.fn();
@@ -165,7 +181,9 @@ describe('Field editable branches', () => {
         value="clubs"
       />,
     );
-    await userEvent.setup().press(search.getByRole('button', { name: 'Clear search' }));
+    await userEvent
+      .setup()
+      .press(search.getByRole('button', { name: 'Clear search' }));
     expect(searchChange).toHaveBeenCalledTimes(1);
     expect(searchChange).toHaveBeenCalledWith('');
     expect(search.getByLabelText('Search').props.value).toBe('clubs');
@@ -182,9 +200,9 @@ describe('Field editable branches', () => {
       />,
     );
     expect(helper.getByText('Shown to invited players')).toBeTruthy();
-    expect(helper.getByLabelText('Game name').props.accessibilityHint).toContain(
-      'Shown to invited players',
-    );
+    expect(
+      helper.getByLabelText('Game name').props.accessibilityHint,
+    ).toContain('Shown to invited players');
 
     const error = await render(
       <Field
@@ -197,8 +215,13 @@ describe('Field editable branches', () => {
       />,
     );
     expect(error.getByText('Use at least 8 characters')).toBeTruthy();
-    expect(error.getByLabelText('Password').props.accessibilityHint).toContain('Error');
-    expect(flattenedStyle(error.getByTestId('field-control').props.style).borderColor).toBe(colors.danger);
+    expect(error.getByLabelText('Password').props.accessibilityHint).toContain(
+      'Error',
+    );
+    expect(
+      flattenedStyle(error.getByTestId('field-control').props.style)
+        .borderColor,
+    ).toBe(colors.danger);
 
     const success = await render(
       <Field
@@ -211,8 +234,13 @@ describe('Field editable branches', () => {
       />,
     );
     expect(success.getByText('Looks good')).toBeTruthy();
-    expect(success.getByLabelText('Players').props.accessibilityHint).toContain('Success');
-    expect(flattenedStyle(success.getByTestId('field-control').props.style).borderColor).toBe(colors.accent);
+    expect(success.getByLabelText('Players').props.accessibilityHint).toContain(
+      'Success',
+    );
+    expect(
+      flattenedStyle(success.getByTestId('field-control').props.style)
+        .borderColor,
+    ).toBe(colors.accent);
   });
 });
 
@@ -221,7 +249,7 @@ describe('Field trigger branches', () => {
     ['select', 'Choose level', 'Intermediate'],
     ['date', 'Choose date', '12 Sep 2026'],
     ['time', 'Choose time', '18:30'],
-  ] as Array<[TriggerFieldProps['type'], string, string]>) (
+  ] as Array<[TriggerFieldProps['type'], string, string]>)(
     '%s is a controlled trigger-only button',
     async (type, placeholder, value) => {
       const onPress = jest.fn();
@@ -239,7 +267,9 @@ describe('Field trigger branches', () => {
 
       expect(trigger.props.accessibilityValue).toEqual({ text: value });
       expect(onPress).toHaveBeenCalledTimes(1);
-      expect(screen.getByText(value, { includeHiddenElements: true })).toBeTruthy();
+      expect(
+        screen.getByText(value, { includeHiddenElements: true }),
+      ).toBeTruthy();
       expect(screen.queryAllByPlaceholderText(placeholder)).toHaveLength(0);
       expect(screen.queryByTestId('field-picker-overlay')).toBeNull();
     },
@@ -261,29 +291,35 @@ describe('Field trigger branches', () => {
 
     expect(trigger.props.accessibilityValue).toEqual({ text: 'Choose time' });
     expect(onPress).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Choose time', { includeHiddenElements: true })).toBeTruthy();
+    expect(
+      screen.getByText('Choose time', { includeHiddenElements: true }),
+    ).toBeTruthy();
   });
 
   it.each([undefined, '', '   '])(
     'rejects an empty controlled trigger with placeholder %p',
     (placeholder) => {
-      expect(() => Field({
-        label: 'Level',
-        onPress: () => undefined,
-        placeholder,
-        type: 'select',
-        value: '',
-      })).toThrow(/non-empty placeholder/u);
+      expect(() =>
+        Field({
+          label: 'Level',
+          onPress: () => undefined,
+          placeholder,
+          type: 'select',
+          value: '',
+        }),
+      ).toThrow(/non-empty placeholder/u);
     },
   );
 
   it('rejects a whitespace-only controlled trigger value without a placeholder', () => {
-    expect(() => Field({
-      label: 'Date',
-      onPress: () => undefined,
-      type: 'date',
-      value: '   ',
-    })).toThrow(/non-empty placeholder when trigger value is empty/u);
+    expect(() =>
+      Field({
+        label: 'Date',
+        onPress: () => undefined,
+        type: 'date',
+        value: '   ',
+      }),
+    ).toThrow(/non-empty placeholder when trigger value is empty/u);
   });
 });
 
@@ -306,12 +342,16 @@ describe('Field stepper branch', () => {
     await userEvent.setup().press(decrement);
     expect(onDecrement).toHaveBeenCalledTimes(1);
     expect(onIncrement).not.toHaveBeenCalled();
-    expect(screen.getByText('4 players', { includeHiddenElements: true })).toBeTruthy();
+    expect(
+      screen.getByText('4 players', { includeHiddenElements: true }),
+    ).toBeTruthy();
 
     await userEvent.setup().press(increment);
     expect(onDecrement).toHaveBeenCalledTimes(1);
     expect(onIncrement).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('field-stepper-value').props.accessibilityValue).toEqual({
+    expect(
+      screen.getByTestId('field-stepper-value').props.accessibilityValue,
+    ).toEqual({
       text: '4 players',
     });
   });
@@ -343,13 +383,20 @@ describe('Field stepper branch', () => {
     expect(onDecrement).not.toHaveBeenCalled();
     expect(onIncrement).toHaveBeenCalledTimes(1);
     for (const action of [decrement, increment]) {
-      expect(action.props.hitSlop).toEqual({ bottom: 0, left: 0, right: 0, top: 0 });
-      expect(flattenedStyle(action.props.style)).toEqual(expect.objectContaining({
-        height: 44,
-        minHeight: 44,
-        minWidth: 44,
-        width: 44,
-      }));
+      expect(action.props.hitSlop).toEqual({
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+      });
+      expect(flattenedStyle(action.props.style)).toEqual(
+        expect.objectContaining({
+          height: 44,
+          minHeight: 44,
+          minWidth: 44,
+          width: 44,
+        }),
+      );
     }
   });
 
@@ -366,14 +413,18 @@ describe('Field stepper branch', () => {
         value="4 players"
       />,
     );
-    await userEvent.setup().press(screen.getByRole('button', {
-      disabled: true,
-      name: 'Decrease Players',
-    }));
-    await userEvent.setup().press(screen.getByRole('button', {
-      disabled: true,
-      name: 'Increase Players',
-    }));
+    await userEvent.setup().press(
+      screen.getByRole('button', {
+        disabled: true,
+        name: 'Decrease Players',
+      }),
+    );
+    await userEvent.setup().press(
+      screen.getByRole('button', {
+        disabled: true,
+        name: 'Increase Players',
+      }),
+    );
     expect(onDecrement).not.toHaveBeenCalled();
     expect(onIncrement).not.toHaveBeenCalled();
   });
@@ -393,8 +444,14 @@ describe('Field focus, geometry, and content boundaries', () => {
     await act(async () => {
       fireEvent(input, 'focus', { nativeEvent: {} });
     });
-    expect(flattenedStyle(screen.getByTestId('field-control').props.style)).toEqual(
-      expect.objectContaining({ borderColor: colors.focusRing, borderWidth: 2, height: 52 }),
+    expect(
+      flattenedStyle(screen.getByTestId('field-control').props.style),
+    ).toEqual(
+      expect.objectContaining({
+        borderColor: colors.focusRing,
+        borderWidth: 2,
+        height: 52,
+      }),
     );
     expect(flattenedStyle(screen.getByTestId('field').props.style)).toEqual(
       expect.objectContaining({ minHeight: 84, width: 350 }),
@@ -403,7 +460,9 @@ describe('Field focus, geometry, and content boundaries', () => {
     await act(async () => {
       fireEvent(input, 'blur', { nativeEvent: {} });
     });
-    expect(flattenedStyle(screen.getByTestId('field-control').props.style)).toEqual(
+    expect(
+      flattenedStyle(screen.getByTestId('field-control').props.style),
+    ).toEqual(
       expect.objectContaining({ borderColor: colors.border, borderWidth: 1 }),
     );
 
@@ -418,9 +477,10 @@ describe('Field focus, geometry, and content boundaries', () => {
       />,
     );
     expect(screen.getByText(/A long error remains visible/u)).toBeTruthy();
-    expect(screen.getByLabelText(/A deliberately long password label/u).props.accessibilityHint).toContain(
-      'A long error remains visible',
-    );
+    expect(
+      screen.getByLabelText(/A deliberately long password label/u).props
+        .accessibilityHint,
+    ).toContain('A long error remains visible');
     expect(flattenedStyle(screen.getByTestId('field').props.style)).toEqual(
       expect.objectContaining({ minHeight: 100, width: 350 }),
     );
@@ -429,79 +489,111 @@ describe('Field focus, geometry, and content boundaries', () => {
 
 describe('Field runtime closure', () => {
   it('rejects malformed and impossible cast combinations', () => {
-    expect(() => Field({
-      label: 'Game name',
-      onChangeText: () => undefined,
-      type: 'slider',
-      value: '',
-    } as unknown as FieldProps)).toThrow(/Unsupported design-system value: slider/u);
-    expect(() => Field({
-      label: 'Game name',
-      onChangeText: () => undefined,
-      onPress: () => undefined,
-      type: 'text',
-      value: '',
-    } as unknown as FieldProps)).toThrow(/Unsupported design-system value: onPress/u);
-    expect(() => Field({
-      label: 'Date',
-      onChangeText: () => undefined,
-      onPress: () => undefined,
-      type: 'date',
-      value: '',
-    } as unknown as FieldProps)).toThrow(/Unsupported design-system value: onChangeText/u);
-    expect(() => Field({
-      label: '',
-      onPress: () => undefined,
-      type: 'select',
-      value: '',
-    })).toThrow(/Supported values: non-empty label/u);
-    expect(() => Field({
-      label: 'Game name',
-      message: 'Bad',
-      onChangeText: () => undefined,
-      status: 'warning',
-      type: 'text',
-      value: '',
-    } as unknown as FieldProps)).toThrow(/Unsupported design-system value: warning/u);
-    expect(() => Field({
-      label: 'Players',
-      onDecrement: () => undefined,
-      onIncrement: () => undefined,
-      onPress: () => undefined,
-      type: 'stepper',
-      value: '4 players',
-    } as unknown as StepperFieldProps)).toThrow(/Unsupported design-system value: onPress/u);
-    expect(() => Field({
-      decrementDisabled: 'minimum',
-      label: 'Players',
-      onDecrement: () => undefined,
-      onIncrement: () => undefined,
-      type: 'stepper',
-      value: '4 players',
-    } as unknown as StepperFieldProps)).toThrow(/Unsupported design-system value: minimum/u);
+    expect(() =>
+      Field({
+        label: 'Game name',
+        onChangeText: () => undefined,
+        type: 'slider',
+        value: '',
+      } as unknown as FieldProps),
+    ).toThrow(/Unsupported design-system value: slider/u);
+    expect(() =>
+      Field({
+        label: 'Game name',
+        onChangeText: () => undefined,
+        onPress: () => undefined,
+        type: 'text',
+        value: '',
+      } as unknown as FieldProps),
+    ).toThrow(/Unsupported design-system value: onPress/u);
+    expect(() =>
+      Field({
+        label: 'Date',
+        onChangeText: () => undefined,
+        onPress: () => undefined,
+        type: 'date',
+        value: '',
+      } as unknown as FieldProps),
+    ).toThrow(/Unsupported design-system value: onChangeText/u);
+    expect(() =>
+      Field({
+        label: '',
+        onPress: () => undefined,
+        type: 'select',
+        value: '',
+      }),
+    ).toThrow(/Supported values: non-empty label/u);
+    expect(() =>
+      Field({
+        label: 'Game name',
+        message: 'Bad',
+        onChangeText: () => undefined,
+        status: 'warning',
+        type: 'text',
+        value: '',
+      } as unknown as FieldProps),
+    ).toThrow(/Unsupported design-system value: warning/u);
+    expect(() =>
+      Field({
+        label: 'Players',
+        onDecrement: () => undefined,
+        onIncrement: () => undefined,
+        onPress: () => undefined,
+        type: 'stepper',
+        value: '4 players',
+      } as unknown as StepperFieldProps),
+    ).toThrow(/Unsupported design-system value: onPress/u);
+    expect(() =>
+      Field({
+        decrementDisabled: 'minimum',
+        label: 'Players',
+        onDecrement: () => undefined,
+        onIncrement: () => undefined,
+        type: 'stepper',
+        value: '4 players',
+      } as unknown as StepperFieldProps),
+    ).toThrow(/Unsupported design-system value: minimum/u);
   });
 });
 
 describe('Field Storybook contract', () => {
   it('publishes the exact group, bounded controls, and twelve source-ordered rows', () => {
     expect(FieldStories.title).toBe('Forms/Field');
-    expect(FieldStories.argTypes).toEqual(expect.objectContaining({
-      disabled: { control: 'boolean' },
-      required: { control: 'boolean' },
-      status: { control: 'select', options: ['default', 'success', 'error'] },
-      type: {
-        control: 'select',
-        options: ['text', 'password', 'search', 'select', 'date', 'time', 'stepper'],
-      },
-    }));
-    const variants = FieldVariants.render?.({} as never, {} as never) as React.ReactElement<{
+    expect(FieldStories.argTypes).toEqual(
+      expect.objectContaining({
+        disabled: { control: 'boolean' },
+        required: { control: 'boolean' },
+        status: { control: 'select', options: ['default', 'success', 'error'] },
+        type: {
+          control: 'select',
+          options: [
+            'text',
+            'password',
+            'search',
+            'select',
+            'date',
+            'time',
+            'stepper',
+          ],
+        },
+      }),
+    );
+    const variants = FieldVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{
       children: React.ReactNode;
     }>;
-    expect(React.Children.toArray(variants.props.children)).toHaveLength(fieldFixtures.length);
+    expect(React.Children.toArray(variants.props.children)).toHaveLength(
+      fieldFixtures.length,
+    );
   });
 
   it('records all required boundary and interactive witnesses without native-proof claims', () => {
-    const boundaries = FieldBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const boundaries = FieldBoundaries.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
     const boundaryJson = JSON.stringify(boundaries);
     expect(boundaryJson).toContain('200%');
     expect(boundaryJson).toContain('constrained width');
@@ -510,7 +602,12 @@ describe('Field Storybook contract', () => {
     expect(boundaryJson).toContain('nested target clearance');
     expect(boundaryJson).toContain('Phase 5');
 
-    const interactive = FieldInteractive.render?.({} as never, {} as never) as React.ReactElement;
-    expect((interactive.type as { name?: string }).name).toBe('InteractiveFieldHarness');
+    const interactive = FieldInteractive.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
+    expect((interactive.type as { name?: string }).name).toBe(
+      'InteractiveFieldHarness',
+    );
   });
 });

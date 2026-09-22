@@ -26,7 +26,9 @@ export const Canonical: Story = {
   args: { background: 'surface', padding: 'space16' },
   render: (args) => (
     <Stack gap="space8">
-      <Surface {...args}><Text variant="body">Surface content</Text></Surface>
+      <Surface {...args}>
+        <Text variant="body">Surface content</Text>
+      </Surface>
       <Text color="textSecondary" variant="caption">
         Standalone surface primitive
       </Text>
@@ -35,19 +37,44 @@ export const Canonical: Story = {
 };
 
 export const Variants: Story = {
-  args: { background: 'surfaceAccent', borderColor: 'border', borderWidth: 'borderDefault', padding: 'space16', radius: 'radius16' },
-  render: (args) => <Surface {...args}><Text variant="body">Token-bounded surface</Text></Surface>,
+  args: {
+    background: 'surfaceAccent',
+    borderColor: 'border',
+    borderWidth: 'borderDefault',
+    padding: 'space16',
+    radius: 'radius16',
+  },
+  render: (args) => (
+    <Surface {...args}>
+      <Text variant="body">Token-bounded surface</Text>
+    </Surface>
+  ),
 };
 
 export const Boundaries: Story = {
   args: { background: 'surface', padding: 'space8' },
   render: () => (
-    <Stack gap="space8" style={{ width: 220 }} testID="boundary-constrained-width">
+    <Stack
+      gap="space8"
+      style={{ width: 220 }}
+      testID="boundary-constrained-width"
+    >
       <Surface testID="boundary-zero" />
-      <Surface testID="boundary-one"><Text variant="body">One</Text></Surface>
-      <Surface testID="boundary-many"><Text variant="body">One · Two · Three</Text></Surface>
-      <Surface testID="boundary-required-content"><Text variant="body">{longUnicode}</Text></Surface>
-      <Text ellipsizeMode="tail" numberOfLines={1} testID="boundary-explicit-truncation" variant="body">
+      <Surface testID="boundary-one">
+        <Text variant="body">One</Text>
+      </Surface>
+      <Surface testID="boundary-many">
+        <Text variant="body">One · Two · Three</Text>
+      </Surface>
+      <Surface testID="boundary-required-content">
+        <Text variant="body">{longUnicode}</Text>
+      </Surface>
+      <Text
+        ellipsizeMode="tail"
+        numberOfLines={1}
+        testID="boundary-explicit-truncation"
+        variant="body"
+      >
         Consumer-authored optional truncation: {longUnicode}
       </Text>
     </Stack>

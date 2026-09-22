@@ -1,6 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import { HeaderMascot, type HeaderMascotName } from '../../assets/artwork/headerMascots';
+import {
+  HeaderMascot,
+  type HeaderMascotName,
+} from '../../assets/artwork/headerMascots';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 import { Favourite } from '../actions/Favourite';
@@ -25,32 +28,33 @@ type CopyProps = Readonly<{
   title?: string;
 }>;
 
-type NotificationPage = CopyProps & Readonly<{
-  onNotificationPress: () => void;
-  page: 'home' | 'games' | 'create' | 'players';
-}>;
+type NotificationPage = CopyProps &
+  Readonly<{
+    onNotificationPress: () => void;
+    page: 'home' | 'games' | 'create' | 'players';
+  }>;
 
-type ProfilePage = CopyProps & Readonly<{
-  page: 'profile';
-}>;
+type ProfilePage = CopyProps &
+  Readonly<{
+    page: 'profile';
+  }>;
 
-type BackPage = CopyProps & Readonly<{
-  onBackPress: () => void;
-  page: 'notifications' | 'gameDetails' | 'settings';
-}>;
+type BackPage = CopyProps &
+  Readonly<{
+    onBackPress: () => void;
+    page: 'notifications' | 'gameDetails' | 'settings';
+  }>;
 
-type PlayerDetailsPage = CopyProps & Readonly<{
-  favouriteChecked: boolean;
-  onBackPress: () => void;
-  onFavouriteChange: (checked: boolean) => void;
-  page: 'playerDetails';
-}>;
+type PlayerDetailsPage = CopyProps &
+  Readonly<{
+    favouriteChecked: boolean;
+    onBackPress: () => void;
+    onFavouriteChange: (checked: boolean) => void;
+    page: 'playerDetails';
+  }>;
 
 export type AppHeaderProps =
-  | NotificationPage
-  | ProfilePage
-  | BackPage
-  | PlayerDetailsPage;
+  NotificationPage | ProfilePage | BackPage | PlayerDetailsPage;
 
 type HeaderConfig = Readonly<{
   mascot?: HeaderMascotName;
@@ -59,15 +63,47 @@ type HeaderConfig = Readonly<{
 }>;
 
 const configs: Readonly<Record<AppHeaderPage, HeaderConfig>> = Object.freeze({
-  home: Object.freeze({ mascot: 'wave', subtitle: 'Ready for your next match?', title: 'Hi, Alex' }),
-  games: Object.freeze({ mascot: 'search', subtitle: 'Find your next match', title: 'Games' }),
-  create: Object.freeze({ mascot: 'create', subtitle: 'Set up your next match', title: 'Create game' }),
-  players: Object.freeze({ mascot: 'players', subtitle: 'Find your next partner', title: 'Players' }),
-  profile: Object.freeze({ mascot: 'profile', subtitle: 'Manage your account', title: 'Profile' }),
-  notifications: Object.freeze({ subtitle: 'Updates and activity', title: 'Notifications' }),
-  gameDetails: Object.freeze({ subtitle: 'Open game · 1 spot left', title: 'Game details' }),
-  playerDetails: Object.freeze({ subtitle: 'Player details and form', title: 'Player profile' }),
-  settings: Object.freeze({ subtitle: 'Manage your account', title: 'Settings' }),
+  home: Object.freeze({
+    mascot: 'wave',
+    subtitle: 'Ready for your next match?',
+    title: 'Hi, Alex',
+  }),
+  games: Object.freeze({
+    mascot: 'search',
+    subtitle: 'Find your next match',
+    title: 'Games',
+  }),
+  create: Object.freeze({
+    mascot: 'create',
+    subtitle: 'Set up your next match',
+    title: 'Create game',
+  }),
+  players: Object.freeze({
+    mascot: 'players',
+    subtitle: 'Find your next partner',
+    title: 'Players',
+  }),
+  profile: Object.freeze({
+    mascot: 'profile',
+    subtitle: 'Manage your account',
+    title: 'Profile',
+  }),
+  notifications: Object.freeze({
+    subtitle: 'Updates and activity',
+    title: 'Notifications',
+  }),
+  gameDetails: Object.freeze({
+    subtitle: 'Open game · 1 spot left',
+    title: 'Game details',
+  }),
+  playerDetails: Object.freeze({
+    subtitle: 'Player details and form',
+    title: 'Player profile',
+  }),
+  settings: Object.freeze({
+    subtitle: 'Manage your account',
+    title: 'Settings',
+  }),
 });
 
 const baseKeys = ['page', 'subtitle', 'title'] as const;
@@ -93,15 +129,21 @@ const unsupported = (value: unknown, supported: readonly unknown[]): never => {
 };
 
 function validateNonEmptyCopy(value: unknown, name: 'title' | 'subtitle') {
-  if (typeof value !== 'undefined' && (typeof value !== 'string' || value.trim().length === 0)) {
+  if (
+    typeof value !== 'undefined' &&
+    (typeof value !== 'string' || value.trim().length === 0)
+  ) {
     unsupported(value, [`non-empty ${name}`]);
   }
 }
 
 function validateAppHeaderProps(props: AppHeaderProps) {
-  if (!appHeaderPages.includes(props.page)) unsupported(props.page, appHeaderPages);
+  if (!appHeaderPages.includes(props.page))
+    unsupported(props.page, appHeaderPages);
   const page = props.page;
-  const keys = notificationPages.includes(page as (typeof notificationPages)[number])
+  const keys = notificationPages.includes(
+    page as (typeof notificationPages)[number],
+  )
     ? actionKeys.notification
     : backPages.includes(page as (typeof backPages)[number])
       ? actionKeys.back
@@ -115,7 +157,9 @@ function validateAppHeaderProps(props: AppHeaderProps) {
   validateNonEmptyCopy(props.subtitle, 'subtitle');
   if (notificationPages.includes(page as (typeof notificationPages)[number])) {
     if (typeof (props as NotificationPage).onNotificationPress !== 'function') {
-      unsupported((props as NotificationPage).onNotificationPress, ['function']);
+      unsupported((props as NotificationPage).onNotificationPress, [
+        'function',
+      ]);
     }
   } else if (backPages.includes(page as (typeof backPages)[number])) {
     if (typeof (props as BackPage).onBackPress !== 'function') {
@@ -141,8 +185,9 @@ export function AppHeader(props: AppHeaderProps) {
   const mascot = config.mascot;
   const title = props.title ?? config.title;
   const subtitle = props.subtitle ?? config.subtitle;
-  const hasBack = backPages.includes(props.page as (typeof backPages)[number])
-    || props.page === 'playerDetails';
+  const hasBack =
+    backPages.includes(props.page as (typeof backPages)[number]) ||
+    props.page === 'playerDetails';
 
   return (
     <View style={styles.container} testID="app-header">
@@ -172,7 +217,9 @@ export function AppHeader(props: AppHeaderProps) {
           {subtitle}
         </Text>
       </View>
-      {notificationPages.includes(props.page as (typeof notificationPages)[number]) ? (
+      {notificationPages.includes(
+        props.page as (typeof notificationPages)[number],
+      ) ? (
         <IconButton
           accessibilityLabel="Notifications"
           icon="notification"

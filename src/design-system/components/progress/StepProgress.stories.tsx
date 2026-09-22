@@ -23,10 +23,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export function normalizeStepProgressStoryArgs(args: Readonly<{ value?: unknown }>): StepProgressProps {
+export function normalizeStepProgressStoryArgs(
+  args: Readonly<{ value?: unknown }>,
+): StepProgressProps {
   return {
     value: values.includes(args.value as StepProgressValue)
-      ? args.value as StepProgressValue
+      ? (args.value as StepProgressValue)
       : 1,
   };
 }
@@ -40,7 +42,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <StepProgress {...normalizeStepProgressStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[3].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[3].label}
+      </Text>
     </Stack>
   ),
 };
@@ -79,7 +83,8 @@ export const Boundaries: Story = {
     <Stack gap="space8" style={{ width: 352 }}>
       <StepProgress value="complete" />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Exact progress copy and values stay available. Native 200% font-scale review remains Phase 5.
+        Exact progress copy and values stay available. Native 200% font-scale
+        review remains Phase 5.
       </Text>
     </Stack>
   ),
@@ -88,7 +93,8 @@ export const Boundaries: Story = {
 export const Interactive: Story = {
   args: Canonical.args,
   parameters: {
-    applicability: 'Step Progress is a read-only progress indicator and exposes no authored interaction.',
+    applicability:
+      'Step Progress is a read-only progress indicator and exposes no authored interaction.',
   },
   render: (args) => <StepProgress {...normalizeStepProgressStoryArgs(args)} />,
 };

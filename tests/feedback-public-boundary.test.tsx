@@ -38,7 +38,11 @@ import {
 
 import * as FeedbackComponents from '../src/design-system/components/feedback';
 
-import { bannerToastFixtures, emptyStateFixtures, illustratedCardFixtures } from '../src/design-system/stories/fixtures';
+import {
+  bannerToastFixtures,
+  emptyStateFixtures,
+  illustratedCardFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import IllustratedCardStories, {
   Boundaries as IllustratedCardBoundaries,

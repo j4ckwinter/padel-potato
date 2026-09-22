@@ -32,7 +32,12 @@ import {
   type SegmentOptions,
 } from '../src/design-system/components/navigation/SegmentedControl';
 
-import { bottomNavigationFixtures, segmentedControlFixtures, appHeaderFixtures, sectionHeaderFixtures } from '../src/design-system/stories/fixtures';
+import {
+  bottomNavigationFixtures,
+  segmentedControlFixtures,
+  appHeaderFixtures,
+  sectionHeaderFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import AppHeaderStories, {
   Boundaries as AppHeaderBoundaries,
@@ -59,16 +64,30 @@ import {
 describe('Header Storybook contract', () => {
   it('publishes exact groups, bounded callbacks, and source-order variants', () => {
     expect(AppHeaderStories.title).toBe('Navigation/App Header');
-    expect(AppHeaderStories.argTypes).toEqual(expect.objectContaining({
-      page: { control: 'select', options: appHeaderPages },
-    }));
-    expect(JSON.stringify(AppHeaderStories.argTypes)).not.toMatch(/overflow|router|navigate/iu);
+    expect(AppHeaderStories.argTypes).toEqual(
+      expect.objectContaining({
+        page: { control: 'select', options: appHeaderPages },
+      }),
+    );
+    expect(JSON.stringify(AppHeaderStories.argTypes)).not.toMatch(
+      /overflow|router|navigate/iu,
+    );
     expect(SectionHeaderStories.title).toBe('Navigation/Section Header');
 
-    const appVariants = AppHeaderVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
-    const sectionVariants = SectionHeaderVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
-    expect(Children.toArray(appVariants.props.children)).toHaveLength(appHeaderFixtures.length);
-    expect(Children.toArray(sectionVariants.props.children)).toHaveLength(sectionHeaderFixtures.length);
+    const appVariants = AppHeaderVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{ children: React.ReactNode }>;
+    const sectionVariants = SectionHeaderVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{ children: React.ReactNode }>;
+    expect(Children.toArray(appVariants.props.children)).toHaveLength(
+      appHeaderFixtures.length,
+    );
+    expect(Children.toArray(sectionVariants.props.children)).toHaveLength(
+      sectionHeaderFixtures.length,
+    );
   });
 
   it('rebuilds a valid action contract for every AppHeader page transition', async () => {
@@ -84,7 +103,9 @@ describe('Header Storybook contract', () => {
       });
       expect(props.page).toBe(page);
       const screen = await render(<AppHeader {...props} />);
-      expect(screen.getByRole('header', { name: 'Controlled title' })).toBeTruthy();
+      expect(
+        screen.getByRole('header', { name: 'Controlled title' }),
+      ).toBeTruthy();
       await screen.unmount();
     }
   });

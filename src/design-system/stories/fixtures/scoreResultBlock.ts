@@ -1,116 +1,100 @@
 // Story-only data for scoreResultBlock.
 export const scoreResultBlockFixtures = [
   {
-    "label": "Full / Live",
-    "configuration": {
-      "type": "full",
-      "state": "live"
+    label: 'Full / Live',
+    configuration: {
+      type: 'full',
+      state: 'live',
     },
-    "copy": [
-      "LIVE",
-      "Tuesday Social Padel",
-      "S1",
-      "S2",
-      "AM",
-      "Alex & Jamie",
-      "6",
-      "6",
-      "RB",
-      "Riley & Sam",
-      "4",
-      "3",
-      "Set 2 in progress"
-    ]
+    copy: [
+      'LIVE',
+      'Tuesday Social Padel',
+      'S1',
+      'S2',
+      'AM',
+      'Alex & Jamie',
+      '6',
+      '6',
+      'RB',
+      'Riley & Sam',
+      '4',
+      '3',
+      'Set 2 in progress',
+    ],
   },
   {
-    "label": "Full / Lost",
-    "configuration": {
-      "type": "full",
-      "state": "lost"
+    label: 'Full / Lost',
+    configuration: {
+      type: 'full',
+      state: 'lost',
     },
-    "copy": [
-      "FINAL",
-      "Tuesday Social Padel",
-      "S1",
-      "S2",
-      "AM",
-      "Alex & Jamie",
-      "4",
-      "3",
-      "RB",
-      "Riley & Sam",
-      "6",
-      "6"
-    ]
+    copy: [
+      'FINAL',
+      'Tuesday Social Padel',
+      'S1',
+      'S2',
+      'AM',
+      'Alex & Jamie',
+      '4',
+      '3',
+      'RB',
+      'Riley & Sam',
+      '6',
+      '6',
+    ],
   },
   {
-    "label": "Full / Won",
-    "configuration": {
-      "type": "full",
-      "state": "won"
+    label: 'Full / Won',
+    configuration: {
+      type: 'full',
+      state: 'won',
     },
-    "copy": [
-      "YOU WON",
-      "Tuesday Social Padel",
-      "S1",
-      "S2",
-      "AM",
-      "Alex & Jamie",
-      "6",
-      "6",
-      "RB",
-      "Riley & Sam",
-      "4",
-      "3"
-    ]
+    copy: [
+      'YOU WON',
+      'Tuesday Social Padel',
+      'S1',
+      'S2',
+      'AM',
+      'Alex & Jamie',
+      '6',
+      '6',
+      'RB',
+      'Riley & Sam',
+      '4',
+      '3',
+    ],
   },
   {
-    "label": "Compact / Live",
-    "configuration": {
-      "type": "compact",
-      "state": "live"
+    label: 'Compact / Live',
+    configuration: {
+      type: 'compact',
+      state: 'live',
     },
-    "copy": [
-      "LIVE",
-      "Alex & Jamie",
-      "6",
-      "6",
-      "Riley & Sam",
-      "4",
-      "3",
-      "Set 2 in progress"
-    ]
+    copy: [
+      'LIVE',
+      'Alex & Jamie',
+      '6',
+      '6',
+      'Riley & Sam',
+      '4',
+      '3',
+      'Set 2 in progress',
+    ],
   },
   {
-    "label": "Compact / Lost",
-    "configuration": {
-      "type": "compact",
-      "state": "lost"
+    label: 'Compact / Lost',
+    configuration: {
+      type: 'compact',
+      state: 'lost',
     },
-    "copy": [
-      "FINAL",
-      "Alex & Jamie",
-      "4",
-      "3",
-      "Riley & Sam",
-      "6",
-      "6"
-    ]
+    copy: ['FINAL', 'Alex & Jamie', '4', '3', 'Riley & Sam', '6', '6'],
   },
   {
-    "label": "Compact / Won",
-    "configuration": {
-      "type": "compact",
-      "state": "won"
+    label: 'Compact / Won',
+    configuration: {
+      type: 'compact',
+      state: 'won',
     },
-    "copy": [
-      "YOU WON",
-      "Alex & Jamie",
-      "6",
-      "6",
-      "Riley & Sam",
-      "4",
-      "3"
-    ]
-  }
+    copy: ['YOU WON', 'Alex & Jamie', '6', '6', 'Riley & Sam', '4', '3'],
+  },
 ] as const;

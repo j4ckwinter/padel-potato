@@ -2,7 +2,12 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { flattenedStyle, invalidProps } from './helpers/componentTest';
 
-import { act, fireEvent, render, userEvent } from '@testing-library/react-native';
+import {
+  act,
+  fireEvent,
+  render,
+  userEvent,
+} from '@testing-library/react-native';
 
 import { Children } from 'react';
 
@@ -44,11 +49,18 @@ import {
 
 import * as actions from '../src/design-system/components/actions';
 
-import { buttonFixtures, iconButtonFixtures, favouriteFixtures, buttonStyles, buttonSizes } from '../src/design-system/stories/fixtures';
+import {
+  buttonFixtures,
+  iconButtonFixtures,
+  favouriteFixtures,
+  buttonStyles,
+  buttonSizes,
+} from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
-describe('Button public contract', () => {  it('exposes only closed authored style and size values', () => {
+describe('Button public contract', () => {
+  it('exposes only closed authored style and size values', () => {
     const stylesAreClosed: ButtonStyle[] = [
       'primary',
       'secondary',
@@ -56,7 +68,10 @@ describe('Button public contract', () => {  it('exposes only closed authored sty
       'ghost',
     ];
     const sizesAreClosed: ButtonSize[] = [40, 48];
-    type VisualEscape = Extract<'layoutStyle' | 'color' | 'pressed' | 'focused', keyof ButtonProps>;
+    type VisualEscape = Extract<
+      'layoutStyle' | 'color' | 'pressed' | 'focused',
+      keyof ButtonProps
+    >;
     const hasNoVisualEscape: VisualEscape extends never ? true : false = true;
 
     expect(stylesAreClosed).toEqual(buttonStyles);
@@ -108,10 +123,14 @@ describe('Button interaction and visual contract', () => {
       <Button label="Create game" loading style="primary" />,
     );
     const subject = screen.getByRole('button', { name: 'Create game' });
-    const visual = screen.getByText('•••', { includeHiddenElements: true }).parent;
+    const visual = screen.getByText('•••', {
+      includeHiddenElements: true,
+    }).parent;
 
     expect(subject).toBeDisabled();
-    expect(screen.getByText('•••', { includeHiddenElements: true })).toBeTruthy();
+    expect(
+      screen.getByText('•••', { includeHiddenElements: true }),
+    ).toBeTruthy();
     expect(flattenedStyle(subject.props.style)).toEqual(
       expect.objectContaining({
         height: 48,
@@ -138,7 +157,12 @@ describe('Button interaction and visual contract', () => {
       top: 2,
     });
     expect(flattenedStyle(subject.props.style)).toEqual(
-      expect.objectContaining({ height: 40, minHeight: 40, minWidth: 40, width: 160 }),
+      expect.objectContaining({
+        height: 40,
+        minHeight: 40,
+        minWidth: 40,
+        width: 160,
+      }),
     );
   });
 
@@ -150,8 +174,15 @@ describe('Button interaction and visual contract', () => {
     await act(async () => {
       fireEvent(focusSubject, 'focus', { nativeEvent: {} });
     });
-    expect(flattenedStyle(focused.getByRole('button', { name: 'Focus action' }).props.style)).toEqual(
-      expect.objectContaining({ outlineColor: colors.focusRing, outlineWidth: 2 }),
+    expect(
+      flattenedStyle(
+        focused.getByRole('button', { name: 'Focus action' }).props.style,
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        outlineColor: colors.focusRing,
+        outlineWidth: 2,
+      }),
     );
 
     const disabled = await render(
@@ -166,17 +197,24 @@ describe('Button interaction and visual contract', () => {
   });
 
   it('uses the native Pressable render state instead of a public persistent prop', () => {
-    const rendered = Button({ label: 'Create game', style: 'primary' }) as React.ReactElement<{
-      children: (state: { pressed: boolean }) => React.ReactElement<{ style: unknown }>;
+    const rendered = Button({
+      label: 'Create game',
+      style: 'primary',
+    }) as React.ReactElement<{
+      children: (state: {
+        pressed: boolean;
+      }) => React.ReactElement<{ style: unknown }>;
     }>;
     const renderContent = rendered.props.children;
 
-    expect(flattenedStyle(renderContent({ pressed: false }).props.style).backgroundColor).toBe(
-      colors.accent,
-    );
-    expect(flattenedStyle(renderContent({ pressed: true }).props.style).backgroundColor).toBe(
-      colors.surfaceAccent,
-    );
+    expect(
+      flattenedStyle(renderContent({ pressed: false }).props.style)
+        .backgroundColor,
+    ).toBe(colors.accent);
+    expect(
+      flattenedStyle(renderContent({ pressed: true }).props.style)
+        .backgroundColor,
+    ).toBe(colors.surfaceAccent);
   });
 
   it.each([
@@ -184,21 +222,30 @@ describe('Button interaction and visual contract', () => {
     ['secondary', colors.surface],
     ['destructive', colors.danger],
     ['ghost', colors.canvas],
-  ] as Array<[ButtonStyle, string]>)('renders the %s authored treatment', async (style, backgroundColor) => {
-    const screen = await render(
-      <Button {...({ label: `${style} action`, style } as ButtonProps)} />,
-    );
-    expect(flattenedStyle(screen.getByText(`${style} action`, { includeHiddenElements: true }).parent?.props.style)).toEqual(
-      expect.objectContaining({ backgroundColor }),
-    );
-  });
+  ] as Array<[ButtonStyle, string]>)(
+    'renders the %s authored treatment',
+    async (style, backgroundColor) => {
+      const screen = await render(
+        <Button {...({ label: `${style} action`, style } as ButtonProps)} />,
+      );
+      expect(
+        flattenedStyle(
+          screen.getByText(`${style} action`, { includeHiddenElements: true })
+            .parent?.props.style,
+        ),
+      ).toEqual(expect.objectContaining({ backgroundColor }));
+    },
+  );
 
   it('rejects empty names and unsupported runtime values without fallback', () => {
     expect(() => Button({ label: '', style: 'primary' })).toThrow(
       /Unsupported design-system value: .*Supported values: non-empty label/u,
     );
     expect(() =>
-      Button({ label: 'Example', style: 'tertiary' as ButtonStyle } as ButtonProps),
+      Button({
+        label: 'Example',
+        style: 'tertiary' as ButtonStyle,
+      } as ButtonProps),
     ).toThrow(/Unsupported design-system value: tertiary/u);
     expect(() =>
       Button({ label: 'Example', size: 44 as ButtonSize, style: 'primary' }),
@@ -211,11 +258,13 @@ describe('Button interaction and visual contract', () => {
       } as unknown as ButtonProps),
     ).toThrow(/Unsupported design-system value: pressed/u);
     for (const onPress of ['press', false, null, 0]) {
-      expect(() => Button({
-        label: 'Example',
-        onPress,
-        style: 'primary',
-      } as unknown as ButtonProps)).toThrow(/Supported values: function/u);
+      expect(() =>
+        Button({
+          label: 'Example',
+          onPress,
+          style: 'primary',
+        } as unknown as ButtonProps),
+      ).toThrow(/Supported values: function/u);
     }
   });
 });
@@ -247,7 +296,9 @@ describe('Button Storybook contract', () => {
               style,
             });
             const screen = await render(<Button {...props} />);
-            expect(screen.getByRole('button', { name: 'Controlled button' })).toBeTruthy();
+            expect(
+              screen.getByRole('button', { name: 'Controlled button' }),
+            ).toBeTruthy();
             await screen.unmount();
           }
         }
@@ -256,16 +307,28 @@ describe('Button Storybook contract', () => {
   });
 
   it('keeps source-ordered variants and explicit long-label target-clearance boundaries', () => {
-    const variants = ButtonVariants.render?.({} as never, {} as never) as React.ReactElement<{
+    const variants = ButtonVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{
       children: readonly React.ReactElement[];
     }>;
     const variantChildren = Children.toArray(variants.props.children);
     expect(variantChildren).toHaveLength(buttonFixtures.length);
-    expect(variantChildren.every((entry) =>
-      Children.count((entry as React.ReactElement<{ children: React.ReactNode }>).props.children) === 2,
-    )).toBe(true);
+    expect(
+      variantChildren.every(
+        (entry) =>
+          Children.count(
+            (entry as React.ReactElement<{ children: React.ReactNode }>).props
+              .children,
+          ) === 2,
+      ),
+    ).toBe(true);
 
-    const boundaries = ButtonBoundaries.render?.({} as never, {} as never) as React.ReactElement;
+    const boundaries = ButtonBoundaries.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement;
     expect(JSON.stringify(boundaries)).toContain('200%');
     expect(JSON.stringify(boundaries)).toContain('hit-area');
   });

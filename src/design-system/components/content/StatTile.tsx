@@ -10,14 +10,15 @@ type StatTileCopy = Readonly<{
   value: string;
 }>;
 
-export type StatTileProps = StatTileCopy & (
-  | Readonly<{ content: 'gamesPlayed'; state: 'neutral'; type: 'compact' }>
-  | Readonly<{ content: 'winRate'; state: 'positive'; type: 'compact' }>
-  | Readonly<{ content: 'rating'; state: 'neutral'; type: 'compact' }>
-  | Readonly<{ content: 'streak'; state: 'positive'; type: 'compact' }>
-  | Readonly<{ content: 'rating'; state: 'positive'; type: 'featured' }>
-  | Readonly<{ content: 'streak'; state: 'positive'; type: 'featured' }>
-);
+export type StatTileProps = StatTileCopy &
+  (
+    | Readonly<{ content: 'gamesPlayed'; state: 'neutral'; type: 'compact' }>
+    | Readonly<{ content: 'winRate'; state: 'positive'; type: 'compact' }>
+    | Readonly<{ content: 'rating'; state: 'neutral'; type: 'compact' }>
+    | Readonly<{ content: 'streak'; state: 'positive'; type: 'compact' }>
+    | Readonly<{ content: 'rating'; state: 'positive'; type: 'featured' }>
+    | Readonly<{ content: 'streak'; state: 'positive'; type: 'featured' }>
+  );
 
 const supportedRuntimeProps = Object.freeze([
   'content',
@@ -51,7 +52,11 @@ function validateText(value: unknown, field: string) {
 function validateStatTileProps(props: StatTileProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(`unsupported property ${key}`);
     }
   }
@@ -74,7 +79,9 @@ export function StatTile(props: StatTileProps) {
     props.value,
     props.supportingText,
     positive ? 'positive trend' : null,
-  ].filter(Boolean).join(', ');
+  ]
+    .filter(Boolean)
+    .join(', ');
 
   return (
     <View
@@ -94,11 +101,17 @@ export function StatTile(props: StatTileProps) {
         importantForAccessibility="no-hide-descendants"
         style={styles.content}
       >
-        <Text color="textSecondary" variant="label">{props.label}</Text>
-        <Text variant={props.type === 'featured' ? 'display' : 'title'}>{props.value}</Text>
+        <Text color="textSecondary" variant="label">
+          {props.label}
+        </Text>
+        <Text variant={props.type === 'featured' ? 'display' : 'title'}>
+          {props.value}
+        </Text>
         <View style={styles.supportingRow}>
           {positive ? <Icon name="check" /> : null}
-          <Text color="textSecondary" variant="caption">{props.supportingText}</Text>
+          <Text color="textSecondary" variant="caption">
+            {props.supportingText}
+          </Text>
         </View>
       </View>
     </View>

@@ -8,10 +8,7 @@ export {
   type BottomNavigationDestination,
   type BottomNavigationProps,
 } from './BottomNavigation';
-export {
-  SectionHeader,
-  type SectionHeaderProps,
-} from './SectionHeader';
+export { SectionHeader, type SectionHeaderProps } from './SectionHeader';
 export {
   SegmentedControl,
   type SegmentedControlProps,

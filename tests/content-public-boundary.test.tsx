@@ -100,7 +100,15 @@ import {
   type PlayerItemProps,
 } from '../src/design-system/components/content/PlayerItem';
 
-import { playerItemFixtures, gameCardFixtures, notificationRowFixtures, settingsRowFixtures, statTileFixtures, scoreResultBlockFixtures, playerPreferencesCardFixtures } from '../src/design-system/stories/fixtures';
+import {
+  playerItemFixtures,
+  gameCardFixtures,
+  notificationRowFixtures,
+  settingsRowFixtures,
+  statTileFixtures,
+  scoreResultBlockFixtures,
+  playerPreferencesCardFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import * as ContentComponents from '../src/design-system/components/content';
 

@@ -3,9 +3,12 @@ import { Fragment, useState } from 'react';
 
 import { Stack } from '../../primitives/Stack';
 import { Text } from '../../primitives/Text';
-import { buttonFixtures, buttonStyles, buttonSizes } from '../../stories/fixtures';
+import {
+  buttonFixtures,
+  buttonStyles,
+  buttonSizes,
+} from '../../stories/fixtures';
 import { Button, type ButtonProps } from './Button';
-
 
 const meta = {
   title: 'Actions/Button',
@@ -32,13 +35,17 @@ type ButtonStoryArgs = Readonly<{
   style?: unknown;
 }>;
 
-export const normalizeButtonStoryArgs = (args: ButtonStoryArgs): ButtonProps => {
-  const label = typeof args.label === 'string' && args.label.trim().length > 0
-    ? args.label
-    : 'Button label';
-  const onPress = typeof args.onPress === 'function'
-    ? args.onPress as ButtonProps['onPress']
-    : undefined;
+export const normalizeButtonStoryArgs = (
+  args: ButtonStoryArgs,
+): ButtonProps => {
+  const label =
+    typeof args.label === 'string' && args.label.trim().length > 0
+      ? args.label
+      : 'Button label';
+  const onPress =
+    typeof args.onPress === 'function'
+      ? (args.onPress as ButtonProps['onPress'])
+      : undefined;
 
   if (args.loading === true) {
     return { label, loading: true, onPress, size: 48, style: 'primary' };
@@ -47,9 +54,11 @@ export const normalizeButtonStoryArgs = (args: ButtonStoryArgs): ButtonProps => 
     return { disabled: true, label, onPress, size: 48, style: 'primary' };
   }
 
-  const size = buttonSizes.includes(args.size as 40 | 48) ? args.size as 40 | 48 : 48;
+  const size = buttonSizes.includes(args.size as 40 | 48)
+    ? (args.size as 40 | 48)
+    : 48;
   const style = buttonStyles.includes(args.style as ButtonProps['style'])
-    ? args.style as ButtonProps['style']
+    ? (args.style as ButtonProps['style'])
     : 'primary';
   if (size === 40) return { label, onPress, size, style: 'primary' };
   return { label, onPress, size, style } as ButtonProps;
@@ -71,12 +80,19 @@ export const Canonical: Story = {
   ),
 };
 
-const fixtureProps = (fixture: (typeof buttonFixtures)[number]): ButtonProps => {
+const fixtureProps = (
+  fixture: (typeof buttonFixtures)[number],
+): ButtonProps => {
   const tuple = fixture.configuration;
   const style = tuple.style as ButtonProps['style'];
   const size = tuple.size as 40 | 48;
   if (tuple.state === 'disabled') {
-    return { disabled: true, label: 'Button label', size: 48, style: 'primary' };
+    return {
+      disabled: true,
+      label: 'Button label',
+      size: 48,
+      style: 'primary',
+    };
   }
   if (tuple.state === 'loading') {
     return { label: 'Button label', loading: true, size: 48, style: 'primary' };
@@ -109,7 +125,8 @@ export const States: Story = {
       <Button disabled label="Disabled" style="primary" />
       <Button label="Loading" loading style="primary" />
       <Text color="textSecondary" variant="caption">
-        Hold Default for the native pressed treatment; keyboard focus drives the native focus ring.
+        Hold Default for the native pressed treatment; keyboard focus drives the
+        native focus ring.
       </Text>
     </Stack>
   ),
@@ -124,7 +141,8 @@ export const Boundaries: Story = {
         style="primary"
       />
       <Text color="textSecondary" variant="caption">
-        Full accessible name retained. Native 200% font-scale and hit-area clipping review remain Phase 5.
+        Full accessible name retained. Native 200% font-scale and hit-area
+        clipping review remain Phase 5.
       </Text>
     </Stack>
   ),

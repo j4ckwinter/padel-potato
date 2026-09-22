@@ -1,12 +1,12 @@
-import { spawn } from "node:child_process";
-import { createServer } from "node:net";
-import process from "node:process";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
+import { spawn } from 'node:child_process';
+import { createServer } from 'node:net';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 const STARTUP_TIMEOUT_MS = 120_000;
 const POLL_INTERVAL_MS = 500;
-const LOOPBACK_HOST = "127.0.0.1";
+const LOOPBACK_HOST = '127.0.0.1';
 
 function delay(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -16,14 +16,14 @@ async function reserveAvailablePort() {
   const server = createServer();
 
   await new Promise((resolve, reject) => {
-    server.once("error", reject);
+    server.once('error', reject);
     server.listen(0, LOOPBACK_HOST, resolve);
   });
 
   const address = server.address();
-  if (address === null || typeof address === "string") {
+  if (address === null || typeof address === 'string') {
     server.close();
-    throw new Error("Could not reserve an available loopback port.");
+    throw new Error('Could not reserve an available loopback port.');
   }
 
   const { port } = address;
@@ -49,15 +49,15 @@ export async function terminateProcessTree(
     return;
   }
 
-  if (platform === "win32") {
+  if (platform === 'win32') {
     await new Promise((resolve, reject) => {
       const killer = spawnProcess(
-        "taskkill.exe",
-        ["/pid", String(child.pid), "/t", "/f"],
-        { stdio: "ignore", windowsHide: true },
+        'taskkill.exe',
+        ['/pid', String(child.pid), '/t', '/f'],
+        { stdio: 'ignore', windowsHide: true },
       );
-      killer.once("error", reject);
-      killer.once("exit", (code) => {
+      killer.once('error', reject);
+      killer.once('exit', (code) => {
         if (code === 0) {
           resolve();
         } else {
@@ -69,27 +69,27 @@ export async function terminateProcessTree(
   }
 
   try {
-    killProcess(-child.pid, "SIGTERM");
+    killProcess(-child.pid, 'SIGTERM');
   } catch (error) {
-    if (error.code !== "ESRCH") throw error;
+    if (error.code !== 'ESRCH') throw error;
     return;
   }
 
   await Promise.race([
-    new Promise((resolve) => child.once("exit", resolve)),
+    new Promise((resolve) => child.once('exit', resolve)),
     delay(3_000),
   ]);
 
   if (child.exitCode === null && child.signalCode === null) {
     try {
-      killProcess(-child.pid, "SIGKILL");
+      killProcess(-child.pid, 'SIGKILL');
     } catch (error) {
-      if (error.code !== "ESRCH") throw error;
+      if (error.code !== 'ESRCH') throw error;
       return;
     }
 
     await Promise.race([
-      new Promise((resolve) => child.once("exit", resolve)),
+      new Promise((resolve) => child.once('exit', resolve)),
       delay(3_000),
     ]);
     if (child.exitCode === null && child.signalCode === null) {
@@ -106,7 +106,7 @@ function registerProcessCleanup(child) {
     for (const [signal, handler] of signalHandlers) {
       process.removeListener(signal, handler);
     }
-    process.removeListener("uncaughtException", handleUncaughtException);
+    process.removeListener('uncaughtException', handleUncaughtException);
   };
   const cleanup = () => {
     cleanupPromise ??= terminateProcessTree(child).finally(removeHandlers);
@@ -137,12 +137,12 @@ function registerProcessCleanup(child) {
       });
   };
 
-  for (const signal of ["SIGINT", "SIGTERM"]) {
+  for (const signal of ['SIGINT', 'SIGTERM']) {
     const handler = () => handleSignal(signal);
     signalHandlers.set(signal, handler);
     process.once(signal, handler);
   }
-  process.once("uncaughtException", handleUncaughtException);
+  process.once('uncaughtException', handleUncaughtException);
 
   return cleanup;
 }
@@ -172,7 +172,7 @@ function bundleUrlsFromHtml(html, baseUrl) {
   const sourcePattern = /(?:src|href)=["']([^"']+)["']/giu;
   for (const match of html.matchAll(sourcePattern)) {
     const value = match[1];
-    if (value.includes(".bundle") || value.includes("AppEntry")) {
+    if (value.includes('.bundle') || value.includes('AppEntry')) {
       urls.add(new URL(value, baseUrl).href);
     }
   }
@@ -188,10 +188,10 @@ async function assertStorybookEntry(url) {
   const html = await response.text();
   const candidates = bundleUrlsFromHtml(html, url);
   const storybookMarkers = [
-    ".rnstorybook",
-    "storybook.requires",
-    "StorybookUIRoot",
-    "@storybook/react-native",
+    '.rnstorybook',
+    'storybook.requires',
+    'StorybookUIRoot',
+    '@storybook/react-native',
   ];
 
   if (storybookMarkers.some((marker) => html.includes(marker))) {
@@ -200,7 +200,7 @@ async function assertStorybookEntry(url) {
 
   if (candidates.length === 0) {
     throw new Error(
-      "Served HTML did not reference an Expo application bundle.",
+      'Served HTML did not reference an Expo application bundle.',
     );
   }
 
@@ -216,7 +216,7 @@ async function assertStorybookEntry(url) {
   }
 
   throw new Error(
-    "The served Expo bundle did not contain the React Native Storybook entry.",
+    'The served Expo bundle did not contain the React Native Storybook entry.',
   );
 }
 
@@ -226,47 +226,47 @@ async function main() {
   const url = `http://${LOOPBACK_HOST}:${port}`;
   const npmExecutable = process.env.npm_execpath
     ? process.execPath
-    : process.platform === "win32"
-      ? (process.env.ComSpec ?? "cmd.exe")
-      : "npm";
+    : process.platform === 'win32'
+      ? (process.env.ComSpec ?? 'cmd.exe')
+      : 'npm';
   const npmCommandArguments = [
-    "run",
-    "storybook:web",
-    "--",
-    "--port",
+    'run',
+    'storybook:web',
+    '--',
+    '--port',
     String(port),
   ];
   const npmArguments = process.env.npm_execpath
     ? [process.env.npm_execpath, ...npmCommandArguments]
-    : process.platform === "win32"
-      ? ["/d", "/s", "/c", "npm.cmd", ...npmCommandArguments]
+    : process.platform === 'win32'
+      ? ['/d', '/s', '/c', 'npm.cmd', ...npmCommandArguments]
       : npmCommandArguments;
   const output = [];
   const child = spawn(npmExecutable, npmArguments, {
-    detached: process.platform !== "win32",
+    detached: process.platform !== 'win32',
     env: {
       ...process.env,
-      BROWSER: "none",
-      CI: "1",
+      BROWSER: 'none',
+      CI: '1',
     },
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: ['ignore', 'pipe', 'pipe'],
     windowsHide: true,
   });
   const cleanup = registerProcessCleanup(child);
 
   for (const stream of [child.stdout, child.stderr]) {
-    stream.setEncoding("utf8");
-    stream.on("data", (chunk) => {
+    stream.setEncoding('utf8');
+    stream.on('data', (chunk) => {
       output.push(chunk);
       process.stdout.write(chunk);
     });
   }
 
   let childFailure;
-  child.once("error", (error) => {
+  child.once('error', (error) => {
     childFailure = error;
   });
-  child.once("exit", (code, signal) => {
+  child.once('exit', (code, signal) => {
     if (code !== null && code !== 0) {
       childFailure = new Error(`Expo exited with code ${code}.`);
     } else if (signal !== null) {
@@ -278,7 +278,7 @@ async function main() {
   let primaryError;
   try {
     const deadline = startedAt + STARTUP_TIMEOUT_MS;
-    let lastError = new Error("Expo web has not responded yet.");
+    let lastError = new Error('Expo web has not responded yet.');
 
     while (Date.now() < deadline) {
       if (childFailure) throw childFailure;
@@ -294,7 +294,7 @@ async function main() {
     }
 
     if (!successMessage) {
-      const recentOutput = output.join("").slice(-4_000);
+      const recentOutput = output.join('').slice(-4_000);
       throw new Error(
         `Timed out after ${STARTUP_TIMEOUT_MS} ms: ${lastError.message}\n${recentOutput}`,
       );
@@ -308,7 +308,7 @@ async function main() {
 }
 
 async function expectCleanupFailure(label, action, pattern) {
-  let message = "";
+  let message = '';
   try {
     await action();
   } catch (error) {
@@ -316,7 +316,7 @@ async function expectCleanupFailure(label, action, pattern) {
   }
   if (!message || !pattern.test(message)) {
     throw new Error(
-      `cleanup controlled rejection "${label}" failed; received: ${message || "no error"}`,
+      `cleanup controlled rejection "${label}" failed; received: ${message || 'no error'}`,
     );
   }
 }
@@ -324,13 +324,13 @@ async function expectCleanupFailure(label, action, pattern) {
 async function runControlledCleanupChecks() {
   const child = { pid: 123, exitCode: null, signalCode: null };
   await expectCleanupFailure(
-    "nonzero taskkill exit",
+    'nonzero taskkill exit',
     () =>
       terminateProcessTree(child, {
-        platform: "win32",
+        platform: 'win32',
         spawnProcess: () => ({
           once(event, handler) {
-            if (event === "exit") queueMicrotask(() => handler(1));
+            if (event === 'exit') queueMicrotask(() => handler(1));
             return this;
           },
         }),
@@ -338,35 +338,35 @@ async function runControlledCleanupChecks() {
     /taskkill exited with code 1/u,
   );
   await expectCleanupFailure(
-    "failed POSIX termination",
+    'failed POSIX termination',
     () =>
       terminateProcessTree(child, {
-        platform: "linux",
+        platform: 'linux',
         killProcess: () => {
-          const error = new Error("operation not permitted");
-          error.code = "EPERM";
+          const error = new Error('operation not permitted');
+          error.code = 'EPERM';
           throw error;
         },
       }),
     /operation not permitted/u,
   );
   await expectCleanupFailure(
-    "cleanup-only smoke failure",
+    'cleanup-only smoke failure',
     () =>
       finishCleanup(async () => {
-        throw new Error("cleanup was not proven");
+        throw new Error('cleanup was not proven');
       }),
     /cleanup was not proven/u,
   );
 
-  const primaryError = new Error("primary launch failure");
-  let reportedCleanupError = "";
+  const primaryError = new Error('primary launch failure');
+  let reportedCleanupError = '';
   await expectCleanupFailure(
-    "primary failure preservation",
+    'primary failure preservation',
     () =>
       finishCleanup(
         async () => {
-          throw new Error("secondary cleanup failure");
+          throw new Error('secondary cleanup failure');
         },
         primaryError,
         (message) => {
@@ -375,17 +375,17 @@ async function runControlledCleanupChecks() {
       ),
     /primary launch failure/u,
   );
-  if (!reportedCleanupError.includes("secondary cleanup failure")) {
+  if (!reportedCleanupError.includes('secondary cleanup failure')) {
     throw new Error(
-      "cleanup controlled rejection did not report the secondary failure",
+      'cleanup controlled rejection did not report the secondary failure',
     );
   }
 }
 
 async function run() {
-  if (process.argv.includes("--self-test-cleanup")) {
+  if (process.argv.includes('--self-test-cleanup')) {
     await runControlledCleanupChecks();
-    console.log("Storybook cleanup controlled rejections passed.");
+    console.log('Storybook cleanup controlled rejections passed.');
     return;
   }
   await main();

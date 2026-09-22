@@ -17,7 +17,6 @@ const values = {
   timeOfDay: 'Afternoons',
 } as const;
 
-
 const meta = {
   title: 'Content/Player Preferences Card',
   excludeStories: /^normalize/u,
@@ -41,7 +40,9 @@ type StoryArgs = Readonly<{
 const normalizedText = (value: unknown, fallback: string) =>
   typeof value === 'string' && value.trim() ? value : fallback;
 
-export function normalizePlayerPreferencesCardStoryArgs(args: StoryArgs): PlayerPreferencesCardProps {
+export function normalizePlayerPreferencesCardStoryArgs(
+  args: StoryArgs,
+): PlayerPreferencesCardProps {
   const shared = {
     days: normalizedText(args.days, values.days),
     side: normalizedText(args.side, values.side),
@@ -49,10 +50,16 @@ export function normalizePlayerPreferencesCardStoryArgs(args: StoryArgs): Player
   };
   return args.content === 'profile'
     ? { ...shared, content: 'profile' }
-    : { ...shared, content: 'full', level: normalizedText(args.level, values.level) };
+    : {
+        ...shared,
+        content: 'full',
+        level: normalizedText(args.level, values.level),
+      };
 }
 
-function fixtureProps(fixture: (typeof fixtures)[number]): PlayerPreferencesCardProps {
+function fixtureProps(
+  fixture: (typeof fixtures)[number],
+): PlayerPreferencesCardProps {
   return normalizePlayerPreferencesCardStoryArgs({
     ...values,
     content: fixture.configuration.content,
@@ -63,8 +70,12 @@ export const Canonical: Story = {
   args: fixtureProps(fixtures[1]),
   render: (args) => (
     <Stack gap="space8">
-      <PlayerPreferencesCard {...normalizePlayerPreferencesCardStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[1].label}</Text>
+      <PlayerPreferencesCard
+        {...normalizePlayerPreferencesCardStoryArgs(args)}
+      />
+      <Text color="textSecondary" variant="caption">
+        {fixtures[1].label}
+      </Text>
     </Stack>
   ),
 };
@@ -107,7 +118,8 @@ export const Boundaries: Story = {
         timeOfDay="Late afternoons and early evenings"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full preference semantics remain available. Native 200% font-scale review remains a Phase 5 backstop.
+        Full preference semantics remain available. Native 200% font-scale
+        review remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),
@@ -116,13 +128,17 @@ export const Boundaries: Story = {
 export const Interactive: Story = {
   args: Canonical.args,
   parameters: {
-    applicability: 'Interactive is inapplicable: Player Preferences Card composes only static Status Chips.',
+    applicability:
+      'Interactive is inapplicable: Player Preferences Card composes only static Status Chips.',
   },
   render: (args) => (
     <Stack gap="space8">
-      <PlayerPreferencesCard {...normalizePlayerPreferencesCardStoryArgs(args)} />
+      <PlayerPreferencesCard
+        {...normalizePlayerPreferencesCardStoryArgs(args)}
+      />
       <Text color="textSecondary" variant="caption">
-        Interactive is inapplicable because the composed preference chips are static text.
+        Interactive is inapplicable because the composed preference chips are
+        static text.
       </Text>
     </Stack>
   ),

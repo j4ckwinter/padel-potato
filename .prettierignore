@@ -1,0 +1,10 @@
+node_modules/
+.expo/
+dist/
+coverage/
+storybook-static/
+.planning/
+.gsd/
+.rnstorybook/storybook.requires.ts
+package-lock.json
+*.log

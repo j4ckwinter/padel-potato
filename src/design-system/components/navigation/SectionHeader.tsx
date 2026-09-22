@@ -16,8 +16,7 @@ type SectionHeaderWithAction = Readonly<{
 }>;
 
 export type SectionHeaderProps =
-  | SectionHeaderWithoutAction
-  | SectionHeaderWithAction;
+  SectionHeaderWithoutAction | SectionHeaderWithAction;
 
 const supportedRuntimeProps = Object.freeze([
   'actionLabel',
@@ -34,7 +33,11 @@ const unsupported = (value: unknown, supported: readonly unknown[]): never => {
 function validateSectionHeaderProps(props: SectionHeaderProps) {
   const runtimeProps = props as Readonly<Record<string, unknown>>;
   for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(key, supportedRuntimeProps);
     }
   }
@@ -44,9 +47,15 @@ function validateSectionHeaderProps(props: SectionHeaderProps) {
   const hasLabel = typeof runtimeProps.actionLabel !== 'undefined';
   const hasCallback = typeof runtimeProps.onActionPress !== 'undefined';
   if (hasLabel !== hasCallback) {
-    throw new Error('SectionHeader actionLabel and onActionPress must both be present or both be absent.');
+    throw new Error(
+      'SectionHeader actionLabel and onActionPress must both be present or both be absent.',
+    );
   }
-  if (hasLabel && (typeof runtimeProps.actionLabel !== 'string' || runtimeProps.actionLabel.trim().length === 0)) {
+  if (
+    hasLabel &&
+    (typeof runtimeProps.actionLabel !== 'string' ||
+      runtimeProps.actionLabel.trim().length === 0)
+  ) {
     unsupported(runtimeProps.actionLabel, ['non-empty action label']);
   }
   if (hasCallback && typeof runtimeProps.onActionPress !== 'function') {
@@ -57,7 +66,9 @@ function validateSectionHeaderProps(props: SectionHeaderProps) {
 export function SectionHeader(props: SectionHeaderProps) {
   validateSectionHeaderProps(props);
   const hasAction = typeof props.actionLabel === 'string';
-  const actionProps = hasAction ? props as SectionHeaderWithAction : undefined;
+  const actionProps = hasAction
+    ? (props as SectionHeaderWithAction)
+    : undefined;
 
   return (
     <View style={styles.clearanceWrapper} testID="section-header">

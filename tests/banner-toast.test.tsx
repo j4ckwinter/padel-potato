@@ -38,7 +38,11 @@ import {
 
 import * as FeedbackComponents from '../src/design-system/components/feedback';
 
-import { bannerToastFixtures, emptyStateFixtures, illustratedCardFixtures } from '../src/design-system/stories/fixtures';
+import {
+  bannerToastFixtures,
+  emptyStateFixtures,
+  illustratedCardFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import IllustratedCardStories, {
   Boundaries as IllustratedCardBoundaries,
@@ -91,57 +95,74 @@ const examples = {
 describe('Banner Toast public contract', () => {});
 
 describe('Banner Toast runtime and announcement contract', () => {
-  it.each(Object.entries(examples))('renders the exact %s branch', async (_name, props) => {
-    const screen = await render(<BannerToast {...props} />);
-    const rootStyle = flattenedStyle(screen.getByTestId('banner-toast').props.style);
-    expect(rootStyle).toEqual(expect.objectContaining({
-      minHeight: props.type === 'toast' ? 72 : 88,
-      width: 352,
-    }));
-    expect(screen.getByRole('alert', {
-      name: `${props.title}. ${props.message}`,
-    })).toBeTruthy();
-    expect(screen.queryAllByRole('image')).toHaveLength(0);
-  });
+  it.each(Object.entries(examples))(
+    'renders the exact %s branch',
+    async (_name, props) => {
+      const screen = await render(<BannerToast {...props} />);
+      const rootStyle = flattenedStyle(
+        screen.getByTestId('banner-toast').props.style,
+      );
+      expect(rootStyle).toEqual(
+        expect.objectContaining({
+          minHeight: props.type === 'toast' ? 72 : 88,
+          width: 352,
+        }),
+      );
+      expect(
+        screen.getByRole('alert', {
+          name: `${props.title}. ${props.message}`,
+        }),
+      ).toBeTruthy();
+      expect(screen.queryAllByRole('image')).toHaveLength(0);
+    },
+  );
 
   it.each([
     ['error', examples.error, 'Close error message'],
     ['success', examples.success, 'Close success message'],
     ['info', examples.info, 'View booking update'],
     ['warning', examples.warning, 'View game details'],
-  ] as Array<[string, BannerToastProps, string]>)('emits the %s branch intent once from a named 44-point target', async (
-    _name,
-    props,
-    actionName,
-  ) => {
-    const screen = await render(<BannerToast {...props} />);
-    const action = screen.getByRole('button', { name: actionName });
-    expect(flattenedStyle(action.props.style)).toEqual(expect.objectContaining({
-      minHeight: 44,
-      minWidth: 44,
-    }));
-    await userEvent.setup().press(action);
-    const callback = props.type === 'toast'
-      ? props.onClose
-      : props.style === 'info'
-        ? props.onViewBookingUpdate
-        : props.onViewGameDetails;
-    expect(callback).toHaveBeenCalledTimes(1);
-  });
+  ] as Array<[string, BannerToastProps, string]>)(
+    'emits the %s branch intent once from a named 44-point target',
+    async (_name, props, actionName) => {
+      const screen = await render(<BannerToast {...props} />);
+      const action = screen.getByRole('button', { name: actionName });
+      expect(flattenedStyle(action.props.style)).toEqual(
+        expect.objectContaining({
+          minHeight: 44,
+          minWidth: 44,
+        }),
+      );
+      await userEvent.setup().press(action);
+      const callback =
+        props.type === 'toast'
+          ? props.onClose
+          : props.style === 'info'
+            ? props.onViewBookingUpdate
+            : props.onViewGameDetails;
+      expect(callback).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('preserves one stable announcement boundary and content across unrelated rerenders', async () => {
     const onClose = jest.fn();
-    const screen = await render(<BannerToast {...examples.success} onClose={onClose} />);
+    const screen = await render(
+      <BannerToast {...examples.success} onClose={onClose} />,
+    );
     const before = screen.getByTestId('banner-toast-announcement');
     expect(before.props.accessibilityLiveRegion).toBe('polite');
     expect(before.props.accessibilityLabel).toBe(
       'Game created. Your game is ready to share.',
     );
 
-    await screen.rerender(<BannerToast {...examples.success} onClose={onClose} />);
+    await screen.rerender(
+      <BannerToast {...examples.success} onClose={onClose} />,
+    );
     const after = screen.getByTestId('banner-toast-announcement');
     expect(after).toBe(before);
-    expect(after.props.accessibilityLabel).toBe(before.props.accessibilityLabel);
+    expect(after.props.accessibilityLabel).toBe(
+      before.props.accessibilityLabel,
+    );
   });
 
   it.each([
@@ -157,13 +178,19 @@ describe('Banner Toast runtime and announcement contract', () => {
     { ...examples.warning, style: 'warning', type: 'toast' },
     { ...examples.info, extra: true },
     { ...examples.info, style: 'unknown' },
-  ])('rejects unsupported content, callbacks, properties, or tuples %#', (props) => {
-    expect(() => BannerToast(invalidProps(props))).toThrow(/Unsupported Banner Toast/u);
-  });
+  ])(
+    'rejects unsupported content, callbacks, properties, or tuples %#',
+    (props) => {
+      expect(() => BannerToast(invalidProps(props))).toThrow(
+        /Unsupported Banner Toast/u,
+      );
+    },
+  );
 
   it('retains complete long Unicode announcement content and a reachable action', async () => {
     const title = 'Booking update for Łucía, Nguyễn, and 東京';
-    const message = 'Court details have changed for an exceptionally long Tuesday evening social game, including the entrance instructions.';
+    const message =
+      'Court details have changed for an exceptionally long Tuesday evening social game, including the entrance instructions.';
     const screen = await render(
       <BannerToast
         message={message}
@@ -173,11 +200,17 @@ describe('Banner Toast runtime and announcement contract', () => {
         type="banner"
       />,
     );
-    expect(screen.getByRole('alert', { name: `${title}. ${message}` })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'View booking update' })).toBeTruthy();
-    expect(screen.getByTestId('banner-toast-copy', {
-      includeHiddenElements: true,
-    }).props.style).toEqual(
+    expect(
+      screen.getByRole('alert', { name: `${title}. ${message}` }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'View booking update' }),
+    ).toBeTruthy();
+    expect(
+      screen.getByTestId('banner-toast-copy', {
+        includeHiddenElements: true,
+      }).props.style,
+    ).toEqual(
       expect.arrayContaining([expect.objectContaining({ flexShrink: 1 })]),
     );
   });
@@ -208,13 +241,15 @@ describe('Banner Toast Storybook contract', () => {
     expect(normalizeBannerToastStoryArgs({ style: 'success' })).toEqual(
       expect.objectContaining({ style: 'success', type: 'toast' }),
     );
-    expect(normalizeBannerToastStoryArgs({
-      onClose: jest.fn(),
-      onViewBookingUpdate: jest.fn(),
-      onViewGameDetails: jest.fn(),
-      style: 'info',
-      type: 'toast',
-    })).toEqual(expect.objectContaining({ style: 'info', type: 'banner' }));
+    expect(
+      normalizeBannerToastStoryArgs({
+        onClose: jest.fn(),
+        onViewBookingUpdate: jest.fn(),
+        onViewGameDetails: jest.fn(),
+        style: 'info',
+        type: 'toast',
+      }),
+    ).toEqual(expect.objectContaining({ style: 'info', type: 'banner' }));
   });
 
   it('renders every supported configuration in order with readable labels', () => {
@@ -246,6 +281,8 @@ describe('Banner Toast Storybook contract', () => {
       {} as never,
       {} as never,
     ) as React.ReactElement;
-    expect((interactive.type as { name?: string }).name).toBe('InteractiveBannerToastHarness');
+    expect((interactive.type as { name?: string }).name).toBe(
+      'InteractiveBannerToastHarness',
+    );
   });
 });

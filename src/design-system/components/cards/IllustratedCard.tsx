@@ -16,7 +16,10 @@ export type IllustratedCardParticipant = Readonly<{
   slot: 1 | 2 | 3 | 4;
 }>;
 
-type TwoParticipants = readonly [IllustratedCardParticipant, IllustratedCardParticipant];
+type TwoParticipants = readonly [
+  IllustratedCardParticipant,
+  IllustratedCardParticipant,
+];
 type FourParticipants = readonly [
   IllustratedCardParticipant,
   IllustratedCardParticipant,
@@ -30,12 +33,29 @@ type Content = Readonly<{
   title: string;
 }>;
 
-export type IllustratedCardProps = Content & (
-  | Readonly<{ onViewGame: () => void; participants: FourParticipants; type: 'nextGame' }>
-  | Readonly<{ onViewResults: () => void; participants: FourParticipants; type: 'matchResult' }>
-  | Readonly<{ onInvitePlayers: () => void; participants: TwoParticipants; type: 'invitePlayers' }>
-  | Readonly<{ onShareGame: () => void; participants: TwoParticipants; type: 'gameCreated' }>
-);
+export type IllustratedCardProps = Content &
+  (
+    | Readonly<{
+        onViewGame: () => void;
+        participants: FourParticipants;
+        type: 'nextGame';
+      }>
+    | Readonly<{
+        onViewResults: () => void;
+        participants: FourParticipants;
+        type: 'matchResult';
+      }>
+    | Readonly<{
+        onInvitePlayers: () => void;
+        participants: TwoParticipants;
+        type: 'invitePlayers';
+      }>
+    | Readonly<{
+        onShareGame: () => void;
+        participants: TwoParticipants;
+        type: 'gameCreated';
+      }>
+  );
 
 const supportedRuntimeProps = Object.freeze([
   'detailPrimary',
@@ -76,9 +96,9 @@ function validateText(value: unknown, field: string) {
 
 function validateInitials(value: unknown, field: string) {
   if (
-    typeof value !== 'string'
-    || value.trim().length < 1
-    || Array.from(value.trim()).length > 3
+    typeof value !== 'string' ||
+    value.trim().length < 1 ||
+    Array.from(value.trim()).length > 3
   ) {
     unsupported(`${field} must contain one to three visible characters`);
   }
@@ -87,22 +107,37 @@ function validateInitials(value: unknown, field: string) {
 function validateIllustratedCardProps(props: IllustratedCardProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(`unsupported property ${key}`);
     }
   }
   if (!supportedTypes.includes(runtime.type as IllustratedCardProps['type'])) {
     unsupported(`unknown type ${String(runtime.type)}`);
   }
-  for (const field of ['detailPrimary', 'detailSecondary', 'eyebrow', 'title'] as const) {
+  for (const field of [
+    'detailPrimary',
+    'detailSecondary',
+    'eyebrow',
+    'title',
+  ] as const) {
     validateText(runtime[field], field);
   }
 
-  const expectedSlots = runtime.type === 'nextGame' || runtime.type === 'matchResult'
-    ? [1, 2, 3, 4]
-    : [1, 2];
-  if (!Array.isArray(runtime.participants) || runtime.participants.length !== expectedSlots.length) {
-    unsupported(`${String(runtime.type)} participants must occupy slots ${expectedSlots.join(', ')}`);
+  const expectedSlots =
+    runtime.type === 'nextGame' || runtime.type === 'matchResult'
+      ? [1, 2, 3, 4]
+      : [1, 2];
+  if (
+    !Array.isArray(runtime.participants) ||
+    runtime.participants.length !== expectedSlots.length
+  ) {
+    unsupported(
+      `${String(runtime.type)} participants must occupy slots ${expectedSlots.join(', ')}`,
+    );
   }
   (runtime.participants as unknown[]).forEach((value, index) => {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
@@ -110,27 +145,42 @@ function validateIllustratedCardProps(props: IllustratedCardProps) {
     }
     const participant = value as Record<string, unknown>;
     const keys = Object.keys(participant);
-    if (keys.length !== 3 || !['initials', 'name', 'slot'].every((key) => keys.includes(key))) {
-      unsupported(`participant ${index + 1} must contain only initials, name, and slot`);
+    if (
+      keys.length !== 3 ||
+      !['initials', 'name', 'slot'].every((key) => keys.includes(key))
+    ) {
+      unsupported(
+        `participant ${index + 1} must contain only initials, name, and slot`,
+      );
     }
     validateInitials(participant.initials, `participant ${index + 1} initials`);
     validateText(participant.name, `participant ${index + 1} name`);
     if (participant.slot !== expectedSlots[index]) {
-      unsupported(`participant order must occupy slots ${expectedSlots.join(', ')}`);
+      unsupported(
+        `participant order must occupy slots ${expectedSlots.join(', ')}`,
+      );
     }
   });
 
-  const callbackKey = runtime.type === 'nextGame'
-    ? 'onViewGame'
-    : runtime.type === 'matchResult'
-      ? 'onViewResults'
-      : runtime.type === 'invitePlayers'
-        ? 'onInvitePlayers'
-        : 'onShareGame';
+  const callbackKey =
+    runtime.type === 'nextGame'
+      ? 'onViewGame'
+      : runtime.type === 'matchResult'
+        ? 'onViewResults'
+        : runtime.type === 'invitePlayers'
+          ? 'onInvitePlayers'
+          : 'onShareGame';
   if (typeof runtime[callbackKey] !== 'function') {
-    unsupported(`${callbackKey} must be a function for ${String(runtime.type)}`);
+    unsupported(
+      `${callbackKey} must be a function for ${String(runtime.type)}`,
+    );
   }
-  for (const key of ['onInvitePlayers', 'onShareGame', 'onViewGame', 'onViewResults'] as const) {
+  for (const key of [
+    'onInvitePlayers',
+    'onShareGame',
+    'onViewGame',
+    'onViewResults',
+  ] as const) {
     if (key !== callbackKey && typeof runtime[key] !== 'undefined') {
       unsupported(`${key} is not available for ${String(runtime.type)}`);
     }
@@ -139,10 +189,14 @@ function validateIllustratedCardProps(props: IllustratedCardProps) {
 
 function Artwork({ type }: Pick<IllustratedCardProps, 'type'>) {
   switch (type) {
-    case 'gameCreated': return <GameCreatedIllustratedCardArtwork />;
-    case 'invitePlayers': return <InvitePlayersIllustratedCardArtwork />;
-    case 'matchResult': return <MatchResultIllustratedCardArtwork />;
-    case 'nextGame': return <NextGameIllustratedCardArtwork />;
+    case 'gameCreated':
+      return <GameCreatedIllustratedCardArtwork />;
+    case 'invitePlayers':
+      return <InvitePlayersIllustratedCardArtwork />;
+    case 'matchResult':
+      return <MatchResultIllustratedCardArtwork />;
+    case 'nextGame':
+      return <NextGameIllustratedCardArtwork />;
   }
 }
 
@@ -150,7 +204,11 @@ function CardAction({
   accessibilityLabel,
   onPress,
   visibleLabel,
-}: Readonly<{ accessibilityLabel: string; onPress: () => void; visibleLabel: string }>) {
+}: Readonly<{
+  accessibilityLabel: string;
+  onPress: () => void;
+  visibleLabel: string;
+}>) {
   return (
     <Pressable
       accessibilityLabel={accessibilityLabel}
@@ -171,7 +229,9 @@ function CardAction({
   );
 }
 
-function ParticipantSummary({ participants }: Readonly<{
+function ParticipantSummary({
+  participants,
+}: Readonly<{
   participants: readonly IllustratedCardParticipant[];
 }>) {
   return (
@@ -199,21 +259,39 @@ function ParticipantSummary({ participants }: Readonly<{
 export function IllustratedCard(props: IllustratedCardProps) {
   validateIllustratedCardProps(props);
   const nextGame = props.type === 'nextGame';
-  const action = props.type === 'nextGame'
-    ? { label: 'View game', onPress: props.onViewGame, visible: 'View' }
-    : props.type === 'matchResult'
-      ? { label: 'View results', onPress: props.onViewResults, visible: 'Results' }
-      : props.type === 'invitePlayers'
-        ? { label: 'Invite players', onPress: props.onInvitePlayers, visible: 'Invite' }
-        : { label: 'Share game', onPress: props.onShareGame, visible: 'Share' };
+  const action =
+    props.type === 'nextGame'
+      ? { label: 'View game', onPress: props.onViewGame, visible: 'View' }
+      : props.type === 'matchResult'
+        ? {
+            label: 'View results',
+            onPress: props.onViewResults,
+            visible: 'Results',
+          }
+        : props.type === 'invitePlayers'
+          ? {
+              label: 'Invite players',
+              onPress: props.onInvitePlayers,
+              visible: 'Invite',
+            }
+          : {
+              label: 'Share game',
+              onPress: props.onShareGame,
+              visible: 'Share',
+            };
 
   return (
-    <View style={[styles.root, nextGame ? styles.nextGame : undefined]} testID="illustrated-card">
+    <View
+      style={[styles.root, nextGame ? styles.nextGame : undefined]}
+      testID="illustrated-card"
+    >
       <View style={styles.copy}>
         <Text color={nextGame ? 'accent' : 'textSecondary'} variant="label">
           {props.eyebrow.trim()}
         </Text>
-        <Text color={nextGame ? 'surface' : 'ink'} variant="heading">{props.title.trim()}</Text>
+        <Text color={nextGame ? 'surface' : 'ink'} variant="heading">
+          {props.title.trim()}
+        </Text>
         <Text color={nextGame ? 'surface' : 'textSecondary'} variant="body">
           {props.detailPrimary.trim()}
         </Text>
@@ -221,7 +299,9 @@ export function IllustratedCard(props: IllustratedCardProps) {
           {props.detailSecondary.trim()}
         </Text>
       </View>
-      <View style={styles.artwork}><Artwork type={props.type} /></View>
+      <View style={styles.artwork}>
+        <Artwork type={props.type} />
+      </View>
       <View style={styles.footer}>
         <ParticipantSummary participants={props.participants} />
         <CardAction

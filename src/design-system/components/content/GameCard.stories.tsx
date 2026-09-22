@@ -23,7 +23,6 @@ const content = {
   venue: 'Padel United · Court 3',
 } as const;
 
-
 type StoryArgs = Readonly<{
   configuration?: unknown;
   onViewGame?: unknown;
@@ -34,9 +33,9 @@ type StoryArgs = Readonly<{
 }>;
 
 export const gameCardStoryConfigurations = Object.freeze(
-  fixtures.map(({ configuration }) => (
-    `${configuration.type}/${configuration.state}`
-  )),
+  fixtures.map(
+    ({ configuration }) => `${configuration.type}/${configuration.state}`,
+  ),
 );
 
 const meta = {
@@ -54,42 +53,88 @@ export default meta;
 type Story = StoryObj<StoryArgs>;
 
 export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
-  const title = typeof args.title === 'string' && args.title.trim() ? args.title : content.title;
-  const venue = typeof args.venue === 'string' && args.venue.trim() ? args.venue : content.venue;
-  const time = typeof args.time === 'string' && args.time.trim() ? args.time : content.time;
-  const onViewGame = typeof args.onViewGame === 'function'
-    ? args.onViewGame as () => void
-    : () => undefined;
-  const onViewResults = typeof args.onViewResults === 'function'
-    ? args.onViewResults as () => void
-    : () => undefined;
+  const title =
+    typeof args.title === 'string' && args.title.trim()
+      ? args.title
+      : content.title;
+  const venue =
+    typeof args.venue === 'string' && args.venue.trim()
+      ? args.venue
+      : content.venue;
+  const time =
+    typeof args.time === 'string' && args.time.trim()
+      ? args.time
+      : content.time;
+  const onViewGame =
+    typeof args.onViewGame === 'function'
+      ? (args.onViewGame as () => void)
+      : () => undefined;
+  const onViewResults =
+    typeof args.onViewResults === 'function'
+      ? (args.onViewResults as () => void)
+      : () => undefined;
   switch (args.configuration) {
-    case 'compact/default': return { title, venue, variant: 'compact' };
-    case 'completed/default': return { onViewResults, participants, time, title, variant: 'completed', venue };
-    case 'open/full': return { full: true, onViewGame, participants, time, title, variant: 'open', venue };
-    case 'open/default': return {
-      full: false,
-      onViewGame,
-      participants: [participants[0], participants[1], participants[2]],
-      time,
-      title,
-      variant: 'open',
-      venue,
-    };
-    case 'next/default': return { onViewGame, participants, time, title, variant: 'next', venue };
-    default: throw new Error(`Unsupported Game Card story configuration: ${String(args.configuration)}.`);
+    case 'compact/default':
+      return { title, venue, variant: 'compact' };
+    case 'completed/default':
+      return {
+        onViewResults,
+        participants,
+        time,
+        title,
+        variant: 'completed',
+        venue,
+      };
+    case 'open/full':
+      return {
+        full: true,
+        onViewGame,
+        participants,
+        time,
+        title,
+        variant: 'open',
+        venue,
+      };
+    case 'open/default':
+      return {
+        full: false,
+        onViewGame,
+        participants: [participants[0], participants[1], participants[2]],
+        time,
+        title,
+        variant: 'open',
+        venue,
+      };
+    case 'next/default':
+      return { onViewGame, participants, time, title, variant: 'next', venue };
+    default:
+      throw new Error(
+        `Unsupported Game Card story configuration: ${String(args.configuration)}.`,
+      );
   }
 }
 
 function fixtureProps(fixture: (typeof fixtures)[number]): GameCardProps {
   const { state, type } = fixture.configuration;
-  if (type === 'compact') return { title: content.title, venue: content.venue, variant: 'compact' };
+  if (type === 'compact')
+    return { title: content.title, venue: content.venue, variant: 'compact' };
   if (type === 'completed') {
-    return { ...content, onViewResults: () => undefined, participants, variant: 'completed' };
+    return {
+      ...content,
+      onViewResults: () => undefined,
+      participants,
+      variant: 'completed',
+    };
   }
   if (type === 'open') {
     return state === 'full'
-      ? { ...content, full: true, onViewGame: () => undefined, participants, variant: 'open' }
+      ? {
+          ...content,
+          full: true,
+          onViewGame: () => undefined,
+          participants,
+          variant: 'open',
+        }
       : {
           ...content,
           full: false,
@@ -98,15 +143,26 @@ function fixtureProps(fixture: (typeof fixtures)[number]): GameCardProps {
           variant: 'open',
         };
   }
-  return { ...content, onViewGame: () => undefined, participants, variant: 'next' };
+  return {
+    ...content,
+    onViewGame: () => undefined,
+    participants,
+    variant: 'next',
+  };
 }
 
 export const Canonical: Story = {
-  args: { ...content, configuration: 'next/default', onViewGame: () => undefined },
+  args: {
+    ...content,
+    configuration: 'next/default',
+    onViewGame: () => undefined,
+  },
   render: (args) => (
     <Stack gap="space8">
       <GameCard {...normalizeGameCardStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[4].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[4].label}
+      </Text>
     </Stack>
   ),
 };
@@ -151,7 +207,8 @@ export const Boundaries: Story = {
         venue="Padel United International Centre · The exceptionally long Court 3 name"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full title and venue semantics remain available. Native 200% font-scale review remains a Phase 5 backstop.
+        Full title and venue semantics remain available. Native 200% font-scale
+        review remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),

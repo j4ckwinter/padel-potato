@@ -30,15 +30,23 @@ const unsupported = (value: unknown, supported: readonly unknown[]): never => {
 };
 
 function validOptions(options: unknown): options is SegmentOptions {
-  return Array.isArray(options)
-    && [2, 3, 4].includes(options.length)
-    && options.every((option) => typeof option === 'string' && option.trim().length > 0)
-    && new Set(options).size === options.length;
+  return (
+    Array.isArray(options) &&
+    [2, 3, 4].includes(options.length) &&
+    options.every(
+      (option) => typeof option === 'string' && option.trim().length > 0,
+    ) &&
+    new Set(options).size === options.length
+  );
 }
 
 function validateSegmentedControlProps(props: SegmentedControlProps) {
   for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(key, supportedRuntimeProps);
     }
   }
@@ -51,7 +59,10 @@ function validateSegmentedControlProps(props: SegmentedControlProps) {
   if (typeof props.onValueChange !== 'function') {
     unsupported(props.onValueChange, ['function']);
   }
-  if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
+  if (
+    typeof props.disabled !== 'undefined' &&
+    typeof props.disabled !== 'boolean'
+  ) {
     unsupported(props.disabled, [true, false]);
   }
 }

@@ -65,21 +65,23 @@ describe('Pressable interaction contract', () => {
     const screen = await render(<Pressable {...accessibilityProps} />);
     const subject = screen.getByTestId('subject');
 
-    expect(subject.props).toEqual(expect.objectContaining({
-      accessibilityIgnoresInvertColors: true,
-      accessibilityLabel: 'Create a game',
-      accessibilityLabelledBy: ['heading', 'detail'],
-      accessibilityLargeContentTitle: 'Create game',
-      accessibilityLiveRegion: 'polite',
-      accessibilityRespondsToUserInteraction: true,
-      accessibilityShowsLargeContentViewer: true,
-      accessibilityViewIsModal: true,
-      'aria-hidden': false,
-      'aria-labelledby': 'heading',
-      'aria-modal': true,
-      role: 'button',
-      screenReaderFocusable: true,
-    }));
+    expect(subject.props).toEqual(
+      expect.objectContaining({
+        accessibilityIgnoresInvertColors: true,
+        accessibilityLabel: 'Create a game',
+        accessibilityLabelledBy: ['heading', 'detail'],
+        accessibilityLargeContentTitle: 'Create game',
+        accessibilityLiveRegion: 'polite',
+        accessibilityRespondsToUserInteraction: true,
+        accessibilityShowsLargeContentViewer: true,
+        accessibilityViewIsModal: true,
+        'aria-hidden': false,
+        'aria-labelledby': 'heading',
+        'aria-modal': true,
+        role: 'button',
+        screenReaderFocusable: true,
+      }),
+    );
     expect(subject.props.accessibilityState).toEqual({
       busy: false,
       checked: 'mixed',
@@ -104,7 +106,8 @@ describe('Pressable interaction contract', () => {
       | 'unstable_pressDelay',
       keyof PressableProps
     >;
-    const publicContractIsClosed: EscapeRoute extends never ? true : false = true;
+    const publicContractIsClosed: EscapeRoute extends never ? true : false =
+      true;
     expect(publicContractIsClosed).toBe(true);
 
     for (const key of [
@@ -114,8 +117,13 @@ describe('Pressable interaction contract', () => {
       'pressRetentionOffset',
       'unstable_pressDelay',
     ]) {
-      expect(() => Pressable({ [key]: true } as unknown as PressableProps)).toThrow(
-        new RegExp(`Unsupported design-system value: ${key}\\. Supported values:`, 'u'),
+      expect(() =>
+        Pressable({ [key]: true } as unknown as PressableProps),
+      ).toThrow(
+        new RegExp(
+          `Unsupported design-system value: ${key}\\. Supported values:`,
+          'u',
+        ),
       );
     }
   });
@@ -200,12 +208,10 @@ describe('Pressable interaction contract', () => {
     ['controlHeight40', 40, 2],
     ['controlHeight44', 44, 0],
     ['controlHeight48', 48, 0],
-  ] as Array<[PressableSize, number, number]>) (
+  ] as Array<[PressableSize, number, number]>)(
     '%s retains a %i visual frame and declares a minimum 44-point target',
     async (size, visualSize, expansion) => {
-      const screen = await render(
-        <Pressable size={size} testID="subject" />,
-      );
+      const screen = await render(<Pressable size={size} testID="subject" />);
       const subject = screen.getByTestId('subject');
       const style = flattenedStyle(subject.props.style);
 
@@ -226,11 +232,7 @@ describe('Pressable interaction contract', () => {
     const onBlur = jest.fn();
     const onFocus = jest.fn();
     const screen = await render(
-      <Pressable
-        onBlur={onBlur}
-        onFocus={onFocus}
-        testID="subject"
-      />,
+      <Pressable onBlur={onBlur} onFocus={onFocus} testID="subject" />,
     );
     const subject = screen.getByTestId('subject');
 
@@ -314,10 +316,12 @@ describe('Pressable interaction contract', () => {
   it('rejects unsupported size and state values without a fallback', () => {
     expect(() =>
       Pressable({ size: 'controlHeight42' as PressableSize }),
-    ).toThrow(/Unsupported design-system value: controlHeight42\. Supported values:/u);
-    expect(() =>
-      Pressable({ loading: 'yes' as unknown as boolean }),
-    ).toThrow(/Unsupported design-system value: yes\. Supported values: true, false/u);
+    ).toThrow(
+      /Unsupported design-system value: controlHeight42\. Supported values:/u,
+    );
+    expect(() => Pressable({ loading: 'yes' as unknown as boolean })).toThrow(
+      /Unsupported design-system value: yes\. Supported values: true, false/u,
+    );
   });
 
   it('does not invent a role or product semantic state', async () => {

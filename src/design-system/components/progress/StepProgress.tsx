@@ -18,8 +18,10 @@ function unsupported(value: unknown): never {
 function validateStepProgressProps(props: StepProgressProps) {
   const runtime = props as unknown as Record<string, unknown>;
   const keys = Object.keys(runtime);
-  if (keys.length !== 1 || keys[0] !== 'value') unsupported(`properties ${keys.join(', ')}`);
-  if (!supportedValues.includes(runtime.value as StepProgressValue)) unsupported(runtime.value);
+  if (keys.length !== 1 || keys[0] !== 'value')
+    unsupported(`properties ${keys.join(', ')}`);
+  if (!supportedValues.includes(runtime.value as StepProgressValue))
+    unsupported(runtime.value);
 }
 
 export function StepProgress(props: StepProgressProps) {

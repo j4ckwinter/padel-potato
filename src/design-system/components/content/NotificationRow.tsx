@@ -12,10 +12,11 @@ type NotificationContent = Readonly<{
   title: string;
 }>;
 
-export type NotificationRowProps = NotificationContent & (
-  | Readonly<{ read: boolean; type: 'game' | 'social' }>
-  | Readonly<{ read: false; type: 'booking' | 'warning' }>
-);
+export type NotificationRowProps = NotificationContent &
+  (
+    | Readonly<{ read: boolean; type: 'game' | 'social' }>
+    | Readonly<{ read: false; type: 'booking' | 'warning' }>
+  );
 
 const supportedRuntimeProps = Object.freeze([
   'message',
@@ -55,18 +56,24 @@ function validateText(value: unknown, field: string) {
 function validateNotificationRowProps(props: NotificationRowProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(`unsupported property ${key}`);
     }
   }
   validateText(runtime.title, 'title');
   validateText(runtime.message, 'message');
   validateText(runtime.timestamp, 'timestamp');
-  if (typeof runtime.onPress !== 'function') unsupported('onPress must be a function');
-  if (typeof runtime.read !== 'boolean') unsupported('read must be an explicit boolean');
+  if (typeof runtime.onPress !== 'function')
+    unsupported('onPress must be a function');
+  if (typeof runtime.read !== 'boolean')
+    unsupported('read must be an explicit boolean');
   if (
-    typeof runtime.type !== 'string'
-    || !Object.prototype.hasOwnProperty.call(iconByType, runtime.type)
+    typeof runtime.type !== 'string' ||
+    !Object.prototype.hasOwnProperty.call(iconByType, runtime.type)
   ) {
     unsupported(`unknown type ${String(runtime.type)}`);
   }
@@ -102,11 +109,17 @@ export function NotificationRow(props: NotificationRowProps) {
           <Icon name={iconByType[props.type]} />
         </View>
         <View style={styles.copy}>
-          <Text numberOfLines={1} variant="bodyStrong">{title}</Text>
-          <Text color="textSecondary" numberOfLines={2} variant="caption">{message}</Text>
+          <Text numberOfLines={1} variant="bodyStrong">
+            {title}
+          </Text>
+          <Text color="textSecondary" numberOfLines={2} variant="caption">
+            {message}
+          </Text>
         </View>
         <View style={styles.meta}>
-          <Text color="textSecondary" variant="caption">{timestamp}</Text>
+          <Text color="textSecondary" variant="caption">
+            {timestamp}
+          </Text>
           {!props.read ? <View style={styles.unreadDot} /> : null}
         </View>
       </View>

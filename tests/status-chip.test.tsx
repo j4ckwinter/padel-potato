@@ -23,7 +23,7 @@ import {
   type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
 
-import {  } from '../src/design-system/stories/fixtures';
+import {} from '../src/design-system/stories/fixtures';
 
 import AvatarGroupStories, {
   Boundaries as AvatarGroupBoundaries,
@@ -76,7 +76,11 @@ describe('Status Chip runtime and semantic contract', () => {
     'renders %s/default as static labelled content',
     async (style) => {
       const screen = await render(
-        <StatusChip label={`${style} status`} style={style} variant="default" />,
+        <StatusChip
+          label={`${style} status`}
+          style={style}
+          variant="default"
+        />,
       );
       expect(screen.getByText(`${style} status`)).toBeTruthy();
       expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
@@ -114,10 +118,18 @@ describe('Status Chip runtime and semantic contract', () => {
 
   it.each([
     { label: 'Wrong', style: 'warning', variant: 'selectable' },
-    { label: 'Wrong', onSelectedChange: jest.fn(), selected: true, style: 'success', variant: 'default' },
+    {
+      label: 'Wrong',
+      onSelectedChange: jest.fn(),
+      selected: true,
+      style: 'success',
+      variant: 'default',
+    },
     { label: 'Wrong', style: 'success', variant: 'disabled' },
     { label: '', style: 'neutral', variant: 'default' },
   ])('rejects an unsupported chip tuple %#', (props) => {
-    expect(() => StatusChip(invalidProps(props))).toThrow(/Unsupported Status Chip/u);
+    expect(() => StatusChip(invalidProps(props))).toThrow(
+      /Unsupported Status Chip/u,
+    );
   });
 });

@@ -36,24 +36,30 @@ type Story = StoryObj<typeof meta>;
 type SegmentedControlStoryArgs = Readonly<Record<string, unknown>>;
 
 const validStoryOptions = (options: unknown): options is SegmentOptions =>
-  Array.isArray(options)
-  && [2, 3, 4].includes(options.length)
-  && options.every((option) => typeof option === 'string' && option.trim().length > 0)
-  && new Set(options).size === options.length;
+  Array.isArray(options) &&
+  [2, 3, 4].includes(options.length) &&
+  options.every(
+    (option) => typeof option === 'string' && option.trim().length > 0,
+  ) &&
+  new Set(options).size === options.length;
 
 export const normalizeSegmentedControlStoryArgs = (
   args: SegmentedControlStoryArgs,
 ): SegmentedControlProps => {
-  const options = validStoryOptions(args.options) ? args.options : optionsByCount[2];
+  const options = validStoryOptions(args.options)
+    ? args.options
+    : optionsByCount[2];
   return {
     disabled: args.disabled === true || undefined,
-    onValueChange: typeof args.onValueChange === 'function'
-      ? args.onValueChange as (value: string) => void
-      : noop,
+    onValueChange:
+      typeof args.onValueChange === 'function'
+        ? (args.onValueChange as (value: string) => void)
+        : noop,
     options,
-    value: typeof args.value === 'string' && options.includes(args.value)
-      ? args.value
-      : options[0],
+    value:
+      typeof args.value === 'string' && options.includes(args.value)
+        ? args.value
+        : options[0],
   };
 };
 
@@ -102,8 +108,17 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space8">
-      <SegmentedControl onValueChange={noop} options={optionsByCount[3]} value="Past" />
-      <SegmentedControl disabled onValueChange={noop} options={optionsByCount[3]} value="Upcoming" />
+      <SegmentedControl
+        onValueChange={noop}
+        options={optionsByCount[3]}
+        value="Past"
+      />
+      <SegmentedControl
+        disabled
+        onValueChange={noop}
+        options={optionsByCount[3]}
+        value="Upcoming"
+      />
     </Stack>
   ),
 };
@@ -123,7 +138,9 @@ export const Boundaries: Story = {
         value="Open games nearby"
       />
       <Text color="textSecondary" variant="caption">
-        long labels share the exact 350-point native width through one deterministic equal-allocation row. Adjacent 48-point targets do not overlap; 200% text and native clipping proof remains Phase 5.
+        long labels share the exact 350-point native width through one
+        deterministic equal-allocation row. Adjacent 48-point targets do not
+        overlap; 200% text and native clipping proof remains Phase 5.
       </Text>
     </Stack>
   ),
@@ -133,7 +150,11 @@ export function InteractiveSegmentedControlHarness() {
   const options = optionsByCount[3] satisfies SegmentOptions;
   const [value, setValue] = useState<string>(options[0]);
   return (
-    <SegmentedControl onValueChange={setValue} options={options} value={value} />
+    <SegmentedControl
+      onValueChange={setValue}
+      options={options}
+      value={value}
+    />
   );
 }
 

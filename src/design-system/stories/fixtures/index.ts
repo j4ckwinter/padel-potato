@@ -26,5 +26,10 @@ export { playerPreferencesCardFixtures } from './playerPreferencesCard';
 export { bannerToastFixtures } from './bannerToast';
 export { emptyStateFixtures } from './emptyState';
 export { illustratedCardFixtures } from './illustratedCard';
-export const buttonStyles = Object.freeze(['primary', 'secondary', 'destructive', 'ghost'] as const);
+export const buttonStyles = Object.freeze([
+  'primary',
+  'secondary',
+  'destructive',
+  'ghost',
+] as const);
 export const buttonSizes = Object.freeze([40, 48] as const);

@@ -20,7 +20,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Canonical: Story = {
-  args: { accessibilityLabel: 'Add', color: 'ink', name: 'add', size: 'iconSize20' },
+  args: {
+    accessibilityLabel: 'Add',
+    color: 'ink',
+    name: 'add',
+    size: 'iconSize20',
+  },
   render: (args) => (
     <Stack gap="space8">
       <Icon {...args} />
@@ -54,9 +59,14 @@ export const Boundaries: Story = {
   render: () => (
     <Stack gap="space8">
       <Icon name="add" testID="decorative-icon" />
-      <Icon accessibilityLabel="Labelled icon" name="add" testID="labelled-icon" />
+      <Icon
+        accessibilityLabel="Labelled icon"
+        name="add"
+        testID="labelled-icon"
+      />
       <Text variant="caption">
-        Icons remain at the sole authored iconSize20 boundary; consumers scale the surrounding layout, not the geometry.
+        Icons remain at the sole authored iconSize20 boundary; consumers scale
+        the surrounding layout, not the geometry.
       </Text>
     </Stack>
   ),

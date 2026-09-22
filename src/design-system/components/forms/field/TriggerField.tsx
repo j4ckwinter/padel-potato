@@ -22,13 +22,16 @@ function triggerIcon(type: TriggerFieldType) {
 export function TriggerField(props: TriggerFieldProps) {
   const status = props.status ?? 'default';
   const hasValue = isNonEmptyString(props.value);
-  const displayedValue = hasValue ? props.value : props.placeholder as string;
+  const displayedValue = hasValue ? props.value : (props.placeholder as string);
 
   return (
     <FieldShell props={props}>
       <Pressable
         accessibilityHint={fieldAccessibilityHint(props)}
-        accessibilityLabel={fieldAccessibleName(props.label, props.required ?? false)}
+        accessibilityLabel={fieldAccessibleName(
+          props.label,
+          props.required ?? false,
+        )}
         accessibilityRole="button"
         accessibilityValue={{ text: displayedValue }}
         disabled={props.disabled}
@@ -41,9 +44,16 @@ export function TriggerField(props: TriggerFieldProps) {
           accessible={false}
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
-          style={[fieldStyles.triggerContent, { borderColor: fieldBorderColor(status) }]}
+          style={[
+            fieldStyles.triggerContent,
+            { borderColor: fieldBorderColor(status) },
+          ]}
         >
-          <Text color={hasValue ? 'ink' : 'muted'} style={fieldStyles.triggerText} variant="body">
+          <Text
+            color={hasValue ? 'ink' : 'muted'}
+            style={fieldStyles.triggerText}
+            variant="body"
+          >
             {displayedValue}
           </Text>
           <Icon name={triggerIcon(props.type)} />

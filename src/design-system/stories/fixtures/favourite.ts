@@ -1,17 +1,17 @@
 // Story-only data for favourite.
 export const favouriteFixtures = [
   {
-    "label": "Selected",
-    "configuration": {
-      "checked": true
+    label: 'Selected',
+    configuration: {
+      checked: true,
     },
-    "copy": []
+    copy: [],
   },
   {
-    "label": "Default",
-    "configuration": {
-      "checked": false
+    label: 'Default',
+    configuration: {
+      checked: false,
     },
-    "copy": []
-  }
+    copy: [],
+  },
 ] as const;

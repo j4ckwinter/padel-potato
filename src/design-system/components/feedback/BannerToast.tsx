@@ -11,23 +11,25 @@ type BannerToastContent = Readonly<{
   title: string;
 }>;
 
-type ToastProps = BannerToastContent & (
-  | Readonly<{ onClose: () => void; style: 'error'; type: 'toast' }>
-  | Readonly<{ onClose: () => void; style: 'success'; type: 'toast' }>
-);
+type ToastProps = BannerToastContent &
+  (
+    | Readonly<{ onClose: () => void; style: 'error'; type: 'toast' }>
+    | Readonly<{ onClose: () => void; style: 'success'; type: 'toast' }>
+  );
 
-type BannerProps = BannerToastContent & (
-  | Readonly<{
-      onViewBookingUpdate: () => void;
-      style: 'info';
-      type: 'banner';
-    }>
-  | Readonly<{
-      onViewGameDetails: () => void;
-      style: 'warning';
-      type: 'banner';
-    }>
-);
+type BannerProps = BannerToastContent &
+  (
+    | Readonly<{
+        onViewBookingUpdate: () => void;
+        style: 'info';
+        type: 'banner';
+      }>
+    | Readonly<{
+        onViewGameDetails: () => void;
+        style: 'warning';
+        type: 'banner';
+      }>
+  );
 
 export type BannerToastProps = ToastProps | BannerProps;
 
@@ -59,10 +61,13 @@ const presentationByStyle = Object.freeze({
   info: { backgroundColor: colors.info, icon: 'notification' },
   success: { backgroundColor: colors.surfaceAccent, icon: 'check' },
   warning: { backgroundColor: colors.warning, icon: 'warning' },
-} satisfies Record<BannerToastProps['style'], {
-  backgroundColor: string;
-  icon: IconName;
-}>);
+} satisfies Record<
+  BannerToastProps['style'],
+  {
+    backgroundColor: string;
+    icon: IconName;
+  }
+>);
 
 function unsupported(reason: string): never {
   throw new Error(
@@ -79,7 +84,11 @@ function validateText(value: unknown, field: string) {
 function validateBannerToastProps(props: BannerToastProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(`unsupported property ${key}`);
     }
   }
@@ -96,15 +105,20 @@ function validateBannerToastProps(props: BannerToastProps) {
     unsupported(`unauthored tuple ${tuple}`);
   }
 
-  const callbackKey = runtime.type === 'toast'
-    ? 'onClose'
-    : runtime.style === 'info'
-      ? 'onViewBookingUpdate'
-      : 'onViewGameDetails';
+  const callbackKey =
+    runtime.type === 'toast'
+      ? 'onClose'
+      : runtime.style === 'info'
+        ? 'onViewBookingUpdate'
+        : 'onViewGameDetails';
   if (typeof runtime[callbackKey] !== 'function') {
     unsupported(`${callbackKey} must be a function for ${tuple}`);
   }
-  for (const key of ['onClose', 'onViewBookingUpdate', 'onViewGameDetails'] as const) {
+  for (const key of [
+    'onClose',
+    'onViewBookingUpdate',
+    'onViewGameDetails',
+  ] as const) {
     if (key !== callbackKey && typeof runtime[key] !== 'undefined') {
       unsupported(`${key} is not available for ${tuple}`);
     }
@@ -175,7 +189,9 @@ export function BannerToast(props: BannerToastProps) {
           testID="banner-toast-copy"
         >
           <Text variant="bodyStrong">{title}</Text>
-          <Text color="textSecondary" variant="caption">{message}</Text>
+          <Text color="textSecondary" variant="caption">
+            {message}
+          </Text>
         </View>
       </View>
 

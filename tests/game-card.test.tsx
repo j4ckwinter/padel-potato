@@ -100,7 +100,15 @@ import {
   type PlayerItemProps,
 } from '../src/design-system/components/content/PlayerItem';
 
-import { playerItemFixtures, gameCardFixtures, notificationRowFixtures, settingsRowFixtures, statTileFixtures, scoreResultBlockFixtures, playerPreferencesCardFixtures } from '../src/design-system/stories/fixtures';
+import {
+  playerItemFixtures,
+  gameCardFixtures,
+  notificationRowFixtures,
+  settingsRowFixtures,
+  statTileFixtures,
+  scoreResultBlockFixtures,
+  playerPreferencesCardFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import * as ContentComponents from '../src/design-system/components/content';
 
@@ -131,45 +139,105 @@ describe('Game Card public contract', () => {});
 
 describe('Game Card runtime and semantic contract', () => {
   it.each([
-    ['next/default', { ...cardContent, onViewGame: jest.fn(), participants, variant: 'next' }],
-    ['open/default', { ...cardContent, full: false, onViewGame: jest.fn(), participants: participants.slice(0, 3), variant: 'open' }],
-    ['compact/default', { title: cardContent.title, venue: cardContent.venue, variant: 'compact' }],
-    ['completed/default', { ...cardContent, onViewResults: jest.fn(), participants, variant: 'completed' }],
-    ['open/full', { ...cardContent, full: true, onViewGame: jest.fn(), participants, variant: 'open' }],
-  ] as Array<[string, GameCardProps]>)('renders the authored %s structure', async (_tuple, props) => {
-    const screen = await render(<GameCard {...props} />);
-    expect(flattenedStyle(screen.getByTestId('game-card').props.style)).toEqual(
-      expect.objectContaining({
-        height: props.variant === 'compact' ? 112 : 176,
-        width: 352,
-      }),
-    );
-    expect(screen.getByText(cardContent.title)).toBeTruthy();
-    expect(screen.getByText(cardContent.venue)).toBeTruthy();
-  });
+    [
+      'next/default',
+      { ...cardContent, onViewGame: jest.fn(), participants, variant: 'next' },
+    ],
+    [
+      'open/default',
+      {
+        ...cardContent,
+        full: false,
+        onViewGame: jest.fn(),
+        participants: participants.slice(0, 3),
+        variant: 'open',
+      },
+    ],
+    [
+      'compact/default',
+      {
+        title: cardContent.title,
+        venue: cardContent.venue,
+        variant: 'compact',
+      },
+    ],
+    [
+      'completed/default',
+      {
+        ...cardContent,
+        onViewResults: jest.fn(),
+        participants,
+        variant: 'completed',
+      },
+    ],
+    [
+      'open/full',
+      {
+        ...cardContent,
+        full: true,
+        onViewGame: jest.fn(),
+        participants,
+        variant: 'open',
+      },
+    ],
+  ] as Array<[string, GameCardProps]>)(
+    'renders the authored %s structure',
+    async (_tuple, props) => {
+      const screen = await render(<GameCard {...props} />);
+      expect(
+        flattenedStyle(screen.getByTestId('game-card').props.style),
+      ).toEqual(
+        expect.objectContaining({
+          height: props.variant === 'compact' ? 112 : 176,
+          width: 352,
+        }),
+      );
+      expect(screen.getByText(cardContent.title)).toBeTruthy();
+      expect(screen.getByText(cardContent.venue)).toBeTruthy();
+    },
+  );
 
   it.each([
     ['next', 'View game'],
     ['open', 'View game'],
     ['completed', 'View results'],
-  ] as Array<['next' | 'open' | 'completed', 'View game' | 'View results']>)('exposes only the authored %s action named %s', async (variant, actionName) => {
-    const callback = jest.fn();
-    const props = variant === 'next'
-      ? { ...cardContent, onViewGame: callback, participants, variant }
-      : variant === 'open'
-        ? { ...cardContent, full: false as const, onViewGame: callback, participants: participants.slice(0, 3), variant }
-        : { ...cardContent, onViewResults: callback, participants, variant };
-    const screen = await render(<GameCard {...props as GameCardProps} />);
-    const action = screen.getByRole('button', { name: actionName });
+  ] as Array<['next' | 'open' | 'completed', 'View game' | 'View results']>)(
+    'exposes only the authored %s action named %s',
+    async (variant, actionName) => {
+      const callback = jest.fn();
+      const props =
+        variant === 'next'
+          ? { ...cardContent, onViewGame: callback, participants, variant }
+          : variant === 'open'
+            ? {
+                ...cardContent,
+                full: false as const,
+                onViewGame: callback,
+                participants: participants.slice(0, 3),
+                variant,
+              }
+            : {
+                ...cardContent,
+                onViewResults: callback,
+                participants,
+                variant,
+              };
+      const screen = await render(<GameCard {...(props as GameCardProps)} />);
+      const action = screen.getByRole('button', { name: actionName });
 
-    expect(screen.getAllByRole('button')).toHaveLength(1);
-    await userEvent.setup().press(action);
-    expect(callback).toHaveBeenCalledTimes(1);
-  });
+      expect(screen.getAllByRole('button')).toHaveLength(1);
+      await userEvent.setup().press(action);
+      expect(callback).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('keeps Compact static without a card or invented CTA activation boundary', async () => {
     const screen = await render(
-      <GameCard title={cardContent.title} venue={cardContent.venue} variant="compact" />,
+      <GameCard
+        title={cardContent.title}
+        venue={cardContent.venue}
+        variant="compact"
+      />,
     );
     expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(screen.queryByRole('link')).toBeNull();
@@ -178,53 +246,99 @@ describe('Game Card runtime and semantic contract', () => {
   it.each([
     [false, participants.slice(0, 3), 'Alex Morgan, Jamie Taylor, Sam Kim'],
     [true, participants, 'Alex Morgan, Jamie Taylor, Sam Kim, Riley Brown'],
-  ] as Array<[boolean, readonly GameCardParticipant[], string]>)('preserves Open participant order for full=%s', async (full, orderedParticipants, description) => {
-    const props = {
-      ...cardContent,
-      full,
-      onViewGame: jest.fn(),
-      participants: orderedParticipants,
-      variant: 'open',
-    } as unknown as GameCardProps;
-    const screen = await render(
-      <GameCard {...props} />,
-    );
-    expect(screen.getByRole('summary')).toHaveAccessibilityValue({ text: description });
-    expect(screen.queryAllByRole('image')).toHaveLength(0);
-  });
+  ] as Array<[boolean, readonly GameCardParticipant[], string]>)(
+    'preserves Open participant order for full=%s',
+    async (full, orderedParticipants, description) => {
+      const props = {
+        ...cardContent,
+        full,
+        onViewGame: jest.fn(),
+        participants: orderedParticipants,
+        variant: 'open',
+      } as unknown as GameCardProps;
+      const screen = await render(<GameCard {...props} />);
+      expect(screen.getByRole('summary')).toHaveAccessibilityValue({
+        text: description,
+      });
+      expect(screen.queryAllByRole('image')).toHaveLength(0);
+    },
+  );
 
   it.each([
-    { ...cardContent, onViewGame: jest.fn(), participants: participants.slice(0, 3), variant: 'next' },
-    { ...cardContent, full: false, onViewGame: jest.fn(), participants, variant: 'open' },
-    { ...cardContent, full: true, onViewGame: jest.fn(), participants: participants.slice(0, 3), variant: 'open' },
-    { ...cardContent, onViewResults: jest.fn(), participants: participants.slice(0, 3), variant: 'completed' },
-    { ...cardContent, onViewGame: jest.fn(), participants: [...participants].reverse(), variant: 'next' },
-    { ...cardContent, onViewGame: null, participants, variant: 'next' },
-    { ...cardContent, onViewGame: jest.fn(), participants, route: '/games/1', variant: 'next' },
-    { title: cardContent.title, venue: null, variant: 'compact' },
-    { ...cardContent, onViewGame: jest.fn(), participants, variant: 'unknown' },
-  ])('rejects unsupported cardinality, order, content, or behavior %#', (props) => {
-    expect(() => GameCard(invalidProps(props))).toThrow(/Unsupported Game Card/u);
-  });
-
-  it.each(rejectedImageSources)('rejects a non-local participant image source %#', (source) => {
-    expect(() => GameCard({
+    {
       ...cardContent,
       onViewGame: jest.fn(),
-      participants: [
-        {
-          name: participants[0].name,
-          presence: participants[0].presence,
-          slot: participants[0].slot,
-          source,
-        },
-        participants[1],
-        participants[2],
-        participants[3],
-      ],
+      participants: participants.slice(0, 3),
       variant: 'next',
-    } as never)).toThrow(/source must be bundled or local/u);
-  });
+    },
+    {
+      ...cardContent,
+      full: false,
+      onViewGame: jest.fn(),
+      participants,
+      variant: 'open',
+    },
+    {
+      ...cardContent,
+      full: true,
+      onViewGame: jest.fn(),
+      participants: participants.slice(0, 3),
+      variant: 'open',
+    },
+    {
+      ...cardContent,
+      onViewResults: jest.fn(),
+      participants: participants.slice(0, 3),
+      variant: 'completed',
+    },
+    {
+      ...cardContent,
+      onViewGame: jest.fn(),
+      participants: [...participants].reverse(),
+      variant: 'next',
+    },
+    { ...cardContent, onViewGame: null, participants, variant: 'next' },
+    {
+      ...cardContent,
+      onViewGame: jest.fn(),
+      participants,
+      route: '/games/1',
+      variant: 'next',
+    },
+    { title: cardContent.title, venue: null, variant: 'compact' },
+    { ...cardContent, onViewGame: jest.fn(), participants, variant: 'unknown' },
+  ])(
+    'rejects unsupported cardinality, order, content, or behavior %#',
+    (props) => {
+      expect(() => GameCard(invalidProps(props))).toThrow(
+        /Unsupported Game Card/u,
+      );
+    },
+  );
+
+  it.each(rejectedImageSources)(
+    'rejects a non-local participant image source %#',
+    (source) => {
+      expect(() =>
+        GameCard({
+          ...cardContent,
+          onViewGame: jest.fn(),
+          participants: [
+            {
+              name: participants[0].name,
+              presence: participants[0].presence,
+              slot: participants[0].slot,
+              source,
+            },
+            participants[1],
+            participants[2],
+            participants[3],
+          ],
+          variant: 'next',
+        } as never),
+      ).toThrow(/source must be bundled or local/u);
+    },
+  );
 
   it('retains complete long title and venue semantics with its action reachable', async () => {
     const screen = await render(
@@ -237,8 +351,16 @@ describe('Game Card runtime and semantic contract', () => {
         venue="Padel United International Centre · The exceptionally long Court 3 name"
       />,
     );
-    expect(screen.getByText('Tuesday Social Padel for Łucía, Nguyễn, and friends from 東京')).toBeTruthy();
-    expect(screen.getByText('Padel United International Centre · The exceptionally long Court 3 name')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Tuesday Social Padel for Łucía, Nguyễn, and friends from 東京',
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Padel United International Centre · The exceptionally long Court 3 name',
+      ),
+    ).toBeTruthy();
     expect(screen.getByRole('button', { name: 'View game' })).toBeTruthy();
   });
 });

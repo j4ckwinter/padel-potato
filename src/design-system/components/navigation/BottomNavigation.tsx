@@ -25,7 +25,9 @@ export type BottomNavigationProps = Readonly<{
   onDestinationPress: (destination: BottomNavigationDestination) => void;
 }>;
 
-const destinations = bottomNavigationDestinations.map(({ destination }) => destination);
+const destinations = bottomNavigationDestinations.map(
+  ({ destination }) => destination,
+);
 const supportedRuntimeProps = Object.freeze([
   'activeDestination',
   'onDestinationPress',
@@ -39,7 +41,11 @@ const unsupported = (value: unknown, supported: readonly unknown[]): never => {
 
 function validateBottomNavigationProps(props: BottomNavigationProps) {
   for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(key, supportedRuntimeProps);
     }
   }
@@ -85,7 +91,10 @@ export function BottomNavigation(props: BottomNavigationProps) {
               >
                 <Icon name={icon} />
               </View>
-              <Text color={selected || accentAction ? 'ink' : 'muted'} variant="micro">
+              <Text
+                color={selected || accentAction ? 'ink' : 'muted'}
+                variant="micro"
+              >
                 {label}
               </Text>
             </View>

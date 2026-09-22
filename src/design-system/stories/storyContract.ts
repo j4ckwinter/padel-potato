@@ -194,57 +194,159 @@ const allStories = categories(
 );
 
 const interactiveDefinitions = Object.freeze([
-  ['Button', 'button', 'Actions/Button', ['style', 'size', 'disabled', 'loading'], ['onPress']],
-  ['IconButton', 'iconButton', 'Actions/Icon Button', ['size', 'icon', 'disabled'], ['onPress']],
-  ['Favourite', 'favourite', 'Actions/Favourite', ['checked', 'disabled'], ['onCheckedChange']],
-  ['Field', 'field', 'Forms/Field', ['type', 'disabled', 'readOnly', 'status'], ['onChangeText', 'onPress', 'onDecrement', 'onIncrement']],
-  ['ChoiceChip', 'choiceChip', 'Forms/Choice Chip', ['type', 'selected', 'disabled'], ['onSelectedChange']],
-  ['Checkbox', 'checkbox', 'Forms/Checkbox', ['checked', 'disabled'], ['onCheckedChange']],
-  ['DayTimeSelector', 'dayTimeSelector', 'Forms/Day Time Selector', ['type', 'selected', 'disabled'], ['onSelect']],
-  ['SocialSignInButton', 'socialSignInButton', 'Authentication/Social Sign-In Button', ['provider', 'disabled'], ['onPress']],
+  [
+    'Button',
+    'button',
+    'Actions/Button',
+    ['style', 'size', 'disabled', 'loading'],
+    ['onPress'],
+  ],
+  [
+    'IconButton',
+    'iconButton',
+    'Actions/Icon Button',
+    ['size', 'icon', 'disabled'],
+    ['onPress'],
+  ],
+  [
+    'Favourite',
+    'favourite',
+    'Actions/Favourite',
+    ['checked', 'disabled'],
+    ['onCheckedChange'],
+  ],
+  [
+    'Field',
+    'field',
+    'Forms/Field',
+    ['type', 'disabled', 'readOnly', 'status'],
+    ['onChangeText', 'onPress', 'onDecrement', 'onIncrement'],
+  ],
+  [
+    'ChoiceChip',
+    'choiceChip',
+    'Forms/Choice Chip',
+    ['type', 'selected', 'disabled'],
+    ['onSelectedChange'],
+  ],
+  [
+    'Checkbox',
+    'checkbox',
+    'Forms/Checkbox',
+    ['checked', 'disabled'],
+    ['onCheckedChange'],
+  ],
+  [
+    'DayTimeSelector',
+    'dayTimeSelector',
+    'Forms/Day Time Selector',
+    ['type', 'selected', 'disabled'],
+    ['onSelect'],
+  ],
+  [
+    'SocialSignInButton',
+    'socialSignInButton',
+    'Authentication/Social Sign-In Button',
+    ['provider', 'disabled'],
+    ['onPress'],
+  ],
   ['AuthDivider', 'authDivider', 'Authentication/Auth Divider', ['label'], []],
-  ['BottomNavigation', 'bottomNavigation', 'Navigation/Bottom Navigation', ['activeDestination'], ['onDestinationPress']],
-  ['SegmentedControl', 'segmentedControl', 'Navigation/Segmented Control', ['options', 'value', 'disabled'], ['onValueChange']],
-  ['AppHeader', 'appHeader', 'Navigation/App Header', ['page', 'favouriteChecked'], ['onNotificationPress', 'onBackPress', 'onFavouriteChange']],
-  ['SectionHeader', 'sectionHeader', 'Navigation/Section Header', ['title', 'actionLabel'], ['onActionPress']],
+  [
+    'BottomNavigation',
+    'bottomNavigation',
+    'Navigation/Bottom Navigation',
+    ['activeDestination'],
+    ['onDestinationPress'],
+  ],
+  [
+    'SegmentedControl',
+    'segmentedControl',
+    'Navigation/Segmented Control',
+    ['options', 'value', 'disabled'],
+    ['onValueChange'],
+  ],
+  [
+    'AppHeader',
+    'appHeader',
+    'Navigation/App Header',
+    ['page', 'favouriteChecked'],
+    ['onNotificationPress', 'onBackPress', 'onFavouriteChange'],
+  ],
+  [
+    'SectionHeader',
+    'sectionHeader',
+    'Navigation/Section Header',
+    ['title', 'actionLabel'],
+    ['onActionPress'],
+  ],
 ] as const);
 
 const interactiveStoryContractsSeed = Object.freeze(
-  Object.fromEntries(interactiveDefinitions.map(([exportName, fixtureKey, title, controls, actions]) => {
-    return [exportName, Object.freeze({
-      exportName,
-      fixtureKey,
-      title,
-      categories: exportName === 'AuthDivider'
-        ? categories(
-            story('Canonical'), story('Variants'),
-            inapplicable('AuthDivider is static readable content with no authored transient state.'),
-            story('Boundaries'),
-            inapplicable('AuthDivider exposes no callback or product interaction.'),
-          )
-        : allStories,
-      controls: Object.freeze([...controls]),
-      actions: Object.freeze([...actions]),
-    })];
-  })),
-) as Readonly<Record<InteractivePublicExport, Readonly<{
-  exportName: InteractivePublicExport;
-  fixtureKey: string;
-  title: string;
-  categories: Readonly<Record<StoryCategory, StoryApplicability>>;
-  controls: readonly string[];
-  actions: readonly string[];
-}>>>;
+  Object.fromEntries(
+    interactiveDefinitions.map(
+      ([exportName, fixtureKey, title, controls, actions]) => {
+        return [
+          exportName,
+          Object.freeze({
+            exportName,
+            fixtureKey,
+            title,
+            categories:
+              exportName === 'AuthDivider'
+                ? categories(
+                    story('Canonical'),
+                    story('Variants'),
+                    inapplicable(
+                      'AuthDivider is static readable content with no authored transient state.',
+                    ),
+                    story('Boundaries'),
+                    inapplicable(
+                      'AuthDivider exposes no callback or product interaction.',
+                    ),
+                  )
+                : allStories,
+            controls: Object.freeze([...controls]),
+            actions: Object.freeze([...actions]),
+          }),
+        ];
+      },
+    ),
+  ),
+) as Readonly<
+  Record<
+    InteractivePublicExport,
+    Readonly<{
+      exportName: InteractivePublicExport;
+      fixtureKey: string;
+      title: string;
+      categories: Readonly<Record<StoryCategory, StoryApplicability>>;
+      controls: readonly string[];
+      actions: readonly string[];
+    }>
+  >
+>;
 
 const interactiveBackstopsSeed = Object.freeze({
-  emptyField: Object.freeze({ witness: 'field-boundary-empty', status: 'host-contract' }),
+  emptyField: Object.freeze({
+    witness: 'field-boundary-empty',
+    status: 'host-contract',
+  }),
   longContent: Object.freeze({
-    witnesses: Object.freeze(['field-boundary-long-content', 'header-boundary-long-content']),
+    witnesses: Object.freeze([
+      'field-boundary-long-content',
+      'header-boundary-long-content',
+    ]),
     nativeStatus: 'deferred-to-native-review',
     status: 'host-contract',
   }),
   compositeOrder: Object.freeze({
-    bottomNavigation: Object.freeze(['home', 'games', 'create', 'players', 'profile']),
+    bottomNavigation: Object.freeze([
+      'home',
+      'games',
+      'create',
+      'players',
+      'profile',
+    ]),
     witness: 'bottom-navigation',
     status: 'host-contract',
   }),
@@ -287,36 +389,110 @@ export type ContentPublicExport =
 
 const contentDefinitions = Object.freeze([
   ['Avatar', 'avatar', 'Identity/Avatar', ['configuration'], []],
-  ['AvatarGroup', 'avatarGroup', 'Identity/Avatar Group', ['variant'], ['onAddPlayer1', 'onAddPlayer2']],
-  ['AvatarPicker', 'avatarPicker', 'Identity/Avatar Picker', ['variant'], ['onPress']],
-  ['StatusChip', 'statusChip', 'Status/Status Chip', ['configuration'], ['onSelectedChange']],
+  [
+    'AvatarGroup',
+    'avatarGroup',
+    'Identity/Avatar Group',
+    ['variant'],
+    ['onAddPlayer1', 'onAddPlayer2'],
+  ],
+  [
+    'AvatarPicker',
+    'avatarPicker',
+    'Identity/Avatar Picker',
+    ['variant'],
+    ['onPress'],
+  ],
+  [
+    'StatusChip',
+    'statusChip',
+    'Status/Status Chip',
+    ['configuration'],
+    ['onSelectedChange'],
+  ],
   ['StepProgress', 'stepProgress', 'Progress/Step Progress', ['value'], []],
-  ['PlayerItem', 'playerItem', 'Content/Player Item', ['configuration'], ['onSelectedChange', 'onViewPlayer', 'onInvite']],
-  ['GameCard', 'gameCard', 'Content/Game Card', ['configuration'], ['onViewGame', 'onViewResults']],
-  ['NotificationRow', 'notificationRow', 'Content/Notification Row', ['configuration'], ['onPress']],
-  ['SettingsRow', 'settingsRow', 'Content/Settings Row', ['configuration'], ['onPress', 'onCheckedChange']],
+  [
+    'PlayerItem',
+    'playerItem',
+    'Content/Player Item',
+    ['configuration'],
+    ['onSelectedChange', 'onViewPlayer', 'onInvite'],
+  ],
+  [
+    'GameCard',
+    'gameCard',
+    'Content/Game Card',
+    ['configuration'],
+    ['onViewGame', 'onViewResults'],
+  ],
+  [
+    'NotificationRow',
+    'notificationRow',
+    'Content/Notification Row',
+    ['configuration'],
+    ['onPress'],
+  ],
+  [
+    'SettingsRow',
+    'settingsRow',
+    'Content/Settings Row',
+    ['configuration'],
+    ['onPress', 'onCheckedChange'],
+  ],
   ['StatTile', 'statTile', 'Content/Stat Tile', ['configuration'], []],
-  ['ScoreResultBlock', 'scoreResultBlock', 'Content/Score Result Block', ['type', 'state'], []],
-  ['PlayerPreferencesCard', 'playerPreferencesCard', 'Content/Player Preferences Card', ['content'], []],
-  ['BannerToast', 'bannerToast', 'Feedback/Banner Toast', ['style'], ['onClose', 'onViewBookingUpdate', 'onViewGameDetails']],
-  ['EmptyState', 'emptyState', 'Feedback/Empty State', ['content'], ['onCreateGame', 'onInvitePlayers']],
-  ['IllustratedCard', 'illustratedCard', 'Cards/Illustrated Card', ['type'], ['onViewGame', 'onViewResults', 'onInvitePlayers', 'onShareGame']],
+  [
+    'ScoreResultBlock',
+    'scoreResultBlock',
+    'Content/Score Result Block',
+    ['type', 'state'],
+    [],
+  ],
+  [
+    'PlayerPreferencesCard',
+    'playerPreferencesCard',
+    'Content/Player Preferences Card',
+    ['content'],
+    [],
+  ],
+  [
+    'BannerToast',
+    'bannerToast',
+    'Feedback/Banner Toast',
+    ['style'],
+    ['onClose', 'onViewBookingUpdate', 'onViewGameDetails'],
+  ],
+  [
+    'EmptyState',
+    'emptyState',
+    'Feedback/Empty State',
+    ['content'],
+    ['onCreateGame', 'onInvitePlayers'],
+  ],
+  [
+    'IllustratedCard',
+    'illustratedCard',
+    'Cards/Illustrated Card',
+    ['type'],
+    ['onViewGame', 'onViewResults', 'onInvitePlayers', 'onShareGame'],
+  ],
 ] as const);
 
 const contentCategories = (exportName: ContentPublicExport) => {
   if (
-    exportName === 'Avatar'
-    || exportName === 'StepProgress'
-    || exportName === 'StatTile'
-    || exportName === 'ScoreResultBlock'
-    || exportName === 'PlayerPreferencesCard'
+    exportName === 'Avatar' ||
+    exportName === 'StepProgress' ||
+    exportName === 'StatTile' ||
+    exportName === 'ScoreResultBlock' ||
+    exportName === 'PlayerPreferencesCard'
   ) {
     return categories(
       story('Canonical'),
       story('Variants'),
       story('States'),
       story('Boundaries'),
-      inapplicable(`${exportName} is presentational and exposes no callback or product interaction.`),
+      inapplicable(
+        `${exportName} is presentational and exposes no callback or product interaction.`,
+      ),
     );
   }
   return allStories;
@@ -324,25 +500,35 @@ const contentCategories = (exportName: ContentPublicExport) => {
 
 const contentStoryContractsSeed = Object.freeze(
   Object.fromEntries(
-    contentDefinitions.map(([exportName, fixtureKey, title, controls, actions]) => {
-      return [exportName, Object.freeze({
-        exportName,
-        fixtureKey,
-        title,
-        categories: contentCategories(exportName),
-        controls: Object.freeze([...controls]),
-        actions: Object.freeze([...actions]),
-      })];
-    }),
+    contentDefinitions.map(
+      ([exportName, fixtureKey, title, controls, actions]) => {
+        return [
+          exportName,
+          Object.freeze({
+            exportName,
+            fixtureKey,
+            title,
+            categories: contentCategories(exportName),
+            controls: Object.freeze([...controls]),
+            actions: Object.freeze([...actions]),
+          }),
+        ];
+      },
+    ),
   ),
-) as Readonly<Record<ContentPublicExport, Readonly<{
-  exportName: ContentPublicExport;
-  fixtureKey: string;
-  title: string;
-  categories: Readonly<Record<StoryCategory, StoryApplicability>>;
-  controls: readonly string[];
-  actions: readonly string[];
-}>>>;
+) as Readonly<
+  Record<
+    ContentPublicExport,
+    Readonly<{
+      exportName: ContentPublicExport;
+      fixtureKey: string;
+      title: string;
+      categories: Readonly<Record<StoryCategory, StoryApplicability>>;
+      controls: readonly string[];
+      actions: readonly string[];
+    }>
+  >
+>;
 
 const contentBackstopsSeed = Object.freeze({
   longContent: Object.freeze({
@@ -356,20 +542,24 @@ const contentBackstopsSeed = Object.freeze({
     status: 'host-contract',
   }),
   overflow: Object.freeze({
-    witness: 'tests/identity-content-feedback-story-contracts.test.tsx#preserves overflow meaning and stable identity order',
+    witness:
+      'tests/identity-content-feedback-story-contracts.test.tsx#preserves overflow meaning and stable identity order',
     status: 'host-contract',
   }),
   cardinality: Object.freeze({
-    witness: 'tests/identity-content-feedback-story-contracts.test.tsx#rejects unauthored singleton cardinality rather than filling a slot',
+    witness:
+      'tests/identity-content-feedback-story-contracts.test.tsx#rejects unauthored singleton cardinality rather than filling a slot',
     status: 'host-contract',
   }),
   targetClearance: Object.freeze({
     minimumEffectiveTarget: 44,
-    witness: 'tests/identity-content-feedback-story-contracts.test.tsx#retains separate 44-point empty-slot targets',
+    witness:
+      'tests/identity-content-feedback-story-contracts.test.tsx#retains separate 44-point empty-slot targets',
     status: 'host-contract',
   }),
   readOrder: Object.freeze({
-    witness: 'tests/identity-content-feedback-story-contracts.test.tsx#preserves caller-formatted score precision and deterministic team/set order',
+    witness:
+      'tests/identity-content-feedback-story-contracts.test.tsx#preserves caller-formatted score precision and deterministic team/set order',
     status: 'host-contract',
   }),
   nativeReview: Object.freeze({
@@ -382,9 +572,7 @@ const contentBackstopsSeed = Object.freeze({
 } as const);
 
 export type StoryContractName =
-  | FoundationPublicExport
-  | InteractivePublicExport
-  | ContentPublicExport;
+  FoundationPublicExport | InteractivePublicExport | ContentPublicExport;
 
 export type StoryContract = Readonly<{
   exportName: StoryContractName;

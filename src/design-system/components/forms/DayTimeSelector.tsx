@@ -1,9 +1,5 @@
 import { useState } from 'react';
-import {
-  Pressable as NativePressable,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Pressable as NativePressable, StyleSheet, View } from 'react-native';
 
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
@@ -30,12 +26,11 @@ type TimeSelectorProps = Readonly<{
 
 type CommonSelectorProps = Readonly<{
   onSelect: () => void;
-}> & SelectorStateProps;
+}> &
+  SelectorStateProps;
 
-export type DayTimeSelectorProps = CommonSelectorProps & (
-  | DaySelectorProps
-  | TimeSelectorProps
-);
+export type DayTimeSelectorProps = CommonSelectorProps &
+  (DaySelectorProps | TimeSelectorProps);
 
 const commonRuntimeProps = Object.freeze([
   'disabled',
@@ -43,7 +38,11 @@ const commonRuntimeProps = Object.freeze([
   'selected',
   'type',
 ] as const);
-const dayRuntimeProps = Object.freeze([...commonRuntimeProps, 'date', 'day'] as const);
+const dayRuntimeProps = Object.freeze([
+  ...commonRuntimeProps,
+  'date',
+  'day',
+] as const);
 const timeRuntimeProps = Object.freeze([
   ...commonRuntimeProps,
   'availability',
@@ -61,17 +60,23 @@ const isNonEmptyString = (value: unknown): value is string =>
 
 function validateDayTimeSelectorProps(props: DayTimeSelectorProps) {
   const runtimeProps = props as unknown as Record<string, unknown>;
-  if (!dayTimeSelectorTypes.includes(runtimeProps.type as DayTimeSelectorType)) {
+  if (
+    !dayTimeSelectorTypes.includes(runtimeProps.type as DayTimeSelectorType)
+  ) {
     unsupported(runtimeProps.type, dayTimeSelectorTypes);
   }
-  const supportedKeys = runtimeProps.type === 'day' ? dayRuntimeProps : timeRuntimeProps;
+  const supportedKeys =
+    runtimeProps.type === 'day' ? dayRuntimeProps : timeRuntimeProps;
   for (const key of Object.keys(runtimeProps)) {
     if (!supportedKeys.includes(key as never)) unsupported(key, supportedKeys);
   }
   if (typeof runtimeProps.selected !== 'boolean') {
     unsupported(runtimeProps.selected, [true, false]);
   }
-  if (typeof runtimeProps.disabled !== 'undefined' && typeof runtimeProps.disabled !== 'boolean') {
+  if (
+    typeof runtimeProps.disabled !== 'undefined' &&
+    typeof runtimeProps.disabled !== 'boolean'
+  ) {
     unsupported(runtimeProps.disabled, [true, false]);
   }
   if (runtimeProps.selected && runtimeProps.disabled) {
@@ -81,10 +86,13 @@ function validateDayTimeSelectorProps(props: DayTimeSelectorProps) {
     unsupported(runtimeProps.onSelect, ['function']);
   }
   if (runtimeProps.type === 'day') {
-    if (!isNonEmptyString(runtimeProps.day)) unsupported(runtimeProps.day, ['non-empty day']);
-    if (!isNonEmptyString(runtimeProps.date)) unsupported(runtimeProps.date, ['non-empty date']);
+    if (!isNonEmptyString(runtimeProps.day))
+      unsupported(runtimeProps.day, ['non-empty day']);
+    if (!isNonEmptyString(runtimeProps.date))
+      unsupported(runtimeProps.date, ['non-empty date']);
   } else {
-    if (!isNonEmptyString(runtimeProps.time)) unsupported(runtimeProps.time, ['non-empty time']);
+    if (!isNonEmptyString(runtimeProps.time))
+      unsupported(runtimeProps.time, ['non-empty time']);
     if (!isNonEmptyString(runtimeProps.availability)) {
       unsupported(runtimeProps.availability, ['non-empty availability']);
     }
@@ -99,12 +107,18 @@ export function DayTimeSelector(props: DayTimeSelectorProps) {
   const supporting = type === 'day' ? props.date : props.availability;
   const accessibleName = `${primary}, ${supporting}`;
   const dimensions = type === 'day' ? styles.day : styles.time;
-  const primaryColor = disabled ? 'muted' : type === 'day' && !selected
-    ? 'textSecondary'
-    : 'ink';
-  const supportingColor = disabled ? 'muted' : selected
-    ? type === 'time' ? 'deep' : 'ink'
-    : 'textSecondary';
+  const primaryColor = disabled
+    ? 'muted'
+    : type === 'day' && !selected
+      ? 'textSecondary'
+      : 'ink';
+  const supportingColor = disabled
+    ? 'muted'
+    : selected
+      ? type === 'time'
+        ? 'deep'
+        : 'ink'
+      : 'textSecondary';
 
   return (
     <View
@@ -142,10 +156,16 @@ export function DayTimeSelector(props: DayTimeSelectorProps) {
           style={styles.content}
           testID="day-time-selector-content"
         >
-          <Text color={primaryColor} variant={type === 'day' ? 'label' : 'bodyStrong'}>
+          <Text
+            color={primaryColor}
+            variant={type === 'day' ? 'label' : 'bodyStrong'}
+          >
             {primary}
           </Text>
-          <Text color={supportingColor} variant={type === 'day' ? 'bodyStrong' : 'caption'}>
+          <Text
+            color={supportingColor}
+            variant={type === 'day' ? 'bodyStrong' : 'caption'}
+          >
             {supporting}
           </Text>
         </View>

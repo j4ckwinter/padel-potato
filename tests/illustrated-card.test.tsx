@@ -38,7 +38,11 @@ import {
 
 import * as FeedbackComponents from '../src/design-system/components/feedback';
 
-import { bannerToastFixtures, emptyStateFixtures, illustratedCardFixtures } from '../src/design-system/stories/fixtures';
+import {
+  bannerToastFixtures,
+  emptyStateFixtures,
+  illustratedCardFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import IllustratedCardStories, {
   Boundaries as IllustratedCardBoundaries,
@@ -103,57 +107,97 @@ const illustratedCardExamples = {
   },
 } as const satisfies Record<string, IllustratedCardProps>;
 
-describe('Illustrated Card runtime contract', () => {  it.each([
-    ['nextGame', illustratedCardExamples.nextGame, 'View', 'View game', 'phase4-artwork-illustrated-card-next-game'],
-    ['matchResult', illustratedCardExamples.matchResult, 'Results', 'View results', 'phase4-artwork-illustrated-card-match-result'],
-    ['invitePlayers', illustratedCardExamples.invitePlayers, 'Invite', 'Invite players', 'phase4-artwork-illustrated-card-invite-players'],
-    ['gameCreated', illustratedCardExamples.gameCreated, 'Share', 'Share game', 'phase4-artwork-illustrated-card-game-created'],
-  ] as Array<[string, IllustratedCardProps, string, string, string]>)('renders exact %s content, one CTA, and mapped decorative mascot', async (
-    _branch,
-    props,
-    visibleAction,
-    actionName,
-    artworkTestId,
-  ) => {
-    const screen = await render(<IllustratedCard {...props} />);
-    expect(flattenedStyle(screen.getByTestId('illustrated-card').props.style)).toEqual(
-      expect.objectContaining({ minHeight: 176, width: 352 }),
-    );
-    expect(screen.getByText(props.eyebrow)).toBeTruthy();
-    expect(screen.getByText(props.title)).toBeTruthy();
-    expect(screen.getByText(props.detailPrimary)).toBeTruthy();
-    expect(screen.getByText(props.detailSecondary)).toBeTruthy();
-    expect(screen.getByText(visibleAction, { includeHiddenElements: true })).toBeTruthy();
-    expect(screen.getByRole('button', { name: actionName })).toBeTruthy();
-    expect(screen.getByTestId(artworkTestId, { includeHiddenElements: true })).toBeTruthy();
-    expect(screen.queryAllByRole('button')).toHaveLength(1);
-    expect(screen.queryAllByRole('image')).toHaveLength(0);
-  });
+describe('Illustrated Card runtime contract', () => {
+  it.each([
+    [
+      'nextGame',
+      illustratedCardExamples.nextGame,
+      'View',
+      'View game',
+      'phase4-artwork-illustrated-card-next-game',
+    ],
+    [
+      'matchResult',
+      illustratedCardExamples.matchResult,
+      'Results',
+      'View results',
+      'phase4-artwork-illustrated-card-match-result',
+    ],
+    [
+      'invitePlayers',
+      illustratedCardExamples.invitePlayers,
+      'Invite',
+      'Invite players',
+      'phase4-artwork-illustrated-card-invite-players',
+    ],
+    [
+      'gameCreated',
+      illustratedCardExamples.gameCreated,
+      'Share',
+      'Share game',
+      'phase4-artwork-illustrated-card-game-created',
+    ],
+  ] as Array<[string, IllustratedCardProps, string, string, string]>)(
+    'renders exact %s content, one CTA, and mapped decorative mascot',
+    async (_branch, props, visibleAction, actionName, artworkTestId) => {
+      const screen = await render(<IllustratedCard {...props} />);
+      expect(
+        flattenedStyle(screen.getByTestId('illustrated-card').props.style),
+      ).toEqual(expect.objectContaining({ minHeight: 176, width: 352 }));
+      expect(screen.getByText(props.eyebrow)).toBeTruthy();
+      expect(screen.getByText(props.title)).toBeTruthy();
+      expect(screen.getByText(props.detailPrimary)).toBeTruthy();
+      expect(screen.getByText(props.detailSecondary)).toBeTruthy();
+      expect(
+        screen.getByText(visibleAction, { includeHiddenElements: true }),
+      ).toBeTruthy();
+      expect(screen.getByRole('button', { name: actionName })).toBeTruthy();
+      expect(
+        screen.getByTestId(artworkTestId, { includeHiddenElements: true }),
+      ).toBeTruthy();
+      expect(screen.queryAllByRole('button')).toHaveLength(1);
+      expect(screen.queryAllByRole('image')).toHaveLength(0);
+    },
+  );
 
   it.each([
     [illustratedCardExamples.nextGame, 'View game'],
     [illustratedCardExamples.matchResult, 'View results'],
     [illustratedCardExamples.invitePlayers, 'Invite players'],
     [illustratedCardExamples.gameCreated, 'Share game'],
-  ] as Array<[IllustratedCardProps, string]>)('emits only the %s CTA intent', async (props, actionName) => {
-    const screen = await render(<IllustratedCard {...props} />);
-    await userEvent.setup().press(screen.getByRole('button', { name: actionName }));
-    const callback = props.type === 'nextGame'
-      ? props.onViewGame
-      : props.type === 'matchResult'
-        ? props.onViewResults
-        : props.type === 'invitePlayers'
-          ? props.onInvitePlayers
-          : props.onShareGame;
-    expect(callback).toHaveBeenCalledTimes(1);
-  });
+  ] as Array<[IllustratedCardProps, string]>)(
+    'emits only the %s CTA intent',
+    async (props, actionName) => {
+      const screen = await render(<IllustratedCard {...props} />);
+      await userEvent
+        .setup()
+        .press(screen.getByRole('button', { name: actionName }));
+      const callback =
+        props.type === 'nextGame'
+          ? props.onViewGame
+          : props.type === 'matchResult'
+            ? props.onViewResults
+            : props.type === 'invitePlayers'
+              ? props.onInvitePlayers
+              : props.onShareGame;
+      expect(callback).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('announces exact participant order while hiding redundant initial decoration', async () => {
-    const screen = await render(<IllustratedCard {...illustratedCardExamples.nextGame} />);
-    expect(screen.getByLabelText('Players: Alex Morgan, Jamie Taylor, Sam Kim, Riley Brown')).toBeTruthy();
-    expect(screen.getByTestId('illustrated-card-participant-decoration', {
-      includeHiddenElements: true,
-    }).props.accessibilityElementsHidden).toBe(true);
+    const screen = await render(
+      <IllustratedCard {...illustratedCardExamples.nextGame} />,
+    );
+    expect(
+      screen.getByLabelText(
+        'Players: Alex Morgan, Jamie Taylor, Sam Kim, Riley Brown',
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getByTestId('illustrated-card-participant-decoration', {
+        includeHiddenElements: true,
+      }).props.accessibilityElementsHidden,
+    ).toBe(true);
   });
 
   it.each([
@@ -161,10 +205,22 @@ describe('Illustrated Card runtime contract', () => {  it.each([
     { ...illustratedCardExamples.nextGame, detailPrimary: null },
     { ...illustratedCardExamples.nextGame, onViewGame: null },
     { ...illustratedCardExamples.nextGame, onViewResults: jest.fn() },
-    { ...illustratedCardExamples.nextGame, participants: illustratedParticipants.slice(0, 3) },
-    { ...illustratedCardExamples.nextGame, participants: [...illustratedParticipants].reverse() },
-    { ...illustratedCardExamples.invitePlayers, participants: illustratedParticipants },
-    { ...illustratedCardExamples.gameCreated, participants: [illustratedParticipants[1], illustratedParticipants[0]] },
+    {
+      ...illustratedCardExamples.nextGame,
+      participants: illustratedParticipants.slice(0, 3),
+    },
+    {
+      ...illustratedCardExamples.nextGame,
+      participants: [...illustratedParticipants].reverse(),
+    },
+    {
+      ...illustratedCardExamples.invitePlayers,
+      participants: illustratedParticipants,
+    },
+    {
+      ...illustratedCardExamples.gameCreated,
+      participants: [illustratedParticipants[1], illustratedParticipants[0]],
+    },
     { ...illustratedCardExamples.matchResult, onViewResults: undefined },
     { ...illustratedCardExamples.gameCreated, extra: true },
     { ...illustratedCardExamples.nextGame, type: 'unknown' },
@@ -189,9 +245,14 @@ describe('Illustrated Card runtime contract', () => {  it.each([
         ...illustratedParticipants.slice(1),
       ],
     },
-  ])('rejects unsupported content, callbacks, participant states, or tuples %#', (props) => {
-    expect(() => IllustratedCard(invalidProps(props))).toThrow(/Unsupported Illustrated Card/u);
-  });
+  ])(
+    'rejects unsupported content, callbacks, participant states, or tuples %#',
+    (props) => {
+      expect(() => IllustratedCard(invalidProps(props))).toThrow(
+        /Unsupported Illustrated Card/u,
+      );
+    },
+  );
 });
 
 describe('Illustrated Card Storybook and public contract', () => {
@@ -209,9 +270,14 @@ describe('Illustrated Card Storybook and public contract', () => {
 
   it('normalizes controls into complete branches with exact participant cardinality', () => {
     expect(normalizeIllustratedCardStoryArgs({ type: 'nextGame' })).toEqual(
-      expect.objectContaining({ participants: illustratedParticipants, type: 'nextGame' }),
+      expect.objectContaining({
+        participants: illustratedParticipants,
+        type: 'nextGame',
+      }),
     );
-    expect(normalizeIllustratedCardStoryArgs({ type: 'invitePlayers' })).toEqual(
+    expect(
+      normalizeIllustratedCardStoryArgs({ type: 'invitePlayers' }),
+    ).toEqual(
       expect.objectContaining({
         participants: [illustratedParticipants[0], illustratedParticipants[1]],
         type: 'invitePlayers',

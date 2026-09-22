@@ -32,7 +32,12 @@ import {
   type SegmentOptions,
 } from '../src/design-system/components/navigation/SegmentedControl';
 
-import { bottomNavigationFixtures, segmentedControlFixtures, appHeaderFixtures, sectionHeaderFixtures } from '../src/design-system/stories/fixtures';
+import {
+  bottomNavigationFixtures,
+  segmentedControlFixtures,
+  appHeaderFixtures,
+  sectionHeaderFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import AppHeaderStories, {
   Boundaries as AppHeaderBoundaries,
@@ -59,21 +64,38 @@ import {
 describe('Navigation composite Storybook contract', () => {
   it('publishes exact groups, bounded controls, and fixture variant counts', () => {
     expect(BottomNavigationStories.title).toBe('Navigation/Bottom Navigation');
-    expect(BottomNavigationStories.argTypes).toEqual(expect.objectContaining({
-      activeDestination: { control: 'select', options: ['home', 'games', 'create', 'players', 'profile'] },
-      onDestinationPress: { action: 'destination pressed' },
-    }));
+    expect(BottomNavigationStories.argTypes).toEqual(
+      expect.objectContaining({
+        activeDestination: {
+          control: 'select',
+          options: ['home', 'games', 'create', 'players', 'profile'],
+        },
+        onDestinationPress: { action: 'destination pressed' },
+      }),
+    );
     expect(SegmentedControlStories.title).toBe('Navigation/Segmented Control');
-    expect(SegmentedControlStories.argTypes).toEqual(expect.objectContaining({
-      disabled: { control: 'boolean' },
-      onValueChange: { action: 'value changed' },
-      value: { control: 'select', options: ['Upcoming', 'Open'] },
-    }));
+    expect(SegmentedControlStories.argTypes).toEqual(
+      expect.objectContaining({
+        disabled: { control: 'boolean' },
+        onValueChange: { action: 'value changed' },
+        value: { control: 'select', options: ['Upcoming', 'Open'] },
+      }),
+    );
 
-    const bottomVariants = BottomNavigationVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
-    const segmentVariants = SegmentedControlVariants.render?.({} as never, {} as never) as React.ReactElement<{ children: React.ReactNode }>;
-    expect(Children.toArray(bottomVariants.props.children)).toHaveLength(bottomNavigationFixtures.length);
-    expect(Children.toArray(segmentVariants.props.children)).toHaveLength(segmentedControlFixtures.length);
+    const bottomVariants = BottomNavigationVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{ children: React.ReactNode }>;
+    const segmentVariants = SegmentedControlVariants.render?.(
+      {} as never,
+      {} as never,
+    ) as React.ReactElement<{ children: React.ReactNode }>;
+    expect(Children.toArray(bottomVariants.props.children)).toHaveLength(
+      bottomNavigationFixtures.length,
+    );
+    expect(Children.toArray(segmentVariants.props.children)).toHaveLength(
+      segmentedControlFixtures.length,
+    );
   });
 
   it('keeps every SegmentedControl value transition inside the controlled options', async () => {

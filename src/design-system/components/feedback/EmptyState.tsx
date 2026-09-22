@@ -48,20 +48,27 @@ function unsupported(reason: string): never {
 function validateEmptyStateProps(props: EmptyStateProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(`unsupported property ${key}`);
     }
   }
   if (!Object.hasOwn(approvedCopy, String(runtime.content))) {
     unsupported(`unknown content ${String(runtime.content)}`);
   }
-  const callbackKey = runtime.content === 'noGames'
-    ? 'onCreateGame'
-    : runtime.content === 'noPlayers'
-      ? 'onInvitePlayers'
-      : undefined;
+  const callbackKey =
+    runtime.content === 'noGames'
+      ? 'onCreateGame'
+      : runtime.content === 'noPlayers'
+        ? 'onInvitePlayers'
+        : undefined;
   if (callbackKey && typeof runtime[callbackKey] !== 'function') {
-    unsupported(`${callbackKey} must be a function for ${String(runtime.content)}`);
+    unsupported(
+      `${callbackKey} must be a function for ${String(runtime.content)}`,
+    );
   }
   for (const key of ['onCreateGame', 'onInvitePlayers'] as const) {
     if (key !== callbackKey && typeof runtime[key] !== 'undefined') {
@@ -72,9 +79,12 @@ function validateEmptyStateProps(props: EmptyStateProps) {
 
 function Artwork({ content }: Pick<EmptyStateProps, 'content'>) {
   switch (content) {
-    case 'noGames': return <NoGamesEmptyStateArtwork />;
-    case 'noNotifications': return <NoNotificationsEmptyStateArtwork />;
-    case 'noPlayers': return <NoPlayersEmptyStateArtwork />;
+    case 'noGames':
+      return <NoGamesEmptyStateArtwork />;
+    case 'noNotifications':
+      return <NoNotificationsEmptyStateArtwork />;
+    case 'noPlayers':
+      return <NoPlayersEmptyStateArtwork />;
   }
 }
 
@@ -83,13 +93,27 @@ export function EmptyState(props: EmptyStateProps) {
   const copy = approvedCopy[props.content];
   return (
     <View style={styles.root} testID="empty-state">
-      <Text style={styles.copy} variant="heading">{copy.heading}</Text>
-      <Text color="textSecondary" style={styles.copy} variant="body">{copy.body}</Text>
+      <Text style={styles.copy} variant="heading">
+        {copy.heading}
+      </Text>
+      <Text color="textSecondary" style={styles.copy} variant="body">
+        {copy.body}
+      </Text>
       <Artwork content={props.content} />
       {props.content === 'noGames' ? (
-        <Button label="Create game" onPress={props.onCreateGame} size={40} style="primary" />
+        <Button
+          label="Create game"
+          onPress={props.onCreateGame}
+          size={40}
+          style="primary"
+        />
       ) : props.content === 'noPlayers' ? (
-        <Button label="Invite players" onPress={props.onInvitePlayers} size={40} style="primary" />
+        <Button
+          label="Invite players"
+          onPress={props.onInvitePlayers}
+          size={40}
+          style="primary"
+        />
       ) : null}
     </View>
   );

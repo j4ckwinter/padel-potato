@@ -84,21 +84,21 @@ describe('Text primitive', () => {
         </DesignText>,
       );
 
-      expect(flattenedStyle(screen.getByTestId('subject').props.style).color).toBe(
-        colors[color],
-      );
+      expect(
+        flattenedStyle(screen.getByTestId('subject').props.style).color,
+      ).toBe(colors[color]);
     },
   );
 
   it.each(invalidTextTokenCases)(
     'rejects a %s with the supported values',
     (_label, props) => {
-    expect(() =>
-      DesignText({
-        ...(props as unknown as DesignTextProps),
-        children: 'Rejected token',
-      }),
-    ).toThrow(/Unsupported design-system value: .*Supported values:/u);
+      expect(() =>
+        DesignText({
+          ...(props as unknown as DesignTextProps),
+          children: 'Rejected token',
+        }),
+      ).toThrow(/Unsupported design-system value: .*Supported values:/u);
     },
   );
 
@@ -181,140 +181,152 @@ describe('Text primitive', () => {
   });
 });
 
-describe.each(layoutPrimitiveCases)('%s layout primitive', (_name, Component, direction) => {
-  it.each(Object.keys(spacing) as SpacingToken[])(
-    'resolves the complete %s spacing token exactly',
-    async (token) => {
+describe.each(layoutPrimitiveCases)(
+  '%s layout primitive',
+  (_name, Component, direction) => {
+    it.each(Object.keys(spacing) as SpacingToken[])(
+      'resolves the complete %s spacing token exactly',
+      async (token) => {
+        const screen = await render(
+          <Component gap={token} padding={token} testID="subject" />,
+        );
+
+        expect(
+          flattenedStyle(screen.getByTestId('subject').props.style),
+        ).toEqual(
+          expect.objectContaining({
+            flexDirection: direction,
+            gap: spacing[token],
+            padding: spacing[token],
+          }),
+        );
+      },
+    );
+
+    it('rejects unsupported and null spacing names', () => {
+      expect(() => Component({ gap: 'space48' as SpacingToken })).toThrow(
+        /Unsupported design-system value: space48\. Supported values:/u,
+      );
+      expect(() =>
+        Component({ padding: null as unknown as SpacingToken }),
+      ).toThrow(/Unsupported design-system value: null\. Supported values:/u);
+    });
+
+    it.each([
+      'alignItems',
+      'flexDirection',
+      'gap',
+      'justifyContent',
+      'padding',
+      'paddingBottom',
+      'paddingEnd',
+      'paddingHorizontal',
+      'paddingLeft',
+      'paddingRight',
+      'paddingStart',
+      'paddingTop',
+      'paddingVertical',
+    ] as const)('rejects the reserved %s layout style key', (reservedKey) => {
+      const registered = StyleSheet.create({
+        protected: { [reservedKey]: 999 },
+      });
+
+      expect(() =>
+        Component({
+          style: [{ width: 100 }, registered.protected] as StackProps['style'],
+        } as StackProps & InlineProps),
+      ).toThrow(
+        new RegExp(
+          `Unsupported design-system value: ${reservedKey}\\. Supported values:`,
+          'u',
+        ),
+      );
+    });
+
+    it('keeps owned layout invariant while preserving allowed caller layout', async () => {
       const screen = await render(
-        <Component gap={token} padding={token} testID="subject" />,
+        <Component
+          align="center"
+          gap="space20"
+          justify="spaceBetween"
+          padding="space12"
+          style={{ marginTop: 8, width: 200 }}
+          testID="subject"
+        />,
       );
 
       expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
         expect.objectContaining({
+          alignItems: 'center',
           flexDirection: direction,
-          gap: spacing[token],
-          padding: spacing[token],
+          gap: 20,
+          justifyContent: 'space-between',
+          marginTop: 8,
+          padding: 12,
+          width: 200,
         }),
+      );
+    });
+
+    it('preserves zero, one, many, null, equal, and adjacent children in React order', async () => {
+      const empty = await render(<Component testID="empty" />);
+      expect(empty.getByTestId('empty').props.children).toBeUndefined();
+      await empty.unmount();
+
+      const screen = await render(
+        <Component testID="subject">
+          <NativeText testID="first">Same</NativeText>
+          {null}
+          <NativeText testID="second">Same</NativeText>
+          <NativeText testID="third">Third</NativeText>
+        </Component>,
+      );
+
+      expect(screen.getAllByText('Same')).toHaveLength(2);
+      expect(
+        screen
+          .getByTestId('subject')
+          .props.children.map(
+            (child: ReactElement<{ testID?: string }> | null) =>
+              child?.props.testID ?? null,
+          ),
+      ).toEqual(['first', null, 'second', 'third']);
+    });
+
+    it('passes caller accessibility props through without inventing a role', async () => {
+      const unlabelled = await render(<Component testID="unlabelled" />);
+      expect(
+        unlabelled.getByTestId('unlabelled').props.accessibilityRole,
+      ).toBeUndefined();
+      await unlabelled.unmount();
+
+      const labelled = await render(
+        <Component
+          accessibilityLabel="Player summary"
+          accessibilityRole="summary"
+          testID="labelled"
+        />,
+      );
+      expect(labelled.getByTestId('labelled').props.accessibilityLabel).toBe(
+        'Player summary',
+      );
+      expect(labelled.getByTestId('labelled').props.accessibilityRole).toBe(
+        'summary',
+      );
+    });
+  },
+);
+
+describe('Inline wrap boundary', () => {
+  it.each(inlineWrapCases)(
+    'maps %s to %s without changing row direction',
+    async (wrap, expected) => {
+      const screen = await render(<Inline testID="subject" wrap={wrap} />);
+      expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
+        expect.objectContaining({ flexDirection: 'row', flexWrap: expected }),
       );
     },
   );
-
-  it('rejects unsupported and null spacing names', () => {
-    expect(() =>
-      Component({ gap: 'space48' as SpacingToken }),
-    ).toThrow(/Unsupported design-system value: space48\. Supported values:/u);
-    expect(() =>
-      Component({ padding: null as unknown as SpacingToken }),
-    ).toThrow(/Unsupported design-system value: null\. Supported values:/u);
-  });
-
-  it.each([
-    'alignItems',
-    'flexDirection',
-    'gap',
-    'justifyContent',
-    'padding',
-    'paddingBottom',
-    'paddingEnd',
-    'paddingHorizontal',
-    'paddingLeft',
-    'paddingRight',
-    'paddingStart',
-    'paddingTop',
-    'paddingVertical',
-  ] as const)('rejects the reserved %s layout style key', (reservedKey) => {
-    const registered = StyleSheet.create({
-      protected: { [reservedKey]: 999 },
-    });
-
-    expect(() =>
-      Component({
-        style: [{ width: 100 }, registered.protected] as StackProps['style'],
-      } as StackProps & InlineProps),
-    ).toThrow(
-      new RegExp(
-        `Unsupported design-system value: ${reservedKey}\\. Supported values:`,
-        'u',
-      ),
-    );
-  });
-
-  it('keeps owned layout invariant while preserving allowed caller layout', async () => {
-    const screen = await render(
-      <Component
-        align="center"
-        gap="space20"
-        justify="spaceBetween"
-        padding="space12"
-        style={{ marginTop: 8, width: 200 }}
-        testID="subject"
-      />,
-    );
-
-    expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
-      expect.objectContaining({
-        alignItems: 'center',
-        flexDirection: direction,
-        gap: 20,
-        justifyContent: 'space-between',
-        marginTop: 8,
-        padding: 12,
-        width: 200,
-      }),
-    );
-  });
-
-  it('preserves zero, one, many, null, equal, and adjacent children in React order', async () => {
-    const empty = await render(<Component testID="empty" />);
-    expect(empty.getByTestId('empty').props.children).toBeUndefined();
-    await empty.unmount();
-
-    const screen = await render(
-      <Component testID="subject">
-        <NativeText testID="first">Same</NativeText>
-        {null}
-        <NativeText testID="second">Same</NativeText>
-        <NativeText testID="third">Third</NativeText>
-      </Component>,
-    );
-
-    expect(screen.getAllByText('Same')).toHaveLength(2);
-    expect(
-      screen.getByTestId('subject').props.children.map(
-        (child: ReactElement<{ testID?: string }> | null) =>
-          child?.props.testID ?? null,
-      ),
-    ).toEqual(['first', null, 'second', 'third']);
-  });
-
-  it('passes caller accessibility props through without inventing a role', async () => {
-    const unlabelled = await render(<Component testID="unlabelled" />);
-    expect(unlabelled.getByTestId('unlabelled').props.accessibilityRole).toBeUndefined();
-    await unlabelled.unmount();
-
-    const labelled = await render(
-      <Component
-        accessibilityLabel="Player summary"
-        accessibilityRole="summary"
-        testID="labelled"
-      />,
-    );
-    expect(labelled.getByTestId('labelled').props.accessibilityLabel).toBe(
-      'Player summary',
-    );
-    expect(labelled.getByTestId('labelled').props.accessibilityRole).toBe('summary');
-  });
-});
-
-describe('Inline wrap boundary', () => {
-  it.each(inlineWrapCases)('maps %s to %s without changing row direction', async (wrap, expected) => {
-    const screen = await render(
-      <Inline testID="subject" wrap={wrap} />,
-    );
-    expect(flattenedStyle(screen.getByTestId('subject').props.style)).toEqual(
-      expect.objectContaining({ flexDirection: 'row', flexWrap: expected }),
-    );
-  });
 
   it('rejects a non-boolean runtime wrap value', () => {
     expect(() => Inline({ wrap: 'wrap' as unknown as boolean })).toThrow(
@@ -375,9 +387,9 @@ describe('Surface primitive', () => {
     'resolves the %s padding exactly',
     async (token) => {
       const screen = await render(<Surface padding={token} testID="subject" />);
-      expect(flattenedStyle(screen.getByTestId('subject').props.style).padding).toBe(
-        spacing[token],
-      );
+      expect(
+        flattenedStyle(screen.getByTestId('subject').props.style).padding,
+      ).toBe(spacing[token]);
     },
   );
 
@@ -387,7 +399,7 @@ describe('Surface primitive', () => {
     ['borderWidth', { borderWidth: 'borderHeavy' }],
     ['padding', { padding: 'space48' }],
     ['radius', { radius: 'radius24' }],
-  ] as Array<[string, Record<string, unknown>]>) (
+  ] as Array<[string, Record<string, unknown>]>)(
     'rejects unsupported %s tokens',
     (_name, props) => {
       expect(() => Surface(props as unknown as SurfaceProps)).toThrow(
@@ -421,7 +433,9 @@ describe('Surface primitive', () => {
     'shadowRadius',
   ] as const)('rejects the reserved %s surface style key', (reservedKey) => {
     const registered = StyleSheet.create({
-      protected: { [reservedKey]: reservedKey === 'shadowOffset' ? {} : 'tampered' },
+      protected: {
+        [reservedKey]: reservedKey === 'shadowOffset' ? {} : 'tampered',
+      },
     });
 
     expect(() =>

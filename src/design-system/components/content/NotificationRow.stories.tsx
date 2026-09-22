@@ -13,7 +13,6 @@ const content = {
   title: 'Game update',
 } as const;
 
-
 type StoryArgs = Readonly<{
   configuration?: unknown;
   message?: unknown;
@@ -23,16 +22,19 @@ type StoryArgs = Readonly<{
 }>;
 
 export const notificationRowStoryConfigurations = Object.freeze(
-  fixtures.map(({ configuration }) => (
-    `${configuration.type}/${configuration.state}`
-  )),
+  fixtures.map(
+    ({ configuration }) => `${configuration.type}/${configuration.state}`,
+  ),
 );
 
 const meta = {
   title: 'Content/Notification Row',
   excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
-    configuration: { control: 'select', options: notificationRowStoryConfigurations },
+    configuration: {
+      control: 'select',
+      options: notificationRowStoryConfigurations,
+    },
     onPress: { action: 'notification pressed' },
   },
   parameters: { controls: { include: ['configuration', 'onPress'] } },
@@ -41,27 +43,50 @@ const meta = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
-export function normalizeNotificationRowStoryArgs(args: StoryArgs): NotificationRowProps {
-  if (!notificationRowStoryConfigurations.includes(
-    args.configuration as (typeof notificationRowStoryConfigurations)[number],
-  )) {
-    throw new Error(`Unsupported Notification Row story configuration: ${String(args.configuration)}.`);
+export function normalizeNotificationRowStoryArgs(
+  args: StoryArgs,
+): NotificationRowProps {
+  if (
+    !notificationRowStoryConfigurations.includes(
+      args.configuration as (typeof notificationRowStoryConfigurations)[number],
+    )
+  ) {
+    throw new Error(
+      `Unsupported Notification Row story configuration: ${String(args.configuration)}.`,
+    );
   }
-  const [type, state] = (args.configuration as (typeof notificationRowStoryConfigurations)[number]).split('/') as [
-    NotificationRowProps['type'],
-    'read' | 'unread',
-  ];
-  const onPress = typeof args.onPress === 'function' ? args.onPress as () => void : () => undefined;
+  const [type, state] = (
+    args.configuration as (typeof notificationRowStoryConfigurations)[number]
+  ).split('/') as [NotificationRowProps['type'], 'read' | 'unread'];
+  const onPress =
+    typeof args.onPress === 'function'
+      ? (args.onPress as () => void)
+      : () => undefined;
   const nextContent = {
-    message: typeof args.message === 'string' && args.message.trim() ? args.message : content.message,
+    message:
+      typeof args.message === 'string' && args.message.trim()
+        ? args.message
+        : content.message,
     onPress,
-    timestamp: typeof args.timestamp === 'string' && args.timestamp.trim() ? args.timestamp : content.timestamp,
-    title: typeof args.title === 'string' && args.title.trim() ? args.title : `${type[0].toUpperCase()}${type.slice(1)} update`,
+    timestamp:
+      typeof args.timestamp === 'string' && args.timestamp.trim()
+        ? args.timestamp
+        : content.timestamp,
+    title:
+      typeof args.title === 'string' && args.title.trim()
+        ? args.title
+        : `${type[0].toUpperCase()}${type.slice(1)} update`,
   };
-  return { ...nextContent, read: state === 'read', type } as NotificationRowProps;
+  return {
+    ...nextContent,
+    read: state === 'read',
+    type,
+  } as NotificationRowProps;
 }
 
-function fixtureProps(fixture: (typeof fixtures)[number]): NotificationRowProps {
+function fixtureProps(
+  fixture: (typeof fixtures)[number],
+): NotificationRowProps {
   const { state, type } = fixture.configuration;
   return normalizeNotificationRowStoryArgs({
     configuration: `${type}/${state}`,
@@ -75,7 +100,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <NotificationRow {...normalizeNotificationRowStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[5].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[5].label}
+      </Text>
     </Stack>
   ),
 };
@@ -119,7 +146,8 @@ export const Boundaries: Story = {
         type="social"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full message semantics remain available. Native 200% font-scale review remains a Phase 5 backstop.
+        Full message semantics remain available. Native 200% font-scale review
+        remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),
@@ -127,7 +155,8 @@ export const Boundaries: Story = {
 
 function InteractiveHarness({ onPress }: Readonly<{ onPress?: unknown }>) {
   const [read, setRead] = useState(false);
-  const callback = typeof onPress === 'function' ? onPress as () => void : undefined;
+  const callback =
+    typeof onPress === 'function' ? (onPress as () => void) : undefined;
   return (
     <Stack gap="space8">
       <NotificationRow

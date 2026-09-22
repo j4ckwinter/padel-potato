@@ -23,7 +23,7 @@ import {
   type AvatarSize,
 } from '../src/design-system/components/identity/Avatar';
 
-import {  } from '../src/design-system/stories/fixtures';
+import {} from '../src/design-system/stories/fixtures';
 
 import AvatarGroupStories, {
   Boundaries as AvatarGroupBoundaries,
@@ -89,8 +89,10 @@ describe('Status Chip and Step Progress Storybook contracts', () => {
       StepProgressBoundaries,
       StepProgressInteractive,
     ]).toHaveLength(5);
-    expect(StepProgressInteractive.parameters).toEqual(expect.objectContaining({
-      applicability: expect.stringMatching(/read-only/u),
-    }));
+    expect(StepProgressInteractive.parameters).toEqual(
+      expect.objectContaining({
+        applicability: expect.stringMatching(/read-only/u),
+      }),
+    );
   });
 });

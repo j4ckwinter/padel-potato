@@ -64,9 +64,18 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Inline gap="space8">
-      <Checkbox accessibilityLabel="Unchecked" checked={false} onCheckedChange={noop} />
+      <Checkbox
+        accessibilityLabel="Unchecked"
+        checked={false}
+        onCheckedChange={noop}
+      />
       <Checkbox accessibilityLabel="Checked" checked onCheckedChange={noop} />
-      <Checkbox accessibilityLabel="Disabled" checked={false} disabled onCheckedChange={noop} />
+      <Checkbox
+        accessibilityLabel="Disabled"
+        checked={false}
+        disabled
+        onCheckedChange={noop}
+      />
     </Inline>
   ),
 };
@@ -81,10 +90,16 @@ export const Boundaries: Story = {
           checked={false}
           onCheckedChange={noop}
         />
-        <Checkbox accessibilityLabel="Adjacent option" checked onCheckedChange={noop} />
+        <Checkbox
+          accessibilityLabel="Adjacent option"
+          checked
+          onCheckedChange={noop}
+        />
       </Inline>
       <Text color="textSecondary" variant="caption">
-        The complete accessible name remains available at 200%; four points preserve target clearance between adjacent expanded controls. Native measurement remains Phase 5.
+        The complete accessible name remains available at 200%; four points
+        preserve target clearance between adjacent expanded controls. Native
+        measurement remains Phase 5.
       </Text>
     </Stack>
   ),

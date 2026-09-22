@@ -27,7 +27,11 @@ function unsupported(value: unknown, supported: readonly unknown[]): never {
 function validateCheckboxProps(props: CheckboxProps) {
   const runtimeProps = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtimeProps)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(key, supportedRuntimeProps);
     }
   }
@@ -35,12 +39,17 @@ function validateCheckboxProps(props: CheckboxProps) {
     typeof runtimeProps.accessibilityLabel !== 'string' ||
     runtimeProps.accessibilityLabel.trim().length === 0
   ) {
-    unsupported(runtimeProps.accessibilityLabel, ['non-empty accessibility label']);
+    unsupported(runtimeProps.accessibilityLabel, [
+      'non-empty accessibility label',
+    ]);
   }
   if (typeof runtimeProps.checked !== 'boolean') {
     unsupported(runtimeProps.checked, [true, false]);
   }
-  if (typeof runtimeProps.disabled !== 'undefined' && typeof runtimeProps.disabled !== 'boolean') {
+  if (
+    typeof runtimeProps.disabled !== 'undefined' &&
+    typeof runtimeProps.disabled !== 'boolean'
+  ) {
     unsupported(runtimeProps.disabled, [true, false]);
   }
   if (typeof runtimeProps.onCheckedChange !== 'function') {
@@ -50,7 +59,12 @@ function validateCheckboxProps(props: CheckboxProps) {
 
 export function Checkbox(props: CheckboxProps) {
   validateCheckboxProps(props);
-  const { accessibilityLabel, checked, disabled = false, onCheckedChange } = props;
+  const {
+    accessibilityLabel,
+    checked,
+    disabled = false,
+    onCheckedChange,
+  } = props;
 
   return (
     <Pressable

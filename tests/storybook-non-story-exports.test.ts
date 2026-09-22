@@ -58,16 +58,17 @@ const storyModules = [
 
 describe('Storybook non-story export contract', () => {
   it('excludes every helper export from CSF story discovery', () => {
-    const helperExports = storyModules.flatMap((storyModule) => (
+    const helperExports = storyModules.flatMap((storyModule) =>
       Object.keys(storyModule)
-        .filter((exportName) => (
-          exportName.startsWith('normalize')
-          || exportName.endsWith('Configurations')
-          || /^Interactive.*Harness$/u.test(exportName)
-          || exportName === 'authDividerStoryApplicability'
-        ))
-        .map((exportName) => ({ exportName, meta: storyModule.default }))
-    ));
+        .filter(
+          (exportName) =>
+            exportName.startsWith('normalize') ||
+            exportName.endsWith('Configurations') ||
+            /^Interactive.*Harness$/u.test(exportName) ||
+            exportName === 'authDividerStoryApplicability',
+        )
+        .map((exportName) => ({ exportName, meta: storyModule.default })),
+    );
 
     expect(helperExports).toHaveLength(36);
     for (const { exportName, meta } of helperExports) {

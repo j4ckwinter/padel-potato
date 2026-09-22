@@ -45,7 +45,11 @@ export const Variants: Story = {
     <Stack gap="space12">
       {fixtures.map((fixture) => (
         <Fragment key={fixture.label}>
-          <SectionHeader actionLabel="See all ›" onActionPress={noop} title="Open games near you" />
+          <SectionHeader
+            actionLabel="See all ›"
+            onActionPress={noop}
+            title="Open games near you"
+          />
           <Text color="textSecondary" variant="caption">
             {fixture.label}
           </Text>
@@ -59,7 +63,11 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space12">
-      <SectionHeader actionLabel="See all ›" onActionPress={noop} title="Open games near you" />
+      <SectionHeader
+        actionLabel="See all ›"
+        onActionPress={noop}
+        title="Open games near you"
+      />
       <SectionHeader title="Your recent games" />
     </Stack>
   ),
@@ -75,7 +83,11 @@ export const Boundaries: Story = {
         title="A complete long section heading for nearby tournament games"
       />
       <Text color="textSecondary" variant="caption">
-        The source-faithful visual row remains 350 by 28 inside a 354 by 44 interaction-clearance wrapper. Long title and action copy preserve a separately named effective 44-point target and 200% text intent without overlap. Native wrapping, hit testing, and measurement remain Phase 5; Profile no overflow is demonstrated in App Header boundaries.
+        The source-faithful visual row remains 350 by 28 inside a 354 by 44
+        interaction-clearance wrapper. Long title and action copy preserve a
+        separately named effective 44-point target and 200% text intent without
+        overlap. Native wrapping, hit testing, and measurement remain Phase 5;
+        Profile no overflow is demonstrated in App Header boundaries.
       </Text>
     </Stack>
   ),

@@ -2,7 +2,12 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { flattenedStyle, invalidProps } from './helpers/componentTest';
 
-import { act, fireEvent, render, userEvent } from '@testing-library/react-native';
+import {
+  act,
+  fireEvent,
+  render,
+  userEvent,
+} from '@testing-library/react-native';
 
 import { readFileSync } from 'node:fs';
 
@@ -36,27 +41,38 @@ import {
 
 import * as authentication from '../src/design-system/components/authentication';
 
-import { socialSignInButtonFixtures, authDividerFixtures } from '../src/design-system/stories/fixtures';
+import {
+  socialSignInButtonFixtures,
+  authDividerFixtures,
+} from '../src/design-system/stories/fixtures';
 
 import { colors } from '../src/design-system/tokens';
 
-describe('AuthDivider static public contract', () => {  it('renders readable default or custom content at exact geometry with hidden rules', async () => {
+describe('AuthDivider static public contract', () => {
+  it('renders readable default or custom content at exact geometry with hidden rules', async () => {
     const screen = await render(<AuthDivider />);
     const label = screen.getByText('or');
     const container = screen.getByTestId('auth-divider');
-    const rules = screen.getAllByTestId(/auth-divider-rule/u, { includeHiddenElements: true });
+    const rules = screen.getAllByTestId(/auth-divider-rule/u, {
+      includeHiddenElements: true,
+    });
 
     expect(label).toBeTruthy();
-    expect(flattenedStyle(container.props.style)).toEqual(expect.objectContaining({
-      height: 24,
-      width: 352,
-    }));
+    expect(flattenedStyle(container.props.style)).toEqual(
+      expect.objectContaining({
+        height: 24,
+        width: 352,
+      }),
+    );
     expect(rules).toHaveLength(2);
-    expect(rules.every((rule) =>
-      rule.props.accessible === false
-      && rule.props.accessibilityElementsHidden === true
-      && rule.props.importantForAccessibility === 'no-hide-descendants',
-    )).toBe(true);
+    expect(
+      rules.every(
+        (rule) =>
+          rule.props.accessible === false &&
+          rule.props.accessibilityElementsHidden === true &&
+          rule.props.importantForAccessibility === 'no-hide-descendants',
+      ),
+    ).toBe(true);
     expect(screen.queryAllByRole('button')).toHaveLength(0);
 
     await screen.rerender(<AuthDivider label="or continue with email" />);
@@ -70,11 +86,11 @@ describe('AuthDivider static public contract', () => {  it('renders readable def
     expect(() => AuthDivider({ label: '   ' })).toThrow(
       /Unsupported design-system value: .*Supported values: non-empty label/u,
     );
-    expect(() => AuthDivider({ onPress: jest.fn() } as unknown as AuthDividerProps)).toThrow(
-      /Unsupported design-system value: onPress/u,
-    );
-    expect(() => AuthDivider({ disabled: true } as unknown as AuthDividerProps)).toThrow(
-      /Unsupported design-system value: disabled/u,
-    );
+    expect(() =>
+      AuthDivider({ onPress: jest.fn() } as unknown as AuthDividerProps),
+    ).toThrow(/Unsupported design-system value: onPress/u);
+    expect(() =>
+      AuthDivider({ disabled: true } as unknown as AuthDividerProps),
+    ).toThrow(/Unsupported design-system value: disabled/u);
   });
 });

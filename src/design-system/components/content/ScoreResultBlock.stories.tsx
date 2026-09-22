@@ -20,7 +20,6 @@ const losingTeams = [
   { initials: 'RB', name: 'Riley & Sam', scores: ['6', '6'] },
 ] as const satisfies readonly [ScoreResultTeam, ScoreResultTeam];
 
-
 const meta = {
   title: 'Content/Score Result Block',
   excludeStories: /^normalize/u,
@@ -42,18 +41,22 @@ type StoryArgs = Readonly<{
   type?: unknown;
 }>;
 
-export function normalizeScoreResultBlockStoryArgs(args: StoryArgs): ScoreResultBlockProps {
+export function normalizeScoreResultBlockStoryArgs(
+  args: StoryArgs,
+): ScoreResultBlockProps {
   const type = args.type === 'full' ? 'full' : 'compact';
-  const state = args.state === 'lost' || args.state === 'live' ? args.state : 'won';
-  const teams: readonly [ScoreResultTeam, ScoreResultTeam] = args.teams === losingTeams
-    ? losingTeams
-    : winningTeams;
-  const title = typeof args.title === 'string' && args.title.trim()
-    ? args.title
-    : 'Tuesday Social Padel';
-  const liveNote = typeof args.liveNote === 'string' && args.liveNote.trim()
-    ? args.liveNote
-    : 'Set 2 in progress';
+  const state =
+    args.state === 'lost' || args.state === 'live' ? args.state : 'won';
+  const teams: readonly [ScoreResultTeam, ScoreResultTeam] =
+    args.teams === losingTeams ? losingTeams : winningTeams;
+  const title =
+    typeof args.title === 'string' && args.title.trim()
+      ? args.title
+      : 'Tuesday Social Padel';
+  const liveNote =
+    typeof args.liveNote === 'string' && args.liveNote.trim()
+      ? args.liveNote
+      : 'Set 2 in progress';
 
   if (type === 'full') {
     return state === 'live'
@@ -65,7 +68,9 @@ export function normalizeScoreResultBlockStoryArgs(args: StoryArgs): ScoreResult
     : { state, teams, type };
 }
 
-function fixtureProps(fixture: (typeof fixtures)[number]): ScoreResultBlockProps {
+function fixtureProps(
+  fixture: (typeof fixtures)[number],
+): ScoreResultBlockProps {
   const { state, type } = fixture.configuration;
   return normalizeScoreResultBlockStoryArgs({
     liveNote: 'Set 2 in progress',
@@ -81,7 +86,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <ScoreResultBlock {...normalizeScoreResultBlockStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[5].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[5].label}
+      </Text>
     </Stack>
   ),
 };
@@ -120,13 +127,22 @@ export const Boundaries: Story = {
       <ScoreResultBlock
         state="won"
         teams={[
-          { initials: 'ŁN', name: 'Łucía Nguyễn & 東京', scores: ['6.000', '0006'] },
-          { initials: 'RS', name: 'Riley & Sam with a very long team name', scores: ['04', '3.0'] },
+          {
+            initials: 'ŁN',
+            name: 'Łucía Nguyễn & 東京',
+            scores: ['6.000', '0006'],
+          },
+          {
+            initials: 'RS',
+            name: 'Riley & Sam with a very long team name',
+            scores: ['04', '3.0'],
+          },
         ]}
         type="compact"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Caller-formatted score text and aggregate reading order remain unchanged. Native 200% font-scale review remains Phase 5.
+        Caller-formatted score text and aggregate reading order remain
+        unchanged. Native 200% font-scale review remains Phase 5.
       </Text>
     </Stack>
   ),
@@ -135,13 +151,15 @@ export const Boundaries: Story = {
 export const Interactive: Story = {
   args: Canonical.args,
   parameters: {
-    applicability: 'Interactive is inapplicable: Score Result Block is presentational and owns no callbacks or timers.',
+    applicability:
+      'Interactive is inapplicable: Score Result Block is presentational and owns no callbacks or timers.',
   },
   render: (args) => (
     <Stack gap="space8">
       <ScoreResultBlock {...normalizeScoreResultBlockStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        Interactive is inapplicable because result state and score text are caller supplied.
+        Interactive is inapplicable because result state and score text are
+        caller supplied.
       </Text>
     </Stack>
   ),

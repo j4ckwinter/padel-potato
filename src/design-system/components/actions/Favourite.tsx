@@ -4,7 +4,12 @@ import { Path, Svg } from 'react-native-svg';
 import { Pressable } from '../../primitives/Pressable';
 import { colors } from '../../tokens';
 import { FavouriteHeartArtwork } from '../../assets/artwork/actionProviderArtwork';
-import { assertOnlyKeys, isCallback, isNonEmptyString, unsupportedValue } from '../../internal/validation';
+import {
+  assertOnlyKeys,
+  isCallback,
+  isNonEmptyString,
+  unsupportedValue,
+} from '../../internal/validation';
 
 export type FavouriteProps = Readonly<{
   accessibilityLabel: string;
@@ -26,10 +31,16 @@ const heartPath =
 function validateFavouriteProps(props: FavouriteProps) {
   assertOnlyKeys(props, supportedRuntimeProps);
   if (!isNonEmptyString(props.accessibilityLabel)) {
-    unsupportedValue(props.accessibilityLabel, ['non-empty accessibility label']);
+    unsupportedValue(props.accessibilityLabel, [
+      'non-empty accessibility label',
+    ]);
   }
-  if (typeof props.checked !== 'boolean') unsupportedValue(props.checked, [true, false]);
-  if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
+  if (typeof props.checked !== 'boolean')
+    unsupportedValue(props.checked, [true, false]);
+  if (
+    typeof props.disabled !== 'undefined' &&
+    typeof props.disabled !== 'boolean'
+  ) {
     unsupportedValue(props.disabled, [true, false]);
   }
   if (!isCallback(props.onCheckedChange)) {

@@ -18,7 +18,6 @@ const players = [
   { initials: 'RB', name: 'Riley Brown', presence: 'online' },
 ] as const satisfies readonly AvatarGroupIdentity[];
 
-
 const meta = {
   title: 'Identity/Avatar Group',
   excludeStories: /^normalize/u,
@@ -36,19 +35,36 @@ type Story = StoryObj<typeof meta>;
 
 type StoryArgs = Readonly<{ overflow?: unknown; variant?: unknown }>;
 
-export function normalizeAvatarGroupStoryArgs(args: StoryArgs): AvatarGroupProps {
+export function normalizeAvatarGroupStoryArgs(
+  args: StoryArgs,
+): AvatarGroupProps {
   switch (args.variant) {
-    case 'empty': return { onAddPlayer1: () => undefined, onAddPlayer2: () => undefined, variant: 'empty' };
-    case '3-players': return { identities: [players[0], players[1], players[2]], variant: '3-players' };
-    case '4-players': return { identities: players, variant: '4-players' };
-    case 'overflow': return {
-      identities: players,
-      overflow: typeof args.overflow === 'number' && Number.isInteger(args.overflow) && args.overflow > 0
-        ? args.overflow
-        : 3,
-      variant: 'overflow',
-    };
-    default: return { identities: [players[0], players[1]], variant: '2-players' };
+    case 'empty':
+      return {
+        onAddPlayer1: () => undefined,
+        onAddPlayer2: () => undefined,
+        variant: 'empty',
+      };
+    case '3-players':
+      return {
+        identities: [players[0], players[1], players[2]],
+        variant: '3-players',
+      };
+    case '4-players':
+      return { identities: players, variant: '4-players' };
+    case 'overflow':
+      return {
+        identities: players,
+        overflow:
+          typeof args.overflow === 'number' &&
+          Number.isInteger(args.overflow) &&
+          args.overflow > 0
+            ? args.overflow
+            : 3,
+        variant: 'overflow',
+      };
+    default:
+      return { identities: [players[0], players[1]], variant: '2-players' };
   }
 }
 
@@ -56,14 +72,22 @@ function fixtureProps(fixture: (typeof fixtures)[number]): AvatarGroupProps {
   const content = fixture.configuration.content;
   const state = fixture.configuration.state;
   if (content === '2Slots' && state === 'empty') {
-    return { onAddPlayer1: () => undefined, onAddPlayer2: () => undefined, variant: 'empty' };
+    return {
+      onAddPlayer1: () => undefined,
+      onAddPlayer2: () => undefined,
+      variant: 'empty',
+    };
   }
   if (content === '4Players' && state === 'overflow') {
     return { identities: players, overflow: 3, variant: 'overflow' };
   }
-  if (content === '4Players') return { identities: players, variant: '4-players' };
+  if (content === '4Players')
+    return { identities: players, variant: '4-players' };
   if (content === '3Players') {
-    return { identities: [players[0], players[1], players[2]], variant: '3-players' };
+    return {
+      identities: [players[0], players[1], players[2]],
+      variant: '3-players',
+    };
   }
   return { identities: [players[0], players[1]], variant: '2-players' };
 }
@@ -101,7 +125,11 @@ export const States: Story = {
   render: () => (
     <Stack gap="space16">
       <AvatarGroup identities={players} overflow={3} variant="overflow" />
-      <AvatarGroup onAddPlayer1={() => undefined} onAddPlayer2={() => undefined} variant="empty" />
+      <AvatarGroup
+        onAddPlayer1={() => undefined}
+        onAddPlayer2={() => undefined}
+        variant="empty"
+      />
     </Stack>
   ),
 };
@@ -112,13 +140,18 @@ export const Boundaries: Story = {
     <Stack gap="space8" style={{ width: 200 }}>
       <AvatarGroup
         identities={[
-          { initials: 'ŁN', name: 'Łucía Nguyễn from 東京', presence: 'online' },
+          {
+            initials: 'ŁN',
+            name: 'Łucía Nguyễn from 東京',
+            presence: 'online',
+          },
           players[1],
         ]}
         variant="2-players"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full ordered group names remain available. Native 200% font-scale review remains a Phase 5 backstop.
+        Full ordered group names remain available. Native 200% font-scale review
+        remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),

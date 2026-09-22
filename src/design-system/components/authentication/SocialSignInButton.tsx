@@ -4,13 +4,20 @@ import { StyleSheet, View } from 'react-native';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
-import { assertOnlyKeys, isCallback, unsupportedValue } from '../../internal/validation';
+import {
+  assertOnlyKeys,
+  isCallback,
+  unsupportedValue,
+} from '../../internal/validation';
 import {
   AppleProviderMark,
   GoogleProviderMark,
 } from '../../assets/artwork/actionProviderArtwork';
 
-export const socialSignInProviders = Object.freeze(['google', 'apple'] as const);
+export const socialSignInProviders = Object.freeze([
+  'google',
+  'apple',
+] as const);
 
 export type SocialSignInProvider = (typeof socialSignInProviders)[number];
 
@@ -39,19 +46,27 @@ const providerContent = Object.freeze({
     label: 'Continue with Google',
     textColor: 'ink' as const,
   }),
-} satisfies Readonly<Record<SocialSignInProvider, {
-  Artwork: () => React.ReactElement;
-  backgroundColor: string;
-  label: string;
-  textColor: 'ink' | 'surface';
-}>>);
+} satisfies Readonly<
+  Record<
+    SocialSignInProvider,
+    {
+      Artwork: () => React.ReactElement;
+      backgroundColor: string;
+      label: string;
+      textColor: 'ink' | 'surface';
+    }
+  >
+>);
 
 function validateProps(props: SocialSignInButtonProps) {
   assertOnlyKeys(props, supportedRuntimeProps);
   if (!socialSignInProviders.includes(props.provider)) {
     unsupportedValue(props.provider, socialSignInProviders);
   }
-  if (typeof props.disabled !== 'undefined' && typeof props.disabled !== 'boolean') {
+  if (
+    typeof props.disabled !== 'undefined' &&
+    typeof props.disabled !== 'boolean'
+  ) {
     unsupportedValue(props.disabled, [true, false]);
   }
   if (typeof props.onPress !== 'undefined' && !isCallback(props.onPress)) {
@@ -62,7 +77,8 @@ function validateProps(props: SocialSignInButtonProps) {
 export function SocialSignInButton(props: SocialSignInButtonProps) {
   validateProps(props);
   const { disabled = false, onPress, provider } = props;
-  const { Artwork, backgroundColor, label, textColor } = providerContent[provider];
+  const { Artwork, backgroundColor, label, textColor } =
+    providerContent[provider];
 
   return (
     <Pressable

@@ -23,68 +23,92 @@ const meta = {
   excludeStories: /^normalize/u,
   component: IllustratedCard,
   argTypes: {
-    type: { control: 'select', options: ['gameCreated', 'invitePlayers', 'matchResult', 'nextGame'] },
-    onInvitePlayers: { action: 'invite players', if: { arg: 'type', eq: 'invitePlayers' } },
-    onShareGame: { action: 'share game', if: { arg: 'type', eq: 'gameCreated' } },
+    type: {
+      control: 'select',
+      options: ['gameCreated', 'invitePlayers', 'matchResult', 'nextGame'],
+    },
+    onInvitePlayers: {
+      action: 'invite players',
+      if: { arg: 'type', eq: 'invitePlayers' },
+    },
+    onShareGame: {
+      action: 'share game',
+      if: { arg: 'type', eq: 'gameCreated' },
+    },
     onViewGame: { action: 'view game', if: { arg: 'type', eq: 'nextGame' } },
-    onViewResults: { action: 'view results', if: { arg: 'type', eq: 'matchResult' } },
+    onViewResults: {
+      action: 'view results',
+      if: { arg: 'type', eq: 'matchResult' },
+    },
   },
 } satisfies Meta<typeof IllustratedCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-type StoryArgs = Readonly<{ type?: unknown }> & Partial<Record<
-  'onInvitePlayers' | 'onShareGame' | 'onViewGame' | 'onViewResults',
-  unknown
->>;
+type StoryArgs = Readonly<{ type?: unknown }> &
+  Partial<
+    Record<
+      'onInvitePlayers' | 'onShareGame' | 'onViewGame' | 'onViewResults',
+      unknown
+    >
+  >;
 
-const callback = (value: unknown) => typeof value === 'function'
-  ? value as () => void
-  : () => undefined;
+const callback = (value: unknown) =>
+  typeof value === 'function' ? (value as () => void) : () => undefined;
 
-export function normalizeIllustratedCardStoryArgs(args: StoryArgs): IllustratedCardProps {
+export function normalizeIllustratedCardStoryArgs(
+  args: StoryArgs,
+): IllustratedCardProps {
   switch (args.type) {
-    case 'gameCreated': return {
-      detailPrimary: 'Your court is booked and',
-      detailSecondary: 'ready to share.',
-      eyebrow: 'Success',
-      onShareGame: callback(args.onShareGame),
-      participants: [participants[0], participants[1]],
-      title: 'Game created!',
-      type: 'gameCreated',
-    };
-    case 'invitePlayers': return {
-      detailPrimary: 'Share this game and fill',
-      detailSecondary: 'the remaining player slots.',
-      eyebrow: 'Players',
-      onInvitePlayers: callback(args.onInvitePlayers),
-      participants: [participants[0], participants[1]],
-      title: 'Bring your crew',
-      type: 'invitePlayers',
-    };
-    case 'matchResult': return {
-      detailPrimary: 'You won 6\u20134, 6\u20133',
-      detailSecondary: 'View scores and highlights',
-      eyebrow: 'Completed',
-      onViewResults: callback(args.onViewResults),
-      participants,
-      title: 'Great match!',
-      type: 'matchResult',
-    };
-    default: return {
-      detailPrimary: 'Padel United \u00b7 Court 3',
-      detailSecondary: '18:30 \u00b7 90 min',
-      eyebrow: 'Your next game',
-      onViewGame: callback(args.onViewGame),
-      participants,
-      title: 'Tuesday Social Padel',
-      type: 'nextGame',
-    };
+    case 'gameCreated':
+      return {
+        detailPrimary: 'Your court is booked and',
+        detailSecondary: 'ready to share.',
+        eyebrow: 'Success',
+        onShareGame: callback(args.onShareGame),
+        participants: [participants[0], participants[1]],
+        title: 'Game created!',
+        type: 'gameCreated',
+      };
+    case 'invitePlayers':
+      return {
+        detailPrimary: 'Share this game and fill',
+        detailSecondary: 'the remaining player slots.',
+        eyebrow: 'Players',
+        onInvitePlayers: callback(args.onInvitePlayers),
+        participants: [participants[0], participants[1]],
+        title: 'Bring your crew',
+        type: 'invitePlayers',
+      };
+    case 'matchResult':
+      return {
+        detailPrimary: 'You won 6\u20134, 6\u20133',
+        detailSecondary: 'View scores and highlights',
+        eyebrow: 'Completed',
+        onViewResults: callback(args.onViewResults),
+        participants,
+        title: 'Great match!',
+        type: 'matchResult',
+      };
+    default:
+      return {
+        detailPrimary: 'Padel United \u00b7 Court 3',
+        detailSecondary: '18:30 \u00b7 90 min',
+        eyebrow: 'Your next game',
+        onViewGame: callback(args.onViewGame),
+        participants,
+        title: 'Tuesday Social Padel',
+        type: 'nextGame',
+      };
   }
 }
 
-function fixtureProps(fixture: (typeof fixtures)[number]): IllustratedCardProps {
-  return normalizeIllustratedCardStoryArgs({ type: fixture.configuration.type });
+function fixtureProps(
+  fixture: (typeof fixtures)[number],
+): IllustratedCardProps {
+  return normalizeIllustratedCardStoryArgs({
+    type: fixture.configuration.type,
+  });
 }
 
 export const Canonical: Story = {
@@ -92,7 +116,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <IllustratedCard {...normalizeIllustratedCardStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[3].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[3].label}
+      </Text>
     </Stack>
   ),
 };
@@ -117,7 +143,9 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {fixtures.map((fixture) => <IllustratedCard key={fixture.label} {...fixtureProps(fixture)} />)}
+      {fixtures.map((fixture) => (
+        <IllustratedCard key={fixture.label} {...fixtureProps(fixture)} />
+      ))}
     </Stack>
   ),
 };
@@ -136,7 +164,10 @@ export const Boundaries: Story = {
         type="nextGame"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        View game remains reachable at 200% host scaling. Invite and Game created preserve the authored two-player partial participant state; arbitrary partial participant arrays are rejected. Native measurement remains a Phase 5 backstop.
+        View game remains reachable at 200% host scaling. Invite and Game
+        created preserve the authored two-player partial participant state;
+        arbitrary partial participant arrays are rejected. Native measurement
+        remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),
@@ -149,13 +180,40 @@ function InteractiveIllustratedCardHarness(props: IllustratedCardProps) {
     setActivations((count) => count + 1);
     intent();
   };
-  const tracked: IllustratedCardProps = fixture.type === 'nextGame'
-    ? { ...fixture, onViewGame: track(props.type === 'nextGame' ? props.onViewGame : () => undefined) }
-    : fixture.type === 'matchResult'
-      ? { ...fixture, onViewResults: track(props.type === 'matchResult' ? props.onViewResults : () => undefined) }
-      : fixture.type === 'invitePlayers'
-        ? { ...fixture, onInvitePlayers: track(props.type === 'invitePlayers' ? props.onInvitePlayers : () => undefined) }
-        : { ...fixture, onShareGame: track(props.type === 'gameCreated' ? props.onShareGame : () => undefined) };
+  const tracked: IllustratedCardProps =
+    fixture.type === 'nextGame'
+      ? {
+          ...fixture,
+          onViewGame: track(
+            props.type === 'nextGame' ? props.onViewGame : () => undefined,
+          ),
+        }
+      : fixture.type === 'matchResult'
+        ? {
+            ...fixture,
+            onViewResults: track(
+              props.type === 'matchResult'
+                ? props.onViewResults
+                : () => undefined,
+            ),
+          }
+        : fixture.type === 'invitePlayers'
+          ? {
+              ...fixture,
+              onInvitePlayers: track(
+                props.type === 'invitePlayers'
+                  ? props.onInvitePlayers
+                  : () => undefined,
+              ),
+            }
+          : {
+              ...fixture,
+              onShareGame: track(
+                props.type === 'gameCreated'
+                  ? props.onShareGame
+                  : () => undefined,
+              ),
+            };
   return (
     <Stack gap="space8">
       <IllustratedCard {...tracked} />
@@ -167,6 +225,8 @@ function InteractiveIllustratedCardHarness(props: IllustratedCardProps) {
 export const Interactive: Story = {
   args: Canonical.args,
   render: (args) => (
-    <InteractiveIllustratedCardHarness {...normalizeIllustratedCardStoryArgs(args)} />
+    <InteractiveIllustratedCardHarness
+      {...normalizeIllustratedCardStoryArgs(args)}
+    />
   ),
 };

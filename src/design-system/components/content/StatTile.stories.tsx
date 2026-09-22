@@ -8,7 +8,6 @@ import { StatTile, type StatTileProps } from './StatTile';
 
 const fixtures = statTileFixtures;
 
-
 type StoryArgs = Readonly<{
   configuration?: unknown;
   label?: unknown;
@@ -17,9 +16,10 @@ type StoryArgs = Readonly<{
 }>;
 
 export const statTileStoryConfigurations = Object.freeze(
-  fixtures.map(({ configuration }) => (
-    `${configuration.type}/${configuration.content}/${configuration.state}`
-  )),
+  fixtures.map(
+    ({ configuration }) =>
+      `${configuration.type}/${configuration.content}/${configuration.state}`,
+  ),
 );
 
 const meta = {
@@ -35,23 +35,67 @@ export default meta;
 type Story = StoryObj<StoryArgs>;
 
 const copy = (args: StoryArgs) => ({
-  label: typeof args.label === 'string' && args.label.trim() ? args.label : 'Win rate',
-  supportingText: typeof args.supportingText === 'string' && args.supportingText.trim()
-    ? args.supportingText
-    : '+8% this month',
-  value: typeof args.value === 'string' && args.value.trim() ? args.value : '68%',
+  label:
+    typeof args.label === 'string' && args.label.trim()
+      ? args.label
+      : 'Win rate',
+  supportingText:
+    typeof args.supportingText === 'string' && args.supportingText.trim()
+      ? args.supportingText
+      : '+8% this month',
+  value:
+    typeof args.value === 'string' && args.value.trim() ? args.value : '68%',
 });
 
 export function normalizeStatTileStoryArgs(args: StoryArgs): StatTileProps {
   const nextCopy = copy(args);
   switch (args.configuration) {
-    case 'compact/gamesPlayed/neutral': return { ...nextCopy, content: 'gamesPlayed', state: 'neutral', type: 'compact' };
-    case 'compact/rating/neutral': return { ...nextCopy, content: 'rating', state: 'neutral', type: 'compact' };
-    case 'compact/streak/positive': return { ...nextCopy, content: 'streak', state: 'positive', type: 'compact' };
-    case 'featured/rating/positive': return { ...nextCopy, content: 'rating', state: 'positive', type: 'featured' };
-    case 'featured/streak/positive': return { ...nextCopy, content: 'streak', state: 'positive', type: 'featured' };
-    case 'compact/winRate/positive': return { ...nextCopy, content: 'winRate', state: 'positive', type: 'compact' };
-    default: throw new Error(`Unsupported Stat Tile story configuration: ${String(args.configuration)}.`);
+    case 'compact/gamesPlayed/neutral':
+      return {
+        ...nextCopy,
+        content: 'gamesPlayed',
+        state: 'neutral',
+        type: 'compact',
+      };
+    case 'compact/rating/neutral':
+      return {
+        ...nextCopy,
+        content: 'rating',
+        state: 'neutral',
+        type: 'compact',
+      };
+    case 'compact/streak/positive':
+      return {
+        ...nextCopy,
+        content: 'streak',
+        state: 'positive',
+        type: 'compact',
+      };
+    case 'featured/rating/positive':
+      return {
+        ...nextCopy,
+        content: 'rating',
+        state: 'positive',
+        type: 'featured',
+      };
+    case 'featured/streak/positive':
+      return {
+        ...nextCopy,
+        content: 'streak',
+        state: 'positive',
+        type: 'featured',
+      };
+    case 'compact/winRate/positive':
+      return {
+        ...nextCopy,
+        content: 'winRate',
+        state: 'positive',
+        type: 'compact',
+      };
+    default:
+      throw new Error(
+        `Unsupported Stat Tile story configuration: ${String(args.configuration)}.`,
+      );
   }
 }
 
@@ -75,7 +119,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <StatTile {...normalizeStatTileStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[4].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[4].label}
+      </Text>
     </Stack>
   ),
 };
@@ -119,7 +165,8 @@ export const Boundaries: Story = {
         value="4.6000000000000000"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full accessible statistic retained. Native 200% font-scale review remains a Phase 5 backstop.
+        Full accessible statistic retained. Native 200% font-scale review
+        remains a Phase 5 backstop.
       </Text>
     </Stack>
   ),
@@ -128,7 +175,8 @@ export const Boundaries: Story = {
 export const Interactive: Story = {
   args: Canonical.args,
   parameters: {
-    applicability: 'Interactive is inapplicable: Stat Tile is a presentational summary with no callbacks.',
+    applicability:
+      'Interactive is inapplicable: Stat Tile is a presentational summary with no callbacks.',
   },
   render: (args) => (
     <Stack gap="space8">

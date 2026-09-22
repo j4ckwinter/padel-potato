@@ -15,7 +15,12 @@ const fixtures = appHeaderFixtures;
 const noop = () => undefined;
 
 const storyProps = (page: AppHeaderPage): AppHeaderProps => {
-  if (page === 'home' || page === 'games' || page === 'create' || page === 'players') {
+  if (
+    page === 'home' ||
+    page === 'games' ||
+    page === 'create' ||
+    page === 'players'
+  ) {
     return { onNotificationPress: noop, page };
   }
   if (page === 'profile') return { page };
@@ -50,9 +55,11 @@ type Story = StoryObj<typeof meta>;
 
 type AppHeaderStoryArgs = Readonly<Record<string, unknown>>;
 
-export const normalizeAppHeaderStoryArgs = (args: AppHeaderStoryArgs): AppHeaderProps => {
+export const normalizeAppHeaderStoryArgs = (
+  args: AppHeaderStoryArgs,
+): AppHeaderProps => {
   const page = appHeaderPages.includes(args.page as AppHeaderPage)
-    ? args.page as AppHeaderPage
+    ? (args.page as AppHeaderPage)
     : 'home';
   const copy = {
     ...(typeof args.subtitle === 'string' && args.subtitle.trim().length > 0
@@ -62,12 +69,18 @@ export const normalizeAppHeaderStoryArgs = (args: AppHeaderStoryArgs): AppHeader
       ? { title: args.title }
       : {}),
   };
-  if (page === 'home' || page === 'games' || page === 'create' || page === 'players') {
+  if (
+    page === 'home' ||
+    page === 'games' ||
+    page === 'create' ||
+    page === 'players'
+  ) {
     return {
       ...copy,
-      onNotificationPress: typeof args.onNotificationPress === 'function'
-        ? args.onNotificationPress as () => void
-        : noop,
+      onNotificationPress:
+        typeof args.onNotificationPress === 'function'
+          ? (args.onNotificationPress as () => void)
+          : noop,
       page,
     };
   }
@@ -76,16 +89,23 @@ export const normalizeAppHeaderStoryArgs = (args: AppHeaderStoryArgs): AppHeader
     return {
       ...copy,
       favouriteChecked: args.favouriteChecked === true,
-      onBackPress: typeof args.onBackPress === 'function' ? args.onBackPress as () => void : noop,
-      onFavouriteChange: typeof args.onFavouriteChange === 'function'
-        ? args.onFavouriteChange as (checked: boolean) => void
-        : noop,
+      onBackPress:
+        typeof args.onBackPress === 'function'
+          ? (args.onBackPress as () => void)
+          : noop,
+      onFavouriteChange:
+        typeof args.onFavouriteChange === 'function'
+          ? (args.onFavouriteChange as (checked: boolean) => void)
+          : noop,
       page,
     };
   }
   return {
     ...copy,
-    onBackPress: typeof args.onBackPress === 'function' ? args.onBackPress as () => void : noop,
+    onBackPress:
+      typeof args.onBackPress === 'function'
+        ? (args.onBackPress as () => void)
+        : noop,
     page,
   };
 };
@@ -144,7 +164,9 @@ export const Boundaries: Story = {
       />
       <AppHeader page="profile" />
       <Text color="textSecondary" variant="caption">
-        long title and subtitle copy retains semantic order at 200% while 44-point actions keep overlap clearance. Profile intentionally has no overflow under revision 296. Native measurement remains Phase 5.
+        long title and subtitle copy retains semantic order at 200% while
+        44-point actions keep overlap clearance. Profile intentionally has no
+        overflow under revision 296. Native measurement remains Phase 5.
       </Text>
     </Stack>
   ),

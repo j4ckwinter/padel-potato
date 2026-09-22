@@ -113,7 +113,10 @@ const supportedRuntimeProps = [
   'testID',
 ] as const;
 
-const unsupported = (value: unknown, supportedValues: readonly string[]): never => {
+const unsupported = (
+  value: unknown,
+  supportedValues: readonly string[],
+): never => {
   throw new Error(
     `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
   );
@@ -125,17 +128,18 @@ export type PressableLayoutStyle = Pick<
   (typeof pressableLayoutStyleKeys)[number]
 >;
 
-type SupportedNativeProps = AccessibilityProps & Pick<
-  NativePressableProps,
-  | 'children'
-  | 'focusable'
-  | 'id'
-  | 'nativeID'
-  | 'onBlur'
-  | 'onFocus'
-  | 'onLayout'
-  | 'testID'
->;
+type SupportedNativeProps = AccessibilityProps &
+  Pick<
+    NativePressableProps,
+    | 'children'
+    | 'focusable'
+    | 'id'
+    | 'nativeID'
+    | 'onBlur'
+    | 'onFocus'
+    | 'onLayout'
+    | 'testID'
+  >;
 
 export type PressableProps = SupportedNativeProps & {
   disabled?: boolean;
@@ -154,7 +158,11 @@ export type PressableProps = SupportedNativeProps & {
  */
 export function Pressable(props: PressableProps) {
   for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(key, supportedRuntimeProps);
     }
   }

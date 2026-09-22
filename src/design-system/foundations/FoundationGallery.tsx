@@ -64,10 +64,7 @@ function Section({
       style={styles.section}
       testID={`foundation-section-${category}`}
     >
-      <Text
-        accessibilityRole="header"
-        style={styles.sectionHeading}
-      >
+      <Text accessibilityRole="header" style={styles.sectionHeading}>
         {categoryHeadings[category]}
       </Text>
       {children}
@@ -139,7 +136,11 @@ type ScalarSpecimensProps = {
 function scalarVisual(category: ScalarCategory, value: number): ViewStyle {
   switch (category) {
     case 'spacing':
-      return { height: spacing.space8, width: value, borderRadius: radii.radius8 };
+      return {
+        height: spacing.space8,
+        width: value,
+        borderRadius: radii.radius8,
+      };
     case 'radii':
       return {
         height: dimensions.controlHeight40,
@@ -220,10 +221,7 @@ function FoundationSection({ category }: { category: FoundationCategory }) {
     case 'dimensions':
       return (
         <Section category={category}>
-          <ScalarSpecimens
-            category={category}
-            tokens={dimensions}
-          />
+          <ScalarSpecimens category={category} tokens={dimensions} />
         </Section>
       );
     case 'borders':

@@ -16,7 +16,12 @@ function StepperAction({
   label,
   onPress,
   symbol,
-}: Readonly<{ disabled: boolean; label: string; onPress: () => void; symbol: '−' | '+' }>) {
+}: Readonly<{
+  disabled: boolean;
+  label: string;
+  onPress: () => void;
+  symbol: '−' | '+';
+}>) {
   return (
     <Pressable
       accessibilityLabel={label}
@@ -57,7 +62,10 @@ export function StepperField(props: StepperFieldProps) {
           accessibilityLabel={`${fieldAccessibleName(props.label, props.required ?? false)} value`}
           accessibilityValue={{ text: props.value }}
           accessible
-          style={[fieldStyles.stepperValue, globallyDisabled ? fieldStyles.disabled : undefined]}
+          style={[
+            fieldStyles.stepperValue,
+            globallyDisabled ? fieldStyles.disabled : undefined,
+          ]}
           testID="field-stepper-value"
         >
           <Text variant="body">{props.value}</Text>

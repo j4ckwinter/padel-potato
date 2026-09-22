@@ -1,31 +1,31 @@
 // Story-only data for checkbox.
 export const checkboxFixtures = [
   {
-    "label": "Disabled",
-    "configuration": {
-      "state": "disabled"
+    label: 'Disabled',
+    configuration: {
+      state: 'disabled',
     },
-    "copy": []
+    copy: [],
   },
   {
-    "label": "Focused",
-    "configuration": {
-      "state": "focused"
+    label: 'Focused',
+    configuration: {
+      state: 'focused',
     },
-    "copy": []
+    copy: [],
   },
   {
-    "label": "Checked",
-    "configuration": {
-      "state": "checked"
+    label: 'Checked',
+    configuration: {
+      state: 'checked',
     },
-    "copy": []
+    copy: [],
   },
   {
-    "label": "Unchecked",
-    "configuration": {
-      "state": "unchecked"
+    label: 'Unchecked',
+    configuration: {
+      state: 'unchecked',
     },
-    "copy": []
-  }
+    copy: [],
+  },
 ] as const;

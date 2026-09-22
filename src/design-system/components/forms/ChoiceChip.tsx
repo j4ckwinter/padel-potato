@@ -6,7 +6,11 @@ import { Text } from '../../primitives/Text';
 import { colors } from '../../tokens';
 
 export const choiceChipTypes = Object.freeze(['option', 'filter'] as const);
-export const choiceChipIcons = Object.freeze(['none', 'leading', 'trailing'] as const);
+export const choiceChipIcons = Object.freeze([
+  'none',
+  'leading',
+  'trailing',
+] as const);
 
 export type ChoiceChipType = (typeof choiceChipTypes)[number];
 export type ChoiceChipIcon = (typeof choiceChipIcons)[number];
@@ -16,19 +20,52 @@ type ChoiceChipCommonProps = Readonly<{
   onSelectedChange: (selected: boolean) => void;
 }>;
 
-type AvailableChoiceChipProps = ChoiceChipCommonProps & (
-  | Readonly<{ type: 'option'; icon: 'none'; selected: false; disabled?: false }>
-  | Readonly<{ type: 'option'; icon: 'leading'; selected: true; disabled?: false }>
-  | Readonly<{ type: 'filter'; icon: 'trailing'; selected: false; disabled?: false }>
-  | Readonly<{ type: 'filter'; icon: 'leading'; selected: true; disabled?: false }>
-);
+type AvailableChoiceChipProps = ChoiceChipCommonProps &
+  (
+    | Readonly<{
+        type: 'option';
+        icon: 'none';
+        selected: false;
+        disabled?: false;
+      }>
+    | Readonly<{
+        type: 'option';
+        icon: 'leading';
+        selected: true;
+        disabled?: false;
+      }>
+    | Readonly<{
+        type: 'filter';
+        icon: 'trailing';
+        selected: false;
+        disabled?: false;
+      }>
+    | Readonly<{
+        type: 'filter';
+        icon: 'leading';
+        selected: true;
+        disabled?: false;
+      }>
+  );
 
-type DisabledChoiceChipProps = ChoiceChipCommonProps & (
-  | Readonly<{ type: 'option'; icon: 'none'; selected: false; disabled: true }>
-  | Readonly<{ type: 'filter'; icon: 'trailing'; selected: false; disabled: true }>
-);
+type DisabledChoiceChipProps = ChoiceChipCommonProps &
+  (
+    | Readonly<{
+        type: 'option';
+        icon: 'none';
+        selected: false;
+        disabled: true;
+      }>
+    | Readonly<{
+        type: 'filter';
+        icon: 'trailing';
+        selected: false;
+        disabled: true;
+      }>
+  );
 
-export type ChoiceChipProps = AvailableChoiceChipProps | DisabledChoiceChipProps;
+export type ChoiceChipProps =
+  AvailableChoiceChipProps | DisabledChoiceChipProps;
 
 const supportedRuntimeProps = Object.freeze([
   'disabled',
@@ -57,7 +94,11 @@ function unsupported(value: unknown, supported: readonly unknown[]): never {
 function validateChoiceChipProps(props: ChoiceChipProps) {
   const runtimeProps = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(props)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(key, supportedRuntimeProps);
     }
   }
@@ -67,13 +108,19 @@ function validateChoiceChipProps(props: ChoiceChipProps) {
   if (!choiceChipIcons.includes(runtimeProps.icon as ChoiceChipIcon)) {
     unsupported(runtimeProps.icon, choiceChipIcons);
   }
-  if (typeof runtimeProps.label !== 'string' || runtimeProps.label.trim().length === 0) {
+  if (
+    typeof runtimeProps.label !== 'string' ||
+    runtimeProps.label.trim().length === 0
+  ) {
     unsupported(runtimeProps.label, ['non-empty label']);
   }
   if (typeof runtimeProps.selected !== 'boolean') {
     unsupported(runtimeProps.selected, [true, false]);
   }
-  if (typeof runtimeProps.disabled !== 'undefined' && typeof runtimeProps.disabled !== 'boolean') {
+  if (
+    typeof runtimeProps.disabled !== 'undefined' &&
+    typeof runtimeProps.disabled !== 'boolean'
+  ) {
     unsupported(runtimeProps.disabled, [true, false]);
   }
   if (typeof runtimeProps.onSelectedChange !== 'function') {
@@ -93,7 +140,14 @@ function validateChoiceChipProps(props: ChoiceChipProps) {
 
 export function ChoiceChip(props: ChoiceChipProps) {
   validateChoiceChipProps(props);
-  const { disabled = false, icon, label, onSelectedChange, selected, type } = props;
+  const {
+    disabled = false,
+    icon,
+    label,
+    onSelectedChange,
+    selected,
+    type,
+  } = props;
 
   return (
     <Pressable

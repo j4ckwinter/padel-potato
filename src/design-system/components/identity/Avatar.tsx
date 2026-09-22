@@ -10,7 +10,11 @@ import { colors } from '../../tokens';
 import { isLocalImageSource } from '../../internal/validation';
 
 export const avatarSizes = Object.freeze([32, 40, 48, 56] as const);
-export const avatarPresences = Object.freeze(['online', 'away', 'offline'] as const);
+export const avatarPresences = Object.freeze([
+  'online',
+  'away',
+  'offline',
+] as const);
 
 export type AvatarSize = (typeof avatarSizes)[number];
 export type AvatarPresence = (typeof avatarPresences)[number];
@@ -49,11 +53,31 @@ const supportedTuples = Object.freeze([
 ] as const);
 
 const avatarConfigurations = Object.freeze({
-  '32/online': Object.freeze({ diameter: 32, indicatorDiameter: 8, indicatorOffset: 25 }),
-  '40/online': Object.freeze({ diameter: 40, indicatorDiameter: 10, indicatorOffset: 31 }),
-  '48/away': Object.freeze({ diameter: 48, indicatorDiameter: 12, indicatorOffset: 37 }),
-  '48/offline': Object.freeze({ diameter: 48, indicatorDiameter: 12, indicatorOffset: 37 }),
-  '56/online': Object.freeze({ diameter: 56, indicatorDiameter: 12, indicatorOffset: 45 }),
+  '32/online': Object.freeze({
+    diameter: 32,
+    indicatorDiameter: 8,
+    indicatorOffset: 25,
+  }),
+  '40/online': Object.freeze({
+    diameter: 40,
+    indicatorDiameter: 10,
+    indicatorOffset: 31,
+  }),
+  '48/away': Object.freeze({
+    diameter: 48,
+    indicatorDiameter: 12,
+    indicatorOffset: 37,
+  }),
+  '48/offline': Object.freeze({
+    diameter: 48,
+    indicatorDiameter: 12,
+    indicatorOffset: 37,
+  }),
+  '56/online': Object.freeze({
+    diameter: 56,
+    indicatorDiameter: 12,
+    indicatorOffset: 45,
+  }),
 } as const);
 
 const presenceColors = Object.freeze({
@@ -75,7 +99,11 @@ function unsupportedIdentity(reason: string): never {
 function validateAvatarProps(props: AvatarProps) {
   const runtimeProps = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtimeProps)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupportedIdentity(`unsupported property ${key}`);
     }
   }
@@ -85,33 +113,47 @@ function validateAvatarProps(props: AvatarProps) {
     unsupportedConfiguration(tuple);
   }
 
-  const hasInitials = Object.prototype.hasOwnProperty.call(runtimeProps, 'initials');
-  const hasSource = Object.prototype.hasOwnProperty.call(runtimeProps, 'source');
+  const hasInitials = Object.prototype.hasOwnProperty.call(
+    runtimeProps,
+    'initials',
+  );
+  const hasSource = Object.prototype.hasOwnProperty.call(
+    runtimeProps,
+    'source',
+  );
   if (hasInitials === hasSource) {
     unsupportedIdentity('provide exactly one of initials or source');
   }
   if (hasInitials) {
     if (
-      typeof runtimeProps.initials !== 'string'
-      || runtimeProps.initials.trim().length < 1
-      || runtimeProps.initials.trim().length > 3
+      typeof runtimeProps.initials !== 'string' ||
+      runtimeProps.initials.trim().length < 1 ||
+      runtimeProps.initials.trim().length > 3
     ) {
-      unsupportedIdentity('initials must contain one to three visible characters');
+      unsupportedIdentity(
+        'initials must contain one to three visible characters',
+      );
     }
   } else if (!isLocalImageSource(runtimeProps.source)) {
-    unsupportedIdentity('source must be a bundled or local React Native image source');
+    unsupportedIdentity(
+      'source must be a bundled or local React Native image source',
+    );
   }
 
   if (runtimeProps.decorative === true) {
     if (typeof runtimeProps.accessibilityLabel !== 'undefined') {
-      unsupportedIdentity('decorative avatars cannot expose an accessibility label');
+      unsupportedIdentity(
+        'decorative avatars cannot expose an accessibility label',
+      );
     }
   } else if (
-    runtimeProps.decorative !== undefined
-    || typeof runtimeProps.accessibilityLabel !== 'string'
-    || runtimeProps.accessibilityLabel.trim().length === 0
+    runtimeProps.decorative !== undefined ||
+    typeof runtimeProps.accessibilityLabel !== 'string' ||
+    runtimeProps.accessibilityLabel.trim().length === 0
   ) {
-    unsupportedIdentity('labelled avatars require a non-empty accessibility label');
+    unsupportedIdentity(
+      'labelled avatars require a non-empty accessibility label',
+    );
   }
 }
 

@@ -10,10 +10,11 @@ type SharedPreferences = Readonly<{
   timeOfDay: string;
 }>;
 
-export type PlayerPreferencesCardProps = SharedPreferences & (
-  | Readonly<{ content: 'full'; level: string }>
-  | Readonly<{ content: 'profile'; level?: never }>
-);
+export type PlayerPreferencesCardProps = SharedPreferences &
+  (
+    | Readonly<{ content: 'full'; level: string }>
+    | Readonly<{ content: 'profile'; level?: never }>
+  );
 
 const supportedRuntimeProps = Object.freeze([
   'content',
@@ -39,7 +40,11 @@ function validateText(value: unknown, field: string) {
 function validatePlayerPreferencesCardProps(props: PlayerPreferencesCardProps) {
   const runtime = props as unknown as Record<string, unknown>;
   for (const key of Object.keys(runtime)) {
-    if (!supportedRuntimeProps.includes(key as (typeof supportedRuntimeProps)[number])) {
+    if (
+      !supportedRuntimeProps.includes(
+        key as (typeof supportedRuntimeProps)[number],
+      )
+    ) {
       unsupported(`unsupported property ${key}`);
     }
   }
@@ -50,12 +55,18 @@ function validatePlayerPreferencesCardProps(props: PlayerPreferencesCardProps) {
   validateText(runtime.days, 'days');
   validateText(runtime.timeOfDay, 'timeOfDay');
   if (runtime.content === 'full') validateText(runtime.level, 'full level');
-  if (runtime.content === 'profile' && Object.prototype.hasOwnProperty.call(runtime, 'level')) {
+  if (
+    runtime.content === 'profile' &&
+    Object.prototype.hasOwnProperty.call(runtime, 'level')
+  ) {
     unsupported('profile omits the level preference');
   }
 }
 
-function StaticPreference({ label, style }: Readonly<{
+function StaticPreference({
+  label,
+  style,
+}: Readonly<{
   label: string;
   style: StatusChipStyle;
 }>) {
@@ -72,10 +83,12 @@ function StaticPreference({ label, style }: Readonly<{
 
 export function PlayerPreferencesCard(props: PlayerPreferencesCardProps) {
   validatePlayerPreferencesCardProps(props);
-  const heading = props.content === 'full' ? 'Your preferences' : 'Playing preferences';
-  const labels = props.content === 'full'
-    ? [props.level, props.side, props.days, props.timeOfDay]
-    : [props.side, props.days, props.timeOfDay];
+  const heading =
+    props.content === 'full' ? 'Your preferences' : 'Playing preferences';
+  const labels =
+    props.content === 'full'
+      ? [props.level, props.side, props.days, props.timeOfDay]
+      : [props.side, props.days, props.timeOfDay];
 
   return (
     <View
@@ -93,9 +106,9 @@ export function PlayerPreferencesCard(props: PlayerPreferencesCardProps) {
       >
         <Text variant="heading">{heading}</Text>
         <View style={styles.preferences}>
-          {props.content === 'full'
-            ? <StaticPreference label={props.level} style="success" />
-            : null}
+          {props.content === 'full' ? (
+            <StaticPreference label={props.level} style="success" />
+          ) : null}
           <StaticPreference label={props.side} style="info" />
           <StaticPreference label={props.days} style="neutral" />
           <StaticPreference label={props.timeOfDay} style="neutral" />

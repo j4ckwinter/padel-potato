@@ -55,10 +55,7 @@ describe('shared accessibility and interaction assertions', () => {
 
     expect(() => expectRoleAndName(screen, 'summary', 'Different')).toThrow();
     expect(() =>
-      expectAccessibilityState(
-        screen.getByRole('summary'),
-        { disabled: true },
-      ),
+      expectAccessibilityState(screen.getByRole('summary'), { disabled: true }),
     ).toThrow();
   });
 
@@ -180,9 +177,9 @@ describe('published interaction and long-content host contract', () => {
     const root = jest.requireActual<typeof import('../src/design-system')>(
       '../src/design-system',
     );
-    const testing = jest.requireActual<typeof import('../src/design-system/testing')>(
-      '../src/design-system/testing',
-    );
+    const testing = jest.requireActual<
+      typeof import('../src/design-system/testing')
+    >('../src/design-system/testing');
 
     expect(primitives.Pressable).toBe(Pressable);
     expect(root.Pressable).toBe(Pressable);
@@ -240,7 +237,9 @@ describe('published interaction and long-content host contract', () => {
 
     expectRoleAndName(screen, 'button', 'Confirm result');
     expect(screen.getByRole('button', { name: 'Confirm result' })).toBeBusy();
-    expect(screen.getByRole('button', { name: 'Confirm result' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Confirm result' }),
+    ).toBeDisabled();
     expect(screen.getByTestId('empty-content').props.children).toBeNull();
     expect(screen.queryByText(/.+/u)).toBeNull();
   });

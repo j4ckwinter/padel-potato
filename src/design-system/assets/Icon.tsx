@@ -2,16 +2,15 @@ import type { AccessibilityProps } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 import { colors, dimensions, type ColorToken } from '../tokens';
-import {
-  iconDefinitions,
-  iconNames,
-  type IconName,
-} from './iconDefinitions';
+import { iconDefinitions, iconNames, type IconName } from './iconDefinitions';
 
 const own = (record: object, key: PropertyKey) =>
   Object.prototype.hasOwnProperty.call(record, key);
 
-const unsupported = (value: unknown, supportedValues: readonly string[]): never => {
+const unsupported = (
+  value: unknown,
+  supportedValues: readonly string[],
+): never => {
   throw new Error(
     `Unsupported design-system value: ${String(value)}. Supported values: ${supportedValues.join(', ')}`,
   );
@@ -66,7 +65,8 @@ export function Icon(props: IconProps) {
   if (size !== 'iconSize20') unsupported(size, ['iconSize20']);
   if (
     accessibilityLabel !== undefined &&
-    (typeof accessibilityLabel !== 'string' || accessibilityLabel.trim().length === 0)
+    (typeof accessibilityLabel !== 'string' ||
+      accessibilityLabel.trim().length === 0)
   ) {
     unsupported(accessibilityLabel, ['non-empty accessibility label']);
   }

@@ -13,7 +13,6 @@ import {
 const fixtures = bannerToastFixtures;
 const noop = () => undefined;
 
-
 const meta = {
   title: 'Feedback/Banner Toast',
   excludeStories: /(?:^normalize|^Interactive.*Harness$)/u,
@@ -68,7 +67,7 @@ export function normalizeBannerToastStoryArgs(
   const style = bannerToastStyles.includes(
     args.style as (typeof bannerToastStyles)[number],
   )
-    ? args.style as (typeof bannerToastStyles)[number]
+    ? (args.style as (typeof bannerToastStyles)[number])
     : 'success';
   const copy = sourceCopy[style];
   const message = textOr(args.message, copy.message);
@@ -78,7 +77,10 @@ export function normalizeBannerToastStoryArgs(
     case 'error':
       return {
         message,
-        onClose: typeof args.onClose === 'function' ? args.onClose as () => void : noop,
+        onClose:
+          typeof args.onClose === 'function'
+            ? (args.onClose as () => void)
+            : noop,
         style,
         title,
         type: 'toast',
@@ -86,9 +88,10 @@ export function normalizeBannerToastStoryArgs(
     case 'warning':
       return {
         message,
-        onViewGameDetails: typeof args.onViewGameDetails === 'function'
-          ? args.onViewGameDetails as () => void
-          : noop,
+        onViewGameDetails:
+          typeof args.onViewGameDetails === 'function'
+            ? (args.onViewGameDetails as () => void)
+            : noop,
         style,
         title,
         type: 'banner',
@@ -96,9 +99,10 @@ export function normalizeBannerToastStoryArgs(
     case 'info':
       return {
         message,
-        onViewBookingUpdate: typeof args.onViewBookingUpdate === 'function'
-          ? args.onViewBookingUpdate as () => void
-          : noop,
+        onViewBookingUpdate:
+          typeof args.onViewBookingUpdate === 'function'
+            ? (args.onViewBookingUpdate as () => void)
+            : noop,
         style,
         title,
         type: 'banner',
@@ -106,7 +110,10 @@ export function normalizeBannerToastStoryArgs(
     case 'success':
       return {
         message,
-        onClose: typeof args.onClose === 'function' ? args.onClose as () => void : noop,
+        onClose:
+          typeof args.onClose === 'function'
+            ? (args.onClose as () => void)
+            : noop,
         style,
         title,
         type: 'toast',
@@ -129,7 +136,9 @@ export const Canonical: Story = {
   render: (args) => (
     <Stack gap="space8">
       <BannerToast {...normalizeBannerToastStoryArgs(args)} />
-      <Text color="textSecondary" variant="caption">{fixtures[3].label}</Text>
+      <Text color="textSecondary" variant="caption">
+        {fixtures[3].label}
+      </Text>
     </Stack>
   ),
 };
@@ -154,7 +163,9 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
-      {fixtures.map((fixture) => <BannerToast key={fixture.label} {...fixtureProps(fixture)} />)}
+      {fixtures.map((fixture) => (
+        <BannerToast key={fixture.label} {...fixtureProps(fixture)} />
+      ))}
     </Stack>
   ),
 };
@@ -171,17 +182,19 @@ export const Boundaries: Story = {
         type="banner"
       />
       <Text color="textSecondary" maxFontSizeMultiplier={2} variant="caption">
-        Full announcement and View booking update remain reachable at 200% host scaling. Native announcement, target measurement, VoiceOver, and TalkBack review remain Phase 5.
+        Full announcement and View booking update remain reachable at 200% host
+        scaling. Native announcement, target measurement, VoiceOver, and
+        TalkBack review remain Phase 5.
       </Text>
     </Stack>
   ),
 };
 
-export function InteractiveBannerToastHarness(
-  { initialStyle = 'info' }: Readonly<{
-    initialStyle?: (typeof bannerToastStyles)[number];
-  }>,
-) {
+export function InteractiveBannerToastHarness({
+  initialStyle = 'info',
+}: Readonly<{
+  initialStyle?: (typeof bannerToastStyles)[number];
+}>) {
   const [activations, setActivations] = useState(0);
   const props = normalizeBannerToastStoryArgs({
     onClose: () => setActivations((count) => count + 1),
@@ -202,7 +215,9 @@ export const Interactive: Story = {
   args: Canonical.args,
   render: (args) => (
     <InteractiveBannerToastHarness
-      initialStyle={bannerToastStyles.includes(args.style) ? args.style : 'info'}
+      initialStyle={
+        bannerToastStyles.includes(args.style) ? args.style : 'info'
+      }
     />
   ),
 };

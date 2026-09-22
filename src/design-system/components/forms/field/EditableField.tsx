@@ -17,8 +17,9 @@ export function EditableField(props: EditableFieldProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const status = props.status ?? 'default';
   const blocked = (props.disabled ?? false) || (props.readOnly ?? false);
-  const hasTrailingAction = props.type === 'password'
-    || (props.type === 'search' && props.value.length > 0);
+  const hasTrailingAction =
+    props.type === 'password' ||
+    (props.type === 'search' && props.value.length > 0);
 
   return (
     <FieldShell props={props}>
@@ -26,9 +27,13 @@ export function EditableField(props: EditableFieldProps) {
         style={[
           fieldStyles.control,
           {
-            backgroundColor: props.readOnly ? colors.surfaceMuted : colors.surface,
+            backgroundColor: props.readOnly
+              ? colors.surfaceMuted
+              : colors.surface,
             borderColor: focused ? colors.focusRing : fieldBorderColor(status),
-            borderWidth: focused ? borders.focusRingWidth : borders.borderDefault,
+            borderWidth: focused
+              ? borders.focusRingWidth
+              : borders.borderDefault,
           },
           props.disabled ? fieldStyles.disabled : undefined,
         ]}
@@ -36,7 +41,10 @@ export function EditableField(props: EditableFieldProps) {
       >
         <TextInput
           accessibilityHint={fieldAccessibilityHint(props)}
-          accessibilityLabel={fieldAccessibleName(props.label, props.required ?? false)}
+          accessibilityLabel={fieldAccessibleName(
+            props.label,
+            props.required ?? false,
+          )}
           accessibilityState={{ disabled: props.disabled ?? false }}
           editable={!blocked}
           onBlur={() => setFocused(false)}
@@ -48,12 +56,17 @@ export function EditableField(props: EditableFieldProps) {
           placeholderTextColor={colors.muted}
           secureTextEntry={props.type === 'password' && !passwordVisible}
           selectionColor={colors.accent}
-          style={[fieldStyles.input, hasTrailingAction ? fieldStyles.inputWithAction : undefined]}
+          style={[
+            fieldStyles.input,
+            hasTrailingAction ? fieldStyles.inputWithAction : undefined,
+          ]}
           value={props.value}
         />
         {props.type === 'password' ? (
           <IconButton
-            accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
+            accessibilityLabel={
+              passwordVisible ? 'Hide password' : 'Show password'
+            }
             disabled={props.disabled}
             icon="eye"
             onPress={() => setPasswordVisible((visible) => !visible)}

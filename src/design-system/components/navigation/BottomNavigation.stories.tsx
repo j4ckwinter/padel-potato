@@ -20,7 +20,9 @@ const meta = {
   argTypes: {
     activeDestination: {
       control: 'select',
-      options: bottomNavigationDestinations.map(({ destination }) => destination),
+      options: bottomNavigationDestinations.map(
+        ({ destination }) => destination,
+      ),
     },
     onDestinationPress: { action: 'destination pressed' },
   },
@@ -48,7 +50,9 @@ export const Variants: Story = {
       {fixtures.map((fixture) => (
         <Fragment key={fixture.label}>
           <BottomNavigation
-            activeDestination={fixture.configuration.active as BottomNavigationDestination}
+            activeDestination={
+              fixture.configuration.active as BottomNavigationDestination
+            }
             onDestinationPress={noop}
           />
           <Text color="textSecondary" variant="caption">
@@ -67,7 +71,8 @@ export const States: Story = {
       <BottomNavigation activeDestination="home" onDestinationPress={noop} />
       <BottomNavigation activeDestination="create" onDestinationPress={noop} />
       <Text color="textSecondary" variant="caption">
-        Selected state is controlled; Create retains its component-defined accent action treatment.
+        Selected state is controlled; Create retains its component-defined
+        accent action treatment.
       </Text>
     </Stack>
   ),
@@ -79,7 +84,9 @@ export const Boundaries: Story = {
     <Stack gap="space8">
       <BottomNavigation activeDestination="profile" onDestinationPress={noop} />
       <Text color="textSecondary" variant="caption">
-        Exact 390-point native width keeps five adjacent targets separate. Fixed labels remain complete at 200% font scale; native clipping and overlap proof remains Phase 5.
+        Exact 390-point native width keeps five adjacent targets separate. Fixed
+        labels remain complete at 200% font scale; native clipping and overlap
+        proof remains Phase 5.
       </Text>
     </Stack>
   ),

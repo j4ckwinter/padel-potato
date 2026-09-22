@@ -64,11 +64,7 @@ export type TextProps = Omit<NativeTextProps, 'style'> & {
 };
 
 export function Text({ color = 'ink', style, variant, ...props }: TextProps) {
-  guardStyle(
-    style,
-    textOwnedStyleKeys,
-    textLayoutStyleKeys,
-  );
+  guardStyle(style, textOwnedStyleKeys, textLayoutStyleKeys);
 
   const typographyStyle = resolveDesignToken(typography, variant);
   const textColor = resolveDesignToken(colors, color);

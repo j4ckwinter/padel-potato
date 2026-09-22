@@ -65,7 +65,8 @@ export const States: Story = {
       <SocialSignInButton provider="apple" />
       <SocialSignInButton disabled provider="apple" />
       <Text color="textSecondary" variant="caption">
-        Hold enabled actions for native pressed treatment; keyboard focus drives the two-point focus ring.
+        Hold enabled actions for native pressed treatment; keyboard focus drives
+        the two-point focus ring.
       </Text>
     </Stack>
   ),
@@ -78,7 +79,9 @@ export const Boundaries: Story = {
       <SocialSignInButton provider="google" />
       <SocialSignInButton provider="apple" />
       <Text color="textSecondary" variant="caption">
-        The fixed provider copy preserves its full accessible name. Native 200% font-scale, long-copy resilience, and 44-point target review remain Phase 5; provider copy is not caller-customizable.
+        The fixed provider copy preserves its full accessible name. Native 200%
+        font-scale, long-copy resilience, and 44-point target review remain
+        Phase 5; provider copy is not caller-customizable.
       </Text>
     </Stack>
   ),
@@ -92,7 +95,11 @@ function InteractiveHarness({ provider }: { provider: SocialSignInProvider }) {
         onPress={() => setActivations((count) => count + 1)}
         provider={provider}
       />
-      <SocialSignInButton disabled onPress={() => setActivations((count) => count + 1)} provider={provider} />
+      <SocialSignInButton
+        disabled
+        onPress={() => setActivations((count) => count + 1)}
+        provider={provider}
+      />
       <Text variant="body">{`Activations: ${activations}`}</Text>
     </Stack>
   );
