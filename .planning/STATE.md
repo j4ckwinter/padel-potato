@@ -4,10 +4,10 @@ current_phase: 5
 current_phase_name: Native Catalogue Validation and Coverage Audit
 status: planning
 stopped_at: Phase 04 complete, ready to plan Phase 5
-last_updated: "2026-09-22T00:00:00.000Z"
+last_updated: "2026-09-22T20:47:00.000Z"
 last_activity: 2026-09-22
-last_activity_desc: Completed focused project stabilization cleanup
-state_head: f43b7df0202464b64a401044772c1e72aadf7c67
+last_activity_desc: Fixed StatusChip semantic text leaking vertically on Storybook web
+state_head: 41b31b9
 progress:
   total_phases: 5
   completed_phases: 4
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-09-18)
 Phase: 5 — Native Catalogue Validation and Coverage Audit
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-09-22 — Standalone design-system cleanup and manual catalogue preparation
+Last activity: 2026-09-22 - Fixed StatusChip semantic text leakage on Storybook web
 
 Progress: [████████░░] 80%
 
@@ -186,6 +186,7 @@ None yet.
 | 260922-qrl | Remove design-tool coupling and make components standalone | 2026-09-22 | 07b930f | [260922-qrl-remove-penpot-coupling-and-make-componen](./quick/260922-qrl-remove-penpot-coupling-and-make-componen/) |
 | 260922-rrw | Refactor the standalone design system for maintainability without changing behavior | 2026-09-22 | 7929533 | [260922-rrw-staged-design-system-cleanup](./quick/260922-rrw-staged-design-system-cleanup/) |
 | 260922-tc1 | Focused project stabilization cleanup | 2026-09-22 | f43b7df | [260922-tc1-focused-project-stabilization-cleanup](./quick/260922-tc1-focused-project-stabilization-cleanup/) |
+| 260922-u7r | Fix StatusChip semantic text leaking vertically in Storybook web | 2026-09-22 | 41b31b9 | [260922-u7r-fix-statuschip-semantic-text-leaking-ver](./quick/260922-u7r-fix-statuschip-semantic-text-leaking-ver/) |
 
 ### Roadmap Evolution
 
