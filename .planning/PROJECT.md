@@ -16,20 +16,25 @@ Make organizing padel games among friends simple and dependable, using the shipp
 - **Archived:** Phase and quick-task history lives under `.planning/milestones/`.
 - **Not verified:** Phase 5 native catalogue validation was not executed. iOS/Android manual review, 200% font-scale review, VoiceOver/TalkBack checks, production Storybook exclusion, and final catalogue coverage remain open.
 
-## Next Milestone Goals
+## Current Milestone: v1.1 App Foundation
 
-Define these through `$gsd-new-milestone` rather than treating them as pre-approved scope:
+**Goal:** Establish a production-shaped, navigable Padel Potato application shell around the completed design system.
 
-- Decide whether deferred native catalogue validation is a prerequisite or an early phase.
-- Assemble product screens from the design system without weakening its public contracts.
-- Introduce navigation and the first coherent game-organizing workflow.
-- Decide backend, authentication, persistence, and notification boundaries only when required by the chosen product slice.
+**Target features:**
+
+- Expo Router with typed routes, deep links, stacks, and route groups.
+- The existing design-system `BottomNavigation` as the custom tab presentation over standard Expo Router infrastructure.
+- Root providers, fonts, splash handling, safe areas, error boundaries, and validated client environment configuration.
+- Placeholder app screens composed from the design system and deterministic local fixtures.
+- Development-build and EAS foundations, screen-level integration tests, and production-export proof that Storybook is excluded.
+- An explicit decision and execution path for the native validation work deferred from v1.0.
 
 ## Active Requirements
 
 - Preserve the shipped tokens, component appearance, public props, variants, interactions, and accessibility behavior.
 - Keep active runtime code independent from design-tool archives and extraction evidence.
 - Retain representative Storybook stories and behavior tests as product screens begin consuming the system.
+- Add the application shell without authentication, backend services, persistence, or live game workflows.
 - Resolve or deliberately rescope the eight deferred v1 requirements archived in `milestones/v1.0-REQUIREMENTS.md`.
 
 ## Out of Scope Until Replanned
@@ -55,6 +60,24 @@ Define these through `$gsd-new-milestone` rather than treating them as pre-appro
 | Keep runtime code independent from design-tool evidence | Runtime components should be portable and maintainable | ✓ Good |
 | Preserve completed planning artifacts as archives | History remains useful without controlling future runtime work | ✓ Good |
 | Close v1.0 before executing Phase 5 | Begin a new milestone without claiming missing native evidence | Accepted override on 2026-09-23 |
+| Use Expo Router with the existing BottomNavigation presentation | Keep standard routing infrastructure while preserving the shipped product identity | — Pending |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `$gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `$gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
 
 ---
-*Last updated: 2026-09-23 after v1.0 Design System override closeout*
+*Last updated: 2026-09-23 for v1.1 App Foundation initialization*
