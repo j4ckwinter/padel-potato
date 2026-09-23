@@ -1,38 +1,36 @@
 ---
 gsd_state_version: 1.0
-current_phase: 5
-current_phase_name: Native Catalogue Validation and Coverage Audit
-status: planning
-stopped_at: Phase 04 complete, ready to plan Phase 5
-last_updated: "2026-09-22T20:47:00.000Z"
-last_activity: 2026-09-22
-last_activity_desc: Fixed StatusChip semantic text leaking vertically on Storybook web
-state_head: 41b31b9
+status: Awaiting next milestone
+stopped_at: Milestone v1.0 archived through override closeout; ready to define the next milestone
+last_updated: "2026-09-23T20:23:29.677Z"
+last_activity: 2026-09-23
+last_activity_desc: Milestone v1.0 completed and archived
+state_head: 50cbee75f6cb40f2a9cda59cfc8f4cd6983a2a1e
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 33
   completed_plans: 33
   percent: 80
+current_phase: null
+current_phase_name: null
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-09-18)
+See: .planning/PROJECT.md (updated 2026-09-23)
 
-**Core value:** Maintain a dependable, reusable mobile component system so future product screens can be assembled consistently and confidently.
-**Current focus:** Phase 5 — Native Catalogue Validation and Coverage Audit
+**Core value:** Make organizing padel games among friends simple and dependable, using the shipped component system as the consistent product foundation.
+**Current focus:** Planning the next milestone; Phase 5 native validation remains an explicit deferral.
 
 ## Current Position
 
-Phase: 5 — Native Catalogue Validation and Coverage Audit
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-09-22 - Fixed StatusChip semantic text leakage on Storybook web
-
-Progress: [████████░░] 80%
+Phase: Milestone v1.0 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-09-23 — Milestone v1.0 completed and archived
 
 ## Performance Metrics
 
@@ -179,18 +177,13 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 1: Confirm an iOS validation route on the Windows development environment (physical device/EAS or macOS runner).
+- v1.0 override: native iOS/Android catalogue review, 200% font-scale review, VoiceOver/TalkBack checks, production Storybook exclusion, and final coverage evidence remain unresolved.
+- Confirm an iOS validation route on the Windows development environment (physical device/EAS or macOS runner) before claiming native acceptance.
 
 ### Quick Tasks Completed
 
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
-| 260918-noz | Adopt the local Penpot export as the canonical design source and replace routine MCP-dependent workflow checks with deterministic local validation | 2026-09-18 | 42bf053 | Complete | [260918-noz-adopt-the-local-penpot-export-as-the-can](./quick/260918-noz-adopt-the-local-penpot-export-as-the-can/) |
-| 260922-qrl | Remove design-tool coupling and make components standalone | 2026-09-22 | 07b930f | Complete | [260922-qrl-remove-penpot-coupling-and-make-componen](./quick/260922-qrl-remove-penpot-coupling-and-make-componen/) |
-| 260922-rrw | Refactor the standalone design system for maintainability without changing behavior | 2026-09-22 | 7929533 | Complete | [260922-rrw-staged-design-system-cleanup](./quick/260922-rrw-staged-design-system-cleanup/) |
-| 260922-tc1 | Focused project stabilization cleanup | 2026-09-22 | f43b7df | Complete | [260922-tc1-focused-project-stabilization-cleanup](./quick/260922-tc1-focused-project-stabilization-cleanup/) |
-| 260922-u7r | Fix StatusChip semantic text leaking vertically in Storybook web | 2026-09-22 | 41b31b9 | Complete | [260922-u7r-fix-statuschip-semantic-text-leaking-ver](./quick/260922-u7r-fix-statuschip-semantic-text-leaking-ver/) |
-| 260922-uw8 | Foundation-driven styling and rhythm cleanup | 2026-09-22 | 60c08b4 | Needs Review | [260922-uw8-foundation-driven-styling-and-rhythm-cle](./quick/260922-uw8-foundation-driven-styling-and-rhythm-cle/) |
 
 ### Roadmap Evolution
 
@@ -202,9 +195,17 @@ None yet.
 |----------|------|--------|-------------|-----------|
 | Product screens | Screen assembly, navigation, and game flows | Deferred | 2026-09-17 | v1 design system |
 | Platform scope | Hosted Storybook and pixel-perfect web parity | Deferred | 2026-09-17 | v1 design system |
+| uat_gaps | 04/04-UAT.md | passed; audit scanner flagged incomplete UAT metadata | 2026-09-23 | v1.0 |
+| deferred_items | 01/deferred-items.md: Expo and metro-runtime compatibility recommendation drift | acknowledged | 2026-09-23 | v1.0 |
+| phase_scope | Phase 5 native catalogue validation and coverage audit | override closeout; unexecuted | 2026-09-23 | v1.0 |
+| requirements | WORK-02, WORK-03, WORK-05, VRFY-01–VRFY-05 | unchecked; deferred for replanning | 2026-09-23 | v1.0 |
 
 ## Session Continuity
 
-Last session: 2026-09-22
-Stopped at: Foundation-driven styling cleanup complete; awaiting native Storybook rhythm and 200% font-scale review
+Last session: 2026-09-23
+Stopped at: v1.0 Design System archived through override closeout; ready for `$gsd-new-milestone`
 Resume file: None
+
+## Operator Next Steps
+
+- Start the next milestone with $gsd-new-milestone
