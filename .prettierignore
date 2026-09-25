@@ -3,8 +3,6 @@ node_modules/
 dist/
 coverage/
 storybook-static/
-.planning/
-.gsd/
 .rnstorybook/storybook.requires.ts
 package-lock.json
 *.log

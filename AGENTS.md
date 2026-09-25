@@ -1,156 +1,37 @@
-<!-- GSD:project-start source:PROJECT.md -->
+# Padel Potato
 
-## Project
+Padel Potato is a native-first Expo and React Native mobile app for organizing padel games among friends and keeping a trustworthy match record.
 
-**Padel Potato**
+The current codebase contains a standalone design system under `src/design-system`, surfaced through React Native Storybook. Product navigation, backend services, authentication, persistence, notifications, and complete game workflows are not yet implemented.
 
-Padel Potato is a mobile app for organizing padel games among groups of friends and keeping a trustworthy record of the matches they play. The broader product will let players create games, choose a date, time, and venue, invite friends, track responses until four players are confirmed, record scores, confirm results, and receive relevant notifications.
+## Project constraints
 
-The first milestone is the product's standalone React Native design system rather than the working game flow. It is an Expo-based component library surfaced and verified through React Native Storybook on iOS and Android. Product screens, navigation, backend behavior, and persistent game data follow in later milestones.
+- Target iOS and Android. Web Storybook is a secondary local review surface.
+- Use the Expo-managed React Native toolchain and Expo-compatible dependency versions.
+- Keep tokens, icons, fonts, artwork, supported configurations, and validation rules inside `src/design-system`.
+- Active runtime code must not depend on design-tool files or extraction evidence.
+- Preserve existing component public APIs, variants, interactions, and accessibility behavior unless the task explicitly changes them.
+- Keep Storybook conditionally enabled through `STORYBOOK_ENABLED`; production app bundles must exclude Storybook code.
+- Use typed React Native styles and the existing local design tokens rather than adding another styling framework.
+- Treat native iOS and Android behavior as authoritative over browser pixel parity.
 
-**Core Value:** Maintain a dependable, reusable mobile component system so future product screens can be assembled consistently and confidently.
+## Working conventions
 
-### Constraints
+- Inspect existing patterns before introducing new architecture.
+- Keep changes focused and preserve unrelated work in a dirty worktree.
+- Add or update behavior-focused tests when a change has a practical test seam.
+- Prefer accessibility-first queries in React Native Testing Library.
+- Install Expo-managed runtime dependencies with `npx expo install`.
+- Keep all Storybook packages on the same exact version.
 
-- **Platform**: Mobile only, targeting iOS and Android — the product experience is intentionally native-first.
-- **Application stack**: React Native with Expo — chosen as the likely implementation platform for the eventual app and its component system.
-- **Component workbench**: React Native Storybook — the first milestone must be independently reviewable without product screens.
-- **Runtime ownership**: Tokens, icons, fonts, artwork, supported configurations, and validation rules live within `src/design-system`; active code must not depend on design-tool files or extraction evidence.
-- **Verification**: Run `npm run verify`, then use native Storybook for user-led visual and interaction review.
-- **Web support**: Provide a locally browser-accessible Storybook catalogue through Expo's web target, but do not add cost or compromise native behavior to achieve pixel-perfect browser parity.
+## Verification
 
-<!-- GSD:project-end -->
+Run `npm run verify` for the full automated check. For visual or interaction changes, also review the relevant stories through native Storybook on the available iOS and Android targets.
 
-<!-- GSD:stack-start source:research/STACK.md -->
+Useful commands:
 
-## Technology Stack
-
-## Recommended Stack
-
-### Core Framework
-
-| Technology | Version | Purpose | Why |
-|---|---:|---|---|
-| Node.js | `22.13.x` or later LTS | Local toolchain | Expo SDK 57 documents Node `22.13.x` as its minimum. Use a current Node 22 LTS patch and record it in `.nvmrc`/Volta rather than relying on a globally drifting Node version. |
-| Expo | `57.0.24` | Managed React Native runtime, Metro, native/web development | Expo owns the React Native compatibility matrix, cross-platform Metro configuration, and local web target; do not compose an arbitrary React Native toolchain. |
-| React Native | `0.86.3` | Native component runtime | SDK 57’s bundled-native-modules manifest pins this patch; it remains within the official SDK 57 line (`0.86`). Install through `npx expo install`, not a manual `npm install react-native@latest`. |
-| React | `19.2.3` | Component model | Expo SDK 57’s supported React version. |
-| TypeScript | `6.0.3` | Strict token, prop, variant, and story contracts | Extend `expo/tsconfig.base`; keep strict checking enabled; do not maintain a custom Babel TypeScript pipeline. |
-| Metro via `expo/metro-config` | SDK-owned | Native + Expo web bundling | A single Expo Metro configuration is required so Storybook can wrap it and Expo web remains available. |
-
-### Storybook and Catalogue
-
-| Technology | Version | Purpose | Why |
-|---|---:|---|---|
-| `@storybook/react-native` | `10.5.0` | Authoritative on-device Storybook UI for iOS and Android | The installed Storybook family is pinned to one patch and exercises native layout, fonts, gestures, and interaction. |
-| `storybook` | `10.5.0` | Shared Storybook core/tooling | Keep every Storybook package on the same exact patch. |
-| `@storybook/addon-ondevice-controls` | `10.5.0` | Editable story args on device | Makes variants/states reviewable without product screens. |
-| `@storybook/addon-ondevice-actions` | `10.5.0` | Event/action inspection on device | Demonstrates press and input behaviour in the catalogue. |
-| `@storybook/addon-ondevice-backgrounds` | `10.5.0` | Light/dark or surface-context checking | Useful for validating tokens and component surfaces. |
-| `@storybook/react-native-web-vite` | deferred | Full browser-native Storybook framework | Do **not** add for this milestone. Expo web provides the required secondary review surface without a second preview configuration. |
-| `withStorybook` from `@storybook/react-native/withStorybook` | bundled with above | Metro wrapper and conditional Storybook entry | This project uses the entry-swapping wrapper. Gate it with `STORYBOOK_ENABLED`; normal app bundles must exclude Storybook code. Use `cross-env@10.1.0` in npm scripts so the flag works in Windows PowerShell and POSIX shells. |
-
-### Database
-
-| Technology | Version | Purpose | Why |
-|---|---:|---|---|
-| None in this milestone | — | — | The deliverable is a stateless component system. Backend, game records, and persistence are explicitly deferred. Keep stories supplied with typed fixtures rather than introducing data infrastructure. |
-
-### Infrastructure and Visual Verification
-
-| Technology | Version | Purpose | Why |
-|---|---:|---|---|
-| Expo Go / Expo development build | SDK 57-compatible | Android device/emulator and physical iPhone review | Supports the acceptance target without committing native project directories. Add a development build only if a later component requires a native dependency unsupported by Expo Go. |
-| Expo web | SDK 57 | Local desktop-browser catalogue | Install Expo-aligned `react-dom@19.2.3`, `react-native-web~0.21.0`, and `@expo/metro-runtime~57.0.15`; launch with `npx expo start --web`. It is a convenience review target, not visual authority. |
-| Component-local assets | repository-owned | Runtime brand, icon, mascot, and font media | Keep runtime media under `src/design-system/assets` or the established licensed font directory. |
-| Manual native Storybook review | user-led workflow | Visual and interaction verification | Review the standalone catalogue on iOS and Android and report observed issues directly; web remains a secondary convenience surface. |
-
-### Testing and Quality
-
-| Library | Version | Purpose | When to Use |
-|---|---:|---|---|
-| `jest-expo` | `~57.0.5` | Expo-aware Jest preset and native-module mocks | Unit and focused component tests. Use the Expo-aligned range, installed with `npx expo install`. |
-| Jest | Expo-resolved compatible release | Test runner | Run component/token tests in CI and locally. Let `jest-expo` determine the compatible version rather than pinning Jest 30 independently. |
-| `@testing-library/react-native` | `14.0.1` | Accessibility-first component interaction tests | Test semantics, event handling, disabled/loading states, and token-driven content. It replaces deprecated `react-test-renderer` for React 19+. |
-| `eslint` + `eslint-config-expo` | Expo template-aligned | Static quality checks | Retain Expo's generated lint configuration; avoid adding a competing React Native ESLint preset. |
-| Prettier | `3.9.7` | Deterministic formatting | Add only as a formatting tool, with a shared script; it is not a substitute for lint/type checks. |
-
-## Alternatives Considered
-
-| Category | Recommended | Alternative | Why Not |
-|---|---|---|---|
-| Application bootstrap | Expo SDK 57 managed project | React Native Community CLI / bare app | Adds native build and web configuration that does not advance a component-library milestone. Expo is already a project decision. |
-| Native component workbench | `@storybook/react-native` v10 | Web-only Storybook with `@storybook/addon-react-native-web` | Browser rendering cannot be the authority for native iOS/Android layout and interaction. The addon is an older web adapter, whereas the v10 native Storybook offers an Expo-aware Metro workflow. |
-| Browser catalogue | Expo web running native Storybook | Separate Vite Storybook from day one | Creates two configurations and a larger parity surface; requirements explicitly make browser review secondary. |
-| Test renderer | React Native Testing Library | `react-test-renderer` | Expo documents the latter as deprecated because it does not support React 19+. |
-| Native visual acceptance | User-led native Storybook review | Browser snapshot tests or source inspection as the sole gate | Automated checks complement review but cannot prove iOS/Android visual fidelity. |
-| Styling system | Typed React Native `StyleSheet`/style objects consuming local tokens | NativeWind/Tailwind, UI kit, or CSS-in-JS framework | The standalone system already owns its tokens and state conventions; an additional styling abstraction is unnecessary. |
-| iOS simulator on Windows | Physical iPhone plus Expo development server; macOS CI/reviewer for simulator checks | Attempting local iOS Simulator/Xcode on Windows | Expo documents that iOS Simulator is macOS-only. Windows can develop Android/web locally and use a physical iOS device or cloud build/distribution. |
-
-## Installation
-
-# Windows-friendly: initialize the official Expo + Storybook template
-
-# Align Expo-managed runtime/web dependencies; never substitute npm @latest here
-
-# Expo documents this Windows syntax for development-only test dependencies
-
-# Keep every Storybook package on the same verified patch
-
-## Sources
-
-- [Expo SDK 57 reference and compatibility matrix](https://docs.expo.dev/versions/v57.0.0/) — MEDIUM confidence (official, cross-checked with registry).
-- [Expo web development](https://docs.expo.dev/workflow/web/) — MEDIUM confidence (official, cross-checked with SDK manifest).
-- [Expo unit testing with Jest](https://docs.expo.dev/develop/unit-testing/) — MEDIUM confidence (official).
-- [Expo iOS Simulator constraints](https://docs.expo.dev/workflow/ios-simulator/) — MEDIUM confidence (official).
-- [React Native Storybook v10 repository/setup](https://github.com/storybookjs/react-native) — MEDIUM confidence (official project).
-- [React Native Storybook documentation](https://storybookjs.github.io/react-native/docs/intro/) — MEDIUM confidence (official project).
-- [npm registry: `@storybook/react-native` 10.6.0](https://www.npmjs.com/package/@storybook/react-native) — MEDIUM confidence after cross-checking peer dependencies and Expo’s SDK manifest.
-
-## Version Verification Snapshot
-
-<!-- GSD:stack-end -->
-
-<!-- GSD:conventions-start source:CONVENTIONS.md -->
-
-## Conventions
-
-Conventions not yet established. Will populate as patterns emerge during development.
-<!-- GSD:conventions-end -->
-
-<!-- GSD:architecture-start source:ARCHITECTURE.md -->
-
-## Architecture
-
-Architecture not yet mapped. Follow existing patterns found in the codebase.
-<!-- GSD:architecture-end -->
-
-<!-- GSD:skills-start source:skills/ -->
-
-## Project Skills
-
-No project skills found. Add skills to any of: `.claude/skills/`, `.agents/skills/`, `.cursor/skills/`, `.github/skills/`, or `.codex/skills/` with a `SKILL.md` index file.
-<!-- GSD:skills-end -->
-
-<!-- GSD:workflow-start source:GSD defaults -->
-
-## GSD Workflow Enforcement
-
-Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
-
-Use these entry points:
-
-- `$gsd-quick` for small fixes, doc updates, and ad-hoc tasks
-- `$gsd-debug` for investigation and bug fixing
-- `$gsd-execute-phase` for planned phase work
-
-Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
-<!-- GSD:workflow-end -->
-
-<!-- GSD:profile-start -->
-
-## Developer Profile
-
-> Profile not yet configured. Run `$gsd-profile-user` to generate your developer profile.
-> This section is managed by `generate-claude-profile` -- do not edit manually.
-<!-- GSD:profile-end -->
+- `npm run storybook:native`
+- `npm run storybook:web`
+- `npm run typecheck`
+- `npm run lint`
+- `npm test -- --runInBand`
