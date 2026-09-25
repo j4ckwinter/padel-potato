@@ -1,4 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
+import { Children } from 'react';
 
 import { flattenedStyle } from './helpers/componentTest';
 
@@ -75,6 +76,9 @@ describe('AppHeader closed page configurations', () => {
       expect(screen.getByRole('header', { name: title })).toBeTruthy();
       expect(screen.getByText(subtitle)).toBeTruthy();
       expect(screen.getAllByRole('button')).toHaveLength(1);
+      expect(
+        Children.toArray(screen.getByTestId('app-header').props.children),
+      ).toHaveLength(2);
       expect(back.props.hitSlop).toEqual({
         bottom: 2,
         left: 2,

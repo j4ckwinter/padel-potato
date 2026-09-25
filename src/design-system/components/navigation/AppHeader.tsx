@@ -186,14 +186,16 @@ export function AppHeader(props: AppHeaderProps) {
 
   return (
     <View style={styles.container} testID="app-header">
-      <View
-        accessible={false}
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={styles.leading}
-      >
-        {mascot ? <HeaderMascot name={mascot} /> : null}
-      </View>
+      {mascot ? (
+        <View
+          accessible={false}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          style={styles.leading}
+        >
+          <HeaderMascot name={mascot} />
+        </View>
+      ) : null}
       {hasBack ? (
         <View style={styles.backAction}>
           <IconButton
