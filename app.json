@@ -2,6 +2,7 @@
   "expo": {
     "name": "Padel Potato",
     "slug": "padel-potato",
+    "scheme": "padel-potato",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -11,6 +12,12 @@
     "android": {
       "predictiveBackGestureEnabled": false
     },
-    "web": {}
+    "web": {
+      "bundler": "metro"
+    },
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": ["expo-router", "expo-splash-screen"]
   }
 }

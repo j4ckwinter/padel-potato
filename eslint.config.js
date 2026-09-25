@@ -39,6 +39,11 @@ module.exports = defineConfig([
     },
   },
   {
-    ignores: ['dist/*', '.rnstorybook/storybook.requires.ts', 'tests/types/**'],
+    ignores: [
+      '.expo/**',
+      'dist/*',
+      '.rnstorybook/storybook.requires.ts',
+      'tests/types/**',
+    ],
   },
 ]);

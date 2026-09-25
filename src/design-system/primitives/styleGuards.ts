@@ -81,6 +81,8 @@ export type LayoutTokenProps = {
   width?: WidthToken;
 };
 
+type ResolvedLayoutStyle = Pick<ViewStyle, keyof LayoutTokenProps>;
+
 const resolveWidth = (token: WidthToken) => {
   if (Object.prototype.hasOwnProperty.call(responsiveWidths, token)) {
     return resolveDesignToken(responsiveWidths, token as ResponsiveWidthToken);
@@ -105,7 +107,7 @@ export const resolveLayoutTokenProps = ({
   minHeight,
   minWidth,
   width,
-}: LayoutTokenProps): ViewStyle => ({
+}: LayoutTokenProps): ResolvedLayoutStyle => ({
   ...(height === undefined
     ? undefined
     : { height: resolveDesignToken(sizing, height) }),
