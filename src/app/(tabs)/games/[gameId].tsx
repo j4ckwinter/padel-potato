@@ -6,10 +6,12 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
+import { PlayerItem } from '../../../design-system/components/content';
 import { BannerToast } from '../../../design-system/components/feedback';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
+import { demoGamePlayers } from '../../../features/demo/demoData';
 import {
   findGameById,
   type CreatedGame,
@@ -26,6 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   weekday: 'long',
   year: 'numeric',
 });
+const gamePlayerCapacity = demoGamePlayers.length;
 
 function gameDate(game: CreatedGame) {
   const [yearText, monthText, dayText] = game.schedule.date.split('-');
@@ -35,6 +38,13 @@ function gameDate(game: CreatedGame) {
     Number(dayText),
   );
   return `${dateFormatter.format(date)} at ${game.schedule.time}`;
+}
+
+function gameAvailability(game: CreatedGame) {
+  const spotsLeft = gamePlayerCapacity - game.setup.currentPlayerCount;
+  if (spotsLeft === 0) return 'Game full';
+  const spotLabel = spotsLeft === 1 ? 'spot' : 'spots';
+  return `Open game · ${spotsLeft} ${spotLabel} left`;
 }
 
 export default function GameDetailsScreen() {
@@ -66,6 +76,7 @@ export default function GameDetailsScreen() {
     gameId === null ? { status: 'notFound' } : loadState;
 
   const returnToGames = () => router.replace('/games');
+  const openPlayers = () => router.push('/players');
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
@@ -75,7 +86,15 @@ export default function GameDetailsScreen() {
           { paddingBottom: sizing.size112 + bottomInset },
         ]}
       >
-        <AppHeader onBackPress={returnToGames} page="gameDetails" />
+        <AppHeader
+          onBackPress={returnToGames}
+          page="gameDetails"
+          subtitle={
+            displayedState.status === 'ready'
+              ? gameAvailability(displayedState.game)
+              : undefined
+          }
+        />
         {showCreated ? (
           <BannerToast
             message="Your game is ready to share."
@@ -103,49 +122,74 @@ export default function GameDetailsScreen() {
         ) : (
           <Stack gap="space16">
             <Surface padding="space20" radius="radius20">
+              <Stack gap="space20">
+                <Stack gap="space8">
+                  <Text accessibilityRole="header" variant="title">
+                    {displayedState.game.name}
+                  </Text>
+                  <Text color="textSecondary" variant="body">
+                    {displayedState.game.venue}
+                  </Text>
+                </Stack>
+                <Stack gap="space16">
+                  <Stack gap="space4">
+                    <Text color="textSecondary" variant="label">
+                      Date and time
+                    </Text>
+                    <Text variant="bodyStrong">
+                      {gameDate(displayedState.game)}
+                    </Text>
+                  </Stack>
+                  <Stack gap="space4">
+                    <Text color="textSecondary" variant="label">
+                      Duration
+                    </Text>
+                    <Text variant="bodyStrong">
+                      {displayedState.game.setup.durationMinutes} minutes
+                    </Text>
+                  </Stack>
+                  <Stack gap="space4">
+                    <Text color="textSecondary" variant="label">
+                      Game type
+                    </Text>
+                    <Text variant="bodyStrong">
+                      {displayedState.game.setup.format}
+                    </Text>
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Surface>
+            <Stack gap="space12">
+              <Text accessibilityRole="header" variant="heading">
+                Players
+              </Text>
               <Stack gap="space8">
-                <Text variant="heading">{displayedState.game.name}</Text>
-                <Text color="textSecondary" variant="body">
-                  {displayedState.game.venue}
-                </Text>
+                {demoGamePlayers
+                  .slice(0, displayedState.game.setup.currentPlayerCount)
+                  .map((identity) => (
+                    <PlayerItem
+                      identity={identity}
+                      key={identity.name}
+                      onViewPlayer={openPlayers}
+                      variant="game-slot"
+                    />
+                  ))}
+                {Array.from(
+                  {
+                    length:
+                      gamePlayerCapacity -
+                      displayedState.game.setup.currentPlayerCount,
+                  },
+                  (_, index) => (
+                    <PlayerItem
+                      key={`open-player-slot-${index + 1}`}
+                      onInvite={openPlayers}
+                      variant="empty-game-slot"
+                    />
+                  ),
+                )}
               </Stack>
-            </Surface>
-            <Surface padding="space20" radius="radius20">
-              <Stack gap="space16">
-                <Stack gap="space4">
-                  <Text color="textSecondary" variant="label">
-                    Date and time
-                  </Text>
-                  <Text variant="bodyStrong">
-                    {gameDate(displayedState.game)}
-                  </Text>
-                </Stack>
-                <Stack gap="space4">
-                  <Text color="textSecondary" variant="label">
-                    Duration
-                  </Text>
-                  <Text variant="bodyStrong">
-                    {displayedState.game.setup.durationMinutes} minutes
-                  </Text>
-                </Stack>
-                <Stack gap="space4">
-                  <Text color="textSecondary" variant="label">
-                    Game type
-                  </Text>
-                  <Text variant="bodyStrong">
-                    {displayedState.game.setup.format}
-                  </Text>
-                </Stack>
-                <Stack gap="space4">
-                  <Text color="textSecondary" variant="label">
-                    Players
-                  </Text>
-                  <Text variant="bodyStrong">
-                    {displayedState.game.setup.currentPlayerCount} of 4 players
-                  </Text>
-                </Stack>
-              </Stack>
-            </Surface>
+            </Stack>
           </Stack>
         )}
       </ScrollView>

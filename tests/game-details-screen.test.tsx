@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
 import {
+  incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
@@ -32,8 +33,9 @@ describe('game details screen', () => {
       created: 'true',
       gameId: game.id,
     });
+    const push = jest.fn();
     const replace = jest.fn();
-    mockUseRouter.mockReturnValue({ replace } as unknown as ReturnType<
+    mockUseRouter.mockReturnValue({ push, replace } as unknown as ReturnType<
       typeof useRouter
     >);
     const user = userEvent.setup();
@@ -50,19 +52,72 @@ describe('game details screen', () => {
     );
 
     expect(await screen.findByText('Friday Evening Padel')).toBeVisible();
+    expect(
+      screen.getByRole('header', { name: 'Friday Evening Padel' }),
+    ).toBeVisible();
     expect(screen.getByText('Potato Padel Club')).toBeVisible();
     expect(screen.getByText('Friday, 2 October 2026 at 18:30')).toBeVisible();
     expect(screen.getByText('60 minutes')).toBeVisible();
     expect(screen.getByText('Social game')).toBeVisible();
-    expect(screen.getByText('1 of 4 players')).toBeVisible();
+    expect(screen.getByRole('header', { name: 'Players' })).toBeVisible();
+    expect(screen.queryByText('1 of 4 players')).not.toBeOnTheScreen();
+    expect(screen.getByText('Open game · 3 spots left')).toBeVisible();
+    expect(
+      screen.getByRole('button', {
+        name: 'View Alex Morgan, Organiser · Rating 4.7',
+      }),
+    ).toBeVisible();
+    const openPlayerSlots = screen.getAllByRole('button', {
+      name: 'Invite player to open slot',
+    });
+    expect(openPlayerSlots).toHaveLength(3);
     expect(
       screen.getByRole('alert', {
         name: 'Game created. Your game is ready to share.',
       }),
     ).toBeVisible();
 
+    await user.press(openPlayerSlots[0]);
+    expect(push).toHaveBeenCalledWith('/players');
+
     await user.press(screen.getByRole('button', { name: 'Back' }));
 
     expect(replace).toHaveBeenCalledWith('/games');
+  });
+
+  it('labels a four-player game as full', async () => {
+    const fullDraft = incrementCurrentPlayers(
+      incrementCurrentPlayers(incrementCurrentPlayers(initialGameDraft)),
+    );
+    const game = await createGame(
+      updateGameVenue(
+        selectGameTime(selectGameDay(fullDraft, '2026-10-02'), '18:30'),
+        'Potato Padel Club',
+      ),
+    );
+    mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
+    mockUseRouter.mockReturnValue({
+      push: jest.fn(),
+      replace: jest.fn(),
+    } as unknown as ReturnType<typeof useRouter>);
+
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <GameDetailsScreen />
+      </SafeAreaProvider>,
+    );
+
+    expect(await screen.findByText('Game full')).toBeVisible();
+    expect(
+      screen.queryByText('Open game · 0 spots left'),
+    ).not.toBeOnTheScreen();
+    expect(
+      screen.queryByRole('button', { name: 'Invite player to open slot' }),
+    ).not.toBeOnTheScreen();
   });
 });

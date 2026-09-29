@@ -61,7 +61,7 @@ describe('AppHeader closed page configurations', () => {
 
   it.each([
     ['notifications', 'Notifications', 'Updates and activity'],
-    ['gameDetails', 'Game details', 'Open game · 1 spot left'],
+    ['gameDetails', 'Game details', 'Open game'],
     ['settings', 'Settings', 'Manage your account'],
   ] as ['notifications' | 'gameDetails' | 'settings', string, string][])(
     'renders %s with only a 40-point back visual and effective 44 target',

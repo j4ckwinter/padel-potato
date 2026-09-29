@@ -94,7 +94,7 @@ const configs: Readonly<Record<AppHeaderPage, HeaderConfig>> = Object.freeze({
     title: 'Notifications',
   }),
   gameDetails: Object.freeze({
-    subtitle: 'Open game · 1 spot left',
+    subtitle: 'Open game',
     title: 'Game details',
   }),
   playerDetails: Object.freeze({

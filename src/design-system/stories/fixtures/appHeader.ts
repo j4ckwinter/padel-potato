@@ -19,7 +19,7 @@ export const appHeaderFixtures = [
     configuration: {
       page: 'gameDetails',
     },
-    copy: ['Game details', 'Open game · 1 spot left'],
+    copy: ['Game details', 'Open game'],
   },
   {
     label: 'Notifications',
