@@ -61,6 +61,20 @@ describe('create game screen', () => {
     ).toBe(146);
   });
 
+  it('shows tomorrow and its start times after today has closed', async () => {
+    jest.setSystemTime(new Date(2026, 8, 29, 21, 31));
+    router();
+    const screen = await renderCreateGame();
+
+    expect(
+      screen.queryByRole('radio', { name: /^Today, /u }),
+    ).not.toBeOnTheScreen();
+    expect(screen.getByRole('radio', { name: 'Wed, 30 Sept' })).toBeVisible();
+    expect(
+      screen.getByRole('radio', { name: '06:00, Available' }),
+    ).toBeDisabled();
+  });
+
   it('renders the confirmed product content and requires venue and schedule', async () => {
     const navigation = router();
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });

@@ -1,4 +1,4 @@
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
@@ -31,6 +31,10 @@ function collectionKey(option: CollectionOption): GameCollection {
   return option === 'Discover' ? 'discover' : 'mine';
 }
 
+function requestedCollection(value: string | string[] | undefined) {
+  return value === 'mine' ? 'My games' : 'Discover';
+}
+
 function GameResultCard({
   game,
   onViewGame,
@@ -51,8 +55,9 @@ function GameResultCard({
 
 export default function GamesScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const [collection, setCollection] = useState<CollectionOption>('Discover');
+  const collection = requestedCollection(params.collection);
   const [venueQuery, setVenueQuery] = useState('');
   const [games, setGames] = useState<readonly Game[] | null>(null);
 
@@ -101,7 +106,7 @@ export default function GamesScreen() {
         <SegmentedControl
           onValueChange={(value) => {
             if (value === 'Discover' || value === 'My games') {
-              setCollection(value);
+              router.setParams({ collection: collectionKey(value) });
             }
           }}
           options={collectionOptions}

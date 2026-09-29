@@ -57,16 +57,20 @@ export function upcomingScheduleTimes(
 export function upcomingScheduleDays(
   today = new Date(),
 ): readonly ScheduleDay[] {
+  const firstDayOffset =
+    upcomingScheduleTimes(dateKey(today), today).length === 0 ? 1 : 0;
+
   return Array.from({ length: 7 }, (_, offset) => {
+    const dayOffset = firstDayOffset + offset;
     const date = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + offset,
+      today.getDate() + dayOffset,
     );
     return {
       date: dateKey(date),
       dateLabel: dateFormatter.format(date),
-      dayLabel: offset === 0 ? 'Today' : dayFormatter.format(date),
+      dayLabel: dayOffset === 0 ? 'Today' : dayFormatter.format(date),
     };
   });
 }

@@ -6,8 +6,8 @@ import {
 } from '../src/features/game-creation/scheduleOptions';
 
 describe('schedule options', () => {
-  it('offers the next seven local calendar days', () => {
-    const days = upcomingScheduleDays(new Date(2026, 8, 25, 23, 45));
+  it('offers seven local calendar days while today still has a start time', () => {
+    const days = upcomingScheduleDays(new Date(2026, 8, 25, 18, 12));
 
     expect(days).toHaveLength(7);
     expect(days[0]).toEqual({
@@ -19,6 +19,24 @@ describe('schedule options', () => {
       date: '2026-10-01',
       dateLabel: '1 Oct',
       dayLabel: 'Thu',
+    });
+  });
+
+  it('starts with tomorrow after the final start time has passed', () => {
+    const now = new Date(2026, 8, 25, 21, 31);
+    const days = upcomingScheduleDays(now);
+
+    expect(days).toHaveLength(7);
+    expect(days[0]).toEqual({
+      date: '2026-09-26',
+      dateLabel: '26 Sept',
+      dayLabel: 'Sat',
+    });
+    expect(upcomingScheduleTimes(days[0]?.date ?? null, now)[0]).toBe('06:00');
+    expect(days[6]).toEqual({
+      date: '2026-10-02',
+      dateLabel: '2 Oct',
+      dayLabel: 'Fri',
     });
   });
 

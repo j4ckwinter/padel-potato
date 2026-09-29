@@ -39,12 +39,19 @@ describe('SectionHeader optional action pair', () => {
     const wrapperStyle = flattenedStyle(
       screen.getByTestId('section-header').props.style,
     );
+    const actionContentStyle = flattenedStyle(
+      screen.getByTestId('section-header-action-content').props.style,
+    );
     expect(visualRowStyle).toEqual(
       expect.objectContaining({ minHeight: 28, width: '100%' }),
     );
     expect(wrapperStyle).toEqual(
       expect.objectContaining({ minHeight: 44, width: '100%' }),
     );
+    expect(actionContentStyle).toEqual(
+      expect.objectContaining({ minHeight: 40, paddingLeft: 8 }),
+    );
+    expect(actionContentStyle.paddingRight).toBeUndefined();
     expect(action.props.hitSlop.left + action.props.hitSlop.right).toBe(4);
     expect(flattenedStyle(action.props.style).minHeight).toBe(40);
     await user.press(action);

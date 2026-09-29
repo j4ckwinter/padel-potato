@@ -274,4 +274,34 @@ export const demoGames = [
     setup: { durationMinutes: 60, format: 'Competitive game' },
     venue: 'Canary Wharf Padel',
   },
+  {
+    id: 'demo-my-lunch-game',
+    name: 'Wednesday Lunch Padel',
+    participants: [{ player: demoCurrentGamePlayer, role: 'organiser' }],
+    schedule: {
+      date: '2026-10-07',
+      startsAt: '2026-10-07T11:30:00.000Z',
+      status: 'complete',
+      time: '12:30',
+    },
+    setup: { durationMinutes: 60, format: 'Social game' },
+    venue: 'Padel United Shoreditch',
+  },
+  {
+    id: 'demo-my-friday-game',
+    name: 'Friday Evening Padel',
+    participants: [
+      { player: sam, role: 'organiser' },
+      { player: demoCurrentGamePlayer, role: 'player' },
+      { player: taylor, role: 'player' },
+    ],
+    schedule: {
+      date: '2026-10-09',
+      startsAt: '2026-10-09T18:30:00.000Z',
+      status: 'complete',
+      time: '19:30',
+    },
+    setup: { durationMinutes: 90, format: 'Competitive game' },
+    venue: 'Stratford Padel Club',
+  },
 ] as const satisfies readonly Game[];

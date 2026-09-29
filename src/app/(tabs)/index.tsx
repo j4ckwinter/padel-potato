@@ -6,7 +6,6 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import { Button } from '../../design-system/components/actions';
 import { GameCard } from '../../design-system/components/content';
 import { EmptyState } from '../../design-system/components/feedback';
 import {
@@ -45,12 +44,19 @@ export default function HomeScreen() {
     [games],
   );
   const nextGame = myGames.find((game) => availableGameSpots(game) === 0);
-  const openGame = myGames.find((game) => availableGameSpots(game) > 0);
+  const openGames = myGames.filter((game) => availableGameSpots(game) > 0);
+  const visibleOpenGames = openGames.slice(0, 2);
+  const recommendedGames = useMemo(
+    () =>
+      gamesInCollection(
+        games ?? [],
+        'discover',
+        demoCurrentGamePlayer.id,
+      ).slice(0, 2),
+    [games],
+  );
   const nextGameCard = nextGame
     ? gameListCard(nextGame, demoCurrentGamePlayer.id)
-    : null;
-  const openGameCard = openGame
-    ? gameListCard(openGame, demoCurrentGamePlayer.id)
     : null;
   const openGameDetails = (gameId: string) =>
     router.push({ pathname: '/games/[gameId]', params: { gameId } });
@@ -89,28 +95,53 @@ export default function HomeScreen() {
             />
           )}
         </Stack>
-        <Stack gap="space12">
-          <SectionHeader title="Play padel" />
-          <Stack gap="space8">
-            <Button
-              label="Create a game"
-              onPress={() => router.push('/create')}
-              style="primary"
-            />
-            <Button
-              label="Find a game"
-              onPress={() => router.push('/games')}
-              style="secondary"
-            />
-          </Stack>
-        </Stack>
-        {openGame && openGameCard?.variant === 'open' ? (
+        {visibleOpenGames.length > 0 ? (
           <Stack gap="space12">
-            <SectionHeader title="Your open game" />
-            <GameCard
-              {...openGameCard}
-              onViewGame={() => openGameDetails(openGame.id)}
+            {openGames.length > 2 ? (
+              <SectionHeader
+                actionLabel="View all your games"
+                onActionPress={() =>
+                  router.push({
+                    params: { collection: 'mine' },
+                    pathname: '/games',
+                  })
+                }
+                title="Your open games"
+              />
+            ) : (
+              <SectionHeader
+                title={
+                  openGames.length === 1 ? 'Your open game' : 'Your open games'
+                }
+              />
+            )}
+            <Stack gap="space16">
+              {visibleOpenGames.map((game) => (
+                <GameCard
+                  {...gameListCard(game, demoCurrentGamePlayer.id)}
+                  key={game.id}
+                  onViewGame={() => openGameDetails(game.id)}
+                />
+              ))}
+            </Stack>
+          </Stack>
+        ) : null}
+        {recommendedGames.length > 0 ? (
+          <Stack gap="space12">
+            <SectionHeader
+              actionLabel="View all games"
+              onActionPress={() => router.push('/games')}
+              title="Recommended for you"
             />
+            <Stack gap="space16">
+              {recommendedGames.map((game) => (
+                <GameCard
+                  {...gameListCard(game, demoCurrentGamePlayer.id)}
+                  key={game.id}
+                  onViewGame={() => openGameDetails(game.id)}
+                />
+              ))}
+            </Stack>
           </Stack>
         ) : null}
       </ScrollView>

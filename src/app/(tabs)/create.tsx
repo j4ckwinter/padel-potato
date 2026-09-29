@@ -48,9 +48,10 @@ function CreateGameForm() {
   const schedule = draft.schedule;
   const selectedDate = schedule.status === 'empty' ? null : schedule.date;
   const selectedTime = schedule.status === 'complete' ? schedule.time : null;
+  const firstAvailableDate = days[0]?.date ?? null;
   const times = useMemo(
-    () => upcomingScheduleTimes(selectedDate, now),
-    [now, selectedDate],
+    () => upcomingScheduleTimes(selectedDate ?? firstAvailableDate, now),
+    [firstAvailableDate, now, selectedDate],
   );
   const canCreate =
     draft.venueQuery.trim().length > 0 && schedule.status === 'complete';

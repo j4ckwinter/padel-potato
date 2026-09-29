@@ -86,7 +86,10 @@ export function SectionHeader(props: SectionHeaderProps) {
             size="controlHeight40"
             style={styles.actionTarget}
           >
-            <View style={styles.actionContent}>
+            <View
+              style={styles.actionContent}
+              testID="section-header-action-content"
+            >
               <Text color="muted" variant="label">
                 {actionProps?.actionLabel}
               </Text>
@@ -101,9 +104,9 @@ export function SectionHeader(props: SectionHeaderProps) {
 const styles = StyleSheet.create({
   actionContent: {
     alignItems: 'center',
-    minHeight: sizing.size28,
+    minHeight: sizing.size40,
     justifyContent: 'center',
-    paddingHorizontal: spacing.space8,
+    paddingLeft: spacing.space8,
   },
   actionTarget: {
     flexShrink: 0,
