@@ -196,6 +196,7 @@ export function demoParticipantsForCount(
 export const demoGames = [
   {
     id: 'demo-shoreditch-evening',
+    lifecycle: { status: 'scheduled' },
     name: 'Wednesday Evening Padel',
     participants: [{ player: riley, role: 'organiser' }],
     schedule: {
@@ -209,6 +210,7 @@ export const demoGames = [
   },
   {
     id: 'demo-stratford-morning',
+    lifecycle: { status: 'scheduled' },
     name: 'Saturday Morning Padel',
     participants: [
       { player: morgan, role: 'organiser' },
@@ -226,6 +228,7 @@ export const demoGames = [
   },
   {
     id: 'demo-canary-social',
+    lifecycle: { status: 'scheduled' },
     name: 'Sunday Social Padel',
     participants: [
       { player: riley, role: 'organiser' },
@@ -242,6 +245,7 @@ export const demoGames = [
   },
   {
     id: 'demo-my-next-game',
+    lifecycle: { status: 'scheduled' },
     name: 'Thursday Evening Padel',
     participants: [
       { player: demoCurrentGamePlayer, role: 'organiser' },
@@ -260,6 +264,7 @@ export const demoGames = [
   },
   {
     id: 'demo-my-open-game',
+    lifecycle: { status: 'scheduled' },
     name: 'Tuesday After-work Padel',
     participants: [
       { player: demoCurrentGamePlayer, role: 'organiser' },
@@ -276,6 +281,7 @@ export const demoGames = [
   },
   {
     id: 'demo-my-lunch-game',
+    lifecycle: { status: 'scheduled' },
     name: 'Wednesday Lunch Padel',
     participants: [{ player: demoCurrentGamePlayer, role: 'organiser' }],
     schedule: {
@@ -289,6 +295,7 @@ export const demoGames = [
   },
   {
     id: 'demo-my-friday-game',
+    lifecycle: { status: 'scheduled' },
     name: 'Friday Evening Padel',
     participants: [
       { player: sam, role: 'organiser' },

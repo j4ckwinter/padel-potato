@@ -2,16 +2,26 @@ import { gameDraftName, type GameDraft } from '../game-creation/gameDraft';
 import { demoGames } from '../demo/demoData';
 import {
   addPlayerToGame,
+  applyGameLifecycleCommand,
   gameHasPlayer,
+  isScheduledGame,
   type Game,
+  type GameLifecycleCommand,
   type GameParticipants,
   type GamePlayer,
+  type ScheduledGame,
 } from './game';
 
 export type JoinGameResult =
   | Readonly<{ game: Game; status: 'joined' }>
   | Readonly<{ game: Game; status: 'alreadyJoined' }>
   | Readonly<{ game: Game; status: 'full' }>
+  | Readonly<{ game: Game; status: 'unavailable' }>
+  | Readonly<{ status: 'notFound' }>;
+
+export type TransitionGameLifecycleResult =
+  | Readonly<{ game: Game; status: 'transitioned' }>
+  | Readonly<{ game: Game; status: 'invalidTransition' }>
   | Readonly<{ status: 'notFound' }>;
 
 const games = new Map<string, Game>(demoGames.map((game) => [game.id, game]));
@@ -23,7 +33,7 @@ export function createGame({
 }: Readonly<{
   draft: GameDraft;
   participants: GameParticipants;
-}>): Promise<Game> {
+}>): Promise<ScheduledGame> {
   const venue = draft.venueQuery.trim();
   if (draft.schedule.status !== 'complete' || venue.length === 0) {
     return Promise.reject(
@@ -36,8 +46,9 @@ export function createGame({
     );
   }
 
-  const game: Game = {
+  const game: ScheduledGame = {
     id: `game-${nextGameId++}`,
+    lifecycle: { status: 'scheduled' },
     name: gameDraftName(draft),
     participants,
     schedule: { ...draft.schedule },
@@ -66,6 +77,9 @@ export function joinGame(
 ): Promise<JoinGameResult> {
   const game = games.get(gameId);
   if (!game) return Promise.resolve({ status: 'notFound' });
+  if (!isScheduledGame(game)) {
+    return Promise.resolve({ game, status: 'unavailable' });
+  }
   if (gameHasPlayer(game, player.id)) {
     return Promise.resolve({ game, status: 'alreadyJoined' });
   }
@@ -76,4 +90,20 @@ export function joinGame(
   const joinedGame = { ...game, participants };
   games.set(game.id, joinedGame);
   return Promise.resolve({ game: joinedGame, status: 'joined' });
+}
+
+export function transitionGameLifecycle(
+  gameId: string,
+  command: GameLifecycleCommand,
+): Promise<TransitionGameLifecycleResult> {
+  const game = games.get(gameId);
+  if (!game) return Promise.resolve({ status: 'notFound' });
+
+  const transitionedGame = applyGameLifecycleCommand(game, command);
+  if (!transitionedGame) {
+    return Promise.resolve({ game, status: 'invalidTransition' });
+  }
+
+  games.set(game.id, transitionedGame);
+  return Promise.resolve({ game: transitionedGame, status: 'transitioned' });
 }

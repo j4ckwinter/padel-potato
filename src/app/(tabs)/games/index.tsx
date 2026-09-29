@@ -16,7 +16,7 @@ import {
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
 import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
-import type { Game } from '../../../features/games/game';
+import type { Game, ScheduledGame } from '../../../features/games/game';
 import {
   gameListCard,
   gamesInCollection,
@@ -39,7 +39,7 @@ function GameResultCard({
   game,
   onViewGame,
 }: Readonly<{
-  game: Game;
+  game: ScheduledGame;
   onViewGame: (gameId: string) => void;
 }>) {
   const card = gameListCard(game, demoCurrentGamePlayer.id);

@@ -5,8 +5,10 @@ import type {
 import {
   availableGameSpots,
   gameHasPlayer,
+  isScheduledGame,
   type Game,
   type GamePlayer,
+  type ScheduledGame,
 } from './game';
 
 type BrowsableGameCardProps = Extract<
@@ -43,7 +45,7 @@ function cardParticipant(
   };
 }
 
-function cardCopy(game: Game) {
+function cardCopy(game: ScheduledGame) {
   const [year, month, day] = game.schedule.date.split('-').map(Number);
   const date = new Date(year, month - 1, day);
   return {
@@ -54,7 +56,7 @@ function cardCopy(game: Game) {
 }
 
 export function gameListCard(
-  game: Game,
+  game: ScheduledGame,
   currentPlayerId: string,
 ): GameListCardProps {
   const copy = cardCopy(game);
@@ -108,6 +110,7 @@ export function gamesInCollection(
   currentPlayerId: string,
 ) {
   return [...games]
+    .filter(isScheduledGame)
     .filter((game) =>
       collection === 'mine'
         ? gameHasPlayer(game, currentPlayerId)

@@ -28,8 +28,34 @@ export type GameParticipants =
   | readonly [Organiser, Participant, Participant]
   | readonly [Organiser, Participant, Participant, Participant];
 
-export type Game = Readonly<{
+type ScheduledGameLifecycle = Readonly<{
+  status: 'scheduled';
+}>;
+
+type AwaitingResultGameLifecycle = Readonly<{
+  endedAt: string;
+  status: 'awaitingResult';
+}>;
+
+type CompletedGameLifecycle = Readonly<{
+  completedAt: string;
+  status: 'completed';
+}>;
+
+type CancelledGameLifecycle = Readonly<{
+  cancelledAt: string;
+  status: 'cancelled';
+}>;
+
+export type GameLifecycle =
+  | ScheduledGameLifecycle
+  | AwaitingResultGameLifecycle
+  | CompletedGameLifecycle
+  | CancelledGameLifecycle;
+
+type GameRecord = Readonly<{
   id: string;
+  lifecycle: GameLifecycle;
   name: string;
   participants: GameParticipants;
   schedule: CompleteGameSchedule;
@@ -40,7 +66,53 @@ export type Game = Readonly<{
   venue: string;
 }>;
 
+export type Game = GameRecord;
+export type ScheduledGame = Omit<GameRecord, 'lifecycle'> &
+  Readonly<{ lifecycle: ScheduledGameLifecycle }>;
+
+export type GameLifecycleCommand =
+  | Readonly<{ at: string; type: 'cancel' }>
+  | Readonly<{ at: string; type: 'finish' }>
+  | Readonly<{ at: string; type: 'complete' }>;
+
 export const gamePlayerCapacity = 4;
+
+export function isScheduledGame(game: Game): game is ScheduledGame {
+  return game.lifecycle.status === 'scheduled';
+}
+
+export function applyGameLifecycleCommand(
+  game: Game,
+  command: GameLifecycleCommand,
+): Game | null {
+  switch (game.lifecycle.status) {
+    case 'scheduled':
+      switch (command.type) {
+        case 'cancel':
+          return {
+            ...game,
+            lifecycle: { cancelledAt: command.at, status: 'cancelled' },
+          };
+        case 'finish':
+          return {
+            ...game,
+            lifecycle: { endedAt: command.at, status: 'awaitingResult' },
+          };
+        case 'complete':
+          return null;
+      }
+    case 'awaitingResult':
+      return command.type === 'complete'
+        ? {
+            ...game,
+            lifecycle: { completedAt: command.at, status: 'completed' },
+          }
+        : null;
+    case 'completed':
+    case 'cancelled':
+      return null;
+  }
+}
 
 export function availableGameSpots(game: Game) {
   return gamePlayerCapacity - game.participants.length;

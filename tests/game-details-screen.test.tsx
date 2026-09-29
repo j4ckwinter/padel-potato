@@ -15,7 +15,11 @@ import {
   selectGameTime,
   updateGameVenue,
 } from '../src/features/game-creation/gameDraft';
-import { createGame, findGameById } from '../src/features/games/gameRepository';
+import {
+  createGame,
+  findGameById,
+  transitionGameLifecycle,
+} from '../src/features/games/gameRepository';
 
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
@@ -232,5 +236,40 @@ describe('game details screen', () => {
         ]),
       },
     );
+  });
+
+  it('shows inactive game details without join or invitation actions', async () => {
+    await transitionGameLifecycle('demo-canary-social', {
+      at: '2026-10-04T12:30:00.000Z',
+      type: 'finish',
+    });
+    mockUseLocalSearchParams.mockReturnValue({
+      gameId: 'demo-canary-social',
+    });
+    mockUseRouter.mockReturnValue({
+      back: jest.fn(),
+      canGoBack: jest.fn(() => true),
+      push: jest.fn(),
+      replace: jest.fn(),
+    } as unknown as ReturnType<typeof useRouter>);
+
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <GameDetailsScreen />
+      </SafeAreaProvider>,
+    );
+
+    expect(await screen.findByText('Awaiting result')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Join game' }),
+    ).not.toBeOnTheScreen();
+    expect(
+      screen.queryByRole('button', { name: 'Invite player to open slot' }),
+    ).not.toBeOnTheScreen();
   });
 });

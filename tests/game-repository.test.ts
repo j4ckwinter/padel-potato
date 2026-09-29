@@ -16,6 +16,7 @@ import {
   findGameById,
   joinGame,
   listGames,
+  transitionGameLifecycle,
 } from '../src/features/games/gameRepository';
 
 describe('game repository', () => {
@@ -31,6 +32,7 @@ describe('game repository', () => {
     });
 
     expect(created).toMatchObject({
+      lifecycle: { status: 'scheduled' },
       name: 'Friday Evening Padel',
       schedule: {
         date: '2026-10-02',
@@ -124,5 +126,55 @@ describe('game repository', () => {
     await expect(joinGame('missing-game', anotherPlayer)).resolves.toEqual({
       status: 'notFound',
     });
+  });
+
+  it('persists lifecycle transitions and closes inactive games to players', async () => {
+    const draft = updateGameVenue(
+      selectGameTime(selectGameDay(initialGameDraft, '2026-10-08'), '18:30'),
+      'Lifecycle Padel Club',
+    );
+    const created = await createGame({
+      draft,
+      participants: demoParticipantsForCount(1),
+    });
+
+    await expect(
+      transitionGameLifecycle(created.id, {
+        at: '2026-10-08T19:30:00.000Z',
+        type: 'finish',
+      }),
+    ).resolves.toMatchObject({
+      game: { lifecycle: { status: 'awaitingResult' } },
+      status: 'transitioned',
+    });
+    await expect(
+      joinGame(created.id, {
+        id: 'late-player',
+        initials: 'LP',
+        name: 'Late Player',
+        rating: '4.2',
+      }),
+    ).resolves.toMatchObject({ status: 'unavailable' });
+    await expect(
+      transitionGameLifecycle(created.id, {
+        at: '2026-10-08T20:00:00.000Z',
+        type: 'complete',
+      }),
+    ).resolves.toMatchObject({
+      game: { lifecycle: { status: 'completed' } },
+      status: 'transitioned',
+    });
+    await expect(
+      transitionGameLifecycle(created.id, {
+        at: '2026-10-08T20:30:00.000Z',
+        type: 'cancel',
+      }),
+    ).resolves.toMatchObject({ status: 'invalidTransition' });
+    await expect(
+      transitionGameLifecycle('missing-game', {
+        at: '2026-10-08T20:30:00.000Z',
+        type: 'cancel',
+      }),
+    ).resolves.toEqual({ status: 'notFound' });
   });
 });

@@ -16,6 +16,7 @@ import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
 import {
   availableGameSpots,
   gameHasPlayer,
+  isScheduledGame,
   playerOrganisesGame,
   type Game,
 } from '../../../features/games/game';
@@ -26,7 +27,7 @@ type GameLoadState =
   | Readonly<{ status: 'notFound' }>
   | Readonly<{ game: Game; status: 'ready' }>;
 
-type JoinFeedback = 'full' | 'joined' | null;
+type JoinFeedback = 'full' | 'joined' | 'unavailable' | null;
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
@@ -45,10 +46,20 @@ function gameDate(game: Game) {
 }
 
 function gameAvailability(game: Game) {
-  const spotsLeft = availableGameSpots(game);
-  if (spotsLeft === 0) return 'Game full';
-  const spotLabel = spotsLeft === 1 ? 'spot' : 'spots';
-  return `Open game · ${spotsLeft} ${spotLabel} left`;
+  switch (game.lifecycle.status) {
+    case 'scheduled': {
+      const spotsLeft = availableGameSpots(game);
+      if (spotsLeft === 0) return 'Game full';
+      const spotLabel = spotsLeft === 1 ? 'spot' : 'spots';
+      return `Open game · ${spotsLeft} ${spotLabel} left`;
+    }
+    case 'awaitingResult':
+      return 'Awaiting result';
+    case 'completed':
+      return 'Game completed';
+    case 'cancelled':
+      return 'Game cancelled';
+  }
 }
 
 export default function GameDetailsScreen() {
@@ -110,6 +121,10 @@ export default function GameDetailsScreen() {
           setLoadState({ game: result.game, status: 'ready' });
           setJoinFeedback('full');
           return;
+        case 'unavailable':
+          setLoadState({ game: result.game, status: 'ready' });
+          setJoinFeedback('unavailable');
+          return;
         case 'notFound':
           setLoadState({ status: 'notFound' });
           return;
@@ -159,6 +174,14 @@ export default function GameDetailsScreen() {
             onClose={() => setJoinFeedback(null)}
             style="error"
             title="Game full"
+            type="toast"
+          />
+        ) : joinFeedback === 'unavailable' ? (
+          <BannerToast
+            message="This game is no longer accepting players."
+            onClose={() => setJoinFeedback(null)}
+            style="error"
+            title="Game unavailable"
             type="toast"
           />
         ) : null}
@@ -242,7 +265,8 @@ export default function GameDetailsScreen() {
                     variant="game-slot"
                   />
                 ))}
-                {playerOrganisesGame(
+                {isScheduledGame(displayedState.game) &&
+                playerOrganisesGame(
                   displayedState.game,
                   demoCurrentGamePlayer.id,
                 )
@@ -259,7 +283,8 @@ export default function GameDetailsScreen() {
                   : null}
               </Stack>
             </Stack>
-            {!gameHasPlayer(displayedState.game, demoCurrentGamePlayer.id) &&
+            {isScheduledGame(displayedState.game) &&
+            !gameHasPlayer(displayedState.game, demoCurrentGamePlayer.id) &&
             availableGameSpots(displayedState.game) > 0 ? (
               joining ? (
                 <Button label="Join game" loading style="primary" />
