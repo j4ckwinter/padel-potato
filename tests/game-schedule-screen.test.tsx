@@ -1,4 +1,11 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -35,6 +42,14 @@ function renderCreateGame(bottomInset = 0) {
 }
 
 describe('create game screen', () => {
+  beforeEach(() => {
+    jest.useFakeTimers({ now: new Date(2026, 8, 29, 18, 12) });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('keeps the final action clear of the floating navigation', async () => {
     router();
     const screen = await renderCreateGame(34);
@@ -48,7 +63,7 @@ describe('create game screen', () => {
 
   it('renders the confirmed product content and requires venue and schedule', async () => {
     const navigation = router();
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const screen = await renderCreateGame();
 
     expect(screen.getByDisplayValue('Padel game')).toBeVisible();
@@ -139,7 +154,7 @@ describe('create game screen', () => {
 
   it('opens notifications from the creation header', async () => {
     const navigation = router();
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const screen = await renderCreateGame();
 
     await user.press(screen.getByRole('button', { name: 'Notifications' }));

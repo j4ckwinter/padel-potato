@@ -4,10 +4,8 @@ import type {
 } from '../../design-system/components/content';
 import type { CreatedGame } from '../games/gameRepository';
 
-export type DemoPlayer = Readonly<{
+export type DemoPlayerProfile = Readonly<{
   bio: string;
-  collection: 'discover' | 'friends';
-  favourite: boolean;
   id: string;
   identity: PlayerItemIdentity;
   level: string;
@@ -23,26 +21,31 @@ export type DemoPlayer = Readonly<{
   }>;
 }>;
 
-export const demoPlayers = [
-  {
-    bio: 'Friendly right-side player who enjoys organised evening games.',
-    collection: 'friends',
-    favourite: true,
-    id: 'alex-morgan',
-    identity: {
-      initials: 'AM',
-      name: 'Alex Morgan',
-      presence: 'away',
-      supportingText: 'Intermediate · Rating 4.7',
-    },
-    level: 'Intermediate',
-    preferences: {
-      days: 'Weekdays',
-      side: 'Right',
-      timeOfDay: 'Evenings',
-    },
-    stats: { gamesPlayed: '48', rating: '4.7', winRate: '68%' },
+export type DemoPlayer = DemoPlayerProfile &
+  Readonly<{
+    collection: 'discover' | 'friends';
+    favourite: boolean;
+  }>;
+
+export const demoCurrentUser = {
+  bio: 'Friendly right-side player who enjoys organised evening games.',
+  id: 'alex-morgan',
+  identity: {
+    initials: 'AM',
+    name: 'Alex Morgan',
+    presence: 'away',
+    supportingText: 'Intermediate · Rating 4.7',
   },
+  level: 'Intermediate',
+  preferences: {
+    days: 'Weekdays',
+    side: 'Right',
+    timeOfDay: 'Evenings',
+  },
+  stats: { gamesPlayed: '48', rating: '4.7', winRate: '68%' },
+} as const satisfies DemoPlayerProfile;
+
+export const demoPlayers = [
   {
     bio: 'Competitive left-side player who is always up for a weekend match.',
     collection: 'friends',
@@ -142,30 +145,34 @@ export const demoPlayers = [
 
 export const demoGameParticipants = [
   {
-    id: demoPlayers[0].id,
+    destination: 'currentUser',
+    id: demoCurrentUser.id,
     identity: {
-      ...demoPlayers[0].identity,
+      ...demoCurrentUser.identity,
       supportingText: 'Organiser · Rating 4.7',
     },
   },
   {
-    id: demoPlayers[1].id,
+    destination: 'player',
+    id: demoPlayers[0].id,
     identity: {
-      ...demoPlayers[1].identity,
+      ...demoPlayers[0].identity,
       supportingText: 'Confirmed · Rating 4.5',
     },
   },
   {
-    id: demoPlayers[2].id,
+    destination: 'player',
+    id: demoPlayers[1].id,
     identity: {
-      ...demoPlayers[2].identity,
+      ...demoPlayers[1].identity,
       supportingText: 'Confirmed · Rating 4.8',
     },
   },
   {
-    id: demoPlayers[3].id,
+    destination: 'player',
+    id: demoPlayers[2].id,
     identity: {
-      ...demoPlayers[3].identity,
+      ...demoPlayers[2].identity,
       supportingText: 'Confirmed · Rating 4.4',
     },
   },

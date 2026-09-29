@@ -180,7 +180,11 @@ export default function GameDetailsScreen() {
                     <PlayerItem
                       identity={participant.identity}
                       key={participant.id}
-                      onViewPlayer={() => openPlayer(participant.id)}
+                      onViewPlayer={() =>
+                        participant.destination === 'currentUser'
+                          ? router.push('/profile')
+                          : openPlayer(participant.id)
+                      }
                       variant="game-slot"
                     />
                   ))}

@@ -46,11 +46,6 @@ describe('players screen', () => {
     expect(screen.getByRole('header', { name: 'Your players' })).toBeVisible();
     expect(
       screen.getByRole('button', {
-        name: 'View Alex Morgan, Intermediate · Rating 4.7',
-      }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole('button', {
         name: 'View Jamie Taylor, Intermediate · Rating 4.5',
       }),
     ).toBeVisible();
@@ -61,6 +56,9 @@ describe('players screen', () => {
     ).toBeVisible();
     expect(
       screen.queryByRole('button', { name: /View Riley Brown/ }),
+    ).not.toBeOnTheScreen();
+    expect(
+      screen.queryByRole('button', { name: /View Alex Morgan/ }),
     ).not.toBeOnTheScreen();
 
     await user.press(screen.getByRole('tab', { name: 'Discover' }));

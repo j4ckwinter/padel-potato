@@ -1,19 +1,17 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import {
-  PlayerPreferencesCard,
-  StatTile,
-} from '../../../design-system/components/content';
+import { PlayerPreferencesCard } from '../../../design-system/components/content';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
 import { findDemoPlayerById } from '../../../features/demo/demoData';
+import { PlayerStats } from '../../../features/players/PlayerStats';
 
 export default function PlayerDetailsScreen() {
   const router = useRouter();
@@ -77,37 +75,7 @@ export default function PlayerDetailsScreen() {
                 </Text>
               </Stack>
             </Surface>
-            <Stack gap="space12">
-              <Text accessibilityRole="header" variant="heading">
-                Player stats
-              </Text>
-              <StatTile
-                content="rating"
-                label="Rating"
-                state="positive"
-                supportingText="Current player rating"
-                type="featured"
-                value={player.stats.rating}
-              />
-              <View style={styles.statRow}>
-                <StatTile
-                  content="gamesPlayed"
-                  label="Games"
-                  state="neutral"
-                  supportingText="Games played"
-                  type="compact"
-                  value={player.stats.gamesPlayed}
-                />
-                <StatTile
-                  content="winRate"
-                  label="Win rate"
-                  state="positive"
-                  supportingText="All-time win rate"
-                  type="compact"
-                  value={player.stats.winRate}
-                />
-              </View>
-            </Stack>
+            <PlayerStats {...player.stats} />
             <PlayerPreferencesCard
               content="profile"
               days={player.preferences.days}
@@ -141,9 +109,5 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: colors.canvas,
     flex: 1,
-  },
-  statRow: {
-    flexDirection: 'row',
-    gap: spacing.space12,
   },
 });

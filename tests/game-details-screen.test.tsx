@@ -93,10 +93,7 @@ describe('game details screen', () => {
         name: 'View Alex Morgan, Organiser · Rating 4.7',
       }),
     );
-    expect(push).toHaveBeenCalledWith({
-      params: { playerId: 'alex-morgan' },
-      pathname: '/players/[playerId]',
-    });
+    expect(push).toHaveBeenCalledWith('/profile');
 
     await user.press(screen.getByRole('button', { name: 'Back' }));
 

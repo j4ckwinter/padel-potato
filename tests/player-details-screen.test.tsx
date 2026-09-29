@@ -41,36 +41,36 @@ async function renderPlayerDetails(playerId: string, canGoBackValue = true) {
 
 describe('player details screen', () => {
   it('shows a complete player profile and controls its favourite state', async () => {
-    const { back, screen } = await renderPlayerDetails('alex-morgan');
+    const { back, screen } = await renderPlayerDetails('jamie-taylor');
     const user = userEvent.setup();
 
-    expect(screen.getByRole('header', { name: 'Alex Morgan' })).toBeVisible();
-    expect(screen.getByText('Intermediate · Rating 4.7')).toBeVisible();
+    expect(screen.getByRole('header', { name: 'Jamie Taylor' })).toBeVisible();
+    expect(screen.getByText('Intermediate · Rating 4.5')).toBeVisible();
     expect(
-      screen.getByRole('header', { name: 'About Alex Morgan' }),
+      screen.getByRole('header', { name: 'About Jamie Taylor' }),
     ).toBeVisible();
     expect(
       screen.getByText(
-        'Friendly right-side player who enjoys organised evening games.',
+        'Competitive left-side player who is always up for a weekend match.',
       ),
     ).toBeVisible();
     expect(
       screen.getByRole('summary', {
-        name: 'Rating, 4.7, Current player rating, positive trend',
+        name: 'Rating, 4.5, Current player rating, positive trend',
       }),
     ).toBeVisible();
     expect(
       screen.getByRole('summary', {
-        name: 'Playing preferences, Right, Weekdays, Evenings',
+        name: 'Playing preferences, Left, Weekends, Mornings',
       }),
     ).toBeVisible();
 
     const favourite = screen.getByRole('checkbox', {
       name: 'Favourite player',
     });
-    expect(favourite).toBeChecked();
-    await user.press(favourite);
     expect(favourite).not.toBeChecked();
+    await user.press(favourite);
+    expect(favourite).toBeChecked();
 
     await user.press(screen.getByRole('button', { name: 'Back' }));
     expect(back).toHaveBeenCalledTimes(1);
