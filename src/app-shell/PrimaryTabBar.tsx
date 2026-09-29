@@ -65,7 +65,12 @@ export function PrimaryTabBar({ navigation, state }: PrimaryTabBarProps) {
   };
 
   return (
-    <SafeAreaView edges={['bottom']} style={styles.safeArea}>
+    <SafeAreaView
+      edges={['bottom']}
+      pointerEvents="box-none"
+      style={styles.safeArea}
+      testID="primary-tab-bar"
+    >
       <View style={styles.frame}>
         <BottomNavigation
           activeDestination={activeDestination}
@@ -83,6 +88,10 @@ const styles = StyleSheet.create({
     paddingTop: spacing.space8,
   },
   safeArea: {
-    backgroundColor: colors.canvas,
+    backgroundColor: colors.transparent,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
   },
 });

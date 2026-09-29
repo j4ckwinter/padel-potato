@@ -3,6 +3,7 @@ import { render, userEvent } from '@testing-library/react-native';
 import type { ComponentProps } from 'react';
 
 import { PrimaryTabBar } from '../src/app-shell/PrimaryTabBar';
+import { flattenedStyle } from './helpers/componentTest';
 
 type PrimaryTabBarProps = ComponentProps<typeof PrimaryTabBar>;
 
@@ -34,6 +35,23 @@ function tabBarProps({
 }
 
 describe('PrimaryTabBar', () => {
+  it('floats over tab content without blocking the surrounding screen', async () => {
+    const home = tabBarProps({ activeIndex: 0 });
+    const screen = await render(<PrimaryTabBar {...home.props} />);
+    const tabBar = screen.getByTestId('primary-tab-bar');
+
+    expect(tabBar.props.pointerEvents).toBe('box-none');
+    expect(flattenedStyle(tabBar.props.style)).toEqual(
+      expect.objectContaining({
+        backgroundColor: 'transparent',
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+      }),
+    );
+  });
+
   it('navigates to a pressed destination and reflects Router state', async () => {
     const home = tabBarProps({ activeIndex: 0 });
     const user = userEvent.setup();

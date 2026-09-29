@@ -1,6 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
 import {
@@ -37,14 +38,23 @@ describe('game details screen', () => {
     >);
     const user = userEvent.setup();
 
-    const screen = await render(<GameDetailsScreen />);
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <GameDetailsScreen />
+      </SafeAreaProvider>,
+    );
 
     expect(await screen.findByText('Friday Evening Padel')).toBeVisible();
     expect(screen.getByText('Potato Padel Club')).toBeVisible();
     expect(screen.getByText('Friday, 2 October 2026 at 18:30')).toBeVisible();
     expect(screen.getByText('60 minutes')).toBeVisible();
     expect(screen.getByText('Social game')).toBeVisible();
-    expect(screen.getByText('4 players')).toBeVisible();
+    expect(screen.getByText('1 of 4 players')).toBeVisible();
     expect(
       screen.getByRole('alert', {
         name: 'Game created. Your game is ready to share.',

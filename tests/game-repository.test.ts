@@ -26,7 +26,7 @@ describe('game repository', () => {
       setup: {
         durationMinutes: 60,
         format: 'Social game',
-        playerCount: 4,
+        currentPlayerCount: 1,
       },
       venue: 'Potato Padel Club',
     });

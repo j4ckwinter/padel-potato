@@ -1,9 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
-  decrementGamePlayers,
+  decrementCurrentPlayers,
   gameDraftName,
-  incrementGamePlayers,
+  incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
@@ -31,7 +31,7 @@ describe('game draft schedule', () => {
       setup: {
         durationMinutes: 60,
         format: 'Social game',
-        playerCount: 4,
+        currentPlayerCount: 1,
       },
       venueQuery: '',
     });
@@ -45,7 +45,7 @@ describe('game draft schedule', () => {
       setup: {
         durationMinutes: 60,
         format: 'Social game',
-        playerCount: 4,
+        currentPlayerCount: 1,
       },
       venueQuery: '',
     });
@@ -62,7 +62,7 @@ describe('game draft schedule', () => {
       setup: {
         durationMinutes: 60,
         format: 'Social game',
-        playerCount: 4,
+        currentPlayerCount: 1,
       },
       venueQuery: '',
     });
@@ -81,21 +81,26 @@ describe('game draft schedule', () => {
     expect(competitive.setup).toEqual({
       durationMinutes: 90,
       format: 'Competitive game',
-      playerCount: 4,
+      currentPlayerCount: 1,
     });
   });
 
   it('keeps the player count between one and four', () => {
-    const threePlayers = decrementGamePlayers(initialGameDraft);
-    const fourPlayers = incrementGamePlayers(threePlayers);
+    const twoPlayers = incrementCurrentPlayers(initialGameDraft);
+    const fourPlayers = incrementCurrentPlayers(
+      incrementCurrentPlayers(twoPlayers),
+    );
 
-    expect(threePlayers.setup.playerCount).toBe(3);
-    expect(fourPlayers.setup.playerCount).toBe(4);
-    expect(incrementGamePlayers(fourPlayers).setup.playerCount).toBe(4);
+    expect(twoPlayers.setup.currentPlayerCount).toBe(2);
+    expect(decrementCurrentPlayers(twoPlayers).setup.currentPlayerCount).toBe(
+      1,
+    );
+    expect(fourPlayers.setup.currentPlayerCount).toBe(4);
+    expect(incrementCurrentPlayers(fourPlayers).setup.currentPlayerCount).toBe(
+      4,
+    );
     expect(
-      decrementGamePlayers(
-        decrementGamePlayers(decrementGamePlayers(threePlayers)),
-      ).setup.playerCount,
+      decrementCurrentPlayers(initialGameDraft).setup.currentPlayerCount,
     ).toBe(1);
   });
 

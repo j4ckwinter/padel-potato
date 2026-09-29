@@ -7,8 +7,8 @@ import {
 } from 'react';
 
 import {
-  decrementGamePlayers,
-  incrementGamePlayers,
+  decrementCurrentPlayers,
+  incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
@@ -20,8 +20,8 @@ import {
 
 type GameDraftAction =
   | Readonly<{ type: 'draftReset' }>
-  | Readonly<{ type: 'playersDecremented' }>
-  | Readonly<{ type: 'playersIncremented' }>
+  | Readonly<{ type: 'currentPlayersDecremented' }>
+  | Readonly<{ type: 'currentPlayersIncremented' }>
   | Readonly<{ date: string; type: 'daySelected' }>
   | Readonly<{
       durationMinutes: GameDraft['setup']['durationMinutes'];
@@ -36,8 +36,8 @@ type GameDraftAction =
 
 type GameDraftContextValue = Readonly<{
   draft: GameDraft;
-  decrementPlayers: () => void;
-  incrementPlayers: () => void;
+  decrementCurrentPlayers: () => void;
+  incrementCurrentPlayers: () => void;
   resetDraft: () => void;
   selectDay: (date: string) => void;
   selectDuration: (
@@ -54,10 +54,10 @@ function gameDraftReducer(draft: GameDraft, action: GameDraftAction) {
   switch (action.type) {
     case 'draftReset':
       return initialGameDraft;
-    case 'playersDecremented':
-      return decrementGamePlayers(draft);
-    case 'playersIncremented':
-      return incrementGamePlayers(draft);
+    case 'currentPlayersDecremented':
+      return decrementCurrentPlayers(draft);
+    case 'currentPlayersIncremented':
+      return incrementCurrentPlayers(draft);
     case 'daySelected':
       return selectGameDay(draft, action.date);
     case 'durationChanged':
@@ -75,9 +75,11 @@ export function GameDraftProvider({ children }: PropsWithChildren) {
   const [draft, dispatch] = useReducer(gameDraftReducer, initialGameDraft);
   const value = useMemo<GameDraftContextValue>(
     () => ({
-      decrementPlayers: () => dispatch({ type: 'playersDecremented' }),
+      decrementCurrentPlayers: () =>
+        dispatch({ type: 'currentPlayersDecremented' }),
       draft,
-      incrementPlayers: () => dispatch({ type: 'playersIncremented' }),
+      incrementCurrentPlayers: () =>
+        dispatch({ type: 'currentPlayersIncremented' }),
       resetDraft: () => dispatch({ type: 'draftReset' }),
       selectDay: (date) => dispatch({ date, type: 'daySelected' }),
       selectDuration: (durationMinutes) =>

@@ -11,9 +11,9 @@ export type GameScheduleDraft =
 export type GameDraft = Readonly<{
   schedule: GameScheduleDraft;
   setup: Readonly<{
+    currentPlayerCount: 1 | 2 | 3 | 4;
     durationMinutes: 60 | 90;
     format: 'Competitive game' | 'Social game';
-    playerCount: 1 | 2 | 3 | 4;
   }>;
   venueQuery: string;
 }>;
@@ -21,9 +21,9 @@ export type GameDraft = Readonly<{
 export const initialGameDraft: GameDraft = Object.freeze({
   schedule: Object.freeze({ status: 'empty' }),
   setup: Object.freeze({
+    currentPlayerCount: 1,
     durationMinutes: 60,
     format: 'Social game',
-    playerCount: 4,
   }),
   venueQuery: '',
 });
@@ -142,16 +142,34 @@ export function updateGameFormat(
   return { ...draft, setup: { ...draft.setup, format } };
 }
 
-export function decrementGamePlayers(draft: GameDraft): GameDraft {
-  const playerCount = draft.setup.playerCount;
-  const nextPlayerCount =
-    playerCount === 4 ? 3 : playerCount === 3 ? 2 : playerCount === 2 ? 1 : 1;
-  return { ...draft, setup: { ...draft.setup, playerCount: nextPlayerCount } };
+export function decrementCurrentPlayers(draft: GameDraft): GameDraft {
+  const currentPlayerCount = draft.setup.currentPlayerCount;
+  const nextCurrentPlayerCount =
+    currentPlayerCount === 4
+      ? 3
+      : currentPlayerCount === 3
+        ? 2
+        : currentPlayerCount === 2
+          ? 1
+          : 1;
+  return {
+    ...draft,
+    setup: { ...draft.setup, currentPlayerCount: nextCurrentPlayerCount },
+  };
 }
 
-export function incrementGamePlayers(draft: GameDraft): GameDraft {
-  const playerCount = draft.setup.playerCount;
-  const nextPlayerCount =
-    playerCount === 1 ? 2 : playerCount === 2 ? 3 : playerCount === 3 ? 4 : 4;
-  return { ...draft, setup: { ...draft.setup, playerCount: nextPlayerCount } };
+export function incrementCurrentPlayers(draft: GameDraft): GameDraft {
+  const currentPlayerCount = draft.setup.currentPlayerCount;
+  const nextCurrentPlayerCount =
+    currentPlayerCount === 1
+      ? 2
+      : currentPlayerCount === 2
+        ? 3
+        : currentPlayerCount === 3
+          ? 4
+          : 4;
+  return {
+    ...draft,
+    setup: { ...draft.setup, currentPlayerCount: nextCurrentPlayerCount },
+  };
 }

@@ -1,7 +1,10 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 import { Button } from '../../design-system/components/actions';
 import { BannerToast } from '../../design-system/components/feedback';
@@ -11,7 +14,7 @@ import {
   SegmentedControl,
 } from '../../design-system/components/navigation';
 import { Inline, Stack, Text } from '../../design-system/primitives';
-import { colors, spacing } from '../../design-system/tokens';
+import { colors, sizing, spacing } from '../../design-system/tokens';
 import {
   GameDraftProvider,
   useGameDraft,
@@ -25,10 +28,11 @@ import { createGame } from '../../features/games/gameRepository';
 
 function CreateGameForm() {
   const router = useRouter();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const {
-    decrementPlayers,
+    decrementCurrentPlayers,
     draft,
-    incrementPlayers,
+    incrementCurrentPlayers,
     resetDraft,
     selectDay,
     selectDuration,
@@ -75,8 +79,12 @@ function CreateGameForm() {
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: sizing.size112 + bottomInset },
+        ]}
         keyboardShouldPersistTaps="handled"
+        testID="create-game-scroll"
       >
         <AppHeader
           onNotificationPress={() => router.push('/notifications')}
@@ -175,19 +183,23 @@ function CreateGameForm() {
             />
           </Stack>
           <Field
-            decrementDisabled={draft.setup.playerCount === 1}
-            incrementDisabled={draft.setup.playerCount === 4}
-            label="Players"
+            decrementDisabled={draft.setup.currentPlayerCount === 1}
+            incrementDisabled={draft.setup.currentPlayerCount === 4}
+            label="Current players"
             onDecrement={() => {
               setSubmissionFailed(false);
-              decrementPlayers();
+              decrementCurrentPlayers();
             }}
             onIncrement={() => {
               setSubmissionFailed(false);
-              incrementPlayers();
+              incrementCurrentPlayers();
             }}
             type="stepper"
-            value={`${draft.setup.playerCount} players`}
+            value={
+              draft.setup.currentPlayerCount === 1
+                ? '1 player'
+                : `${draft.setup.currentPlayerCount} players`
+            }
           />
           <Stack gap="space8">
             <Text color="textSecondary" variant="label">
@@ -232,7 +244,8 @@ export default function CreateGameScreen() {
 const styles = StyleSheet.create({
   content: {
     gap: spacing.space24,
-    padding: spacing.space16,
+    paddingHorizontal: spacing.space16,
+    paddingTop: spacing.space16,
   },
   safeArea: {
     backgroundColor: colors.canvas,

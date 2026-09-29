@@ -1,12 +1,15 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 import { BannerToast } from '../../../design-system/components/feedback';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
-import { colors, spacing } from '../../../design-system/tokens';
+import { colors, sizing, spacing } from '../../../design-system/tokens';
 import {
   findGameById,
   type CreatedGame,
@@ -36,6 +39,7 @@ function gameDate(game: CreatedGame) {
 
 export default function GameDetailsScreen() {
   const router = useRouter();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const params = useLocalSearchParams();
   const gameId = typeof params.gameId === 'string' ? params.gameId : null;
   const [loadState, setLoadState] = useState<GameLoadState>({
@@ -65,7 +69,12 @@ export default function GameDetailsScreen() {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: sizing.size112 + bottomInset },
+        ]}
+      >
         <AppHeader onBackPress={returnToGames} page="gameDetails" />
         {showCreated ? (
           <BannerToast
@@ -132,7 +141,7 @@ export default function GameDetailsScreen() {
                     Players
                   </Text>
                   <Text variant="bodyStrong">
-                    {displayedState.game.setup.playerCount} players
+                    {displayedState.game.setup.currentPlayerCount} of 4 players
                   </Text>
                 </Stack>
               </Stack>
@@ -147,7 +156,8 @@ export default function GameDetailsScreen() {
 const styles = StyleSheet.create({
   content: {
     gap: spacing.space16,
-    padding: spacing.space16,
+    paddingHorizontal: spacing.space16,
+    paddingTop: spacing.space16,
   },
   safeArea: {
     backgroundColor: colors.canvas,

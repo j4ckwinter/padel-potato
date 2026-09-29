@@ -1,8 +1,10 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import CreateGameScreen from '../src/app/(tabs)/create';
+import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
@@ -19,11 +21,35 @@ function router() {
   return value;
 }
 
+function renderCreateGame(bottomInset = 0) {
+  return render(
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { height: 844, width: 390, x: 0, y: 0 },
+        insets: { bottom: bottomInset, left: 0, right: 0, top: 47 },
+      }}
+    >
+      <CreateGameScreen />
+    </SafeAreaProvider>,
+  );
+}
+
 describe('create game screen', () => {
+  it('keeps the final action clear of the floating navigation', async () => {
+    router();
+    const screen = await renderCreateGame(34);
+
+    expect(
+      flattenedStyle(
+        screen.getByTestId('create-game-scroll').props.contentContainerStyle,
+      ).paddingBottom,
+    ).toBe(146);
+  });
+
   it('renders the confirmed product content and requires venue and schedule', async () => {
     const navigation = router();
     const user = userEvent.setup();
-    const screen = await render(<CreateGameScreen />);
+    const screen = await renderCreateGame();
 
     expect(screen.getByDisplayValue('Padel game')).toBeVisible();
     expect(screen.getByPlaceholderText('Search venues or clubs')).toBeVisible();
@@ -35,10 +61,10 @@ describe('create game screen', () => {
     expect(
       screen.queryByRole('header', { name: 'Game setup' }),
     ).not.toBeOnTheScreen();
-    expect(screen.getByText('4 players')).toBeVisible();
+    expect(screen.getByText('1 player')).toBeVisible();
     expect(screen.queryByText('Intermediate level')).not.toBeOnTheScreen();
     expect(screen.getByText('Duration')).toBeVisible();
-    expect(screen.getByText('Players')).toBeVisible();
+    expect(screen.getByText('Current players')).toBeVisible();
     expect(screen.getByText('Game type')).toBeVisible();
     expect(screen.queryByRole('progressbar')).not.toBeOnTheScreen();
 
@@ -62,13 +88,15 @@ describe('create game screen', () => {
     ).toBeSelected();
 
     expect(
-      screen.getByRole('button', { name: 'Increase Players' }),
+      screen.getByRole('button', { name: 'Decrease Current players' }),
     ).toBeDisabled();
-    await user.press(screen.getByRole('button', { name: 'Decrease Players' }));
-    expect(screen.getByText('3 players')).toBeVisible();
     expect(
-      screen.getByRole('button', { name: 'Increase Players' }),
+      screen.getByRole('button', { name: 'Increase Current players' }),
     ).toBeEnabled();
+    await user.press(
+      screen.getByRole('button', { name: 'Increase Current players' }),
+    );
+    expect(screen.getByText('2 players')).toBeVisible();
     const currentFirstTime = screen.getAllByRole('radio', {
       name: /, Available$/u,
     })[0];
@@ -112,7 +140,7 @@ describe('create game screen', () => {
   it('opens notifications from the creation header', async () => {
     const navigation = router();
     const user = userEvent.setup();
-    const screen = await render(<CreateGameScreen />);
+    const screen = await renderCreateGame();
 
     await user.press(screen.getByRole('button', { name: 'Notifications' }));
 
