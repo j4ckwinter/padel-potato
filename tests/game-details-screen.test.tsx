@@ -272,4 +272,41 @@ describe('game details screen', () => {
       screen.queryByRole('button', { name: 'Invite player to open slot' }),
     ).not.toBeOnTheScreen();
   });
+
+  it('opens result entry for a full game organised by the current player', async () => {
+    mockUseLocalSearchParams.mockReturnValue({
+      gameId: 'demo-my-next-game',
+    });
+    const push = jest.fn();
+    mockUseRouter.mockReturnValue({
+      back: jest.fn(),
+      canGoBack: jest.fn(() => true),
+      push,
+      replace: jest.fn(),
+    } as unknown as ReturnType<typeof useRouter>);
+    const user = userEvent.setup();
+
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <GameDetailsScreen />
+      </SafeAreaProvider>,
+    );
+
+    await user.press(
+      await screen.findByRole('button', { name: 'Enter result' }),
+    );
+
+    expect(push).toHaveBeenCalledWith({
+      params: { gameId: 'demo-my-next-game' },
+      pathname: '/games/result',
+    });
+    await expect(findGameById('demo-my-next-game')).resolves.toMatchObject({
+      lifecycle: { status: 'scheduled' },
+    });
+  });
 });

@@ -37,8 +37,15 @@ type AwaitingResultGameLifecycle = Readonly<{
   status: 'awaitingResult';
 }>;
 
+export type GameSetScore = readonly [number, number];
+
+export type GameResult = Readonly<{
+  sets: readonly [GameSetScore, GameSetScore];
+}>;
+
 type CompletedGameLifecycle = Readonly<{
   completedAt: string;
+  result: GameResult;
   status: 'completed';
 }>;
 
@@ -70,10 +77,15 @@ export type Game = GameRecord;
 export type ScheduledGame = Omit<GameRecord, 'lifecycle'> &
   Readonly<{ lifecycle: ScheduledGameLifecycle }>;
 
+export type GameTeams = readonly [
+  readonly [GamePlayer, GamePlayer],
+  readonly [GamePlayer, GamePlayer],
+];
+
 export type GameLifecycleCommand =
   | Readonly<{ at: string; type: 'cancel' }>
   | Readonly<{ at: string; type: 'finish' }>
-  | Readonly<{ at: string; type: 'complete' }>;
+  | Readonly<{ at: string; result: GameResult; type: 'recordResult' }>;
 
 export const gamePlayerCapacity = 4;
 
@@ -98,20 +110,79 @@ export function applyGameLifecycleCommand(
             ...game,
             lifecycle: { endedAt: command.at, status: 'awaitingResult' },
           };
-        case 'complete':
+        case 'recordResult':
           return null;
       }
     case 'awaitingResult':
-      return command.type === 'complete'
-        ? {
+      if (command.type !== 'recordResult') return null;
+      const result = createGameResult(game, command.result.sets);
+      return result === null
+        ? null
+        : {
             ...game,
-            lifecycle: { completedAt: command.at, status: 'completed' },
-          }
-        : null;
+            lifecycle: {
+              completedAt: command.at,
+              result,
+              status: 'completed',
+            },
+          };
     case 'completed':
     case 'cancelled':
       return null;
   }
+}
+
+function setWinner([teamOne, teamTwo]: GameSetScore): 0 | 1 | null {
+  if (
+    !Number.isInteger(teamOne) ||
+    !Number.isInteger(teamTwo) ||
+    teamOne < 0 ||
+    teamTwo < 0 ||
+    teamOne > 7 ||
+    teamTwo > 7
+  ) {
+    return null;
+  }
+  if (teamOne === 6 && teamTwo <= 4) return 0;
+  if (teamTwo === 6 && teamOne <= 4) return 1;
+  if (teamOne === 7 && (teamTwo === 5 || teamTwo === 6)) return 0;
+  if (teamTwo === 7 && (teamOne === 5 || teamOne === 6)) return 1;
+  return null;
+}
+
+export function gameTeams(game: Game): GameTeams | null {
+  if (game.participants.length !== 4) return null;
+
+  return [
+    [game.participants[0].player, game.participants[1].player],
+    [game.participants[2].player, game.participants[3].player],
+  ];
+}
+
+export function createGameResult(
+  game: Game,
+  sets: readonly [GameSetScore, GameSetScore],
+): GameResult | null {
+  const firstWinner = setWinner(sets[0]);
+  const secondWinner = setWinner(sets[1]);
+  if (
+    gameTeams(game) === null ||
+    firstWinner === null ||
+    secondWinner !== firstWinner
+  ) {
+    return null;
+  }
+
+  return {
+    sets: [
+      [sets[0][0], sets[0][1]],
+      [sets[1][0], sets[1][1]],
+    ],
+  };
+}
+
+export function gameResultWinner(result: GameResult): 0 | 1 {
+  return result.sets[0][0] > result.sets[0][1] ? 0 : 1;
 }
 
 export function availableGameSpots(game: Game) {

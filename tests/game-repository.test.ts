@@ -11,6 +11,7 @@ import {
   demoCurrentGamePlayer,
   demoParticipantsForCount,
 } from '../src/features/demo/demoData';
+import { createGameResult } from '../src/features/games/game';
 import {
   createGame,
   findGameById,
@@ -129,43 +130,42 @@ describe('game repository', () => {
   });
 
   it('persists lifecycle transitions and closes inactive games to players', async () => {
-    const draft = updateGameVenue(
-      selectGameTime(selectGameDay(initialGameDraft, '2026-10-08'), '18:30'),
-      'Lifecycle Padel Club',
-    );
-    const created = await createGame({
-      draft,
-      participants: demoParticipantsForCount(1),
+    const transition = await transitionGameLifecycle('demo-my-next-game', {
+      at: '2026-10-08T19:30:00.000Z',
+      type: 'finish',
     });
-
-    await expect(
-      transitionGameLifecycle(created.id, {
-        at: '2026-10-08T19:30:00.000Z',
-        type: 'finish',
-      }),
-    ).resolves.toMatchObject({
+    expect(transition).toMatchObject({
       game: { lifecycle: { status: 'awaitingResult' } },
       status: 'transitioned',
     });
+    if (transition.status !== 'transitioned') {
+      throw new Error('Expected the game to await its result.');
+    }
     await expect(
-      joinGame(created.id, {
+      joinGame(transition.game.id, {
         id: 'late-player',
         initials: 'LP',
         name: 'Late Player',
         rating: '4.2',
       }),
     ).resolves.toMatchObject({ status: 'unavailable' });
+    const result = createGameResult(transition.game, [
+      [6, 4],
+      [6, 3],
+    ]);
+    if (result === null) throw new Error('Expected a valid result.');
     await expect(
-      transitionGameLifecycle(created.id, {
+      transitionGameLifecycle(transition.game.id, {
         at: '2026-10-08T20:00:00.000Z',
-        type: 'complete',
+        result,
+        type: 'recordResult',
       }),
     ).resolves.toMatchObject({
-      game: { lifecycle: { status: 'completed' } },
+      game: { lifecycle: { result, status: 'completed' } },
       status: 'transitioned',
     });
     await expect(
-      transitionGameLifecycle(created.id, {
+      transitionGameLifecycle(transition.game.id, {
         at: '2026-10-08T20:30:00.000Z',
         type: 'cancel',
       }),

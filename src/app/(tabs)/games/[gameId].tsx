@@ -7,7 +7,10 @@ import {
 } from 'react-native-safe-area-context';
 
 import { Button } from '../../../design-system/components/actions';
-import { PlayerItem } from '../../../design-system/components/content';
+import {
+  PlayerItem,
+  ScoreResultBlock,
+} from '../../../design-system/components/content';
 import { BannerToast } from '../../../design-system/components/feedback';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
@@ -15,7 +18,9 @@ import { colors, sizing, spacing } from '../../../design-system/tokens';
 import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
 import {
   availableGameSpots,
+  gameResultWinner,
   gameHasPlayer,
+  gameTeams,
   isScheduledGame,
   playerOrganisesGame,
   type Game,
@@ -62,6 +67,38 @@ function gameAvailability(game: Game) {
   }
 }
 
+function CompletedResult({ game }: Readonly<{ game: Game }>) {
+  if (game.lifecycle.status !== 'completed') return null;
+  const teams = gameTeams(game);
+  if (teams === null) return null;
+
+  const currentTeam = teams.findIndex((team) =>
+    team.some((player) => player.id === demoCurrentGamePlayer.id),
+  );
+  if (currentTeam === -1) return null;
+
+  const result = game.lifecycle.result;
+  return (
+    <ScoreResultBlock
+      state={gameResultWinner(result) === currentTeam ? 'won' : 'lost'}
+      teams={[
+        {
+          initials: teams[0].map((player) => player.initials).join('/'),
+          name: teams[0].map((player) => player.name).join(' & '),
+          scores: [String(result.sets[0][0]), String(result.sets[1][0])],
+        },
+        {
+          initials: teams[1].map((player) => player.initials).join('/'),
+          name: teams[1].map((player) => player.name).join(' & '),
+          scores: [String(result.sets[0][1]), String(result.sets[1][1])],
+        },
+      ]}
+      title="Final score"
+      type="full"
+    />
+  );
+}
+
 export default function GameDetailsScreen() {
   const router = useRouter();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -71,6 +108,9 @@ export default function GameDetailsScreen() {
     status: 'loading',
   });
   const [showCreated, setShowCreated] = useState(params.created === 'true');
+  const [showResultRecorded, setShowResultRecorded] = useState(
+    params.resultRecorded === 'true',
+  );
   const [joinFeedback, setJoinFeedback] = useState<JoinFeedback>(null);
   const [joining, setJoining] = useState(false);
 
@@ -133,6 +173,11 @@ export default function GameDetailsScreen() {
       setJoining(false);
     }
   };
+  const openResultEntry = (game: Game) =>
+    router.push({
+      params: { gameId: game.id },
+      pathname: '/games/result',
+    });
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
@@ -157,6 +202,15 @@ export default function GameDetailsScreen() {
             onClose={() => setShowCreated(false)}
             style="success"
             title="Game created"
+            type="toast"
+          />
+        ) : null}
+        {showResultRecorded && displayedState.status === 'ready' ? (
+          <BannerToast
+            message="The final score is now part of the game record."
+            onClose={() => setShowResultRecorded(false)}
+            style="success"
+            title="Result saved"
             type="toast"
           />
         ) : null}
@@ -240,6 +294,7 @@ export default function GameDetailsScreen() {
                 </Stack>
               </Stack>
             </Surface>
+            <CompletedResult game={displayedState.game} />
             <Stack gap="space12">
               <Text accessibilityRole="header" variant="heading">
                 Players
@@ -283,6 +338,19 @@ export default function GameDetailsScreen() {
                   : null}
               </Stack>
             </Stack>
+            {(displayedState.game.lifecycle.status === 'scheduled' ||
+              displayedState.game.lifecycle.status === 'awaitingResult') &&
+            playerOrganisesGame(
+              displayedState.game,
+              demoCurrentGamePlayer.id,
+            ) &&
+            gameTeams(displayedState.game) !== null ? (
+              <Button
+                label="Enter result"
+                onPress={() => openResultEntry(displayedState.game)}
+                style="primary"
+              />
+            ) : null}
             {isScheduledGame(displayedState.game) &&
             !gameHasPlayer(displayedState.game, demoCurrentGamePlayer.id) &&
             availableGameSpots(displayedState.game) > 0 ? (
