@@ -1,9 +1,11 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { PrimarySectionScreen } from '../src/app-shell/PrimarySectionScreen';
+import HomeScreen from '../src/app/(tabs)';
 import NotificationsScreen from '../src/app/notifications';
+import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
@@ -24,17 +26,49 @@ function router({ canGoBack = false }: { canGoBack?: boolean } = {}) {
 }
 
 describe('primary navigation screens', () => {
-  it('opens notifications from Home without presenting a fake user name', async () => {
+  it('connects Home to the next game and primary actions', async () => {
     const navigation = router();
     const user = userEvent.setup();
-    const screen = await render(<PrimarySectionScreen page="home" />);
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <HomeScreen />
+      </SafeAreaProvider>,
+    );
 
     expect(screen.getByRole('header', { name: 'Padel Potato' })).toBeVisible();
     expect(screen.queryByText('Hi, Alex')).not.toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: 'Coming up' })).toBeVisible();
+    expect(screen.getByText('Thursday Evening Padel')).toBeVisible();
+    expect(
+      screen.getByRole('header', { name: 'Your open game' }),
+    ).toBeVisible();
+    expect(screen.getByText('Tuesday After-work Padel')).toBeVisible();
+
+    await user.press(screen.getAllByRole('button', { name: 'View game' })[0]);
+    expect(navigation.push).toHaveBeenCalledWith({
+      params: { gameId: 'demo-my-next-game' },
+      pathname: '/games/[gameId]',
+    });
+
+    await user.press(screen.getByRole('button', { name: 'Create a game' }));
+    expect(navigation.push).toHaveBeenCalledWith('/create');
+
+    await user.press(screen.getByRole('button', { name: 'Find a game' }));
+    expect(navigation.push).toHaveBeenCalledWith('/games');
 
     await user.press(screen.getByRole('button', { name: 'Notifications' }));
-
     expect(navigation.push).toHaveBeenCalledWith('/notifications');
+
+    expect(
+      flattenedStyle(
+        screen.getByTestId('home-scroll').props.contentContainerStyle,
+      ).paddingBottom,
+    ).toBe(146);
   });
 
   it('returns a directly opened Notifications screen to Home', async () => {
