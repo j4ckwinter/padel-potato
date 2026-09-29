@@ -1,0 +1,121 @@
+import { describe, expect, it, jest } from '@jest/globals';
+import { render, userEvent } from '@testing-library/react-native';
+import { useRouter } from 'expo-router';
+
+import CreateGameScreen from '../src/app/(tabs)/create';
+
+jest.mock('expo-router', () => ({
+  useRouter: jest.fn(),
+}));
+
+const mockUseRouter = jest.mocked(useRouter);
+
+function router() {
+  const value = {
+    push: jest.fn(),
+    replace: jest.fn(),
+  } as unknown as ReturnType<typeof useRouter>;
+  mockUseRouter.mockReturnValue(value);
+  return value;
+}
+
+describe('create game screen', () => {
+  it('renders the confirmed product content and requires venue and schedule', async () => {
+    const navigation = router();
+    const user = userEvent.setup();
+    const screen = await render(<CreateGameScreen />);
+
+    expect(screen.getByDisplayValue('Padel game')).toBeVisible();
+    expect(screen.getByPlaceholderText('Search venues or clubs')).toBeVisible();
+    expect(
+      screen.queryByRole('header', { name: 'When' }),
+    ).not.toBeOnTheScreen();
+    expect(screen.getByText('Day')).toBeVisible();
+    expect(screen.getByText('Start time')).toBeVisible();
+    expect(
+      screen.queryByRole('header', { name: 'Game setup' }),
+    ).not.toBeOnTheScreen();
+    expect(screen.getByText('4 players')).toBeVisible();
+    expect(screen.queryByText('Intermediate level')).not.toBeOnTheScreen();
+    expect(screen.getByText('Duration')).toBeVisible();
+    expect(screen.getByText('Players')).toBeVisible();
+    expect(screen.getByText('Game type')).toBeVisible();
+    expect(screen.queryByRole('progressbar')).not.toBeOnTheScreen();
+
+    const daySelectors = screen.getAllByRole('radio', {
+      name: /^(Today|Mon|Tue|Wed|Thu|Fri|Sat|Sun), /u,
+    });
+    expect(daySelectors).toHaveLength(7);
+    expect(screen.getByRole('tab', { name: '60 minutes' })).toBeSelected();
+    expect(screen.getByRole('tab', { name: '90 minutes' })).not.toBeSelected();
+    expect(screen.getByRole('tab', { name: 'Social game' })).toBeSelected();
+    expect(
+      screen.getByRole('tab', { name: 'Competitive game' }),
+    ).not.toBeSelected();
+
+    await user.press(screen.getByRole('tab', { name: '90 minutes' }));
+    await user.press(screen.getByRole('tab', { name: 'Competitive game' }));
+
+    expect(screen.getByRole('tab', { name: '90 minutes' })).toBeSelected();
+    expect(
+      screen.getByRole('tab', { name: 'Competitive game' }),
+    ).toBeSelected();
+
+    expect(
+      screen.getByRole('button', { name: 'Increase Players' }),
+    ).toBeDisabled();
+    await user.press(screen.getByRole('button', { name: 'Decrease Players' }));
+    expect(screen.getByText('3 players')).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Increase Players' }),
+    ).toBeEnabled();
+    const currentFirstTime = screen.getAllByRole('radio', {
+      name: /, Available$/u,
+    })[0];
+    expect(currentFirstTime).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Create game' })).toBeDisabled();
+
+    await user.press(daySelectors[1]);
+
+    expect(daySelectors[1]).toBeChecked();
+    const firstTime = screen.getByRole('radio', {
+      name: '06:00, Available',
+    });
+    expect(firstTime).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Create game' })).toBeDisabled();
+
+    await user.press(firstTime);
+
+    expect(firstTime).toBeChecked();
+    expect(
+      screen.getByDisplayValue(
+        /^[A-Z][a-z]+ (Morning|Afternoon|Evening|Night) Padel$/u,
+      ),
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Create game' })).toBeDisabled();
+
+    await user.type(
+      screen.getByLabelText('Venue, required'),
+      'Potato Padel Club',
+    );
+
+    const createButton = screen.getByRole('button', { name: 'Create game' });
+    expect(createButton).toBeEnabled();
+    await user.press(createButton);
+
+    expect(navigation.replace).toHaveBeenCalledWith({
+      params: { created: 'true', gameId: expect.any(String) },
+      pathname: '/games/[gameId]',
+    });
+  });
+
+  it('opens notifications from the creation header', async () => {
+    const navigation = router();
+    const user = userEvent.setup();
+    const screen = await render(<CreateGameScreen />);
+
+    await user.press(screen.getByRole('button', { name: 'Notifications' }));
+
+    expect(navigation.push).toHaveBeenCalledWith('/notifications');
+  });
+});
