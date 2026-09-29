@@ -1,4 +1,5 @@
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
@@ -14,18 +15,43 @@ import {
 } from '../../design-system/components/navigation';
 import { Stack } from '../../design-system/primitives';
 import { colors, sizing, spacing } from '../../design-system/tokens';
-import { demoGameCards } from '../../features/demo/demoData';
-
-const nextGame = demoGameCards.find(
-  (entry) => entry.collection === 'mine' && entry.card.variant === 'next',
-);
-const openGame = demoGameCards.find(
-  (entry) => entry.collection === 'mine' && entry.card.variant === 'open',
-);
+import { demoCurrentGamePlayer } from '../../features/demo/demoData';
+import { availableGameSpots, type Game } from '../../features/games/game';
+import {
+  gameListCard,
+  gamesInCollection,
+} from '../../features/games/gameCardViewModel';
+import { listGames } from '../../features/games/gameRepository';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const [games, setGames] = useState<readonly Game[] | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      void listGames().then((availableGames) => {
+        if (active) setGames(availableGames);
+      });
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
+
+  const myGames = useMemo(
+    () => gamesInCollection(games ?? [], 'mine', demoCurrentGamePlayer.id),
+    [games],
+  );
+  const nextGame = myGames.find((game) => availableGameSpots(game) === 0);
+  const openGame = myGames.find((game) => availableGameSpots(game) > 0);
+  const nextGameCard = nextGame
+    ? gameListCard(nextGame, demoCurrentGamePlayer.id)
+    : null;
+  const openGameCard = openGame
+    ? gameListCard(openGame, demoCurrentGamePlayer.id)
+    : null;
   const openGameDetails = (gameId: string) =>
     router.push({ pathname: '/games/[gameId]', params: { gameId } });
 
@@ -45,18 +71,18 @@ export default function HomeScreen() {
         />
         <Stack gap="space12">
           <SectionHeader title="Coming up" />
-          {nextGame?.card.variant === 'next' ? (
+          {nextGame && nextGameCard?.variant === 'next' ? (
             <GameCard
-              detailPrimary={nextGame.card.venue}
-              detailSecondary={nextGame.card.time}
+              detailPrimary={nextGameCard.venue}
+              detailSecondary={nextGameCard.time}
               eyebrow="Your next game"
               illustration="nextGame"
-              onViewGame={() => openGameDetails(nextGame.game.id)}
-              participants={nextGame.card.participants}
-              title={nextGame.card.title}
+              onViewGame={() => openGameDetails(nextGame.id)}
+              participants={nextGameCard.participants}
+              title={nextGameCard.title}
               variant="illustrated"
             />
-          ) : (
+          ) : games === null ? null : (
             <EmptyState
               content="noGames"
               onCreateGame={() => router.push('/create')}
@@ -78,12 +104,12 @@ export default function HomeScreen() {
             />
           </Stack>
         </Stack>
-        {openGame?.card.variant === 'open' ? (
+        {openGame && openGameCard?.variant === 'open' ? (
           <Stack gap="space12">
             <SectionHeader title="Your open game" />
             <GameCard
-              {...openGame.card}
-              onViewGame={() => openGameDetails(openGame.game.id)}
+              {...openGameCard}
+              onViewGame={() => openGameDetails(openGame.id)}
             />
           </Stack>
         ) : null}

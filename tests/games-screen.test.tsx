@@ -4,11 +4,22 @@ import { useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GamesScreen from '../src/app/(tabs)/games';
+import { demoCurrentGamePlayer } from '../src/features/demo/demoData';
+import { joinGame } from '../src/features/games/gameRepository';
 import { flattenedStyle } from './helpers/componentTest';
 
-jest.mock('expo-router', () => ({
-  useRouter: jest.fn(),
-}));
+jest.mock('expo-router', () => {
+  const focusedCallbacks = new WeakSet<() => void>();
+  return {
+    useFocusEffect: (callback: () => void) => {
+      if (!focusedCallbacks.has(callback)) {
+        focusedCallbacks.add(callback);
+        callback();
+      }
+    },
+    useRouter: jest.fn(),
+  };
+});
 
 const mockUseRouter = jest.mocked(useRouter);
 
@@ -48,7 +59,7 @@ describe('games screen', () => {
     expect(
       screen.getByRole('header', { name: 'Open games near you' }),
     ).toBeVisible();
-    expect(screen.getByText('Wednesday Evening Padel')).toBeVisible();
+    expect(await screen.findByText('Wednesday Evening Padel')).toBeVisible();
     expect(screen.getByText('Saturday Morning Padel')).toBeVisible();
     expect(screen.getByText('Sunday Social Padel')).toBeVisible();
     expect(screen.queryByText('Thursday Evening Padel')).not.toBeOnTheScreen();
@@ -84,6 +95,8 @@ describe('games screen', () => {
     const user = userEvent.setup();
     const search = screen.getByLabelText('Venue');
 
+    await screen.findByText('Sunday Social Padel');
+
     await user.type(search, 'Canary');
 
     expect(screen.getByText('Sunday Social Padel')).toBeVisible();
@@ -107,5 +120,18 @@ describe('games screen', () => {
         screen.getByTestId('games-scroll').props.contentContainerStyle,
       ).paddingBottom,
     ).toBe(146);
+  });
+
+  it('moves a joined game from Discover to My games', async () => {
+    await joinGame('demo-canary-social', demoCurrentGamePlayer);
+    const { screen } = await renderGamesScreen();
+    const user = userEvent.setup();
+
+    await screen.findByText('Wednesday Evening Padel');
+    expect(screen.queryByText('Sunday Social Padel')).not.toBeOnTheScreen();
+
+    await user.press(screen.getByRole('tab', { name: 'My games' }));
+
+    expect(await screen.findByText('Sunday Social Padel')).toBeVisible();
   });
 });

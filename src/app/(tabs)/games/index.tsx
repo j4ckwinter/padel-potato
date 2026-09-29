@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
@@ -15,32 +15,37 @@ import {
 } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
+import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
+import type { Game } from '../../../features/games/game';
 import {
-  demoGameCards,
-  type DemoGameCardEntry,
-} from '../../../features/demo/demoData';
+  gameListCard,
+  gamesInCollection,
+  type GameCollection,
+} from '../../../features/games/gameCardViewModel';
+import { listGames } from '../../../features/games/gameRepository';
 
 const collectionOptions = ['Discover', 'My games'] as const;
 type CollectionOption = (typeof collectionOptions)[number];
 
-function collectionKey(option: CollectionOption) {
+function collectionKey(option: CollectionOption): GameCollection {
   return option === 'Discover' ? 'discover' : 'mine';
 }
 
 function GameResultCard({
-  entry,
+  game,
   onViewGame,
 }: Readonly<{
-  entry: DemoGameCardEntry;
+  game: Game;
   onViewGame: (gameId: string) => void;
 }>) {
-  const openGame = () => onViewGame(entry.game.id);
+  const card = gameListCard(game, demoCurrentGamePlayer.id);
+  const openGame = () => onViewGame(game.id);
 
-  switch (entry.card.variant) {
+  switch (card.variant) {
     case 'next':
-      return <GameCard {...entry.card} onViewGame={openGame} />;
+      return <GameCard {...card} onViewGame={openGame} />;
     case 'open':
-      return <GameCard {...entry.card} onViewGame={openGame} />;
+      return <GameCard {...card} onViewGame={openGame} />;
   }
 }
 
@@ -49,16 +54,32 @@ export default function GamesScreen() {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const [collection, setCollection] = useState<CollectionOption>('Discover');
   const [venueQuery, setVenueQuery] = useState('');
+  const [games, setGames] = useState<readonly Game[] | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      void listGames().then((availableGames) => {
+        if (active) setGames(availableGames);
+      });
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
 
   const visibleGames = useMemo(() => {
     const normalizedQuery = venueQuery.trim().toLocaleLowerCase();
-    return demoGameCards.filter(
-      ({ card, collection: entryCollection }) =>
-        entryCollection === collectionKey(collection) &&
-        (normalizedQuery.length === 0 ||
-          card.venue.toLocaleLowerCase().includes(normalizedQuery)),
+    return gamesInCollection(
+      games ?? [],
+      collectionKey(collection),
+      demoCurrentGamePlayer.id,
+    ).filter(
+      (game) =>
+        normalizedQuery.length === 0 ||
+        game.venue.toLocaleLowerCase().includes(normalizedQuery),
     );
-  }, [collection, venueQuery]);
+  }, [collection, games, venueQuery]);
 
   const openGame = (gameId: string) =>
     router.push({ pathname: '/games/[gameId]', params: { gameId } });
@@ -99,12 +120,18 @@ export default function GamesScreen() {
               collection === 'Discover' ? 'Open games near you' : 'Your games'
             }
           />
-          {visibleGames.length > 0 ? (
+          {games === null ? (
+            <Surface padding="space20" radius="radius20">
+              <Text color="textSecondary" variant="body">
+                Loading games...
+              </Text>
+            </Surface>
+          ) : visibleGames.length > 0 ? (
             <Stack gap="space16">
-              {visibleGames.map((entry) => (
+              {visibleGames.map((game) => (
                 <GameResultCard
-                  entry={entry}
-                  key={entry.game.id}
+                  game={game}
+                  key={game.id}
                   onViewGame={openGame}
                 />
               ))}

@@ -24,6 +24,7 @@ import {
   upcomingScheduleDays,
   upcomingScheduleTimes,
 } from '../../features/game-creation/scheduleOptions';
+import { demoParticipantsForCount } from '../../features/demo/demoData';
 import { createGame } from '../../features/games/gameRepository';
 
 function CreateGameForm() {
@@ -63,7 +64,10 @@ function CreateGameForm() {
     setSubmitting(true);
     setSubmissionFailed(false);
     try {
-      const game = await createGame(draft);
+      const game = await createGame({
+        draft,
+        participants: demoParticipantsForCount(draft.setup.currentPlayerCount),
+      });
       resetDraft();
       router.replace({
         params: { created: 'true', gameId: game.id },

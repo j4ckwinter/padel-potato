@@ -5,13 +5,17 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
 import {
+  demoCurrentGamePlayer,
+  demoParticipantsForCount,
+} from '../src/features/demo/demoData';
+import {
   incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
   updateGameVenue,
 } from '../src/features/game-creation/gameDraft';
-import { createGame } from '../src/features/games/gameRepository';
+import { createGame, findGameById } from '../src/features/games/gameRepository';
 
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
@@ -23,12 +27,14 @@ const mockUseRouter = jest.mocked(useRouter);
 
 describe('game details screen', () => {
   it('displays the game created by the submission flow', async () => {
-    const game = await createGame(
-      updateGameVenue(
-        selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
-        'Potato Padel Club',
-      ),
+    const draft = updateGameVenue(
+      selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
+      'Potato Padel Club',
     );
+    const game = await createGame({
+      draft,
+      participants: demoParticipantsForCount(draft.setup.currentPlayerCount),
+    });
     mockUseLocalSearchParams.mockReturnValue({
       created: 'true',
       gameId: game.id,
@@ -105,12 +111,14 @@ describe('game details screen', () => {
     const fullDraft = incrementCurrentPlayers(
       incrementCurrentPlayers(incrementCurrentPlayers(initialGameDraft)),
     );
-    const game = await createGame(
-      updateGameVenue(
-        selectGameTime(selectGameDay(fullDraft, '2026-10-02'), '18:30'),
-        'Potato Padel Club',
-      ),
+    const draft = updateGameVenue(
+      selectGameTime(selectGameDay(fullDraft, '2026-10-02'), '18:30'),
+      'Potato Padel Club',
     );
+    const game = await createGame({
+      draft,
+      participants: demoParticipantsForCount(draft.setup.currentPlayerCount),
+    });
     mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
     mockUseRouter.mockReturnValue({
       back: jest.fn(),
@@ -168,5 +176,61 @@ describe('game details screen', () => {
 
     expect(back).not.toHaveBeenCalled();
     expect(replace).toHaveBeenCalledWith('/games');
+  });
+
+  it('joins a discovered game and updates its participant record', async () => {
+    mockUseLocalSearchParams.mockReturnValue({
+      gameId: 'demo-stratford-morning',
+    });
+    mockUseRouter.mockReturnValue({
+      back: jest.fn(),
+      canGoBack: jest.fn(() => true),
+      push: jest.fn(),
+      replace: jest.fn(),
+    } as unknown as ReturnType<typeof useRouter>);
+    const user = userEvent.setup();
+
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <GameDetailsScreen />
+      </SafeAreaProvider>,
+    );
+
+    expect(await screen.findByText('Open game · 1 spot left')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Invite player to open slot' }),
+    ).not.toBeOnTheScreen();
+
+    await user.press(screen.getByRole('button', { name: 'Join game' }));
+
+    expect(await screen.findByText('Game full')).toBeVisible();
+    expect(
+      screen.getByRole('button', {
+        name: 'View Alex Morgan, Player · Rating 4.7',
+      }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('alert', {
+        name: "You're in. This game is now in My games.",
+      }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Join game' }),
+    ).not.toBeOnTheScreen();
+    await expect(findGameById('demo-stratford-morning')).resolves.toMatchObject(
+      {
+        participants: expect.arrayContaining([
+          expect.objectContaining({
+            player: expect.objectContaining({ id: demoCurrentGamePlayer.id }),
+            role: 'player',
+          }),
+        ]),
+      },
+    );
   });
 });
