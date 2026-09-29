@@ -13,7 +13,7 @@ import {
   AppHeader,
   SegmentedControl,
 } from '../../design-system/components/navigation';
-import { Inline, Stack, Text } from '../../design-system/primitives';
+import { Inline, Stack, Surface, Text } from '../../design-system/primitives';
 import { colors, sizing, spacing } from '../../design-system/tokens';
 import {
   GameDraftProvider,
@@ -104,14 +104,25 @@ function CreateGameForm() {
             type="toast"
           />
         ) : null}
-        <Stack gap="space20">
-          <Field
-            label="Generated game name"
-            onChangeText={() => undefined}
-            readOnly
-            type="text"
-            value={gameDraftName(draft)}
-          />
+        <Stack gap="space16">
+          <Surface
+            background="surfaceAccent"
+            padding="space20"
+            radius="radius20"
+            testID="game-name-summary"
+          >
+            <Stack gap="space4">
+              <Text color="deep" variant="label">
+                Game name
+              </Text>
+              <Text accessibilityRole="header" variant="section">
+                {gameDraftName(draft)}
+              </Text>
+              <Text color="textSecondary" variant="body">
+                Updates automatically from your selected day and start time.
+              </Text>
+            </Stack>
+          </Surface>
           <Field
             label="Venue"
             onChangeText={updateVenueQuery}
@@ -120,107 +131,129 @@ function CreateGameForm() {
             type="search"
             value={draft.venueQuery}
           />
-          <Stack gap="space8">
-            <Text variant="label">Day</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <Inline accessibilityRole="radiogroup" gap="space8">
-                {days.map((day) => (
-                  <DayTimeSelector
-                    date={day.dateLabel}
-                    day={day.dayLabel}
-                    key={day.date}
-                    onSelect={() => {
-                      setSubmissionFailed(false);
-                      selectDay(day.date);
-                    }}
-                    selected={selectedDate === day.date}
-                    type="day"
-                  />
-                ))}
-              </Inline>
-            </ScrollView>
-          </Stack>
-          <Stack gap="space8">
-            <Text variant="label">Start time</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <Inline accessibilityRole="radiogroup" gap="space8">
-                {times.map((time) =>
-                  selectedDate === null ? (
-                    <DayTimeSelector
-                      availability="Available"
-                      disabled
-                      key={time}
-                      onSelect={() => selectTime(time)}
-                      selected={false}
-                      time={time}
-                      type="time"
-                    />
-                  ) : (
-                    <DayTimeSelector
-                      availability={
-                        selectedTime === time ? 'Selected' : 'Available'
-                      }
-                      key={time}
-                      onSelect={() => {
-                        setSubmissionFailed(false);
-                        selectTime(time);
-                      }}
-                      selected={selectedTime === time}
-                      time={time}
-                      type="time"
-                    />
-                  ),
-                )}
-              </Inline>
-            </ScrollView>
-          </Stack>
-          <Stack gap="space8">
-            <Text color="textSecondary" variant="label">
-              Duration
-            </Text>
-            <SegmentedControl
-              onValueChange={(value) => {
-                setSubmissionFailed(false);
-                selectDuration(value === '60 minutes' ? 60 : 90);
-              }}
-              options={['60 minutes', '90 minutes']}
-              value={`${draft.setup.durationMinutes} minutes`}
-            />
-          </Stack>
-          <Field
-            decrementDisabled={draft.setup.currentPlayerCount === 1}
-            incrementDisabled={draft.setup.currentPlayerCount === 4}
-            label="Current players"
-            onDecrement={() => {
-              setSubmissionFailed(false);
-              decrementCurrentPlayers();
-            }}
-            onIncrement={() => {
-              setSubmissionFailed(false);
-              incrementCurrentPlayers();
-            }}
-            type="stepper"
-            value={
-              draft.setup.currentPlayerCount === 1
-                ? '1 player'
-                : `${draft.setup.currentPlayerCount} players`
-            }
-          />
-          <Stack gap="space8">
-            <Text color="textSecondary" variant="label">
-              Game type
-            </Text>
-            <SegmentedControl
-              onValueChange={(value) => {
-                setSubmissionFailed(false);
-                selectFormat(
-                  value === 'Social game' ? 'Social game' : 'Competitive game',
-                );
-              }}
-              options={['Social game', 'Competitive game']}
-              value={draft.setup.format}
-            />
-          </Stack>
+          <Surface
+            padding="space16"
+            radius="radius20"
+            testID="schedule-controls"
+          >
+            <Stack gap="space20">
+              <Stack gap="space8">
+                <Text color="textSecondary" variant="label">
+                  Day
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <Inline accessibilityRole="radiogroup" gap="space8">
+                    {days.map((day) => (
+                      <DayTimeSelector
+                        date={day.dateLabel}
+                        day={day.dayLabel}
+                        key={day.date}
+                        onSelect={() => {
+                          setSubmissionFailed(false);
+                          selectDay(day.date);
+                        }}
+                        selected={selectedDate === day.date}
+                        type="day"
+                      />
+                    ))}
+                  </Inline>
+                </ScrollView>
+              </Stack>
+              <Stack gap="space8">
+                <Text color="textSecondary" variant="label">
+                  Start time
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <Inline accessibilityRole="radiogroup" gap="space8">
+                    {times.map((time) =>
+                      selectedDate === null ? (
+                        <DayTimeSelector
+                          availability="Available"
+                          disabled
+                          key={time}
+                          onSelect={() => selectTime(time)}
+                          selected={false}
+                          time={time}
+                          type="time"
+                        />
+                      ) : (
+                        <DayTimeSelector
+                          availability={
+                            selectedTime === time ? 'Selected' : 'Available'
+                          }
+                          key={time}
+                          onSelect={() => {
+                            setSubmissionFailed(false);
+                            selectTime(time);
+                          }}
+                          selected={selectedTime === time}
+                          time={time}
+                          type="time"
+                        />
+                      ),
+                    )}
+                  </Inline>
+                </ScrollView>
+              </Stack>
+            </Stack>
+          </Surface>
+          <Surface
+            padding="space16"
+            radius="radius20"
+            testID="game-setup-controls"
+          >
+            <Stack gap="space20">
+              <Stack gap="space8">
+                <Text color="textSecondary" variant="label">
+                  Duration
+                </Text>
+                <SegmentedControl
+                  onValueChange={(value) => {
+                    setSubmissionFailed(false);
+                    selectDuration(value === '60 minutes' ? 60 : 90);
+                  }}
+                  options={['60 minutes', '90 minutes']}
+                  value={`${draft.setup.durationMinutes} minutes`}
+                />
+              </Stack>
+              <Field
+                decrementDisabled={draft.setup.currentPlayerCount === 1}
+                incrementDisabled={draft.setup.currentPlayerCount === 4}
+                label="Current players"
+                onDecrement={() => {
+                  setSubmissionFailed(false);
+                  decrementCurrentPlayers();
+                }}
+                onIncrement={() => {
+                  setSubmissionFailed(false);
+                  incrementCurrentPlayers();
+                }}
+                type="stepper"
+                value={
+                  draft.setup.currentPlayerCount === 1
+                    ? '1 player'
+                    : `${draft.setup.currentPlayerCount} players`
+                }
+              />
+              <Stack gap="space8">
+                <Text color="textSecondary" variant="label">
+                  Game type
+                </Text>
+                <SegmentedControl
+                  onValueChange={(value) => {
+                    setSubmissionFailed(false);
+                    selectFormat(
+                      value === 'Social game'
+                        ? 'Social game'
+                        : 'Competitive game',
+                    );
+                  }}
+                  options={['Social game', 'Competitive game']}
+                  value={draft.setup.format}
+                />
+              </Stack>
+            </Stack>
+          </Surface>
           {submitting ? (
             <Button label="Create game" loading style="primary" />
           ) : canCreate ? (
@@ -248,7 +281,7 @@ export default function CreateGameScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    gap: spacing.space24,
+    gap: spacing.space16,
     paddingHorizontal: spacing.space16,
     paddingTop: spacing.space16,
   },

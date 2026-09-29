@@ -80,7 +80,10 @@ describe('create game screen', () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const screen = await renderCreateGame();
 
-    expect(screen.getByDisplayValue('Padel game')).toBeVisible();
+    expect(screen.getByRole('header', { name: 'Padel game' })).toBeVisible();
+    expect(screen.getByTestId('game-name-summary')).toBeVisible();
+    expect(screen.getByTestId('schedule-controls')).toBeVisible();
+    expect(screen.getByTestId('game-setup-controls')).toBeVisible();
     expect(screen.getByPlaceholderText('Search venues or clubs')).toBeVisible();
     expect(
       screen.queryByRole('header', { name: 'When' }),
@@ -145,9 +148,9 @@ describe('create game screen', () => {
 
     expect(firstTime).toBeChecked();
     expect(
-      screen.getByDisplayValue(
-        /^[A-Z][a-z]+ (Morning|Afternoon|Evening|Night) Padel$/u,
-      ),
+      screen.getByRole('header', {
+        name: /^[A-Z][a-z]+ (Morning|Afternoon|Evening|Night) Padel$/u,
+      }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Create game' })).toBeDisabled();
 
