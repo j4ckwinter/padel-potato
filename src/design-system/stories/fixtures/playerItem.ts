@@ -1,6 +1,14 @@
 // Story-only data for playerItem.
 export const playerItemFixtures = [
   {
+    label: 'Profile link / Default',
+    configuration: {
+      type: 'profileLink',
+      state: 'default',
+    },
+    copy: ['AM', 'Alex Morgan', 'Intermediate · Rating 4.6'],
+  },
+  {
     label: 'Invite result / Disabled',
     configuration: {
       type: 'inviteResult',

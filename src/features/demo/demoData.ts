@@ -1,32 +1,179 @@
-import type { GameCardProps } from '../../design-system/components/content';
+import type {
+  GameCardProps,
+  PlayerItemIdentity,
+} from '../../design-system/components/content';
 import type { CreatedGame } from '../games/gameRepository';
 
-export const demoGamePlayers = [
+export type DemoPlayer = Readonly<{
+  bio: string;
+  collection: 'discover' | 'friends';
+  favourite: boolean;
+  id: string;
+  identity: PlayerItemIdentity;
+  level: string;
+  preferences: Readonly<{
+    days: string;
+    side: string;
+    timeOfDay: string;
+  }>;
+  stats: Readonly<{
+    gamesPlayed: string;
+    rating: string;
+    winRate: string;
+  }>;
+}>;
+
+export const demoPlayers = [
   {
-    initials: 'AM',
-    name: 'Alex Morgan',
-    presence: 'away',
-    supportingText: 'Organiser · Rating 4.7',
+    bio: 'Friendly right-side player who enjoys organised evening games.',
+    collection: 'friends',
+    favourite: true,
+    id: 'alex-morgan',
+    identity: {
+      initials: 'AM',
+      name: 'Alex Morgan',
+      presence: 'away',
+      supportingText: 'Intermediate · Rating 4.7',
+    },
+    level: 'Intermediate',
+    preferences: {
+      days: 'Weekdays',
+      side: 'Right',
+      timeOfDay: 'Evenings',
+    },
+    stats: { gamesPlayed: '48', rating: '4.7', winRate: '68%' },
   },
   {
-    initials: 'P2',
-    name: 'Player 2',
-    presence: 'offline',
-    supportingText: 'Included by organiser',
+    bio: 'Competitive left-side player who is always up for a weekend match.',
+    collection: 'friends',
+    favourite: false,
+    id: 'jamie-taylor',
+    identity: {
+      initials: 'JT',
+      name: 'Jamie Taylor',
+      presence: 'offline',
+      supportingText: 'Intermediate · Rating 4.5',
+    },
+    level: 'Intermediate',
+    preferences: {
+      days: 'Weekends',
+      side: 'Left',
+      timeOfDay: 'Mornings',
+    },
+    stats: { gamesPlayed: '31', rating: '4.5', winRate: '61%' },
   },
   {
-    initials: 'P3',
-    name: 'Player 3',
-    presence: 'offline',
-    supportingText: 'Included by organiser',
+    bio: 'Experienced player who likes fast rallies and social post-match drinks.',
+    collection: 'friends',
+    favourite: true,
+    id: 'sam-kim',
+    identity: {
+      initials: 'SK',
+      name: 'Sam Kim',
+      presence: 'away',
+      supportingText: 'Advanced · Rating 4.8',
+    },
+    level: 'Advanced',
+    preferences: {
+      days: 'Monday–Saturday',
+      side: 'Left',
+      timeOfDay: 'Evenings',
+    },
+    stats: { gamesPlayed: '56', rating: '4.8', winRate: '72%' },
   },
   {
-    initials: 'P4',
-    name: 'Player 4',
-    presence: 'offline',
-    supportingText: 'Included by organiser',
+    bio: 'Relaxed all-court player looking for regular local games.',
+    collection: 'discover',
+    favourite: false,
+    id: 'riley-brown',
+    identity: {
+      initials: 'RB',
+      name: 'Riley Brown',
+      presence: 'offline',
+      supportingText: 'Intermediate · Rating 4.4',
+    },
+    level: 'Intermediate',
+    preferences: {
+      days: 'Weekends',
+      side: 'Either',
+      timeOfDay: 'Afternoons',
+    },
+    stats: { gamesPlayed: '22', rating: '4.4', winRate: '57%' },
+  },
+  {
+    bio: 'Newer player building confidence through friendly morning games.',
+    collection: 'discover',
+    favourite: false,
+    id: 'taylor-singh',
+    identity: {
+      initials: 'TS',
+      name: 'Taylor Singh',
+      presence: 'away',
+      supportingText: 'Beginner · Rating 3.9',
+    },
+    level: 'Beginner',
+    preferences: {
+      days: 'Weekdays',
+      side: 'Either',
+      timeOfDay: 'Mornings',
+    },
+    stats: { gamesPlayed: '12', rating: '3.9', winRate: '50%' },
+  },
+  {
+    bio: 'Advanced right-side player who enjoys competitive weekend fixtures.',
+    collection: 'discover',
+    favourite: false,
+    id: 'morgan-lee',
+    identity: {
+      initials: 'ML',
+      name: 'Morgan Lee',
+      presence: 'offline',
+      supportingText: 'Advanced · Rating 4.9',
+    },
+    level: 'Advanced',
+    preferences: {
+      days: 'Weekends',
+      side: 'Right',
+      timeOfDay: 'Afternoons',
+    },
+    stats: { gamesPlayed: '63', rating: '4.9', winRate: '74%' },
+  },
+] as const satisfies readonly DemoPlayer[];
+
+export const demoGameParticipants = [
+  {
+    id: demoPlayers[0].id,
+    identity: {
+      ...demoPlayers[0].identity,
+      supportingText: 'Organiser · Rating 4.7',
+    },
+  },
+  {
+    id: demoPlayers[1].id,
+    identity: {
+      ...demoPlayers[1].identity,
+      supportingText: 'Confirmed · Rating 4.5',
+    },
+  },
+  {
+    id: demoPlayers[2].id,
+    identity: {
+      ...demoPlayers[2].identity,
+      supportingText: 'Confirmed · Rating 4.8',
+    },
+  },
+  {
+    id: demoPlayers[3].id,
+    identity: {
+      ...demoPlayers[3].identity,
+      supportingText: 'Confirmed · Rating 4.4',
+    },
   },
 ] as const;
+
+export function findDemoPlayerById(id: string) {
+  return demoPlayers.find((player) => player.id === id) ?? null;
+}
 
 type BrowsableGameCardProps = Extract<
   GameCardProps,

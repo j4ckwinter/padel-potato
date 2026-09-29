@@ -286,11 +286,13 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
       const tuple =
         props.variant === 'list'
           ? `list/${props.selected ? 'selected' : 'default'}`
-          : props.variant === 'game-slot'
-            ? 'gameSlot/default'
-            : props.variant === 'empty-game-slot'
-              ? 'gameSlot/empty'
-              : `inviteResult/${props.disabled ? 'disabled' : 'default'}`;
+          : props.variant === 'profile-link'
+            ? 'profileLink/default'
+            : props.variant === 'game-slot'
+              ? 'gameSlot/default'
+              : props.variant === 'empty-game-slot'
+                ? 'gameSlot/empty'
+                : `inviteResult/${props.disabled ? 'disabled' : 'default'}`;
       expect(tuple).toBe(configuration);
     }
 

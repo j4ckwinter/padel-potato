@@ -63,6 +63,14 @@ describe('Player Item runtime and semantic contract', () => {
         variant: 'game-slot',
       },
     ],
+    [
+      'profile link/default',
+      {
+        identity: player,
+        onViewPlayer: jest.fn(),
+        variant: 'profile-link',
+      },
+    ],
     ['game slot/empty', { onInvite: jest.fn(), variant: 'empty-game-slot' }],
     [
       'invite result/default',
@@ -122,7 +130,7 @@ describe('Player Item runtime and semantic contract', () => {
     expect(screen.queryAllByRole('image')).toHaveLength(0);
   });
 
-  it('emits only the authored game-slot and invite-result intents', async () => {
+  it('emits only the authored profile, game-slot, and invite-result intents', async () => {
     const onViewPlayer = jest.fn();
     const onInvite = jest.fn();
     const gameSlot = await render(
@@ -138,6 +146,20 @@ describe('Player Item runtime and semantic contract', () => {
       }),
     );
     expect(onViewPlayer).toHaveBeenCalledTimes(1);
+
+    const profileLink = await render(
+      <PlayerItem
+        identity={player}
+        onViewPlayer={onViewPlayer}
+        variant="profile-link"
+      />,
+    );
+    await userEvent.setup().press(
+      profileLink.getByRole('button', {
+        name: 'View Alex Morgan, Intermediate · Rating 4.6',
+      }),
+    );
+    expect(onViewPlayer).toHaveBeenCalledTimes(2);
 
     const invite = await render(
       <PlayerItem
@@ -184,6 +206,7 @@ describe('Player Item runtime and semantic contract', () => {
       variant: 'list',
     },
     { identity: null, onViewPlayer: jest.fn(), variant: 'game-slot' },
+    { identity: player, variant: 'profile-link' },
     { onInvite: null, variant: 'empty-game-slot' },
     { disabled: false, identity: player, variant: 'invite-result' },
     {

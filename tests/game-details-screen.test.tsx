@@ -83,7 +83,20 @@ describe('game details screen', () => {
     ).toBeVisible();
 
     await user.press(openPlayerSlots[0]);
-    expect(push).toHaveBeenCalledWith('/players');
+    expect(push).toHaveBeenCalledWith({
+      params: { view: 'discover' },
+      pathname: '/players',
+    });
+
+    await user.press(
+      screen.getByRole('button', {
+        name: 'View Alex Morgan, Organiser · Rating 4.7',
+      }),
+    );
+    expect(push).toHaveBeenCalledWith({
+      params: { playerId: 'alex-morgan' },
+      pathname: '/players/[playerId]',
+    });
 
     await user.press(screen.getByRole('button', { name: 'Back' }));
 

@@ -39,6 +39,11 @@ export type PlayerItemProps =
       variant: 'game-slot';
     }>
   | Readonly<{
+      identity: PlayerItemIdentity;
+      onViewPlayer: () => void;
+      variant: 'profile-link';
+    }>
+  | Readonly<{
       onInvite: () => void;
       variant: 'empty-game-slot';
     }>
@@ -70,6 +75,7 @@ const supportedTuples = Object.freeze([
   'list/selected',
   'game slot/default',
   'game slot/empty',
+  'profile link/default',
   'invite result/default',
   'invite result/disabled',
 ] as const);
@@ -172,7 +178,7 @@ function validatePlayerItemProps(props: PlayerItemProps) {
     return;
   }
 
-  if (runtime.variant === 'game-slot') {
+  if (runtime.variant === 'game-slot' || runtime.variant === 'profile-link') {
     if (typeof runtime.onViewPlayer !== 'function')
       unsupported('game slot/default requires onViewPlayer');
     if (
@@ -180,9 +186,7 @@ function validatePlayerItemProps(props: PlayerItemProps) {
         (key) => !['identity', 'onViewPlayer', 'variant'].includes(key),
       )
     ) {
-      unsupported(
-        'game slot/default contains an unsupported callback or property',
-      );
+      unsupported(`${runtime.variant} contains an unsupported property`);
     }
     return;
   }
@@ -264,7 +268,7 @@ export function PlayerItem(props: PlayerItemProps) {
   const accessibilityLabel =
     props.variant === 'list'
       ? `${name}, ${supportingText}, ${selected ? 'selected' : 'not selected'}`
-      : props.variant === 'game-slot'
+      : props.variant === 'game-slot' || props.variant === 'profile-link'
         ? `View ${name}, ${supportingText}`
         : empty
           ? 'Invite player to open slot'
@@ -272,7 +276,7 @@ export function PlayerItem(props: PlayerItemProps) {
   const onPress =
     props.variant === 'list'
       ? () => props.onSelectedChange(!props.selected)
-      : props.variant === 'game-slot'
+      : props.variant === 'game-slot' || props.variant === 'profile-link'
         ? props.onViewPlayer
         : props.onInvite;
 

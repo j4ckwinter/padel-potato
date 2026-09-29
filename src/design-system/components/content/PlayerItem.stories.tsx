@@ -63,6 +63,12 @@ export function normalizePlayerItemStoryArgs(args: StoryArgs): PlayerItemProps {
       ? (args.onViewPlayer as () => void)
       : () => undefined;
   switch (args.configuration) {
+    case 'profileLink/default':
+      return {
+        identity: player,
+        onViewPlayer,
+        variant: 'profile-link',
+      };
     case 'gameSlot/empty':
       return { onInvite, variant: 'empty-game-slot' };
     case 'gameSlot/default':
@@ -101,6 +107,13 @@ export function normalizePlayerItemStoryArgs(args: StoryArgs): PlayerItemProps {
 
 function fixtureProps(fixture: (typeof fixtures)[number]): PlayerItemProps {
   const { state, type } = fixture.configuration;
+  if (type === 'profileLink') {
+    return {
+      identity: player,
+      onViewPlayer: () => undefined,
+      variant: 'profile-link',
+    };
+  }
   if (type === 'gameSlot' && state === 'empty') {
     return { onInvite: () => undefined, variant: 'empty-game-slot' };
   }
@@ -138,7 +151,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <PlayerItem {...normalizePlayerItemStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {fixtures[5].label}
+        {fixtures[6].label}
       </Text>
     </Stack>
   ),
@@ -164,6 +177,11 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
+      <PlayerItem
+        identity={player}
+        onViewPlayer={() => undefined}
+        variant="profile-link"
+      />
       <PlayerItem
         identity={player}
         onSelectedChange={() => undefined}

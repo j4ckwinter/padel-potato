@@ -11,7 +11,7 @@ import { BannerToast } from '../../../design-system/components/feedback';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
-import { demoGamePlayers } from '../../../features/demo/demoData';
+import { demoGameParticipants } from '../../../features/demo/demoData';
 import {
   findGameById,
   type CreatedGame,
@@ -28,7 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   weekday: 'long',
   year: 'numeric',
 });
-const gamePlayerCapacity = demoGamePlayers.length;
+const gamePlayerCapacity = demoGameParticipants.length;
 
 function gameDate(game: CreatedGame) {
   const [yearText, monthText, dayText] = game.schedule.date.split('-');
@@ -83,7 +83,10 @@ export default function GameDetailsScreen() {
 
     router.replace('/games');
   };
-  const openPlayers = () => router.push('/players');
+  const openPlayer = (playerId: string) =>
+    router.push({ pathname: '/players/[playerId]', params: { playerId } });
+  const discoverPlayers = () =>
+    router.push({ pathname: '/players', params: { view: 'discover' } });
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
@@ -171,13 +174,13 @@ export default function GameDetailsScreen() {
                 Players
               </Text>
               <Stack gap="space8">
-                {demoGamePlayers
+                {demoGameParticipants
                   .slice(0, displayedState.game.setup.currentPlayerCount)
-                  .map((identity) => (
+                  .map((participant) => (
                     <PlayerItem
-                      identity={identity}
-                      key={identity.name}
-                      onViewPlayer={openPlayers}
+                      identity={participant.identity}
+                      key={participant.id}
+                      onViewPlayer={() => openPlayer(participant.id)}
                       variant="game-slot"
                     />
                   ))}
@@ -190,7 +193,7 @@ export default function GameDetailsScreen() {
                   (_, index) => (
                     <PlayerItem
                       key={`open-player-slot-${index + 1}`}
-                      onInvite={openPlayers}
+                      onInvite={discoverPlayers}
                       variant="empty-game-slot"
                     />
                   ),
