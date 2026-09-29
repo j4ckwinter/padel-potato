@@ -37,13 +37,16 @@ async function renderPlayersScreen(view?: string) {
 }
 
 describe('players screen', () => {
-  it('browses friends and discoverable players', async () => {
+  it('browses favourite, recent, and discoverable players', async () => {
     const { push, screen } = await renderPlayersScreen();
     const user = userEvent.setup();
 
     expect(screen.getByRole('header', { name: 'Players' })).toBeVisible();
-    expect(screen.getByRole('tab', { name: 'Friends' })).toBeSelected();
-    expect(screen.getByRole('header', { name: 'Your players' })).toBeVisible();
+    expect(screen.getByRole('tab', { name: 'My players' })).toBeSelected();
+    expect(screen.getByRole('header', { name: 'Favourites' })).toBeVisible();
+    expect(
+      screen.getByRole('header', { name: 'Recently played with' }),
+    ).toBeVisible();
     expect(
       screen.getByRole('button', {
         name: 'View Jamie Taylor, Intermediate · Rating 4.5',
@@ -57,6 +60,9 @@ describe('players screen', () => {
     expect(
       screen.queryByRole('button', { name: /View Riley Brown/ }),
     ).not.toBeOnTheScreen();
+    expect(
+      screen.getAllByRole('button', { name: /View Sam Kim/u }),
+    ).toHaveLength(1);
     expect(
       screen.queryByRole('button', { name: /View Alex Morgan/ }),
     ).not.toBeOnTheScreen();

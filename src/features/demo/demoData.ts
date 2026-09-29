@@ -20,8 +20,8 @@ export type DemoPlayerProfile = Readonly<{
 
 export type DemoPlayer = DemoPlayerProfile &
   Readonly<{
-    collection: 'discover' | 'friends';
     favourite: boolean;
+    recentlyPlayedWith: boolean;
   }>;
 
 export const demoCurrentUser = {
@@ -45,7 +45,6 @@ export const demoCurrentUser = {
 export const demoPlayers = [
   {
     bio: 'Competitive left-side player who is always up for a weekend match.',
-    collection: 'friends',
     favourite: false,
     id: 'jamie-taylor',
     identity: {
@@ -61,10 +60,10 @@ export const demoPlayers = [
       timeOfDay: 'Mornings',
     },
     stats: { gamesPlayed: '31', rating: '4.5', winRate: '61%' },
+    recentlyPlayedWith: true,
   },
   {
     bio: 'Experienced player who likes fast rallies and social post-match drinks.',
-    collection: 'friends',
     favourite: true,
     id: 'sam-kim',
     identity: {
@@ -80,10 +79,10 @@ export const demoPlayers = [
       timeOfDay: 'Evenings',
     },
     stats: { gamesPlayed: '56', rating: '4.8', winRate: '72%' },
+    recentlyPlayedWith: true,
   },
   {
     bio: 'Relaxed all-court player looking for regular local games.',
-    collection: 'discover',
     favourite: false,
     id: 'riley-brown',
     identity: {
@@ -99,10 +98,10 @@ export const demoPlayers = [
       timeOfDay: 'Afternoons',
     },
     stats: { gamesPlayed: '22', rating: '4.4', winRate: '57%' },
+    recentlyPlayedWith: false,
   },
   {
     bio: 'Newer player building confidence through friendly morning games.',
-    collection: 'discover',
     favourite: false,
     id: 'taylor-singh',
     identity: {
@@ -118,10 +117,10 @@ export const demoPlayers = [
       timeOfDay: 'Mornings',
     },
     stats: { gamesPlayed: '12', rating: '3.9', winRate: '50%' },
+    recentlyPlayedWith: false,
   },
   {
     bio: 'Advanced right-side player who enjoys competitive weekend fixtures.',
-    collection: 'discover',
     favourite: false,
     id: 'morgan-lee',
     identity: {
@@ -137,6 +136,7 @@ export const demoPlayers = [
       timeOfDay: 'Afternoons',
     },
     stats: { gamesPlayed: '63', rating: '4.9', winRate: '74%' },
+    recentlyPlayedWith: false,
   },
 ] as const satisfies readonly DemoPlayer[];
 

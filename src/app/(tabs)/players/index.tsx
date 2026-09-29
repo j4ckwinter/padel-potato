@@ -15,19 +15,49 @@ import {
 } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
-import { demoPlayers } from '../../../features/demo/demoData';
+import { demoPlayers, type DemoPlayer } from '../../../features/demo/demoData';
 
-const collectionOptions = ['Friends', 'Discover'] as const;
+const collectionOptions = ['My players', 'Discover'] as const;
 type CollectionOption = (typeof collectionOptions)[number];
 
 function initialCollection(
   view: string | string[] | undefined,
 ): CollectionOption {
-  return view === 'discover' ? 'Discover' : 'Friends';
+  return view === 'discover' ? 'Discover' : 'My players';
 }
 
-function collectionKey(option: CollectionOption) {
-  return option === 'Friends' ? 'friends' : 'discover';
+function PlayerList({
+  onViewPlayer,
+  players,
+}: Readonly<{
+  onViewPlayer: (playerId: string) => void;
+  players: readonly DemoPlayer[];
+}>) {
+  return (
+    <Stack gap="space8">
+      {players.map((player) => (
+        <PlayerItem
+          identity={player.identity}
+          key={player.id}
+          onViewPlayer={() => onViewPlayer(player.id)}
+          variant="profile-link"
+        />
+      ))}
+    </Stack>
+  );
+}
+
+function NoPlayersFound() {
+  return (
+    <Surface padding="space20" radius="radius20">
+      <Stack gap="space4">
+        <Text variant="heading">No players found</Text>
+        <Text color="textSecondary" variant="body">
+          Try searching for a different name.
+        </Text>
+      </Stack>
+    </Surface>
+  );
 }
 
 export default function PlayersScreen() {
@@ -39,15 +69,21 @@ export default function PlayersScreen() {
   );
   const [playerQuery, setPlayerQuery] = useState('');
 
-  const visiblePlayers = useMemo(() => {
+  const matchingPlayers = useMemo(() => {
     const normalizedQuery = playerQuery.trim().toLocaleLowerCase();
     return demoPlayers.filter(
       (player) =>
-        player.collection === collectionKey(collection) &&
-        (normalizedQuery.length === 0 ||
-          player.identity.name.toLocaleLowerCase().includes(normalizedQuery)),
+        normalizedQuery.length === 0 ||
+        player.identity.name.toLocaleLowerCase().includes(normalizedQuery),
     );
-  }, [collection, playerQuery]);
+  }, [playerQuery]);
+  const favouritePlayers = matchingPlayers.filter((player) => player.favourite);
+  const recentPlayers = matchingPlayers.filter(
+    (player) => player.recentlyPlayedWith && !player.favourite,
+  );
+  const discoverPlayers = matchingPlayers.filter(
+    (player) => !player.favourite && !player.recentlyPlayedWith,
+  );
 
   const openPlayer = (playerId: string) =>
     router.push({ pathname: '/players/[playerId]', params: { playerId } });
@@ -68,7 +104,7 @@ export default function PlayersScreen() {
         />
         <SegmentedControl
           onValueChange={(value) => {
-            if (value === 'Friends' || value === 'Discover') {
+            if (value === 'My players' || value === 'Discover') {
               setCollection(value);
             }
           }}
@@ -82,32 +118,41 @@ export default function PlayersScreen() {
           type="search"
           value={playerQuery}
         />
-        <Stack gap="space12">
-          <SectionHeader
-            title={collection === 'Friends' ? 'Your players' : 'Find players'}
-          />
-          {visiblePlayers.length > 0 ? (
-            <Stack gap="space8">
-              {visiblePlayers.map((player) => (
-                <PlayerItem
-                  identity={player.identity}
-                  key={player.id}
-                  onViewPlayer={() => openPlayer(player.id)}
-                  variant="profile-link"
-                />
-              ))}
+        {collection === 'My players' ? (
+          favouritePlayers.length + recentPlayers.length > 0 ? (
+            <Stack gap="space20">
+              {favouritePlayers.length > 0 ? (
+                <Stack gap="space12">
+                  <SectionHeader title="Favourites" />
+                  <PlayerList
+                    onViewPlayer={openPlayer}
+                    players={favouritePlayers}
+                  />
+                </Stack>
+              ) : null}
+              {recentPlayers.length > 0 ? (
+                <Stack gap="space12">
+                  <SectionHeader title="Recently played with" />
+                  <PlayerList
+                    onViewPlayer={openPlayer}
+                    players={recentPlayers}
+                  />
+                </Stack>
+              ) : null}
             </Stack>
           ) : (
-            <Surface padding="space20" radius="radius20">
-              <Stack gap="space4">
-                <Text variant="heading">No players found</Text>
-                <Text color="textSecondary" variant="body">
-                  Try searching for a different name.
-                </Text>
-              </Stack>
-            </Surface>
-          )}
-        </Stack>
+            <NoPlayersFound />
+          )
+        ) : (
+          <Stack gap="space12">
+            <SectionHeader title="Find players" />
+            {discoverPlayers.length > 0 ? (
+              <PlayerList onViewPlayer={openPlayer} players={discoverPlayers} />
+            ) : (
+              <NoPlayersFound />
+            )}
+          </Stack>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
