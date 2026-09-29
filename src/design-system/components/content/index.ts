@@ -1,5 +1,6 @@
 export {
   GameCard,
+  type GameCardIllustration,
   type GameCardParticipant,
   type GameCardProps,
 } from './GameCard';

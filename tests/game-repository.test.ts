@@ -38,4 +38,12 @@ describe('game repository', () => {
       'A game requires a venue, day, and start time.',
     );
   });
+
+  it('resolves demo games opened from the Games tab', async () => {
+    await expect(findGameById('demo-canary-social')).resolves.toMatchObject({
+      id: 'demo-canary-social',
+      name: 'Sunday Social Padel',
+      venue: 'Canary Wharf Padel',
+    });
+  });
 });

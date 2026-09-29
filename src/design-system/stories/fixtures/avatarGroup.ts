@@ -1,6 +1,14 @@
 // Story-only data for avatarGroup.
 export const avatarGroupFixtures = [
   {
+    label: '1 player / Partial',
+    configuration: {
+      content: '1Player',
+      state: 'partial',
+    },
+    copy: ['AM', '+', '+', '+'],
+  },
+  {
     label: '2 slots / Empty',
     configuration: {
       content: '2Slots',

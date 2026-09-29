@@ -5,7 +5,6 @@ import {
   BannerToast,
   EmptyState,
   GameCard,
-  IllustratedCard,
   NotificationRow,
   PlayerItem,
   PlayerPreferencesCard,
@@ -22,8 +21,6 @@ import {
   type EmptyStateProps,
   type GameCardParticipant,
   type GameCardProps,
-  type IllustratedCardParticipant,
-  type IllustratedCardProps,
   type NotificationRowProps,
   type PlayerItemIdentity,
   type PlayerItemProps,
@@ -55,7 +52,6 @@ const contentPublicFamilies = [
   'PlayerPreferencesCard',
   'BannerToast',
   'EmptyState',
-  'IllustratedCard',
 ] as const satisfies readonly (keyof typeof DesignSystem)[];
 
 // @ts-expect-error Generated artwork renderers remain private.
@@ -94,29 +90,6 @@ const participant3 = {
 } as const;
 const participant4 = {
   ...participant1,
-  initials: 'DP',
-  name: 'Dev Potato',
-  slot: 4,
-} as const;
-const illustrated1 = {
-  initials: 'AP',
-  name: 'Alex Potato',
-  slot: 1,
-} as const satisfies IllustratedCardParticipant;
-const illustrated2 = {
-  ...illustrated1,
-  initials: 'BP',
-  name: 'Bea Potato',
-  slot: 2,
-} as const;
-const illustrated3 = {
-  ...illustrated1,
-  initials: 'CP',
-  name: 'Cam Potato',
-  slot: 3,
-} as const;
-const illustrated4 = {
-  ...illustrated1,
   initials: 'DP',
   name: 'Dev Potato',
   slot: 4,
@@ -198,14 +171,15 @@ const validContracts = [
     type="toast"
   />,
   <EmptyState content="noNotifications" />,
-  <IllustratedCard
+  <GameCard
     detailPrimary="Friday, 18:30"
     detailSecondary="Canary Wharf"
     eyebrow="Next game"
+    illustration="nextGame"
     onViewGame={noop}
-    participants={[illustrated1, illustrated2, illustrated3, illustrated4]}
+    participants={[participant1, participant2, participant3, participant4]}
     title="Padel night"
-    type="nextGame"
+    variant="illustrated"
   />,
 ];
 
@@ -422,26 +396,28 @@ const invalidEmptyStateCallback: EmptyStateProps = {
 // @ts-expect-error No-games branch requires its authored action.
 const invalidEmptyStateMissing: EmptyStateProps = { content: 'noGames' };
 
-// Illustrated Card: reject fixed-cardinality and callback mismatch.
-// @ts-expect-error Next-game card requires exactly four participants.
-const invalidIllustratedCardCardinality: IllustratedCardProps = {
+// Illustrated Game Card: reject fixed-cardinality and callback mismatch.
+const invalidIllustratedCardCardinality: GameCardProps = {
   detailPrimary: 'Friday',
   detailSecondary: 'Court',
   eyebrow: 'Next',
+  illustration: 'nextGame',
   onViewGame: noop,
-  participants: [illustrated1, illustrated2],
+  // @ts-expect-error Next-game card requires exactly four participants.
+  participants: [participant1, participant2],
   title: 'Game',
-  type: 'nextGame',
+  variant: 'illustrated',
 };
-const invalidIllustratedCardCallback: IllustratedCardProps = {
+const invalidIllustratedCardCallback: GameCardProps = {
   detailPrimary: 'Won',
   detailSecondary: '6-4, 6-3',
   eyebrow: 'Result',
+  illustration: 'matchResult',
   // @ts-expect-error Match-result branch owns onViewResults only.
   onViewGame: noop,
-  participants: [illustrated1, illustrated2, illustrated3, illustrated4],
+  participants: [participant1, participant2, participant3, participant4],
   title: 'Victory',
-  type: 'matchResult',
+  variant: 'illustrated',
 };
 
 void validContracts;

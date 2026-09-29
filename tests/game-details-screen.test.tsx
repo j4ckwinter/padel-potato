@@ -33,11 +33,16 @@ describe('game details screen', () => {
       created: 'true',
       gameId: game.id,
     });
+    const back = jest.fn();
+    const canGoBack = jest.fn(() => true);
     const push = jest.fn();
     const replace = jest.fn();
-    mockUseRouter.mockReturnValue({ push, replace } as unknown as ReturnType<
-      typeof useRouter
-    >);
+    mockUseRouter.mockReturnValue({
+      back,
+      canGoBack,
+      push,
+      replace,
+    } as unknown as ReturnType<typeof useRouter>);
     const user = userEvent.setup();
 
     const screen = await render(
@@ -82,7 +87,8 @@ describe('game details screen', () => {
 
     await user.press(screen.getByRole('button', { name: 'Back' }));
 
-    expect(replace).toHaveBeenCalledWith('/games');
+    expect(back).toHaveBeenCalledTimes(1);
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it('labels a four-player game as full', async () => {
@@ -97,6 +103,8 @@ describe('game details screen', () => {
     );
     mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
     mockUseRouter.mockReturnValue({
+      back: jest.fn(),
+      canGoBack: jest.fn(() => true),
       push: jest.fn(),
       replace: jest.fn(),
     } as unknown as ReturnType<typeof useRouter>);
@@ -119,5 +127,36 @@ describe('game details screen', () => {
     expect(
       screen.queryByRole('button', { name: 'Invite player to open slot' }),
     ).not.toBeOnTheScreen();
+  });
+
+  it('returns a directly opened game detail to the Games tab', async () => {
+    mockUseLocalSearchParams.mockReturnValue({
+      gameId: 'demo-canary-social',
+    });
+    const back = jest.fn();
+    const replace = jest.fn();
+    mockUseRouter.mockReturnValue({
+      back,
+      canGoBack: jest.fn(() => false),
+      push: jest.fn(),
+      replace,
+    } as unknown as ReturnType<typeof useRouter>);
+    const user = userEvent.setup();
+
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <GameDetailsScreen />
+      </SafeAreaProvider>,
+    );
+
+    await user.press(screen.getByRole('button', { name: 'Back' }));
+
+    expect(back).not.toHaveBeenCalled();
+    expect(replace).toHaveBeenCalledWith('/games');
   });
 });

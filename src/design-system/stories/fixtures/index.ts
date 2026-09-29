@@ -25,7 +25,6 @@ export { scoreResultBlockFixtures } from './scoreResultBlock';
 export { playerPreferencesCardFixtures } from './playerPreferencesCard';
 export { bannerToastFixtures } from './bannerToast';
 export { emptyStateFixtures } from './emptyState';
-export { illustratedCardFixtures } from './illustratedCard';
 export const buttonStyles = Object.freeze([
   'primary',
   'secondary',

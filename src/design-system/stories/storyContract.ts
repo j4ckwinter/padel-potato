@@ -384,8 +384,7 @@ export type ContentPublicExport =
   | 'ScoreResultBlock'
   | 'PlayerPreferencesCard'
   | 'BannerToast'
-  | 'EmptyState'
-  | 'IllustratedCard';
+  | 'EmptyState';
 
 const contentDefinitions = Object.freeze([
   ['Avatar', 'avatar', 'Identity/Avatar', ['configuration'], []],
@@ -423,7 +422,7 @@ const contentDefinitions = Object.freeze([
     'gameCard',
     'Content/Game Card',
     ['configuration'],
-    ['onViewGame', 'onViewResults'],
+    ['onInvitePlayers', 'onShareGame', 'onViewGame', 'onViewResults'],
   ],
   [
     'NotificationRow',
@@ -467,13 +466,6 @@ const contentDefinitions = Object.freeze([
     'Feedback/Empty State',
     ['content'],
     ['onCreateGame', 'onInvitePlayers'],
-  ],
-  [
-    'IllustratedCard',
-    'illustratedCard',
-    'Cards/Illustrated Card',
-    ['type'],
-    ['onViewGame', 'onViewResults', 'onInvitePlayers', 'onShareGame'],
   ],
 ] as const);
 

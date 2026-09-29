@@ -3,6 +3,7 @@ import {
   type GameDraft,
   type GameScheduleDraft,
 } from '../game-creation/gameDraft';
+import { demoGameCards } from '../demo/demoData';
 
 type CompleteGameSchedule = Extract<
   GameScheduleDraft,
@@ -41,5 +42,6 @@ export function createGame(draft: GameDraft): Promise<CreatedGame> {
 }
 
 export function findGameById(id: string): Promise<CreatedGame | null> {
-  return Promise.resolve(games.get(id) ?? null);
+  const demoGame = demoGameCards.find(({ game }) => game.id === id)?.game;
+  return Promise.resolve(games.get(id) ?? demoGame ?? null);
 }

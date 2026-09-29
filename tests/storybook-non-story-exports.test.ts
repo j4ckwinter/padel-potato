@@ -2,7 +2,6 @@ import { describe, expect, it } from '@jest/globals';
 
 import * as ButtonStories from '../src/design-system/components/actions/Button.stories';
 import * as AuthDividerStories from '../src/design-system/components/authentication/AuthDivider.stories';
-import * as IllustratedCardStories from '../src/design-system/components/cards/IllustratedCard.stories';
 import * as GameCardStories from '../src/design-system/components/content/GameCard.stories';
 import * as NotificationRowStories from '../src/design-system/components/content/NotificationRow.stories';
 import * as PlayerItemStories from '../src/design-system/components/content/PlayerItem.stories';
@@ -32,7 +31,6 @@ type StoryModule = Readonly<Record<string, unknown>> & {
 const storyModules = [
   ButtonStories,
   AuthDividerStories,
-  IllustratedCardStories,
   GameCardStories,
   NotificationRowStories,
   PlayerItemStories,
@@ -70,7 +68,7 @@ describe('Storybook non-story export contract', () => {
         .map((exportName) => ({ exportName, meta: storyModule.default })),
     );
 
-    expect(helperExports).toHaveLength(36);
+    expect(helperExports).toHaveLength(35);
     for (const { exportName, meta } of helperExports) {
       expect(meta.excludeStories).toBeInstanceOf(RegExp);
       expect(meta.excludeStories?.test(exportName)).toBe(true);

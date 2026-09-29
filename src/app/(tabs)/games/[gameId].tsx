@@ -75,7 +75,14 @@ export default function GameDetailsScreen() {
   const displayedState: GameLoadState =
     gameId === null ? { status: 'notFound' } : loadState;
 
-  const returnToGames = () => router.replace('/games');
+  const returnToGames = () => {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/games');
+  };
   const openPlayers = () => router.push('/players');
 
   return (

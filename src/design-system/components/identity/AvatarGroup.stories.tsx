@@ -25,7 +25,14 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['2-players', '3-players', '4-players', 'overflow', 'empty'],
+      options: [
+        '2-players',
+        '3-players',
+        '4-players',
+        'partial',
+        'overflow',
+        'empty',
+      ],
     },
   },
 } satisfies Meta<typeof AvatarGroup>;
@@ -39,6 +46,8 @@ export function normalizeAvatarGroupStoryArgs(
   args: StoryArgs,
 ): AvatarGroupProps {
   switch (args.variant) {
+    case 'partial':
+      return { identities: [players[0]], variant: 'partial' };
     case 'empty':
       return {
         onAddPlayer1: () => undefined,
@@ -71,6 +80,9 @@ export function normalizeAvatarGroupStoryArgs(
 function fixtureProps(fixture: (typeof fixtures)[number]): AvatarGroupProps {
   const content = fixture.configuration.content;
   const state = fixture.configuration.state;
+  if (state === 'partial') {
+    return { identities: [players[0]], variant: 'partial' };
+  }
   if (content === '2Slots' && state === 'empty') {
     return {
       onAddPlayer1: () => undefined,
@@ -98,7 +110,7 @@ export const Canonical: Story = {
     <Stack gap="space8">
       <AvatarGroup {...normalizeAvatarGroupStoryArgs(args)} />
       <Text color="textSecondary" variant="caption">
-        {fixtures[4].label}
+        {fixtures[5].label}
       </Text>
     </Stack>
   ),
@@ -124,6 +136,7 @@ export const States: Story = {
   args: Canonical.args,
   render: () => (
     <Stack gap="space16">
+      <AvatarGroup identities={[players[0]]} variant="partial" />
       <AvatarGroup identities={players} overflow={3} variant="overflow" />
       <AvatarGroup
         onAddPlayer1={() => undefined}

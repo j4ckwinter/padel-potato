@@ -25,6 +25,8 @@ const content = {
 
 type StoryArgs = Readonly<{
   configuration?: unknown;
+  onInvitePlayers?: unknown;
+  onShareGame?: unknown;
   onViewGame?: unknown;
   onViewResults?: unknown;
   time?: unknown;
@@ -43,6 +45,8 @@ const meta = {
   excludeStories: /(?:^normalize|Configurations$)/u,
   argTypes: {
     configuration: { control: 'select', options: gameCardStoryConfigurations },
+    onInvitePlayers: { action: 'invite players' },
+    onShareGame: { action: 'share game' },
     onViewGame: { action: 'view game' },
     onViewResults: { action: 'view results' },
   },
@@ -72,6 +76,14 @@ export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
   const onViewResults =
     typeof args.onViewResults === 'function'
       ? (args.onViewResults as () => void)
+      : () => undefined;
+  const onInvitePlayers =
+    typeof args.onInvitePlayers === 'function'
+      ? (args.onInvitePlayers as () => void)
+      : () => undefined;
+  const onShareGame =
+    typeof args.onShareGame === 'function'
+      ? (args.onShareGame as () => void)
       : () => undefined;
   switch (args.configuration) {
     case 'compact/default':
@@ -107,6 +119,50 @@ export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
       };
     case 'next/default':
       return { onViewGame, participants, time, title, variant: 'next', venue };
+    case 'illustrated/gameCreated':
+      return {
+        detailPrimary: 'Your court is booked and',
+        detailSecondary: 'ready to share.',
+        eyebrow: 'Success',
+        illustration: 'gameCreated',
+        onShareGame,
+        participants: [participants[0], participants[1]],
+        title: 'Game created!',
+        variant: 'illustrated',
+      };
+    case 'illustrated/invitePlayers':
+      return {
+        detailPrimary: 'Share this game and fill',
+        detailSecondary: 'the remaining player slots.',
+        eyebrow: 'Players',
+        illustration: 'invitePlayers',
+        onInvitePlayers,
+        participants: [participants[0], participants[1]],
+        title: 'Bring your crew',
+        variant: 'illustrated',
+      };
+    case 'illustrated/matchResult':
+      return {
+        detailPrimary: 'You won 6\u20134, 6\u20133',
+        detailSecondary: 'View scores and highlights',
+        eyebrow: 'Completed',
+        illustration: 'matchResult',
+        onViewResults,
+        participants,
+        title: 'Great match!',
+        variant: 'illustrated',
+      };
+    case 'illustrated/nextGame':
+      return {
+        detailPrimary: venue,
+        detailSecondary: time,
+        eyebrow: 'Your next game',
+        illustration: 'nextGame',
+        onViewGame,
+        participants,
+        title,
+        variant: 'illustrated',
+      };
     default:
       throw new Error(
         `Unsupported Game Card story configuration: ${String(args.configuration)}.`,
@@ -116,6 +172,9 @@ export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
 
 function fixtureProps(fixture: (typeof fixtures)[number]): GameCardProps {
   const { state, type } = fixture.configuration;
+  if (type === 'illustrated') {
+    return normalizeGameCardStoryArgs({ configuration: `${type}/${state}` });
+  }
   if (type === 'compact')
     return { title: content.title, venue: content.venue, variant: 'compact' };
   if (type === 'completed') {

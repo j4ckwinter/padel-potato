@@ -31,6 +31,10 @@ describe('Avatar Group runtime and semantic contract', () => {
     Parameters<typeof AvatarGroup>[0],
     { variant: 'empty' }
   >;
+  type PartialAvatarGroupProps = Extract<
+    Parameters<typeof AvatarGroup>[0],
+    { variant: 'partial' }
+  >;
   it.each([
     [
       '2 players/default',
@@ -90,9 +94,42 @@ describe('Avatar Group runtime and semantic contract', () => {
   });
 
   it.each([
+    [
+      { identities: [groupPlayers[0]], variant: 'partial' },
+      'Alex Morgan, 3 open spots',
+      3,
+    ],
+    [
+      {
+        identities: [groupPlayers[0], groupPlayers[1], groupPlayers[2]],
+        variant: 'partial',
+      },
+      'Alex Morgan, Jamie Taylor, Sam Kim, 1 open spot',
+      1,
+    ],
+  ] as [PartialAvatarGroupProps, string, number][])(
+    'fills a four-player partial group with empty avatars %#',
+    async (props, description, emptyCount) => {
+      const screen = await render(<AvatarGroup {...props} />);
+
+      expect(screen.getByRole('summary')).toHaveAccessibilityValue({
+        text: description,
+      });
+      expect(
+        screen.getAllByTestId('avatar-group-empty-identity', {
+          includeHiddenElements: true,
+        }),
+      ).toHaveLength(emptyCount);
+      expect(screen.queryAllByRole('button')).toHaveLength(0);
+    },
+  );
+
+  it.each([
     { identities: [], variant: '2-players' },
     { identities: groupPlayers.slice(0, 1), variant: '2-players' },
     { identities: [...groupPlayers, groupPlayers[0]], variant: '4-players' },
+    { identities: [], variant: 'partial' },
+    { identities: groupPlayers, variant: 'partial' },
     { identities: groupPlayers, overflow: 0, variant: 'overflow' },
     { identities: groupPlayers, overflow: -1, variant: 'overflow' },
     { identities: [groupPlayers[0], null], variant: '2-players' },

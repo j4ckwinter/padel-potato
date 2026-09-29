@@ -24,6 +24,7 @@ type PhotoIdentity = Readonly<{
 
 export type AvatarGroupIdentity = InitialsIdentity | PhotoIdentity;
 
+type Solo = readonly [AvatarGroupIdentity];
 type Pair = readonly [AvatarGroupIdentity, AvatarGroupIdentity];
 type Trio = readonly [
   AvatarGroupIdentity,
@@ -41,6 +42,7 @@ export type AvatarGroupProps =
   | Readonly<{ identities: Pair; variant: '2-players' }>
   | Readonly<{ identities: Trio; variant: '3-players' }>
   | Readonly<{ identities: Quartet; variant: '4-players' }>
+  | Readonly<{ identities: Solo | Pair | Trio; variant: 'partial' }>
   | Readonly<{ identities: Quartet; overflow: number; variant: 'overflow' }>
   | Readonly<{
       onAddPlayer1: () => void;
@@ -59,13 +61,14 @@ const supportedVariants = Object.freeze([
   '2-players',
   '3-players',
   '4-players',
+  'partial',
   'overflow',
   'empty',
 ] as const);
 
 function unsupported(reason: string): never {
   throw new Error(
-    `Unsupported Avatar Group configuration: ${reason}. Supported configurations: 2 players/default, 3 players/default, 4 players/default, 4 players/overflow, 2 slots/empty.`,
+    `Unsupported Avatar Group configuration: ${reason}. Supported configurations: 2 players/default, 3 players/default, 4 players/default, 1-3 players/partial, 4 players/overflow, 2 slots/empty.`,
   );
 }
 
@@ -156,6 +159,13 @@ function validateAvatarGroupProps(props: AvatarGroupProps) {
   if (!Array.isArray(runtime.identities))
     unsupported(`${String(runtime.variant)} requires identities`);
   const identities = runtime.identities as unknown[];
+  if (runtime.variant === 'partial') {
+    if (identities.length < 1 || identities.length > 3) {
+      unsupported('partial requires one to three identities');
+    }
+    identities.forEach(validateIdentity);
+    return;
+  }
   const expected =
     runtime.variant === '2-players'
       ? 2
@@ -175,6 +185,20 @@ function validateAvatarGroupProps(props: AvatarGroupProps) {
   }
 }
 
+function EmptyAvatar() {
+  return (
+    <View
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={styles.emptyVisual}
+      testID="avatar-group-empty-identity"
+    >
+      <Icon name="add" />
+    </View>
+  );
+}
+
 function EmptySlot({
   label,
   onPress,
@@ -188,14 +212,7 @@ function EmptySlot({
       size="controlHeight44"
       width="size44"
     >
-      <View
-        accessible={false}
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={styles.emptyVisual}
-      >
-        <Icon name="add" />
-      </View>
+      <EmptyAvatar />
     </Pressable>
   );
 }
@@ -216,7 +233,9 @@ export function AvatarGroup(props: AvatarGroupProps) {
   const description =
     props.variant === 'overflow'
       ? `${names}, plus ${props.overflow} more`
-      : names;
+      : props.variant === 'partial'
+        ? `${names}, ${4 - props.identities.length} open ${props.identities.length === 3 ? 'spot' : 'spots'}`
+        : names;
 
   return (
     <View
@@ -251,6 +270,13 @@ export function AvatarGroup(props: AvatarGroupProps) {
           )}
         </View>
       ))}
+      {props.variant === 'partial'
+        ? Array.from({ length: 4 - props.identities.length }, (_, index) => (
+            <View key={`empty-${index}`} style={styles.overlap}>
+              <EmptyAvatar />
+            </View>
+          ))
+        : null}
       {props.variant === 'overflow' ? (
         <View
           accessible={false}

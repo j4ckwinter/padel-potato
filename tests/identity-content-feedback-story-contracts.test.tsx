@@ -20,7 +20,6 @@ import * as ScoreResultBlockStories from '../src/design-system/components/conten
 import * as PlayerPreferencesCardStories from '../src/design-system/components/content/PlayerPreferencesCard.stories';
 import * as BannerToastStories from '../src/design-system/components/feedback/BannerToast.stories';
 import * as EmptyStateStories from '../src/design-system/components/feedback/EmptyState.stories';
-import * as IllustratedCardStories from '../src/design-system/components/cards/IllustratedCard.stories';
 import {
   storybookBackstops,
   storyContracts,
@@ -94,7 +93,6 @@ const expectedDefinitions = [
   ],
   ['BannerToast', 'bannerToast', 'Feedback/Banner Toast'],
   ['EmptyState', 'emptyState', 'Feedback/Empty State'],
-  ['IllustratedCard', 'illustratedCard', 'Cards/Illustrated Card'],
 ] as const;
 
 const storyModules = [
@@ -112,7 +110,6 @@ const storyModules = [
   PlayerPreferencesCardStories,
   BannerToastStories,
   EmptyStateStories,
-  IllustratedCardStories,
 ] as const;
 
 const componentStoryFiles = [
@@ -130,7 +127,6 @@ const componentStoryFiles = [
   'content/PlayerPreferencesCard.stories.tsx',
   'feedback/BannerToast.stories.tsx',
   'feedback/EmptyState.stories.tsx',
-  'cards/IllustratedCard.stories.tsx',
 ] as const;
 
 const componentStoryContracts = Object.fromEntries(
@@ -218,7 +214,6 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
       'onInvitePlayers',
     ]);
     expect(storyContracts.StepProgress.actions).toEqual([]);
-    expect(storyContracts.IllustratedCard.controls).toEqual(['type']);
     for (const name of [
       'Avatar',
       'StatusChip',
@@ -308,7 +303,13 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
         configuration,
       });
       expect(
-        `${props.variant}/${props.variant === 'open' && props.full ? 'full' : 'default'}`,
+        `${props.variant}/${
+          props.variant === 'open' && props.full
+            ? 'full'
+            : props.variant === 'illustrated'
+              ? props.illustration
+              : 'default'
+        }`,
       ).toBe(configuration);
     }
 
@@ -410,21 +411,6 @@ describe('identity, content, and feedback Storybook catalogue contract', () => {
     expect(EmptyStateStories.default.argTypes?.onInvitePlayers?.if).toEqual({
       arg: 'content',
       eq: 'noPlayers',
-    });
-    expect(IllustratedCardStories.default.argTypes?.onViewGame?.if).toEqual({
-      arg: 'type',
-      eq: 'nextGame',
-    });
-    expect(IllustratedCardStories.default.argTypes?.onViewResults?.if).toEqual({
-      arg: 'type',
-      eq: 'matchResult',
-    });
-    expect(
-      IllustratedCardStories.default.argTypes?.onInvitePlayers?.if,
-    ).toEqual({ arg: 'type', eq: 'invitePlayers' });
-    expect(IllustratedCardStories.default.argTypes?.onShareGame?.if).toEqual({
-      arg: 'type',
-      eq: 'gameCreated',
     });
   });
 
