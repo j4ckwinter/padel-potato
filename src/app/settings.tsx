@@ -34,7 +34,7 @@ export default function SettingsScreen() {
     setSigningOut(true);
     setSignOutFailed(false);
     const result = await signOut();
-    if (result.status === 'storageError') {
+    if (result.status === 'error') {
       setSignOutFailed(true);
       setSigningOut(false);
     }

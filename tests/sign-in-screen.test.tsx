@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { render, userEvent } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -7,7 +7,7 @@ import {
   SessionProvider,
   useSession,
 } from '../src/features/authentication/SessionContext';
-import type { SessionStorage } from '../src/features/authentication/sessionStorage';
+import { createAuthGateway } from './helpers/authGateway';
 
 function SessionStatus() {
   const { state } = useSession();
@@ -28,51 +28,59 @@ function appScreen(children: React.ReactNode) {
 }
 
 describe('sign-in screen', () => {
-  it('creates a persisted demo session', async () => {
-    const storage: SessionStorage = {
-      clear: jest.fn(() => Promise.resolve()),
-      read: jest.fn(() => Promise.resolve(null)),
-      write: jest.fn(() => Promise.resolve()),
-    };
+  it('starts Apple sign-in', async () => {
+    const gateway = createAuthGateway(null);
     const user = userEvent.setup();
     const screen = await render(
       appScreen(
-        <SessionProvider storage={storage}>
+        <SessionProvider gateway={gateway}>
           <SessionStatus />
         </SessionProvider>,
       ),
     );
 
-    expect(
-      await screen.findByRole('header', { name: 'Welcome to Padel Potato' }),
-    ).toBeVisible();
     await user.press(
-      screen.getByRole('button', { name: 'Continue with demo account' }),
+      await screen.findByRole('button', { name: 'Continue with Apple' }),
     );
 
+    expect(gateway.signIn).toHaveBeenCalledWith('apple');
     expect(screen.queryByText('Welcome to Padel Potato')).toBeNull();
-    expect(storage.write).toHaveBeenCalledTimes(1);
   });
 
-  it('reports a session storage failure', async () => {
-    const storage: SessionStorage = {
-      clear: jest.fn(() => Promise.resolve()),
-      read: jest.fn(() => Promise.resolve(null)),
-      write: jest.fn(() => Promise.reject(new Error('storage unavailable'))),
-    };
+  it('starts Google sign-in', async () => {
+    const gateway = createAuthGateway(null);
     const user = userEvent.setup();
     const screen = await render(
       appScreen(
-        <SessionProvider storage={storage}>
+        <SessionProvider gateway={gateway}>
           <SessionStatus />
         </SessionProvider>,
       ),
     );
 
     await user.press(
-      await screen.findByRole('button', {
-        name: 'Continue with demo account',
-      }),
+      await screen.findByRole('button', { name: 'Continue with Google' }),
+    );
+
+    expect(gateway.signIn).toHaveBeenCalledWith('google');
+  });
+
+  it('reports an identity-provider failure', async () => {
+    const gateway = createAuthGateway(null, {
+      message: 'Provider unavailable',
+      status: 'error',
+    });
+    const user = userEvent.setup();
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={gateway}>
+          <SessionStatus />
+        </SessionProvider>,
+      ),
+    );
+
+    await user.press(
+      await screen.findByRole('button', { name: 'Continue with Apple' }),
     );
 
     expect(

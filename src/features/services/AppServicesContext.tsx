@@ -9,11 +9,11 @@ import {
 } from 'react';
 
 import { useSession } from '../authentication/SessionContext';
-import { loadDemoAppServices } from '../demo/demoAppServices';
 import type { GamePlayer } from '../games/game';
 import type { GameRepository } from '../games/gameRepository';
 import type { PlayerProfile } from '../players/player';
 import type { PlayerRepository } from '../players/playerRepository';
+import { loadSupabaseAppServices } from '../supabase/appServices';
 
 export type AppServices = Readonly<{
   currentPlayer: GamePlayer;
@@ -64,7 +64,7 @@ export function AppServicesProvider({
 
 export function SessionAppServicesProvider({
   children,
-  loadServices = loadDemoAppServices,
+  loadServices = loadSupabaseAppServices,
 }: PropsWithChildren<Readonly<{ loadServices?: AppServicesLoader }>>) {
   const { state: sessionState } = useSession();
   const [retryCount, setRetryCount] = useState(0);

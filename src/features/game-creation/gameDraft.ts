@@ -11,7 +11,6 @@ export type GameScheduleDraft =
 export type GameDraft = Readonly<{
   schedule: GameScheduleDraft;
   setup: Readonly<{
-    currentPlayerCount: 1 | 2 | 3 | 4;
     durationMinutes: 60 | 90;
     format: 'Competitive game' | 'Social game';
   }>;
@@ -21,7 +20,6 @@ export type GameDraft = Readonly<{
 export const initialGameDraft: GameDraft = Object.freeze({
   schedule: Object.freeze({ status: 'empty' }),
   setup: Object.freeze({
-    currentPlayerCount: 1,
     durationMinutes: 60,
     format: 'Social game',
   }),
@@ -140,36 +138,4 @@ export function updateGameFormat(
   format: GameDraft['setup']['format'],
 ): GameDraft {
   return { ...draft, setup: { ...draft.setup, format } };
-}
-
-export function decrementCurrentPlayers(draft: GameDraft): GameDraft {
-  const currentPlayerCount = draft.setup.currentPlayerCount;
-  const nextCurrentPlayerCount =
-    currentPlayerCount === 4
-      ? 3
-      : currentPlayerCount === 3
-        ? 2
-        : currentPlayerCount === 2
-          ? 1
-          : 1;
-  return {
-    ...draft,
-    setup: { ...draft.setup, currentPlayerCount: nextCurrentPlayerCount },
-  };
-}
-
-export function incrementCurrentPlayers(draft: GameDraft): GameDraft {
-  const currentPlayerCount = draft.setup.currentPlayerCount;
-  const nextCurrentPlayerCount =
-    currentPlayerCount === 1
-      ? 2
-      : currentPlayerCount === 2
-        ? 3
-        : currentPlayerCount === 3
-          ? 4
-          : 4;
-  return {
-    ...draft,
-    setup: { ...draft.setup, currentPlayerCount: nextCurrentPlayerCount },
-  };
 }

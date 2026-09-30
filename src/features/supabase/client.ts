@@ -3,8 +3,10 @@ import 'expo-sqlite/localStorage/install';
 
 import { createClient } from '@supabase/supabase-js';
 
-import type { SupabaseConfig } from './config';
+import { readSupabaseConfig, type SupabaseConfig } from './config';
 import type { Database } from './database.types';
+
+let client: PadelSupabaseClient | undefined;
 
 export function createSupabaseClient({ publishableKey, url }: SupabaseConfig) {
   return createClient<Database>(url, publishableKey, {
@@ -18,3 +20,8 @@ export function createSupabaseClient({ publishableKey, url }: SupabaseConfig) {
 }
 
 export type PadelSupabaseClient = ReturnType<typeof createSupabaseClient>;
+
+export function getSupabaseClient(): PadelSupabaseClient {
+  client ??= createSupabaseClient(readSupabaseConfig());
+  return client;
+}

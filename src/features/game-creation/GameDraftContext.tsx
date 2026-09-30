@@ -7,8 +7,6 @@ import {
 } from 'react';
 
 import {
-  decrementCurrentPlayers,
-  incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
@@ -20,8 +18,6 @@ import {
 
 type GameDraftAction =
   | Readonly<{ type: 'draftReset' }>
-  | Readonly<{ type: 'currentPlayersDecremented' }>
-  | Readonly<{ type: 'currentPlayersIncremented' }>
   | Readonly<{ date: string; type: 'daySelected' }>
   | Readonly<{
       durationMinutes: GameDraft['setup']['durationMinutes'];
@@ -36,8 +32,6 @@ type GameDraftAction =
 
 type GameDraftContextValue = Readonly<{
   draft: GameDraft;
-  decrementCurrentPlayers: () => void;
-  incrementCurrentPlayers: () => void;
   resetDraft: () => void;
   selectDay: (date: string) => void;
   selectDuration: (
@@ -54,10 +48,6 @@ function gameDraftReducer(draft: GameDraft, action: GameDraftAction) {
   switch (action.type) {
     case 'draftReset':
       return initialGameDraft;
-    case 'currentPlayersDecremented':
-      return decrementCurrentPlayers(draft);
-    case 'currentPlayersIncremented':
-      return incrementCurrentPlayers(draft);
     case 'daySelected':
       return selectGameDay(draft, action.date);
     case 'durationChanged':
@@ -75,11 +65,7 @@ export function GameDraftProvider({ children }: PropsWithChildren) {
   const [draft, dispatch] = useReducer(gameDraftReducer, initialGameDraft);
   const value = useMemo<GameDraftContextValue>(
     () => ({
-      decrementCurrentPlayers: () =>
-        dispatch({ type: 'currentPlayersDecremented' }),
       draft,
-      incrementCurrentPlayers: () =>
-        dispatch({ type: 'currentPlayersIncremented' }),
       resetDraft: () => dispatch({ type: 'draftReset' }),
       selectDay: (date) => dispatch({ date, type: 'daySelected' }),
       selectDuration: (durationMinutes) =>

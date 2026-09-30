@@ -1,16 +1,15 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
 import { SessionProvider } from '../src/features/authentication/SessionContext';
-import { createDemoSession } from '../src/features/authentication/session';
-import type { SessionStorage } from '../src/features/authentication/sessionStorage';
 import { demoAppServices } from '../src/features/demo/demoAppServices';
 import {
   SessionAppServicesProvider,
   useAppServices,
   useAppServicesLoadState,
 } from '../src/features/services/AppServicesContext';
+import { createAuthGateway, testSession } from './helpers/authGateway';
 
 function ServicesProbe() {
   const { state } = useAppServicesLoadState();
@@ -24,19 +23,13 @@ function ReadyServicesProbe() {
   return <Text>{currentUser.identity.name}</Text>;
 }
 
-function restoredSessionStorage(): SessionStorage {
-  return {
-    clear: jest.fn(() => Promise.resolve()),
-    read: jest.fn(() => Promise.resolve(createDemoSession())),
-    write: jest.fn(() => Promise.resolve()),
-  };
-}
-
 describe('app services', () => {
   it('resolves the current profile from the restored session', async () => {
     const screen = await render(
-      <SessionProvider storage={restoredSessionStorage()}>
-        <SessionAppServicesProvider>
+      <SessionProvider gateway={createAuthGateway(testSession)}>
+        <SessionAppServicesProvider
+          loadServices={() => Promise.resolve(demoAppServices)}
+        >
           <ServicesProbe />
         </SessionAppServicesProvider>
       </SessionProvider>,
@@ -47,7 +40,7 @@ describe('app services', () => {
 
   it('keeps a missing profile distinct from a loading profile', async () => {
     const screen = await render(
-      <SessionProvider storage={restoredSessionStorage()}>
+      <SessionProvider gateway={createAuthGateway(testSession)}>
         <SessionAppServicesProvider loadServices={() => Promise.resolve(null)}>
           <ServicesProbe />
         </SessionAppServicesProvider>

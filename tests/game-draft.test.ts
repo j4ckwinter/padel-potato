@@ -1,9 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
-  decrementCurrentPlayers,
   gameDraftName,
-  incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
@@ -31,7 +29,6 @@ describe('game draft schedule', () => {
       setup: {
         durationMinutes: 60,
         format: 'Social game',
-        currentPlayerCount: 1,
       },
       venueQuery: '',
     });
@@ -45,7 +42,6 @@ describe('game draft schedule', () => {
       setup: {
         durationMinutes: 60,
         format: 'Social game',
-        currentPlayerCount: 1,
       },
       venueQuery: '',
     });
@@ -62,7 +58,6 @@ describe('game draft schedule', () => {
       setup: {
         durationMinutes: 60,
         format: 'Social game',
-        currentPlayerCount: 1,
       },
       venueQuery: '',
     });
@@ -81,27 +76,7 @@ describe('game draft schedule', () => {
     expect(competitive.setup).toEqual({
       durationMinutes: 90,
       format: 'Competitive game',
-      currentPlayerCount: 1,
     });
-  });
-
-  it('keeps the player count between one and four', () => {
-    const twoPlayers = incrementCurrentPlayers(initialGameDraft);
-    const fourPlayers = incrementCurrentPlayers(
-      incrementCurrentPlayers(twoPlayers),
-    );
-
-    expect(twoPlayers.setup.currentPlayerCount).toBe(2);
-    expect(decrementCurrentPlayers(twoPlayers).setup.currentPlayerCount).toBe(
-      1,
-    );
-    expect(fourPlayers.setup.currentPlayerCount).toBe(4);
-    expect(incrementCurrentPlayers(fourPlayers).setup.currentPlayerCount).toBe(
-      4,
-    );
-    expect(
-      decrementCurrentPlayers(initialGameDraft).setup.currentPlayerCount,
-    ).toBe(1);
   });
 
   it('rejects impossible schedule transitions at the domain boundary', () => {

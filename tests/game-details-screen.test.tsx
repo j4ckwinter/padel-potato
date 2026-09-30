@@ -6,7 +6,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
 import { demoAppServices } from '../src/features/demo/demoAppServices';
 import {
-  incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
@@ -117,15 +116,7 @@ describe('game details screen', () => {
   });
 
   it('labels a four-player game as full', async () => {
-    const fullDraft = incrementCurrentPlayers(
-      incrementCurrentPlayers(incrementCurrentPlayers(initialGameDraft)),
-    );
-    const draft = updateGameVenue(
-      selectGameTime(selectGameDay(fullDraft, '2026-10-02'), '18:30'),
-      'Potato Padel Club',
-    );
-    const game = await demoAppServices.games.create(draft);
-    mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
+    mockUseLocalSearchParams.mockReturnValue({ gameId: 'demo-my-next-game' });
     mockUseRouter.mockReturnValue({
       back: jest.fn(),
       canGoBack: jest.fn(() => true),

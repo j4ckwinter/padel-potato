@@ -130,14 +130,17 @@ function AccountUnavailable({
 }: Readonly<{
   message: string;
   onRetry?: () => void;
-  onSignOut: () => Promise<Readonly<{ status: 'success' | 'storageError' }>>;
+  onSignOut: () => Promise<
+    | Readonly<{ status: 'success' | 'cancelled' }>
+    | Readonly<{ message: string; status: 'error' }>
+  >;
   title: string;
 }>) {
   const [signOutFailed, setSignOutFailed] = useState(false);
   const signOut = async () => {
     setSignOutFailed(false);
     const result = await onSignOut();
-    if (result.status === 'storageError') setSignOutFailed(true);
+    if (result.status === 'error') setSignOutFailed(true);
   };
 
   return (
@@ -155,7 +158,7 @@ function AccountUnavailable({
             </LayoutStack>
             {signOutFailed ? (
               <BannerToast
-                message="Your saved session could not be removed."
+                message="Your account could not be signed out."
                 onClose={() => setSignOutFailed(false)}
                 style="error"
                 title="Could not sign out"

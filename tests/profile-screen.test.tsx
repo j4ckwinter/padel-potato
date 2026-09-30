@@ -60,14 +60,12 @@ async function renderWithSafeArea(node: React.ReactNode) {
 describe('profile screen', () => {
   beforeEach(() => {
     mockUseSession.mockReturnValue({
-      signInDemo: successfulSessionAction(),
+      signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: {
         session: {
-          kind: 'demo',
-          startedAt: '2026-09-30T12:00:00.000Z',
-          userId: 'alex-morgan',
-          version: 1,
+          kind: 'supabase',
+          userId: '00000000-0000-4000-8000-000000000001',
         },
         status: 'signedIn',
       },
@@ -135,14 +133,12 @@ describe('profile screen', () => {
     router();
     const signOut = successfulSessionAction();
     mockUseSession.mockReturnValue({
-      signInDemo: successfulSessionAction(),
+      signIn: successfulSessionAction(),
       signOut,
       state: {
         session: {
-          kind: 'demo',
-          startedAt: '2026-09-30T12:00:00.000Z',
-          userId: 'alex-morgan',
-          version: 1,
+          kind: 'supabase',
+          userId: '00000000-0000-4000-8000-000000000001',
         },
         status: 'signedIn',
       },

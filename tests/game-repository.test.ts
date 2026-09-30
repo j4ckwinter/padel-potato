@@ -2,7 +2,6 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   initialGameDraft,
-  incrementCurrentPlayers,
   selectGameDay,
   selectGameTime,
   updateGameVenue,
@@ -45,21 +44,18 @@ describe('game repository', () => {
     );
   });
 
-  it('creates the selected number of current players', async () => {
-    const twoPlayerDraft = incrementCurrentPlayers(
-      updateGameVenue(
-        selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
-        'Potato Padel Club',
-      ),
+  it('creates a game with its organiser as the only participant', async () => {
+    const draft = updateGameVenue(
+      selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
+      'Potato Padel Club',
     );
 
-    await expect(games.create(twoPlayerDraft)).resolves.toMatchObject({
+    await expect(games.create(draft)).resolves.toMatchObject({
       participants: [
         {
           player: { id: demoCurrentGamePlayer.id },
           role: 'organiser',
         },
-        { role: 'player' },
       ],
     });
   });

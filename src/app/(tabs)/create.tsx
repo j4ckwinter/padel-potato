@@ -31,9 +31,7 @@ function CreateGameForm() {
   const { games } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const {
-    decrementCurrentPlayers,
     draft,
-    incrementCurrentPlayers,
     resetDraft,
     selectDay,
     selectDuration,
@@ -213,25 +211,6 @@ function CreateGameForm() {
                   value={`${draft.setup.durationMinutes} minutes`}
                 />
               </Stack>
-              <Field
-                decrementDisabled={draft.setup.currentPlayerCount === 1}
-                incrementDisabled={draft.setup.currentPlayerCount === 4}
-                label="Current players"
-                onDecrement={() => {
-                  setSubmissionFailed(false);
-                  decrementCurrentPlayers();
-                }}
-                onIncrement={() => {
-                  setSubmissionFailed(false);
-                  incrementCurrentPlayers();
-                }}
-                type="stepper"
-                value={
-                  draft.setup.currentPlayerCount === 1
-                    ? '1 player'
-                    : `${draft.setup.currentPlayerCount} players`
-                }
-              />
               <Stack gap="space8">
                 <Text color="textSecondary" variant="label">
                   Game type

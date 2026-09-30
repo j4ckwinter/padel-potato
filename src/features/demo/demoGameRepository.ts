@@ -5,40 +5,14 @@ import {
   gameHasPlayer,
   isScheduledGame,
   type Game,
-  type GameParticipants,
   type GamePlayer,
   type ScheduledGame,
 } from '../games/game';
 import type { GameRepository } from '../games/gameRepository';
-import { gamePlayerFromProfile } from '../players/player';
-import { demoGames, demoPlayers } from './demoData';
+import { demoGames } from './demoData';
 
 const games = new Map<string, Game>(demoGames.map((game) => [game.id, game]));
 let nextGameId = 1;
-
-function participantsForCount(
-  currentPlayer: GamePlayer,
-  count: 1 | 2 | 3 | 4,
-): GameParticipants {
-  const organiser = { player: currentPlayer, role: 'organiser' } as const;
-  const availablePlayers = demoPlayers
-    .map(gamePlayerFromProfile)
-    .filter((player) => player.id !== currentPlayer.id);
-  const first = { player: availablePlayers[0], role: 'player' } as const;
-  const second = { player: availablePlayers[1], role: 'player' } as const;
-  const third = { player: availablePlayers[2], role: 'player' } as const;
-
-  switch (count) {
-    case 1:
-      return [organiser];
-    case 2:
-      return [organiser, first];
-    case 3:
-      return [organiser, first, second];
-    case 4:
-      return [organiser, first, second, third];
-  }
-}
 
 export function createDemoGameRepository(
   currentPlayer: GamePlayer,
@@ -56,10 +30,7 @@ export function createDemoGameRepository(
         id: `game-${nextGameId++}`,
         lifecycle: { status: 'scheduled' },
         name: gameDraftName(draft),
-        participants: participantsForCount(
-          currentPlayer,
-          draft.setup.currentPlayerCount,
-        ),
+        participants: [{ player: currentPlayer, role: 'organiser' }],
         schedule: { ...draft.schedule },
         setup: {
           durationMinutes: draft.setup.durationMinutes,

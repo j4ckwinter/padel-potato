@@ -8,19 +8,23 @@ import {
   useState,
 } from 'react';
 
-import { createDemoSession, type Session } from './session';
-import { deviceSessionStorage, type SessionStorage } from './sessionStorage';
+import {
+  type AuthGateway,
+  type AuthMutationResult,
+  type AuthProvider,
+  getDeviceAuthGateway,
+} from './authGateway';
+import type { Session } from './session';
 
 export type SessionState =
   | Readonly<{ status: 'loading' }>
   | Readonly<{ status: 'signedOut' }>
   | Readonly<{ session: Session; status: 'signedIn' }>;
 
-export type SessionMutationResult =
-  Readonly<{ status: 'success' }> | Readonly<{ status: 'storageError' }>;
+export type SessionMutationResult = AuthMutationResult;
 
 type SessionContextValue = Readonly<{
-  signInDemo: () => Promise<SessionMutationResult>;
+  signIn: (provider: AuthProvider) => Promise<SessionMutationResult>;
   signOut: () => Promise<SessionMutationResult>;
   state: SessionState;
 }>;
@@ -28,19 +32,28 @@ type SessionContextValue = Readonly<{
 const SessionContext = createContext<SessionContextValue | null>(null);
 
 type SessionProviderProps = PropsWithChildren<
-  Readonly<{ storage?: SessionStorage }>
+  Readonly<{ gateway?: AuthGateway }>
 >;
 
 export function SessionProvider({
   children,
-  storage = deviceSessionStorage,
+  gateway: providedGateway,
 }: SessionProviderProps) {
+  const [gateway] = useState(() => providedGateway ?? getDeviceAuthGateway());
   const [state, setState] = useState<SessionState>({ status: 'loading' });
 
   useEffect(() => {
     let active = true;
-    void storage
-      .read()
+    const unsubscribe = gateway.subscribe((session) => {
+      if (!active) return;
+      setState(
+        session === null
+          ? { status: 'signedOut' }
+          : { session, status: 'signedIn' },
+      );
+    });
+    void gateway
+      .restoreSession()
       .then((session) => {
         if (!active) return;
         setState(
@@ -55,33 +68,20 @@ export function SessionProvider({
 
     return () => {
       active = false;
+      unsubscribe();
     };
-  }, [storage]);
+  }, [gateway]);
 
-  const signInDemo = useCallback(async (): Promise<SessionMutationResult> => {
-    const session = createDemoSession();
-    try {
-      await storage.write(session);
-      setState({ session, status: 'signedIn' });
-      return { status: 'success' };
-    } catch {
-      return { status: 'storageError' };
-    }
-  }, [storage]);
+  const signIn = useCallback(
+    (provider: AuthProvider) => gateway.signIn(provider),
+    [gateway],
+  );
 
-  const signOut = useCallback(async (): Promise<SessionMutationResult> => {
-    try {
-      await storage.clear();
-      setState({ status: 'signedOut' });
-      return { status: 'success' };
-    } catch {
-      return { status: 'storageError' };
-    }
-  }, [storage]);
+  const signOut = useCallback(() => gateway.signOut(), [gateway]);
 
   const value = useMemo(
-    () => ({ signInDemo, signOut, state }),
-    [signInDemo, signOut, state],
+    () => ({ signIn, signOut, state }),
+    [signIn, signOut, state],
   );
 
   return (

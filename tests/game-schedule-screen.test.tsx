@@ -97,10 +97,9 @@ describe('create game screen', () => {
     expect(
       screen.queryByRole('header', { name: 'Game setup' }),
     ).not.toBeOnTheScreen();
-    expect(screen.getByText('1 player')).toBeVisible();
     expect(screen.queryByText('Intermediate level')).not.toBeOnTheScreen();
     expect(screen.getByText('Duration')).toBeVisible();
-    expect(screen.getByText('Current players')).toBeVisible();
+    expect(screen.queryByText('Current players')).not.toBeOnTheScreen();
     expect(screen.getByText('Game type')).toBeVisible();
     expect(screen.queryByRole('progressbar')).not.toBeOnTheScreen();
 
@@ -123,16 +122,6 @@ describe('create game screen', () => {
       screen.getByRole('tab', { name: 'Competitive game' }),
     ).toBeSelected();
 
-    expect(
-      screen.getByRole('button', { name: 'Decrease Current players' }),
-    ).toBeDisabled();
-    expect(
-      screen.getByRole('button', { name: 'Increase Current players' }),
-    ).toBeEnabled();
-    await user.press(
-      screen.getByRole('button', { name: 'Increase Current players' }),
-    );
-    expect(screen.getByText('2 players')).toBeVisible();
     const currentFirstTime = screen.getAllByRole('radio', {
       name: /, Available$/u,
     })[0];

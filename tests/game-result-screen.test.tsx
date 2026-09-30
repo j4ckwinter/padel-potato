@@ -6,13 +6,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
 import GameResultScreen from '../src/app/(tabs)/games/result';
 import { demoAppServices } from '../src/features/demo/demoAppServices';
+import { demoPlayers } from '../src/features/demo/demoData';
+import { createDemoGameRepository } from '../src/features/demo/demoGameRepository';
 import {
-  incrementCurrentPlayers,
   initialGameDraft,
   selectGameDay,
   selectGameTime,
   updateGameVenue,
 } from '../src/features/game-creation/gameDraft';
+import { gamePlayerFromProfile } from '../src/features/players/player';
 import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 
 jest.mock('expo-router', () => {
@@ -166,14 +168,16 @@ describe('game result screen', () => {
   });
 
   it('offers a third set for a 60-minute game', async () => {
-    const fourPlayerDraft = incrementCurrentPlayers(
-      incrementCurrentPlayers(incrementCurrentPlayers(initialGameDraft)),
-    );
     const draft = updateGameVenue(
-      selectGameTime(selectGameDay(fourPlayerDraft, '2026-10-02'), '18:30'),
+      selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
       'Potato Padel Club',
     );
     const game = await demoAppServices.games.create(draft);
+    for (const player of demoPlayers.slice(0, 3)) {
+      await createDemoGameRepository(gamePlayerFromProfile(player)).join(
+        game.id,
+      );
+    }
     mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
     mockUseRouter.mockReturnValue({
       back: jest.fn(),

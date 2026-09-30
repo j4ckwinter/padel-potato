@@ -3,25 +3,26 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BrandLockupStacked } from '../design-system/assets';
-import { Button } from '../design-system/components/actions';
+import { SocialSignInButton } from '../design-system/components/authentication';
 import { BannerToast } from '../design-system/components/feedback';
 import { Stack, Surface, Text } from '../design-system/primitives';
 import { colors, spacing } from '../design-system/tokens';
 import { useSession } from '../features/authentication/SessionContext';
+import type { AuthProvider } from '../features/authentication/authGateway';
 
 export default function SignInScreen() {
-  const { signInDemo } = useSession();
-  const [submitting, setSubmitting] = useState(false);
+  const { signIn } = useSession();
+  const [submitting, setSubmitting] = useState<AuthProvider | null>(null);
   const [submissionFailed, setSubmissionFailed] = useState(false);
 
-  const signIn = async () => {
-    setSubmitting(true);
+  const continueWith = async (provider: AuthProvider) => {
+    setSubmitting(provider);
     setSubmissionFailed(false);
-    const result = await signInDemo();
-    if (result.status === 'storageError') {
+    const result = await signIn(provider);
+    if (result.status === 'error') {
       setSubmissionFailed(true);
-      setSubmitting(false);
     }
+    setSubmitting(null);
   };
 
   return (
@@ -44,29 +45,27 @@ export default function SignInScreen() {
               </Stack>
               {submissionFailed ? (
                 <BannerToast
-                  message="Your session could not be saved on this device."
+                  message="Check your connection and try again."
                   onClose={() => setSubmissionFailed(false)}
                   style="error"
                   title="Could not sign in"
                   type="toast"
                 />
               ) : null}
-              {submitting ? (
-                <Button
-                  label="Continue with demo account"
-                  loading
-                  style="primary"
+              <Stack gap="space12">
+                <SocialSignInButton
+                  disabled={submitting !== null}
+                  onPress={() => void continueWith('apple')}
+                  provider="apple"
                 />
-              ) : (
-                <Button
-                  label="Continue with demo account"
-                  onPress={() => void signIn()}
-                  style="primary"
+                <SocialSignInButton
+                  disabled={submitting !== null}
+                  onPress={() => void continueWith('google')}
+                  provider="google"
                 />
-              )}
+              </Stack>
               <Text color="muted" variant="caption">
-                This local account keeps the app usable until an account
-                provider is connected.
+                Continue to organise games and keep your match history synced.
               </Text>
             </Stack>
           </Surface>

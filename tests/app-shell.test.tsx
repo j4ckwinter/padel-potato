@@ -90,7 +90,7 @@ describe('application shell startup', () => {
     mockUseFonts.mockReset();
     mockHideAsync.mockClear();
     mockUseSession.mockReturnValue({
-      signInDemo: successfulSessionAction(),
+      signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: { status: 'signedOut' },
     });
@@ -103,7 +103,7 @@ describe('application shell startup', () => {
   it('keeps the native splash visible while the session restores', async () => {
     mockUseFonts.mockReturnValue([true, null]);
     mockUseSession.mockReturnValue({
-      signInDemo: successfulSessionAction(),
+      signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: { status: 'loading' },
     });
@@ -139,14 +139,12 @@ describe('application shell startup', () => {
   it('exposes protected app routes to a restored session', async () => {
     mockUseFonts.mockReturnValue([true, null]);
     mockUseSession.mockReturnValue({
-      signInDemo: successfulSessionAction(),
+      signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: {
         session: {
-          kind: 'demo',
-          startedAt: '2026-09-30T12:00:00.000Z',
-          userId: 'alex-morgan',
-          version: 1,
+          kind: 'supabase',
+          userId: '00000000-0000-4000-8000-000000000001',
         },
         status: 'signedIn',
       },
@@ -166,14 +164,12 @@ describe('application shell startup', () => {
   it('does not expose app routes until the current profile is ready', async () => {
     mockUseFonts.mockReturnValue([true, null]);
     mockUseSession.mockReturnValue({
-      signInDemo: successfulSessionAction(),
+      signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: {
         session: {
-          kind: 'demo',
-          startedAt: '2026-09-30T12:00:00.000Z',
-          userId: 'alex-morgan',
-          version: 1,
+          kind: 'supabase',
+          userId: '00000000-0000-4000-8000-000000000001',
         },
         status: 'signedIn',
       },
