@@ -21,10 +21,19 @@ import {
   transitionGameLifecycle,
 } from '../src/features/games/gameRepository';
 
-jest.mock('expo-router', () => ({
-  useLocalSearchParams: jest.fn(),
-  useRouter: jest.fn(),
-}));
+jest.mock('expo-router', () => {
+  const focusedCallbacks = new WeakSet<() => void>();
+  return {
+    useFocusEffect: jest.fn((callback: () => void) => {
+      if (!focusedCallbacks.has(callback)) {
+        focusedCallbacks.add(callback);
+        callback();
+      }
+    }),
+    useLocalSearchParams: jest.fn(),
+    useRouter: jest.fn(),
+  };
+});
 
 const mockUseLocalSearchParams = jest.mocked(useLocalSearchParams);
 const mockUseRouter = jest.mocked(useRouter);

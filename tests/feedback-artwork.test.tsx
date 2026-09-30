@@ -7,7 +7,8 @@ import { render } from '@testing-library/react-native';
 import {
   GameCreatedIllustratedCardArtwork,
   InvitePlayersIllustratedCardArtwork,
-  MatchResultIllustratedCardArtwork,
+  MatchLostIllustratedCardArtwork,
+  MatchWonIllustratedCardArtwork,
   NextGameIllustratedCardArtwork,
   NoGamesEmptyStateArtwork,
   NoNotificationsEmptyStateArtwork,
@@ -20,7 +21,8 @@ describe('feedback and card artwork', () => {
     ['empty-state-no-notifications', 96, NoNotificationsEmptyStateArtwork],
     ['empty-state-no-players', 96, NoPlayersEmptyStateArtwork],
     ['illustrated-card-next-game', 80, NextGameIllustratedCardArtwork],
-    ['illustrated-card-match-result', 80, MatchResultIllustratedCardArtwork],
+    ['illustrated-card-match-won', 80, MatchWonIllustratedCardArtwork],
+    ['illustrated-card-match-lost', 80, MatchLostIllustratedCardArtwork],
     [
       'illustrated-card-invite-players',
       80,
@@ -57,6 +59,6 @@ describe('feedback and card artwork', () => {
     );
     expect(
       source.match(/require\('\.\.\/media\/mascot-[a-z-]+\.webp'\)/gu),
-    ).toHaveLength(7);
+    ).toHaveLength(8);
   });
 });

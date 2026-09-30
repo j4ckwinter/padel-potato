@@ -7,7 +7,8 @@ import { colors, radii, sizing, spacing } from '../../tokens';
 import {
   GameCreatedIllustratedCardArtwork,
   InvitePlayersIllustratedCardArtwork,
-  MatchResultIllustratedCardArtwork,
+  MatchLostIllustratedCardArtwork,
+  MatchWonIllustratedCardArtwork,
   NextGameIllustratedCardArtwork,
 } from '../../assets/artwork/feedbackArtwork';
 import { AvatarGroup, type AvatarGroupIdentity } from '../identity/AvatarGroup';
@@ -63,7 +64,7 @@ type IllustratedContent = Readonly<{
 }>;
 
 export type GameCardIllustration =
-  'gameCreated' | 'invitePlayers' | 'matchResult' | 'nextGame';
+  'gameCreated' | 'invitePlayers' | 'matchLost' | 'matchWon' | 'nextGame';
 
 export type GameCardProps =
   | (FullContent &
@@ -105,7 +106,13 @@ export type GameCardProps =
       }>)
   | (IllustratedContent &
       Readonly<{
-        illustration: 'matchResult';
+        illustration: 'matchLost';
+        onViewResults: () => void;
+        participants: Quartet;
+      }>)
+  | (IllustratedContent &
+      Readonly<{
+        illustration: 'matchWon';
         onViewResults: () => void;
         participants: Quartet;
       }>)
@@ -146,14 +153,16 @@ const supportedTuples = Object.freeze([
   'open/full',
   'illustrated/gameCreated',
   'illustrated/invitePlayers',
-  'illustrated/matchResult',
+  'illustrated/matchLost',
+  'illustrated/matchWon',
   'illustrated/nextGame',
 ] as const);
 
 const supportedIllustrations = Object.freeze([
   'gameCreated',
   'invitePlayers',
-  'matchResult',
+  'matchLost',
+  'matchWon',
   'nextGame',
 ] as const satisfies readonly GameCardIllustration[]);
 
@@ -262,7 +271,8 @@ function validateGameCardProps(props: GameCardProps) {
 
     const expectedParticipants =
       runtime.illustration === 'nextGame' ||
-      runtime.illustration === 'matchResult'
+      runtime.illustration === 'matchLost' ||
+      runtime.illustration === 'matchWon'
         ? 4
         : 2;
     validateParticipants(runtime.participants, expectedParticipants);
@@ -270,7 +280,8 @@ function validateGameCardProps(props: GameCardProps) {
     const callbackKey =
       runtime.illustration === 'nextGame'
         ? 'onViewGame'
-        : runtime.illustration === 'matchResult'
+        : runtime.illustration === 'matchLost' ||
+            runtime.illustration === 'matchWon'
           ? 'onViewResults'
           : runtime.illustration === 'invitePlayers'
             ? 'onInvitePlayers'
@@ -486,8 +497,10 @@ function Artwork({
       return <GameCreatedIllustratedCardArtwork />;
     case 'invitePlayers':
       return <InvitePlayersIllustratedCardArtwork />;
-    case 'matchResult':
-      return <MatchResultIllustratedCardArtwork />;
+    case 'matchLost':
+      return <MatchLostIllustratedCardArtwork />;
+    case 'matchWon':
+      return <MatchWonIllustratedCardArtwork />;
     case 'nextGame':
       return <NextGameIllustratedCardArtwork />;
   }
@@ -523,7 +536,8 @@ function Action({
             visibleLabel="Invite"
           />
         );
-      case 'matchResult':
+      case 'matchLost':
+      case 'matchWon':
         return (
           <CardAction
             label="View results"

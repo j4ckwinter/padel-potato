@@ -38,9 +38,12 @@ type AwaitingResultGameLifecycle = Readonly<{
 }>;
 
 export type GameSetScore = readonly [number, number];
+export type GameResultTeam = readonly [string, string];
+export type GameResultTeams = readonly [GameResultTeam, GameResultTeam];
 
 export type GameResult = Readonly<{
   sets: readonly [GameSetScore, GameSetScore];
+  teams: GameResultTeams;
 }>;
 
 type CompletedGameLifecycle = Readonly<{
@@ -76,6 +79,15 @@ type GameRecord = Readonly<{
 export type Game = GameRecord;
 export type ScheduledGame = Omit<GameRecord, 'lifecycle'> &
   Readonly<{ lifecycle: ScheduledGameLifecycle }>;
+type FourPlayerGameParticipants = Extract<
+  GameParticipants,
+  Readonly<{ length: 4 }>
+>;
+export type CompletedGame = Omit<GameRecord, 'lifecycle' | 'participants'> &
+  Readonly<{
+    lifecycle: CompletedGameLifecycle;
+    participants: FourPlayerGameParticipants;
+  }>;
 
 export type GameTeams = readonly [
   readonly [GamePlayer, GamePlayer],
@@ -91,6 +103,12 @@ export const gamePlayerCapacity = 4;
 
 export function isScheduledGame(game: Game): game is ScheduledGame {
   return game.lifecycle.status === 'scheduled';
+}
+
+export function isCompletedGame(game: Game): game is CompletedGame {
+  return (
+    game.lifecycle.status === 'completed' && game.participants.length === 4
+  );
 }
 
 export function applyGameLifecycleCommand(
@@ -115,7 +133,11 @@ export function applyGameLifecycleCommand(
       }
     case 'awaitingResult':
       if (command.type !== 'recordResult') return null;
-      const result = createGameResult(game, command.result.sets);
+      const teams = gameResultTeams(game, command.result);
+      const result =
+        teams === null
+          ? null
+          : createGameResult({ game, sets: command.result.sets, teams });
       return result === null
         ? null
         : {
@@ -159,14 +181,85 @@ export function gameTeams(game: Game): GameTeams | null {
   ];
 }
 
-export function createGameResult(
+export function gameTeamsForPartner(
   game: Game,
-  sets: readonly [GameSetScore, GameSetScore],
-): GameResult | null {
+  partnerId: string,
+): GameTeams | null {
+  if (game.participants.length !== 4) return null;
+
+  const organiser = game.participants[0].player;
+  const firstPlayer = game.participants[1].player;
+  const secondPlayer = game.participants[2].player;
+  const thirdPlayer = game.participants[3].player;
+  if (partnerId === firstPlayer.id) {
+    return [
+      [organiser, firstPlayer],
+      [secondPlayer, thirdPlayer],
+    ];
+  }
+  if (partnerId === secondPlayer.id) {
+    return [
+      [organiser, secondPlayer],
+      [firstPlayer, thirdPlayer],
+    ];
+  }
+  if (partnerId === thirdPlayer.id) {
+    return [
+      [organiser, thirdPlayer],
+      [firstPlayer, secondPlayer],
+    ];
+  }
+  return null;
+}
+
+export function gameResultTeams(
+  game: Game,
+  result: GameResult,
+): GameTeams | null {
+  if (game.participants.length !== 4) return null;
+  const playerById = new Map(
+    game.participants.map(({ player }) => [player.id, player]),
+  );
+  const firstTeamFirstPlayer = playerById.get(result.teams[0][0]);
+  const firstTeamSecondPlayer = playerById.get(result.teams[0][1]);
+  const secondTeamFirstPlayer = playerById.get(result.teams[1][0]);
+  const secondTeamSecondPlayer = playerById.get(result.teams[1][1]);
+  const uniquePlayerIds = new Set(result.teams.flat());
+  if (
+    !firstTeamFirstPlayer ||
+    !firstTeamSecondPlayer ||
+    !secondTeamFirstPlayer ||
+    !secondTeamSecondPlayer ||
+    uniquePlayerIds.size !== 4
+  ) {
+    return null;
+  }
+
+  return [
+    [firstTeamFirstPlayer, firstTeamSecondPlayer],
+    [secondTeamFirstPlayer, secondTeamSecondPlayer],
+  ];
+}
+
+export function createGameResult({
+  game,
+  sets,
+  teams,
+}: Readonly<{
+  game: Game;
+  sets: readonly [GameSetScore, GameSetScore];
+  teams: GameTeams;
+}>): GameResult | null {
   const firstWinner = setWinner(sets[0]);
   const secondWinner = setWinner(sets[1]);
   if (
-    gameTeams(game) === null ||
+    gameResultTeams(game, {
+      sets,
+      teams: [
+        [teams[0][0].id, teams[0][1].id],
+        [teams[1][0].id, teams[1][1].id],
+      ],
+    }) === null ||
     firstWinner === null ||
     secondWinner !== firstWinner
   ) {
@@ -177,6 +270,10 @@ export function createGameResult(
     sets: [
       [sets[0][0], sets[0][1]],
       [sets[1][0], sets[1][1]],
+    ],
+    teams: [
+      [teams[0][0].id, teams[0][1].id],
+      [teams[1][0].id, teams[1][1].id],
     ],
   };
 }

@@ -7,9 +7,14 @@ import {
 import {
   applyGameLifecycleCommand,
   createGameResult,
+  gameTeams,
   isScheduledGame,
 } from '../src/features/games/game';
-import { gamesInCollection } from '../src/features/games/gameCardViewModel';
+import {
+  completedGameListCard,
+  completedGamesForPlayer,
+  gamesInCollection,
+} from '../src/features/games/gameCardViewModel';
 
 describe('game lifecycle', () => {
   it('moves a scheduled game through result confirmation to completion', () => {
@@ -24,11 +29,17 @@ describe('game lifecycle', () => {
       status: 'awaitingResult',
     });
     if (!awaitingResult) throw new Error('Expected a valid finish transition.');
+    const teams = gameTeams(awaitingResult);
+    if (teams === null) throw new Error('Expected four-player teams.');
 
-    const result = createGameResult(awaitingResult, [
-      [6, 4],
-      [7, 5],
-    ]);
+    const result = createGameResult({
+      game: awaitingResult,
+      sets: [
+        [6, 4],
+        [7, 5],
+      ],
+      teams,
+    });
     if (!result) throw new Error('Expected a valid game result.');
 
     const completed = applyGameLifecycleCommand(awaitingResult, {
@@ -42,6 +53,10 @@ describe('game lifecycle', () => {
         sets: [
           [6, 4],
           [7, 5],
+        ],
+        teams: [
+          ['alex-morgan', 'jamie-taylor'],
+          ['sam-kim', 'riley-brown'],
         ],
       },
       status: 'completed',
@@ -73,6 +88,10 @@ describe('game lifecycle', () => {
             [6, 4],
             [6, 4],
           ],
+          teams: [
+            ['alex-morgan', 'jamie-taylor'],
+            ['sam-kim', 'riley-brown'],
+          ],
         },
         type: 'recordResult',
       }),
@@ -80,40 +99,79 @@ describe('game lifecycle', () => {
   });
 
   it('accepts only valid straight-set results for four-player games', () => {
+    const teams = gameTeams(demoGames[3]);
+    if (teams === null) throw new Error('Expected four-player teams.');
     expect(
-      createGameResult(demoGames[3], [
-        [6, 4],
-        [7, 6],
-      ]),
+      createGameResult({
+        game: demoGames[3],
+        sets: [
+          [6, 4],
+          [7, 6],
+        ],
+        teams,
+      }),
     ).toEqual({
       sets: [
         [6, 4],
         [7, 6],
       ],
+      teams: [
+        ['alex-morgan', 'jamie-taylor'],
+        ['sam-kim', 'riley-brown'],
+      ],
     });
     expect(
-      createGameResult(demoGames[3], [
-        [6, 5],
-        [6, 4],
-      ]),
+      createGameResult({
+        game: demoGames[3],
+        sets: [
+          [6, 5],
+          [6, 4],
+        ],
+        teams,
+      }),
     ).toBeNull();
     expect(
-      createGameResult(demoGames[3], [
-        [6, 4],
-        [4, 6],
-      ]),
+      createGameResult({
+        game: demoGames[3],
+        sets: [
+          [6, 4],
+          [4, 6],
+        ],
+        teams,
+      }),
     ).toBeNull();
     expect(
-      createGameResult(demoGames[3], [
-        [6, -1],
-        [6, 4],
-      ]),
+      createGameResult({
+        game: demoGames[3],
+        sets: [
+          [6, -1],
+          [6, 4],
+        ],
+        teams,
+      }),
     ).toBeNull();
     expect(
-      createGameResult(demoGames[0], [
-        [6, 4],
-        [6, 4],
-      ]),
+      createGameResult({
+        game: demoGames[0],
+        sets: [
+          [6, 4],
+          [6, 4],
+        ],
+        teams,
+      }),
+    ).toBeNull();
+    expect(
+      createGameResult({
+        game: demoGames[3],
+        sets: [
+          [6, 4],
+          [6, 4],
+        ],
+        teams: [
+          [teams[0][0], teams[0][0]],
+          [teams[1][0], teams[1][1]],
+        ],
+      }),
     ).toBeNull();
   });
 
@@ -134,6 +192,10 @@ describe('game lifecycle', () => {
             [5, 4],
             [6, 4],
           ],
+          teams: [
+            ['alex-morgan', 'jamie-taylor'],
+            ['sam-kim', 'riley-brown'],
+          ],
         },
         type: 'recordResult',
       }),
@@ -152,5 +214,38 @@ describe('game lifecycle', () => {
     expect(
       gamesInCollection([cancelled], 'discover', demoCurrentGamePlayer.id),
     ).toEqual([]);
+  });
+
+  it('lists completed games for participating players newest first', () => {
+    const completedGames = completedGamesForPlayer(
+      demoGames,
+      demoCurrentGamePlayer.id,
+    );
+
+    expect(completedGames.map((game) => game.id)).toEqual([
+      'demo-completed-loss',
+      'demo-completed-game',
+    ]);
+    expect(
+      completedGameListCard(completedGames[0], demoCurrentGamePlayer.id),
+    ).toMatchObject({
+      detailSecondary: 'Mon 28 Sept · 19:30 · 3–6, 4–6',
+      eyebrow: 'You lost',
+      illustration: 'matchLost',
+      participants: expect.arrayContaining([
+        expect.objectContaining({ name: 'Alex Morgan' }),
+      ]),
+      title: 'Monday Night Padel',
+      variant: 'illustrated',
+    });
+    expect(
+      completedGameListCard(completedGames[1], demoCurrentGamePlayer.id),
+    ).toMatchObject({
+      detailSecondary: 'Sun 27 Sept · 18:00 · 6–4, 6–3',
+      eyebrow: 'You won',
+      illustration: 'matchWon',
+      title: 'Sunday Evening Padel',
+      variant: 'illustrated',
+    });
   });
 });

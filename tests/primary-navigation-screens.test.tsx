@@ -6,7 +6,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import HomeScreen from '../src/app/(tabs)';
 import NotificationsScreen from '../src/app/notifications';
 import { demoCurrentGamePlayer } from '../src/features/demo/demoData';
-import { joinGame } from '../src/features/games/gameRepository';
+import {
+  joinGame,
+  transitionGameLifecycle,
+} from '../src/features/games/gameRepository';
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => {
@@ -154,5 +157,29 @@ describe('primary navigation screens', () => {
       params: { collection: 'mine' },
       pathname: '/games',
     });
+  });
+
+  it('hides Coming up when the player has no next game', async () => {
+    await transitionGameLifecycle('demo-my-next-game', {
+      at: '2026-10-01T20:30:00.000Z',
+      type: 'finish',
+    });
+    router();
+
+    const screen = await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 34, left: 0, right: 0, top: 47 },
+        }}
+      >
+        <HomeScreen />
+      </SafeAreaProvider>,
+    );
+
+    expect(await screen.findByText('Recommended for you')).toBeVisible();
+    expect(
+      screen.queryByRole('header', { name: 'Coming up' }),
+    ).not.toBeOnTheScreen();
   });
 });

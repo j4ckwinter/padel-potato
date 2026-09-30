@@ -18,20 +18,28 @@ const routes = [
 function tabBarProps({
   activeIndex,
   defaultPrevented = false,
+  nestedState,
 }: Readonly<{
   activeIndex: number;
   defaultPrevented?: boolean;
+  nestedState?: Readonly<{ index: number; key: string; type: 'stack' }>;
 }>) {
   const emit = jest.fn(() => ({ defaultPrevented }));
+  const dispatch = jest.fn();
   const navigate = jest.fn();
+  const stateRoutes = routes.map((route, index) =>
+    index === activeIndex && nestedState
+      ? { ...route, state: nestedState }
+      : route,
+  );
   const props = {
     descriptors: {},
     insets: { bottom: 0, left: 0, right: 0, top: 0 },
-    navigation: { emit, navigate },
-    state: { index: activeIndex, routes },
+    navigation: { dispatch, emit, navigate },
+    state: { index: activeIndex, routes: stateRoutes },
   } as unknown as PrimaryTabBarProps;
 
-  return { emit, navigate, props };
+  return { dispatch, emit, navigate, props };
 }
 
 describe('PrimaryTabBar', () => {
@@ -92,5 +100,22 @@ describe('PrimaryTabBar', () => {
       screen.getByRole('tab', { name: 'Home' }).props.accessibilityState
         .selected,
     ).toBe(true);
+  });
+
+  it('returns a selected tab to the root of its nested stack', async () => {
+    const games = tabBarProps({
+      activeIndex: 1,
+      nestedState: { index: 2, key: 'games-stack', type: 'stack' },
+    });
+    const user = userEvent.setup();
+    const screen = await render(<PrimaryTabBar {...games.props} />);
+
+    await user.press(screen.getByRole('tab', { name: 'Games' }));
+
+    expect(games.dispatch).toHaveBeenCalledWith({
+      target: 'games-stack',
+      type: 'POP_TO_TOP',
+    });
+    expect(games.navigate).not.toHaveBeenCalled();
   });
 });

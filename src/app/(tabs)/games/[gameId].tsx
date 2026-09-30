@@ -1,5 +1,5 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
@@ -19,6 +19,7 @@ import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
 import {
   availableGameSpots,
   gameResultWinner,
+  gameResultTeams,
   gameHasPlayer,
   gameTeams,
   isScheduledGame,
@@ -69,7 +70,7 @@ function gameAvailability(game: Game) {
 
 function CompletedResult({ game }: Readonly<{ game: Game }>) {
   if (game.lifecycle.status !== 'completed') return null;
-  const teams = gameTeams(game);
+  const teams = gameResultTeams(game, game.lifecycle.result);
   if (teams === null) return null;
 
   const currentTeam = teams.findIndex((team) =>
@@ -108,31 +109,33 @@ export default function GameDetailsScreen() {
     status: 'loading',
   });
   const [showCreated, setShowCreated] = useState(params.created === 'true');
-  const [showResultRecorded, setShowResultRecorded] = useState(
-    params.resultRecorded === 'true',
-  );
   const [joinFeedback, setJoinFeedback] = useState<JoinFeedback>(null);
   const [joining, setJoining] = useState(false);
 
-  useEffect(() => {
-    if (gameId === null) {
-      return undefined;
-    }
+  useFocusEffect(
+    useCallback(() => {
+      if (gameId === null) return undefined;
 
-    let active = true;
-    void findGameById(gameId).then((game) => {
-      if (!active) return;
-      setLoadState(game ? { game, status: 'ready' } : { status: 'notFound' });
-    });
+      let active = true;
+      void findGameById(gameId).then((game) => {
+        if (!active) return;
+        setLoadState(game ? { game, status: 'ready' } : { status: 'notFound' });
+      });
 
-    return () => {
-      active = false;
-    };
-  }, [gameId]);
+      return () => {
+        active = false;
+      };
+    }, [gameId]),
+  );
   const displayedState: GameLoadState =
     gameId === null ? { status: 'notFound' } : loadState;
 
   const returnToGames = () => {
+    if (params.returnTo === 'games') {
+      router.dismissTo('/games');
+      return;
+    }
+
     if (router.canGoBack()) {
       router.back();
       return;
@@ -205,10 +208,11 @@ export default function GameDetailsScreen() {
             type="toast"
           />
         ) : null}
-        {showResultRecorded && displayedState.status === 'ready' ? (
+        {params.resultRecorded === 'true' &&
+        displayedState.status === 'ready' ? (
           <BannerToast
             message="The final score is now part of the game record."
-            onClose={() => setShowResultRecorded(false)}
+            onClose={() => router.setParams({ resultRecorded: undefined })}
             style="success"
             title="Result saved"
             type="toast"

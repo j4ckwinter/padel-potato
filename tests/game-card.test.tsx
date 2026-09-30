@@ -68,14 +68,24 @@ const illustratedCardExamples = {
     title: 'Bring your crew',
     variant: 'illustrated',
   },
-  matchResult: {
+  matchWon: {
     detailPrimary: 'You won 6\u20134, 6\u20133',
     detailSecondary: 'View scores and highlights',
-    eyebrow: 'Completed',
-    illustration: 'matchResult',
+    eyebrow: 'You won',
+    illustration: 'matchWon',
     onViewResults: jest.fn(),
     participants,
     title: 'Great match!',
+    variant: 'illustrated',
+  },
+  matchLost: {
+    detailPrimary: 'You lost 4\u20136, 3\u20136',
+    detailSecondary: 'View the final score',
+    eyebrow: 'You lost',
+    illustration: 'matchLost',
+    onViewResults: jest.fn(),
+    participants,
+    title: 'Tuesday Social Padel',
     variant: 'illustrated',
   },
   nextGame: {
@@ -205,9 +215,14 @@ describe('Game Card runtime and semantic contract', () => {
       'artwork-illustrated-card-next-game',
     ],
     [
-      illustratedCardExamples.matchResult,
+      illustratedCardExamples.matchWon,
       'View results',
-      'artwork-illustrated-card-match-result',
+      'artwork-illustrated-card-match-won',
+    ],
+    [
+      illustratedCardExamples.matchLost,
+      'View results',
+      'artwork-illustrated-card-match-lost',
     ],
     [
       illustratedCardExamples.invitePlayers,
@@ -240,7 +255,8 @@ describe('Game Card runtime and semantic contract', () => {
 
   it.each([
     [illustratedCardExamples.nextGame, 'View game'],
-    [illustratedCardExamples.matchResult, 'View results'],
+    [illustratedCardExamples.matchWon, 'View results'],
+    [illustratedCardExamples.matchLost, 'View results'],
     [illustratedCardExamples.invitePlayers, 'Invite players'],
     [illustratedCardExamples.gameCreated, 'Share game'],
   ] as [IllustratedGameCardProps, string][])(
@@ -253,7 +269,8 @@ describe('Game Card runtime and semantic contract', () => {
       const callback =
         props.illustration === 'nextGame'
           ? props.onViewGame
-          : props.illustration === 'matchResult'
+          : props.illustration === 'matchWon' ||
+              props.illustration === 'matchLost'
             ? props.onViewResults
             : props.illustration === 'invitePlayers'
               ? props.onInvitePlayers
@@ -432,7 +449,7 @@ describe('Game Card Storybook contract', () => {
     expect(GameCardVariants.render).toBeDefined();
     expect(GameCardBoundaries.render).toBeDefined();
     expect(GameCardInteractive.render).toBeDefined();
-    expect(gameCardFixtures).toHaveLength(9);
+    expect(gameCardFixtures).toHaveLength(10);
     expect(
       normalizeGameCardStoryArgs({
         configuration: 'illustrated/invitePlayers',

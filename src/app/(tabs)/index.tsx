@@ -7,7 +7,6 @@ import {
 } from 'react-native-safe-area-context';
 
 import { GameCard } from '../../design-system/components/content';
-import { EmptyState } from '../../design-system/components/feedback';
 import {
   AppHeader,
   SectionHeader,
@@ -75,9 +74,9 @@ export default function HomeScreen() {
           page="home"
           title="Padel Potato"
         />
-        <Stack gap="space12">
-          <SectionHeader title="Coming up" />
-          {nextGame && nextGameCard?.variant === 'next' ? (
+        {nextGame && nextGameCard?.variant === 'next' ? (
+          <Stack gap="space12">
+            <SectionHeader title="Coming up" />
             <GameCard
               detailPrimary={nextGameCard.venue}
               detailSecondary={nextGameCard.time}
@@ -88,13 +87,8 @@ export default function HomeScreen() {
               title={nextGameCard.title}
               variant="illustrated"
             />
-          ) : games === null ? null : (
-            <EmptyState
-              content="noGames"
-              onCreateGame={() => router.push('/create')}
-            />
-          )}
-        </Stack>
+          </Stack>
+        ) : null}
         {visibleOpenGames.length > 0 ? (
           <Stack gap="space12">
             {openGames.length > 2 ? (

@@ -311,4 +311,68 @@ export const demoGames = [
     setup: { durationMinutes: 90, format: 'Competitive game' },
     venue: 'Stratford Padel Club',
   },
+  {
+    id: 'demo-completed-game',
+    lifecycle: {
+      completedAt: '2026-09-27T18:30:00.000Z',
+      result: {
+        sets: [
+          [6, 4],
+          [6, 3],
+        ],
+        teams: [
+          [demoCurrentGamePlayer.id, jamie.id],
+          [sam.id, riley.id],
+        ],
+      },
+      status: 'completed',
+    },
+    name: 'Sunday Evening Padel',
+    participants: [
+      { player: demoCurrentGamePlayer, role: 'organiser' },
+      { player: jamie, role: 'player' },
+      { player: sam, role: 'player' },
+      { player: riley, role: 'player' },
+    ],
+    schedule: {
+      date: '2026-09-27',
+      startsAt: '2026-09-27T17:00:00.000Z',
+      status: 'complete',
+      time: '18:00',
+    },
+    setup: { durationMinutes: 90, format: 'Competitive game' },
+    venue: 'Padel United Shoreditch',
+  },
+  {
+    id: 'demo-completed-loss',
+    lifecycle: {
+      completedAt: '2026-09-28T20:00:00.000Z',
+      result: {
+        sets: [
+          [6, 3],
+          [6, 4],
+        ],
+        teams: [
+          [sam.id, riley.id],
+          [demoCurrentGamePlayer.id, jamie.id],
+        ],
+      },
+      status: 'completed',
+    },
+    name: 'Monday Night Padel',
+    participants: [
+      { player: sam, role: 'organiser' },
+      { player: riley, role: 'player' },
+      { player: demoCurrentGamePlayer, role: 'player' },
+      { player: jamie, role: 'player' },
+    ],
+    schedule: {
+      date: '2026-09-28',
+      startsAt: '2026-09-28T18:30:00.000Z',
+      status: 'complete',
+      time: '19:30',
+    },
+    setup: { durationMinutes: 90, format: 'Social game' },
+    venue: 'Canary Wharf Padel',
+  },
 ] as const satisfies readonly Game[];

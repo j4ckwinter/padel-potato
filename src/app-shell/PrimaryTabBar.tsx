@@ -59,9 +59,25 @@ export function PrimaryTabBar({ navigation, state }: PrimaryTabBarProps) {
       type: 'tabPress',
     });
 
-    if (route.key !== activeRoute.key && !event.defaultPrevented) {
-      navigation.navigate(route.name, route.params);
+    if (event.defaultPrevented) return;
+
+    if (route.key === activeRoute.key) {
+      const nestedState = route.state;
+      if (
+        nestedState?.type === 'stack' &&
+        typeof nestedState.index === 'number' &&
+        nestedState.index > 0 &&
+        typeof nestedState.key === 'string'
+      ) {
+        navigation.dispatch({
+          target: nestedState.key,
+          type: 'POP_TO_TOP',
+        });
+      }
+      return;
     }
+
+    navigation.navigate(route.name, route.params);
   };
 
   return (

@@ -90,11 +90,33 @@ describe('games screen', () => {
     await rerender({ collection: 'mine' });
 
     expect(screen.getByRole('tab', { name: 'My games' })).toBeSelected();
-    expect(screen.getByRole('header', { name: 'Your games' })).toBeVisible();
+    expect(
+      screen.getByRole('header', { name: 'Upcoming games' }),
+    ).toBeVisible();
     expect(screen.getByText('Thursday Evening Padel')).toBeVisible();
     expect(screen.getByText('Tuesday After-work Padel')).toBeVisible();
     expect(screen.getByText('Wednesday Lunch Padel')).toBeVisible();
     expect(screen.getByText('Friday Evening Padel')).toBeVisible();
+    expect(
+      screen.getByRole('header', { name: 'Previous games' }),
+    ).toBeVisible();
+    expect(screen.getByText('Monday Night Padel')).toBeVisible();
+    expect(screen.getByText('Sunday Evening Padel')).toBeVisible();
+    expect(screen.getByText('You lost')).toBeVisible();
+    expect(screen.getByText('You won')).toBeVisible();
+    expect(
+      screen.getAllByRole('button', { name: 'View results' }),
+    ).toHaveLength(2);
+    expect(
+      screen.getByTestId('artwork-illustrated-card-match-lost', {
+        includeHiddenElements: true,
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByTestId('artwork-illustrated-card-match-won', {
+        includeHiddenElements: true,
+      }),
+    ).toBeTruthy();
     expect(screen.queryByText('Wednesday Evening Padel')).not.toBeOnTheScreen();
     expect(
       screen.getAllByTestId('avatar-group-empty-identity', {
@@ -106,6 +128,15 @@ describe('games screen', () => {
 
     expect(push).toHaveBeenCalledWith({
       params: { gameId: 'demo-my-next-game' },
+      pathname: '/games/[gameId]',
+    });
+
+    await user.press(
+      screen.getAllByRole('button', { name: 'View results' })[1],
+    );
+
+    expect(push).toHaveBeenCalledWith({
+      params: { gameId: 'demo-completed-game' },
       pathname: '/games/[gameId]',
     });
   });

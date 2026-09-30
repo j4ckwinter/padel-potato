@@ -16,8 +16,14 @@ import {
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
 import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
-import type { Game, ScheduledGame } from '../../../features/games/game';
+import type {
+  CompletedGame,
+  Game,
+  ScheduledGame,
+} from '../../../features/games/game';
 import {
+  completedGameListCard,
+  completedGamesForPlayer,
   gameListCard,
   gamesInCollection,
   type GameCollection,
@@ -35,7 +41,7 @@ function requestedCollection(value: string | string[] | undefined) {
   return value === 'mine' ? 'My games' : 'Discover';
 }
 
-function GameResultCard({
+function ActiveGameCard({
   game,
   onViewGame,
 }: Readonly<{
@@ -51,6 +57,21 @@ function GameResultCard({
     case 'open':
       return <GameCard {...card} onViewGame={openGame} />;
   }
+}
+
+function PreviousGameCard({
+  game,
+  onViewGame,
+}: Readonly<{
+  game: CompletedGame;
+  onViewGame: (gameId: string) => void;
+}>) {
+  return (
+    <GameCard
+      {...completedGameListCard(game, demoCurrentGamePlayer.id)}
+      onViewResults={() => onViewGame(game.id)}
+    />
+  );
 }
 
 export default function GamesScreen() {
@@ -78,6 +99,18 @@ export default function GamesScreen() {
     return gamesInCollection(
       games ?? [],
       collectionKey(collection),
+      demoCurrentGamePlayer.id,
+    ).filter(
+      (game) =>
+        normalizedQuery.length === 0 ||
+        game.venue.toLocaleLowerCase().includes(normalizedQuery),
+    );
+  }, [collection, games, venueQuery]);
+  const previousGames = useMemo(() => {
+    if (collection !== 'My games') return [];
+    const normalizedQuery = venueQuery.trim().toLocaleLowerCase();
+    return completedGamesForPlayer(
+      games ?? [],
       demoCurrentGamePlayer.id,
     ).filter(
       (game) =>
@@ -122,7 +155,9 @@ export default function GamesScreen() {
         <Stack gap="space12">
           <SectionHeader
             title={
-              collection === 'Discover' ? 'Open games near you' : 'Your games'
+              collection === 'Discover'
+                ? 'Open games near you'
+                : 'Upcoming games'
             }
           />
           {games === null ? (
@@ -134,7 +169,7 @@ export default function GamesScreen() {
           ) : visibleGames.length > 0 ? (
             <Stack gap="space16">
               {visibleGames.map((game) => (
-                <GameResultCard
+                <ActiveGameCard
                   game={game}
                   key={game.id}
                   onViewGame={openGame}
@@ -144,14 +179,47 @@ export default function GamesScreen() {
           ) : (
             <Surface padding="space20" radius="radius20">
               <Stack gap="space4">
-                <Text variant="heading">No games found</Text>
+                <Text variant="heading">
+                  {collection === 'Discover'
+                    ? 'No games found'
+                    : 'No upcoming games'}
+                </Text>
                 <Text color="textSecondary" variant="body">
-                  Try searching for a different venue.
+                  {collection === 'Discover' || venueQuery.trim().length > 0
+                    ? 'Try searching for a different venue.'
+                    : 'Create or join a game to add it here.'}
                 </Text>
               </Stack>
             </Surface>
           )}
         </Stack>
+        {collection === 'My games' && games !== null ? (
+          <Stack gap="space12">
+            <SectionHeader title="Previous games" />
+            {previousGames.length > 0 ? (
+              <Stack gap="space16">
+                {previousGames.map((game) => (
+                  <PreviousGameCard
+                    game={game}
+                    key={game.id}
+                    onViewGame={openGame}
+                  />
+                ))}
+              </Stack>
+            ) : (
+              <Surface padding="space20" radius="radius20">
+                <Stack gap="space4">
+                  <Text variant="heading">No previous games yet</Text>
+                  <Text color="textSecondary" variant="body">
+                    {venueQuery.trim().length > 0
+                      ? 'Try searching for a different venue.'
+                      : 'Completed games will appear here.'}
+                  </Text>
+                </Stack>
+              </Surface>
+            )}
+          </Stack>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

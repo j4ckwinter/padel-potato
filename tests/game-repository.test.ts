@@ -11,7 +11,7 @@ import {
   demoCurrentGamePlayer,
   demoParticipantsForCount,
 } from '../src/features/demo/demoData';
-import { createGameResult } from '../src/features/games/game';
+import { createGameResult, gameTeams } from '../src/features/games/game';
 import {
   createGame,
   findGameById,
@@ -149,10 +149,16 @@ describe('game repository', () => {
         rating: '4.2',
       }),
     ).resolves.toMatchObject({ status: 'unavailable' });
-    const result = createGameResult(transition.game, [
-      [6, 4],
-      [6, 3],
-    ]);
+    const teams = gameTeams(transition.game);
+    if (teams === null) throw new Error('Expected four-player teams.');
+    const result = createGameResult({
+      game: transition.game,
+      sets: [
+        [6, 4],
+        [6, 3],
+      ],
+      teams,
+    });
     if (result === null) throw new Error('Expected a valid result.');
     await expect(
       transitionGameLifecycle(transition.game.id, {

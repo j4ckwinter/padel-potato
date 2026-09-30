@@ -5,7 +5,10 @@ import type {
 import {
   availableGameSpots,
   gameHasPlayer,
+  gameResultWinner,
+  isCompletedGame,
   isScheduledGame,
+  type CompletedGame,
   type Game,
   type GamePlayer,
   type ScheduledGame,
@@ -20,6 +23,14 @@ export type GameListCardProps = BrowsableGameCardProps extends infer Props
     ? Omit<Props, 'onViewGame'>
     : never
   : never;
+type CompletedGameCardProps = Extract<
+  GameCardProps,
+  { illustration: 'matchLost' | 'matchWon'; variant: 'illustrated' }
+>;
+export type CompletedGameListCardProps = Omit<
+  CompletedGameCardProps,
+  'onViewResults'
+>;
 
 export type GameCollection = 'discover' | 'mine';
 
@@ -45,13 +56,48 @@ function cardParticipant(
   };
 }
 
-function cardCopy(game: ScheduledGame) {
+function cardCopy(game: Game) {
   const [year, month, day] = game.schedule.date.split('-').map(Number);
   const date = new Date(year, month - 1, day);
   return {
     time: `${gameDay(game.schedule.date)} ${day} ${monthFormatter.format(date)} · ${game.schedule.time} · ${game.setup.durationMinutes} min`,
     title: game.name,
     venue: game.venue,
+  };
+}
+
+function completedCardDateTime(game: CompletedGame) {
+  const [year, month, day] = game.schedule.date.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return `${gameDay(game.schedule.date)} ${day} ${monthFormatter.format(date)} · ${game.schedule.time}`;
+}
+
+export function completedGameListCard(
+  game: CompletedGame,
+  currentPlayerId: string,
+): CompletedGameListCardProps {
+  const result = game.lifecycle.result;
+  const currentTeam = result.teams[0].includes(currentPlayerId) ? 0 : 1;
+  const score = result.sets
+    .map((set) =>
+      currentTeam === 0 ? `${set[0]}–${set[1]}` : `${set[1]}–${set[0]}`,
+    )
+    .join(', ');
+  const won = gameResultWinner(result) === currentTeam;
+
+  return {
+    detailPrimary: game.venue,
+    detailSecondary: `${completedCardDateTime(game)} · ${score}`,
+    eyebrow: won ? 'You won' : 'You lost',
+    illustration: won ? 'matchWon' : 'matchLost',
+    participants: [
+      cardParticipant(game.participants[0].player, 1),
+      cardParticipant(game.participants[1].player, 2),
+      cardParticipant(game.participants[2].player, 3),
+      cardParticipant(game.participants[3].player, 4),
+    ],
+    title: game.name,
+    variant: 'illustrated',
   };
 }
 
@@ -118,5 +164,17 @@ export function gamesInCollection(
     )
     .sort((left, right) =>
       left.schedule.startsAt.localeCompare(right.schedule.startsAt),
+    );
+}
+
+export function completedGamesForPlayer(
+  games: readonly Game[],
+  currentPlayerId: string,
+) {
+  return [...games]
+    .filter(isCompletedGame)
+    .filter((game) => gameHasPlayer(game, currentPlayerId))
+    .sort((left, right) =>
+      right.lifecycle.completedAt.localeCompare(left.lifecycle.completedAt),
     );
 }

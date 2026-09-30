@@ -8,7 +8,7 @@ import {
 
 import { Button } from '../../../design-system/components/actions';
 import { BannerToast } from '../../../design-system/components/feedback';
-import { Field } from '../../../design-system/components/forms';
+import { ChoiceChip, Field } from '../../../design-system/components/forms';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
@@ -16,6 +16,7 @@ import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
 import {
   createGameResult,
   gameTeams,
+  gameTeamsForPartner,
   playerOrganisesGame,
   type Game,
   type GameSetScore,
@@ -63,6 +64,7 @@ export default function GameResultScreen() {
   const [loadState, setLoadState] = useState<ResultLoadState>({
     status: 'loading',
   });
+  const [partnerId, setPartnerId] = useState<string | null>(null);
   const [scores, setScores] = useState<ResultScores>(initialScores);
   const [submissionFailed, setSubmissionFailed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -91,6 +93,7 @@ export default function GameResultScreen() {
         return;
       }
 
+      setPartnerId(teams[0][1].id);
       setLoadState({ game, status: 'ready', teams });
     });
 
@@ -100,6 +103,13 @@ export default function GameResultScreen() {
   }, [gameId]);
   const displayedState: ResultLoadState =
     gameId === null ? { status: 'notFound' } : loadState;
+  const selectedTeams =
+    displayedState.status === 'ready'
+      ? gameTeamsForPartner(
+          displayedState.game,
+          partnerId ?? displayedState.teams[0][1].id,
+        )
+      : null;
 
   const returnToGame = () => {
     if (router.canGoBack()) {
@@ -129,8 +139,8 @@ export default function GameResultScreen() {
     );
   };
 
-  const submitResult = async (game: Game) => {
-    const result = createGameResult(game, scores);
+  const submitResult = async (game: Game, teams: GameTeams) => {
+    const result = createGameResult({ game, sets: scores, teams });
     if (result === null) {
       setSubmissionFailed(true);
       return;
@@ -160,8 +170,12 @@ export default function GameResultScreen() {
         return;
       }
 
-      router.replace({
-        params: { gameId: game.id, resultRecorded: 'true' },
+      router.dismissTo({
+        params: {
+          gameId: game.id,
+          resultRecorded: 'true',
+          returnTo: 'games',
+        },
         pathname: '/games/[gameId]',
       });
     } finally {
@@ -216,8 +230,51 @@ export default function GameResultScreen() {
               </Text>
             </Stack>
           </Surface>
+        ) : selectedTeams === null ? (
+          <Surface padding="space20" radius="radius20">
+            <Text variant="heading">Team selection unavailable</Text>
+          </Surface>
         ) : (
           <Stack gap="space16">
+            <Surface padding="space16" radius="radius20">
+              <Stack gap="space12">
+                <Stack gap="space4">
+                  <Text accessibilityRole="header" variant="heading">
+                    Choose your partner
+                  </Text>
+                  <Text color="textSecondary" variant="body">
+                    The other two players will form the opposing team.
+                  </Text>
+                </Stack>
+                <Stack accessibilityRole="radiogroup" gap="space8">
+                  {[
+                    displayedState.teams[0][1],
+                    displayedState.teams[1][0],
+                    displayedState.teams[1][1],
+                  ].map((player) =>
+                    selectedTeams[0][1].id === player.id ? (
+                      <ChoiceChip
+                        icon="leading"
+                        key={player.id}
+                        label={player.name}
+                        onSelectedChange={() => setPartnerId(player.id)}
+                        selected
+                        type="option"
+                      />
+                    ) : (
+                      <ChoiceChip
+                        icon="none"
+                        key={player.id}
+                        label={player.name}
+                        onSelectedChange={() => setPartnerId(player.id)}
+                        selected={false}
+                        type="option"
+                      />
+                    ),
+                  )}
+                </Stack>
+              </Stack>
+            </Surface>
             <Surface
               background="surfaceAccent"
               padding="space20"
@@ -227,15 +284,11 @@ export default function GameResultScreen() {
                 <Text color="textSecondary" variant="label">
                   Teams
                 </Text>
-                <Text variant="bodyStrong">
-                  {teamName(displayedState.teams[0])}
-                </Text>
+                <Text variant="bodyStrong">{teamName(selectedTeams[0])}</Text>
                 <Text color="textSecondary" variant="caption">
                   versus
                 </Text>
-                <Text variant="bodyStrong">
-                  {teamName(displayedState.teams[1])}
-                </Text>
+                <Text variant="bodyStrong">{teamName(selectedTeams[1])}</Text>
               </Stack>
             </Surface>
             {scoreIndexes.map((setIndex) => (
@@ -253,7 +306,7 @@ export default function GameResultScreen() {
                       decrementDisabled={scores[setIndex][teamIndex] === 0}
                       incrementDisabled={scores[setIndex][teamIndex] === 7}
                       key={`set-${setIndex + 1}-team-${teamIndex + 1}`}
-                      label={teamName(displayedState.teams[teamIndex])}
+                      label={teamName(selectedTeams[teamIndex])}
                       onDecrement={() => changeScore(setIndex, teamIndex, -1)}
                       onIncrement={() => changeScore(setIndex, teamIndex, 1)}
                       type="stepper"
@@ -268,7 +321,9 @@ export default function GameResultScreen() {
             ) : (
               <Button
                 label="Save result"
-                onPress={() => void submitResult(displayedState.game)}
+                onPress={() =>
+                  void submitResult(displayedState.game, selectedTeams)
+                }
                 style="primary"
               />
             )}

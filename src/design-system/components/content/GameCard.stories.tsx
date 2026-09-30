@@ -141,15 +141,26 @@ export function normalizeGameCardStoryArgs(args: StoryArgs): GameCardProps {
         title: 'Bring your crew',
         variant: 'illustrated',
       };
-    case 'illustrated/matchResult':
+    case 'illustrated/matchWon':
       return {
         detailPrimary: 'You won 6\u20134, 6\u20133',
         detailSecondary: 'View scores and highlights',
-        eyebrow: 'Completed',
-        illustration: 'matchResult',
+        eyebrow: 'You won',
+        illustration: 'matchWon',
         onViewResults,
         participants,
         title: 'Great match!',
+        variant: 'illustrated',
+      };
+    case 'illustrated/matchLost':
+      return {
+        detailPrimary: 'You lost 4\u20136, 3\u20136',
+        detailSecondary: 'View the final score',
+        eyebrow: 'You lost',
+        illustration: 'matchLost',
+        onViewResults,
+        participants,
+        title: 'Tuesday Social Padel',
         variant: 'illustrated',
       };
     case 'illustrated/nextGame':

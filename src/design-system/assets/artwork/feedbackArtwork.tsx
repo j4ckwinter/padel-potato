@@ -50,14 +50,26 @@ export function NextGameIllustratedCardArtwork() {
   );
 }
 
-export function MatchResultIllustratedCardArtwork() {
+export function MatchWonIllustratedCardArtwork() {
   return (
     <Image
       {...decorativeImageProps}
       resizeMode="contain"
       source={require('../media/mascot-match-result.webp')}
       style={{ height: 80, width: 80 }}
-      testID="artwork-illustrated-card-match-result"
+      testID="artwork-illustrated-card-match-won"
+    />
+  );
+}
+
+export function MatchLostIllustratedCardArtwork() {
+  return (
+    <Image
+      {...decorativeImageProps}
+      resizeMode="contain"
+      source={require('../media/mascot-no-games.webp')}
+      style={{ height: 80, width: 80 }}
+      testID="artwork-illustrated-card-match-lost"
     />
   );
 }

@@ -412,7 +412,7 @@ const invalidIllustratedCardCallback: GameCardProps = {
   detailPrimary: 'Won',
   detailSecondary: '6-4, 6-3',
   eyebrow: 'Result',
-  illustration: 'matchResult',
+  illustration: 'matchWon',
   // @ts-expect-error Match-result branch owns onViewResults only.
   onViewGame: noop,
   participants: [participant1, participant2, participant3, participant4],
