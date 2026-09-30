@@ -1,17 +1,32 @@
-import { describe, expect, it, jest } from '@jest/globals';
-import { render, userEvent } from '@testing-library/react-native';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { render, userEvent, waitFor } from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import ProfileScreen from '../src/app/(tabs)/profile';
 import SettingsScreen from '../src/app/settings';
+import {
+  type SessionMutationResult,
+  useSession,
+} from '../src/features/authentication/SessionContext';
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
 }));
 
+jest.mock('../src/features/authentication/SessionContext', () => ({
+  useSession: jest.fn(),
+}));
+
 const mockUseRouter = jest.mocked(useRouter);
+const mockUseSession = jest.mocked(useSession);
+
+function successfulSessionAction() {
+  return jest.fn(() =>
+    Promise.resolve({ status: 'success' } satisfies SessionMutationResult),
+  );
+}
 
 function router(canGoBack = true) {
   const value = {
@@ -39,6 +54,22 @@ async function renderWithSafeArea(node: React.ReactNode) {
 }
 
 describe('profile screen', () => {
+  beforeEach(() => {
+    mockUseSession.mockReturnValue({
+      signInDemo: successfulSessionAction(),
+      signOut: successfulSessionAction(),
+      state: {
+        session: {
+          kind: 'demo',
+          startedAt: '2026-09-30T12:00:00.000Z',
+          userId: 'alex-morgan',
+          version: 1,
+        },
+        status: 'signedIn',
+      },
+    });
+  });
+
   it('shows the current player and opens account settings', async () => {
     const navigation = router();
     const user = userEvent.setup();
@@ -94,5 +125,29 @@ describe('profile screen', () => {
 
     expect(navigation.back).not.toHaveBeenCalled();
     expect(navigation.replace).toHaveBeenCalledWith('/profile');
+  });
+
+  it('signs out from account settings', async () => {
+    router();
+    const signOut = successfulSessionAction();
+    mockUseSession.mockReturnValue({
+      signInDemo: successfulSessionAction(),
+      signOut,
+      state: {
+        session: {
+          kind: 'demo',
+          startedAt: '2026-09-30T12:00:00.000Z',
+          userId: 'alex-morgan',
+          version: 1,
+        },
+        status: 'signedIn',
+      },
+    });
+    const user = userEvent.setup();
+    const screen = await renderWithSafeArea(<SettingsScreen />);
+
+    await user.press(screen.getByRole('button', { name: 'Sign out' }));
+
+    await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
   });
 });

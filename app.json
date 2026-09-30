@@ -18,6 +18,6 @@
     "experiments": {
       "typedRoutes": true
     },
-    "plugins": ["expo-router", "expo-splash-screen"]
+    "plugins": ["expo-router", "expo-splash-screen", "expo-secure-store"]
   }
 }
