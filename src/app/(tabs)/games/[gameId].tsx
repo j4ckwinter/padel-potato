@@ -10,6 +10,7 @@ import { Button } from '../../../design-system/components/actions';
 import {
   PlayerItem,
   ScoreResultBlock,
+  type ScoreResultBlockProps,
 } from '../../../design-system/components/content';
 import { BannerToast } from '../../../design-system/components/feedback';
 import { AppHeader } from '../../../design-system/components/navigation';
@@ -79,21 +80,44 @@ function CompletedResult({ game }: Readonly<{ game: Game }>) {
   if (currentTeam === -1) return null;
 
   const result = game.lifecycle.result;
+  const scoreTeams: ScoreResultBlockProps['teams'] =
+    result.sets.length === 2
+      ? [
+          {
+            initials: teams[0].map((player) => player.initials).join('/'),
+            name: teams[0].map((player) => player.name).join(' & '),
+            scores: [String(result.sets[0][0]), String(result.sets[1][0])],
+          },
+          {
+            initials: teams[1].map((player) => player.initials).join('/'),
+            name: teams[1].map((player) => player.name).join(' & '),
+            scores: [String(result.sets[0][1]), String(result.sets[1][1])],
+          },
+        ]
+      : [
+          {
+            initials: teams[0].map((player) => player.initials).join('/'),
+            name: teams[0].map((player) => player.name).join(' & '),
+            scores: [
+              String(result.sets[0][0]),
+              String(result.sets[1][0]),
+              String(result.sets[2][0]),
+            ],
+          },
+          {
+            initials: teams[1].map((player) => player.initials).join('/'),
+            name: teams[1].map((player) => player.name).join(' & '),
+            scores: [
+              String(result.sets[0][1]),
+              String(result.sets[1][1]),
+              String(result.sets[2][1]),
+            ],
+          },
+        ];
   return (
     <ScoreResultBlock
       state={gameResultWinner(result) === currentTeam ? 'won' : 'lost'}
-      teams={[
-        {
-          initials: teams[0].map((player) => player.initials).join('/'),
-          name: teams[0].map((player) => player.name).join(' & '),
-          scores: [String(result.sets[0][0]), String(result.sets[1][0])],
-        },
-        {
-          initials: teams[1].map((player) => player.initials).join('/'),
-          name: teams[1].map((player) => player.name).join(' & '),
-          scores: [String(result.sets[0][1]), String(result.sets[1][1])],
-        },
-      ]}
+      teams={scoreTeams}
       title="Final score"
       type="full"
     />

@@ -22,6 +22,10 @@ const scoreTeams = [
   { initials: 'AM', name: 'Alex & Jamie', scores: ['6', '6'] },
   { initials: 'RB', name: 'Riley & Sam', scores: ['4', '3'] },
 ] as const satisfies readonly [ScoreResultTeam, ScoreResultTeam];
+const threeSetScoreTeams = [
+  { initials: 'AM', name: 'Alex & Jamie', scores: ['6', '3', '7'] },
+  { initials: 'RB', name: 'Riley & Sam', scores: ['4', '6', '5'] },
+] as const satisfies ScoreResultBlockProps['teams'];
 
 describe('Score Result Block public contract', () => {});
 
@@ -98,6 +102,26 @@ describe('Score Result Block runtime and semantic contract', () => {
     expect(screen.queryAllByRole('button')).toHaveLength(0);
   });
 
+  it('renders and announces a third set', async () => {
+    const screen = await render(
+      <ScoreResultBlock
+        state="won"
+        teams={threeSetScoreTeams}
+        title="Tuesday Social Padel"
+        type="full"
+      />,
+    );
+
+    expect(
+      screen.getByRole('summary', {
+        name: 'YOU WON, Tuesday Social Padel, Alex & Jamie, set 1 6, set 2 3, set 3 7, winner, Riley & Sam, set 1 4, set 2 6, set 3 5',
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText('S3', { includeHiddenElements: true }),
+    ).toBeTruthy();
+  });
+
   it('preserves live state and note without owning a timer', async () => {
     const intervalSpy = jest.spyOn(global, 'setInterval');
     const screen = await render(
@@ -128,6 +152,11 @@ describe('Score Result Block runtime and semantic contract', () => {
     {
       state: 'won',
       teams: [{ ...scoreTeams[0], scores: ['6'] }, scoreTeams[1]],
+      type: 'compact',
+    },
+    {
+      state: 'won',
+      teams: [threeSetScoreTeams[0], scoreTeams[1]],
       type: 'compact',
     },
     {

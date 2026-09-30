@@ -19,6 +19,10 @@ const losingTeams = [
   { initials: 'AM', name: 'Alex & Jamie', scores: ['4', '3'] },
   { initials: 'RB', name: 'Riley & Sam', scores: ['6', '6'] },
 ] as const satisfies readonly [ScoreResultTeam, ScoreResultTeam];
+const threeSetTeams = [
+  { initials: 'AM', name: 'Alex & Jamie', scores: ['6', '3', '7'] },
+  { initials: 'RB', name: 'Riley & Sam', scores: ['4', '6', '5'] },
+] as const satisfies ScoreResultBlockProps['teams'];
 
 const meta = {
   title: 'Content/Score Result Block',
@@ -47,7 +51,7 @@ export function normalizeScoreResultBlockStoryArgs(
   const type = args.type === 'full' ? 'full' : 'compact';
   const state =
     args.state === 'lost' || args.state === 'live' ? args.state : 'won';
-  const teams: readonly [ScoreResultTeam, ScoreResultTeam] =
+  const teams: ScoreResultBlockProps['teams'] =
     args.teams === losingTeams ? losingTeams : winningTeams;
   const title =
     typeof args.title === 'string' && args.title.trim()
@@ -116,6 +120,7 @@ export const States: Story = {
       <ScoreResultBlock {...fixtureProps(fixtures[5])} />
       <ScoreResultBlock {...fixtureProps(fixtures[4])} />
       <ScoreResultBlock {...fixtureProps(fixtures[3])} />
+      <ScoreResultBlock state="won" teams={threeSetTeams} type="compact" />
     </Stack>
   ),
 };

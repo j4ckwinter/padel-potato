@@ -3,13 +3,20 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from '../../primitives/Text';
 import { borders, colors, radii, sizing, spacing } from '../../tokens';
 
-export type ScoreResultTeam = Readonly<{
+type ScoreResultTeamContent = Readonly<{
   initials: string;
   name: string;
-  scores: readonly [string, string];
 }>;
 
-type ScoreTeams = readonly [ScoreResultTeam, ScoreResultTeam];
+type TwoSetScoreResultTeam = ScoreResultTeamContent &
+  Readonly<{ scores: readonly [string, string] }>;
+type ThreeSetScoreResultTeam = ScoreResultTeamContent &
+  Readonly<{ scores: readonly [string, string, string] }>;
+export type ScoreResultTeam = TwoSetScoreResultTeam | ThreeSetScoreResultTeam;
+
+type ScoreTeams =
+  | readonly [TwoSetScoreResultTeam, TwoSetScoreResultTeam]
+  | readonly [ThreeSetScoreResultTeam, ThreeSetScoreResultTeam];
 type ScoreResultState = 'won' | 'lost' | 'live';
 
 type ScoreResultLayout =
@@ -59,7 +66,7 @@ function validateText(value: unknown, field: string) {
   }
 }
 
-function validateTeam(value: unknown, index: number) {
+function validateTeam(value: unknown, index: number): 2 | 3 {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {
     unsupported(`team ${index + 1} must be a fixed team record`);
   }
@@ -71,8 +78,11 @@ function validateTeam(value: unknown, index: number) {
   }
   validateText(team.initials, `team ${index + 1} initials`);
   validateText(team.name, `team ${index + 1} name`);
-  if (!Array.isArray(team.scores) || team.scores.length !== 2) {
-    unsupported(`team ${index + 1} requires exactly two score strings`);
+  if (
+    !Array.isArray(team.scores) ||
+    (team.scores.length !== 2 && team.scores.length !== 3)
+  ) {
+    unsupported(`team ${index + 1} requires two or three score strings`);
   }
   team.scores.forEach((score, scoreIndex) => {
     validateText(score, `team ${index + 1} set ${scoreIndex + 1}`);
@@ -82,6 +92,7 @@ function validateTeam(value: unknown, index: number) {
       );
     }
   });
+  return team.scores.length === 2 ? 2 : 3;
 }
 
 function validateScoreResultBlockProps(props: ScoreResultBlockProps) {
@@ -102,7 +113,10 @@ function validateScoreResultBlockProps(props: ScoreResultBlockProps) {
   if (!Array.isArray(runtime.teams) || runtime.teams.length !== 2) {
     unsupported('teams must contain exactly two ordered records');
   }
-  runtime.teams.forEach(validateTeam);
+  const scoreCounts = runtime.teams.map(validateTeam);
+  if (scoreCounts[0] !== scoreCounts[1]) {
+    unsupported('both teams must contain the same number of scores');
+  }
 
   if (runtime.type === 'full') validateText(runtime.title, 'full title');
   if (
@@ -135,12 +149,11 @@ function aggregateLabel(props: ScoreResultBlockProps) {
     props.type === 'full' ? props.title : null,
   ];
   props.teams.forEach((team, index) => {
-    parts.push(
-      team.name,
-      `set 1 ${team.scores[0]}`,
-      `set 2 ${team.scores[1]}`,
-      winnerIndex === index ? 'winner' : null,
-    );
+    parts.push(team.name);
+    team.scores.forEach((score, scoreIndex) => {
+      parts.push(`set ${scoreIndex + 1} ${score}`);
+    });
+    parts.push(winnerIndex === index ? 'winner' : null);
   });
   if (props.state === 'live') parts.push(props.liveNote);
   return parts.filter(Boolean).join(', ');
@@ -161,8 +174,11 @@ function TeamRow({
       <Text numberOfLines={1} style={styles.teamName} variant="label">
         {team.name}
       </Text>
-      <Text variant="label">{team.scores[0]}</Text>
-      <Text variant="label">{team.scores[1]}</Text>
+      {team.scores.map((score, scoreIndex) => (
+        <Text key={`set-${scoreIndex + 1}`} variant="label">
+          {score}
+        </Text>
+      ))}
     </View>
   );
 }
@@ -197,12 +213,11 @@ export function ScoreResultBlock(props: ScoreResultBlockProps) {
         {full ? (
           <View style={styles.headerRow}>
             <View style={styles.teamName} />
-            <Text color="muted" variant="micro">
-              S1
-            </Text>
-            <Text color="muted" variant="micro">
-              S2
-            </Text>
+            {props.teams[0].scores.map((_score, scoreIndex) => (
+              <Text color="muted" key={`set-${scoreIndex + 1}`} variant="micro">
+                S{scoreIndex + 1}
+              </Text>
+            ))}
           </View>
         ) : null}
         <TeamRow full={full} team={props.teams[0]} winner={winnerIndex === 0} />

@@ -98,7 +98,7 @@ describe('game lifecycle', () => {
     ).toBeNull();
   });
 
-  it('accepts only valid straight-set results for four-player games', () => {
+  it('accepts valid two-set and three-set results for four-player games', () => {
     const teams = gameTeams(demoGames[3]);
     if (teams === null) throw new Error('Expected four-player teams.');
     expect(
@@ -130,6 +130,30 @@ describe('game lifecycle', () => {
         teams,
       }),
     ).toBeNull();
+    expect(
+      createGameResult({
+        game: {
+          ...demoGames[3],
+          setup: { ...demoGames[3].setup, durationMinutes: 60 },
+        },
+        sets: [
+          [6, 4],
+          [3, 6],
+          [7, 5],
+        ],
+        teams,
+      }),
+    ).toEqual({
+      sets: [
+        [6, 4],
+        [3, 6],
+        [7, 5],
+      ],
+      teams: [
+        ['alex-morgan', 'jamie-taylor'],
+        ['sam-kim', 'riley-brown'],
+      ],
+    });
     expect(
       createGameResult({
         game: demoGames[3],

@@ -19,6 +19,7 @@ import {
   gameTeamsForPartner,
   playerOrganisesGame,
   type Game,
+  type GameResultSets,
   type GameSetScore,
   type GameTeams,
 } from '../../../features/games/game';
@@ -33,27 +34,88 @@ type ResultLoadState =
   | Readonly<{ status: 'unavailable' }>
   | Readonly<{ game: Game; teams: GameTeams; status: 'ready' }>;
 
-type SetIndex = 0 | 1;
+type SetIndex = 0 | 1 | 2;
 type TeamIndex = 0 | 1;
-type ResultScores = readonly [GameSetScore, GameSetScore];
+type DraftGameSetScore = readonly [number | null, number | null];
+type DraftGameResultSets =
+  | readonly [DraftGameSetScore, DraftGameSetScore]
+  | readonly [DraftGameSetScore, DraftGameSetScore, DraftGameSetScore];
 
-const initialScores: ResultScores = [
-  [6, 4],
-  [6, 4],
+const initialScores: DraftGameResultSets = [
+  [null, null],
+  [null, null],
 ];
-const scoreIndexes: readonly (0 | 1)[] = [0, 1];
+const teamIndexes: readonly TeamIndex[] = [0, 1];
+
+function indexedSetScores(
+  scores: DraftGameResultSets,
+): readonly (readonly [SetIndex, DraftGameSetScore])[] {
+  return scores.length === 2
+    ? [
+        [0, scores[0]],
+        [1, scores[1]],
+      ]
+    : [
+        [0, scores[0]],
+        [1, scores[1]],
+        [2, scores[2]],
+      ];
+}
 
 function teamName(team: GameTeams[TeamIndex]) {
   return team.map((player) => player.name).join(' & ');
 }
 
 function updateSetScore(
-  score: GameSetScore,
+  score: DraftGameSetScore,
   teamIndex: TeamIndex,
   amount: -1 | 1,
-): GameSetScore {
-  const nextScore = Math.max(0, Math.min(7, score[teamIndex] + amount));
+): DraftGameSetScore {
+  const currentScore = score[teamIndex] ?? 0;
+  const nextScore = Math.max(0, Math.min(7, currentScore + amount));
   return teamIndex === 0 ? [nextScore, score[1]] : [score[0], nextScore];
+}
+
+function updateResultScores(
+  scores: DraftGameResultSets,
+  setIndex: SetIndex,
+  teamIndex: TeamIndex,
+  amount: -1 | 1,
+): DraftGameResultSets {
+  switch (setIndex) {
+    case 0: {
+      const updated = updateSetScore(scores[0], teamIndex, amount);
+      return scores.length === 2
+        ? [updated, scores[1]]
+        : [updated, scores[1], scores[2]];
+    }
+    case 1: {
+      const updated = updateSetScore(scores[1], teamIndex, amount);
+      return scores.length === 2
+        ? [scores[0], updated]
+        : [scores[0], updated, scores[2]];
+    }
+    case 2:
+      return scores.length === 3
+        ? [scores[0], scores[1], updateSetScore(scores[2], teamIndex, amount)]
+        : scores;
+  }
+}
+
+function completeSetScore(score: DraftGameSetScore): GameSetScore | null {
+  return score[0] === null || score[1] === null ? null : [score[0], score[1]];
+}
+
+function completeResultScores(
+  scores: DraftGameResultSets,
+): GameResultSets | null {
+  const firstSet = completeSetScore(scores[0]);
+  const secondSet = completeSetScore(scores[1]);
+  if (firstSet === null || secondSet === null) return null;
+  if (scores.length === 2) return [firstSet, secondSet];
+
+  const thirdSet = completeSetScore(scores[2]);
+  return thirdSet === null ? null : [firstSet, secondSet, thirdSet];
 }
 
 export default function GameResultScreen() {
@@ -65,7 +127,7 @@ export default function GameResultScreen() {
     status: 'loading',
   });
   const [partnerId, setPartnerId] = useState<string | null>(null);
-  const [scores, setScores] = useState<ResultScores>(initialScores);
+  const [scores, setScores] = useState<DraftGameResultSets>(initialScores);
   const [submissionFailed, setSubmissionFailed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -94,6 +156,7 @@ export default function GameResultScreen() {
       }
 
       setPartnerId(teams[0][1].id);
+      setScores(initialScores);
       setLoadState({ game, status: 'ready', teams });
     });
 
@@ -133,14 +196,18 @@ export default function GameResultScreen() {
   ) => {
     setSubmissionFailed(false);
     setScores((current) =>
-      setIndex === 0
-        ? [updateSetScore(current[0], teamIndex, amount), current[1]]
-        : [current[0], updateSetScore(current[1], teamIndex, amount)],
+      updateResultScores(current, setIndex, teamIndex, amount),
     );
   };
 
   const submitResult = async (game: Game, teams: GameTeams) => {
-    const result = createGameResult({ game, sets: scores, teams });
+    const completedScores = completeResultScores(scores);
+    if (completedScores === null) {
+      setSubmissionFailed(true);
+      return;
+    }
+
+    const result = createGameResult({ game, sets: completedScores, teams });
     if (result === null) {
       setSubmissionFailed(true);
       return;
@@ -203,7 +270,7 @@ export default function GameResultScreen() {
         />
         {submissionFailed ? (
           <BannerToast
-            message="Each set needs a valid 6-x, 7-5, or 7-6 score, with the same team winning both sets."
+            message="Enter every score. Each set needs a valid 6-x, 7-5, or 7-6 result, and one team must win at least two sets."
             onClose={() => setSubmissionFailed(false)}
             style="error"
             title="Check the score"
@@ -291,7 +358,7 @@ export default function GameResultScreen() {
                 <Text variant="bodyStrong">{teamName(selectedTeams[1])}</Text>
               </Stack>
             </Surface>
-            {scoreIndexes.map((setIndex) => (
+            {indexedSetScores(scores).map(([setIndex, setScore]) => (
               <Surface
                 key={`set-${setIndex + 1}`}
                 padding="space16"
@@ -301,21 +368,44 @@ export default function GameResultScreen() {
                   <Text accessibilityRole="header" variant="heading">
                     Set {setIndex + 1}
                   </Text>
-                  {scoreIndexes.map((teamIndex) => (
+                  {teamIndexes.map((teamIndex) => (
                     <Field
-                      decrementDisabled={scores[setIndex][teamIndex] === 0}
-                      incrementDisabled={scores[setIndex][teamIndex] === 7}
+                      decrementDisabled={setScore[teamIndex] === 0}
+                      incrementDisabled={setScore[teamIndex] === 7}
                       key={`set-${setIndex + 1}-team-${teamIndex + 1}`}
                       label={teamName(selectedTeams[teamIndex])}
                       onDecrement={() => changeScore(setIndex, teamIndex, -1)}
                       onIncrement={() => changeScore(setIndex, teamIndex, 1)}
                       type="stepper"
-                      value={String(scores[setIndex][teamIndex])}
+                      value={
+                        setScore[teamIndex] === null
+                          ? '—'
+                          : String(setScore[teamIndex])
+                      }
                     />
                   ))}
                 </Stack>
               </Surface>
             ))}
+            {scores.length === 2 ? (
+              <Button
+                label="Add set"
+                onPress={() =>
+                  setScores((current) =>
+                    current.length === 2
+                      ? [current[0], current[1], [null, null]]
+                      : current,
+                  )
+                }
+                style="secondary"
+              />
+            ) : (
+              <Button
+                label="Remove set 3"
+                onPress={() => setScores((current) => [current[0], current[1]])}
+                style="secondary"
+              />
+            )}
             {submitting ? (
               <Button label="Save result" loading style="primary" />
             ) : (

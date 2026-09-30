@@ -38,11 +38,14 @@ type AwaitingResultGameLifecycle = Readonly<{
 }>;
 
 export type GameSetScore = readonly [number, number];
+export type GameResultSets =
+  | readonly [GameSetScore, GameSetScore]
+  | readonly [GameSetScore, GameSetScore, GameSetScore];
 export type GameResultTeam = readonly [string, string];
 export type GameResultTeams = readonly [GameResultTeam, GameResultTeam];
 
 export type GameResult = Readonly<{
-  sets: readonly [GameSetScore, GameSetScore];
+  sets: GameResultSets;
   teams: GameResultTeams;
 }>;
 
@@ -247,11 +250,12 @@ export function createGameResult({
   teams,
 }: Readonly<{
   game: Game;
-  sets: readonly [GameSetScore, GameSetScore];
+  sets: GameResultSets;
   teams: GameTeams;
 }>): GameResult | null {
-  const firstWinner = setWinner(sets[0]);
-  const secondWinner = setWinner(sets[1]);
+  const winners = sets.map(setWinner);
+  const teamOneWins = winners.filter((winner) => winner === 0).length;
+  const teamTwoWins = winners.filter((winner) => winner === 1).length;
   if (
     gameResultTeams(game, {
       sets,
@@ -260,17 +264,27 @@ export function createGameResult({
         [teams[1][0].id, teams[1][1].id],
       ],
     }) === null ||
-    firstWinner === null ||
-    secondWinner !== firstWinner
+    winners.some((winner) => winner === null) ||
+    Math.max(teamOneWins, teamTwoWins) < 2 ||
+    teamOneWins === teamTwoWins
   ) {
     return null;
   }
 
+  const normalizedSets: GameResultSets =
+    sets.length === 2
+      ? [
+          [sets[0][0], sets[0][1]],
+          [sets[1][0], sets[1][1]],
+        ]
+      : [
+          [sets[0][0], sets[0][1]],
+          [sets[1][0], sets[1][1]],
+          [sets[2][0], sets[2][1]],
+        ];
+
   return {
-    sets: [
-      [sets[0][0], sets[0][1]],
-      [sets[1][0], sets[1][1]],
-    ],
+    sets: normalizedSets,
     teams: [
       [teams[0][0].id, teams[0][1].id],
       [teams[1][0].id, teams[1][1].id],
@@ -279,7 +293,10 @@ export function createGameResult({
 }
 
 export function gameResultWinner(result: GameResult): 0 | 1 {
-  return result.sets[0][0] > result.sets[0][1] ? 0 : 1;
+  const teamOneWins = result.sets.filter(
+    ([teamOne, teamTwo]) => teamOne > teamTwo,
+  ).length;
+  return teamOneWins >= 2 ? 0 : 1;
 }
 
 export function availableGameSpots(game: Game) {
