@@ -9,6 +9,8 @@ import {
   type SessionMutationResult,
   useSession,
 } from '../src/features/authentication/SessionContext';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => ({
@@ -48,7 +50,9 @@ async function renderWithSafeArea(node: React.ReactNode) {
         insets: { bottom: 34, left: 0, right: 0, top: 47 },
       }}
     >
-      {node}
+      <AppServicesProvider services={demoAppServices}>
+        {node}
+      </AppServicesProvider>
     </SafeAreaProvider>,
   );
 }

@@ -12,7 +12,6 @@ import { ChoiceChip, Field } from '../../../design-system/components/forms';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
-import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
 import {
   createGameResult,
   gameTeams,
@@ -23,10 +22,7 @@ import {
   type GameSetScore,
   type GameTeams,
 } from '../../../features/games/game';
-import {
-  findGameById,
-  transitionGameLifecycle,
-} from '../../../features/games/gameRepository';
+import { useAppServices } from '../../../features/services/AppServicesContext';
 
 type ResultLoadState =
   | Readonly<{ status: 'loading' }>
@@ -120,6 +116,7 @@ function completeResultScores(
 
 export default function GameResultScreen() {
   const router = useRouter();
+  const { currentPlayer, games } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const params = useLocalSearchParams();
   const gameId = typeof params.gameId === 'string' ? params.gameId : null;
@@ -137,7 +134,7 @@ export default function GameResultScreen() {
     }
 
     let active = true;
-    void findGameById(gameId).then((game) => {
+    void games.findById(gameId).then((game) => {
       if (!active) return;
       if (game === null) {
         setLoadState({ status: 'notFound' });
@@ -149,7 +146,7 @@ export default function GameResultScreen() {
         (game.lifecycle.status !== 'scheduled' &&
           game.lifecycle.status !== 'awaitingResult') ||
         teams === null ||
-        !playerOrganisesGame(game, demoCurrentGamePlayer.id)
+        !playerOrganisesGame(game, currentPlayer.id)
       ) {
         setLoadState({ status: 'unavailable' });
         return;
@@ -163,7 +160,7 @@ export default function GameResultScreen() {
     return () => {
       active = false;
     };
-  }, [gameId]);
+  }, [currentPlayer.id, gameId, games]);
   const displayedState: ResultLoadState =
     gameId === null ? { status: 'notFound' } : loadState;
   const selectedTeams =
@@ -217,7 +214,7 @@ export default function GameResultScreen() {
     setSubmissionFailed(false);
     try {
       if (game.lifecycle.status === 'scheduled') {
-        const awaitingResult = await transitionGameLifecycle(game.id, {
+        const awaitingResult = await games.transitionLifecycle(game.id, {
           at: new Date().toISOString(),
           type: 'finish',
         });
@@ -227,7 +224,7 @@ export default function GameResultScreen() {
         }
       }
 
-      const transition = await transitionGameLifecycle(game.id, {
+      const transition = await games.transitionLifecycle(game.id, {
         at: new Date().toISOString(),
         result,
         type: 'recordResult',

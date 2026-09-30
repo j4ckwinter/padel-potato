@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
@@ -10,21 +10,59 @@ import { PlayerPreferencesCard } from '../../../design-system/components/content
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
-import { findDemoPlayerById } from '../../../features/demo/demoData';
 import { PlayerStats } from '../../../features/players/PlayerStats';
+import type { PlayerDirectoryEntry } from '../../../features/players/player';
+import { useAppServices } from '../../../features/services/AppServicesContext';
+
+type PlayerLoadState =
+  | Readonly<{ status: 'loading' }>
+  | Readonly<{ playerId: string; status: 'notFound' }>
+  | Readonly<{
+      player: PlayerDirectoryEntry;
+      playerId: string;
+      status: 'ready';
+    }>;
 
 export default function PlayerDetailsScreen() {
   const router = useRouter();
+  const { players } = useAppServices();
   const params = useLocalSearchParams();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const playerId = typeof params.playerId === 'string' ? params.playerId : null;
-  const player = playerId === null ? null : findDemoPlayerById(playerId);
+  const [loadState, setLoadState] = useState<PlayerLoadState>({
+    status: 'loading',
+  });
   const [favouriteOverrides, setFavouriteOverrides] = useState<
     Readonly<Record<string, boolean>>
   >({});
+  const displayedState: PlayerLoadState =
+    playerId === null
+      ? { playerId: '', status: 'notFound' }
+      : 'playerId' in loadState && loadState.playerId === playerId
+        ? loadState
+        : { status: 'loading' };
+  const player =
+    displayedState.status === 'ready' ? displayedState.player : null;
   const favourite = player
     ? (favouriteOverrides[player.id] ?? player.favourite)
     : false;
+
+  useEffect(() => {
+    if (playerId === null) return undefined;
+
+    let active = true;
+    void players.findById(playerId).then((foundPlayer) => {
+      if (!active) return;
+      setLoadState(
+        foundPlayer === null
+          ? { playerId, status: 'notFound' }
+          : { player: foundPlayer, playerId, status: 'ready' },
+      );
+    });
+    return () => {
+      active = false;
+    };
+  }, [playerId, players]);
 
   const returnToPlayers = () => {
     if (router.canGoBack()) {
@@ -63,7 +101,13 @@ export default function PlayerDetailsScreen() {
           }
           title={player?.identity.name}
         />
-        {player ? (
+        {displayedState.status === 'loading' ? (
+          <Surface padding="space20" radius="radius20">
+            <Text color="textSecondary" variant="body">
+              Loading player...
+            </Text>
+          </Surface>
+        ) : player ? (
           <Stack gap="space16">
             <Surface padding="space20" radius="radius20">
               <Stack gap="space8">

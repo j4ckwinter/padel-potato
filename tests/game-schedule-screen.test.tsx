@@ -11,6 +11,8 @@ import { useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import CreateGameScreen from '../src/app/(tabs)/create';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => ({
@@ -36,7 +38,9 @@ function renderCreateGame(bottomInset = 0) {
         insets: { bottom: bottomInset, left: 0, right: 0, top: 47 },
       }}
     >
-      <CreateGameScreen />
+      <AppServicesProvider services={demoAppServices}>
+        <CreateGameScreen />
+      </AppServicesProvider>
     </SafeAreaProvider>,
   );
 }

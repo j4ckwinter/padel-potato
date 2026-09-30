@@ -5,7 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
 import GameResultScreen from '../src/app/(tabs)/games/result';
-import { demoParticipantsForCount } from '../src/features/demo/demoData';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
 import {
   incrementCurrentPlayers,
   initialGameDraft,
@@ -13,7 +13,7 @@ import {
   selectGameTime,
   updateGameVenue,
 } from '../src/features/game-creation/gameDraft';
-import { createGame, findGameById } from '../src/features/games/gameRepository';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 
 jest.mock('expo-router', () => {
   const focusedCallbacks = new WeakSet<() => void>();
@@ -40,7 +40,9 @@ function appScreen(children: React.ReactNode) {
         insets: { bottom: 34, left: 0, right: 0, top: 47 },
       }}
     >
-      {children}
+      <AppServicesProvider services={demoAppServices}>
+        {children}
+      </AppServicesProvider>
     </SafeAreaProvider>
   );
 }
@@ -120,7 +122,9 @@ describe('game result screen', () => {
       },
       pathname: '/games/[gameId]',
     });
-    await expect(findGameById('demo-my-next-game')).resolves.toMatchObject({
+    await expect(
+      demoAppServices.games.findById('demo-my-next-game'),
+    ).resolves.toMatchObject({
       lifecycle: {
         result: {
           sets: [
@@ -169,10 +173,7 @@ describe('game result screen', () => {
       selectGameTime(selectGameDay(fourPlayerDraft, '2026-10-02'), '18:30'),
       'Potato Padel Club',
     );
-    const game = await createGame({
-      draft,
-      participants: demoParticipantsForCount(4),
-    });
+    const game = await demoAppServices.games.create(draft);
     mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
     mockUseRouter.mockReturnValue({
       back: jest.fn(),

@@ -4,8 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GamesScreen from '../src/app/(tabs)/games';
-import { demoCurrentGamePlayer } from '../src/features/demo/demoData';
-import { joinGame } from '../src/features/games/gameRepository';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => {
@@ -33,7 +33,9 @@ function gamesScreen() {
         insets: { bottom: 34, left: 0, right: 0, top: 47 },
       }}
     >
-      <GamesScreen />
+      <AppServicesProvider services={demoAppServices}>
+        <GamesScreen />
+      </AppServicesProvider>
     </SafeAreaProvider>
   );
 }
@@ -182,7 +184,7 @@ describe('games screen', () => {
   });
 
   it('moves a joined game from Discover to My games', async () => {
-    await joinGame('demo-canary-social', demoCurrentGamePlayer);
+    await demoAppServices.games.join('demo-canary-social');
     const { rerender, screen } = await renderGamesScreen();
     const user = userEvent.setup();
 

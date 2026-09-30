@@ -13,49 +13,45 @@ import {
 } from '../../design-system/components/navigation';
 import { Stack } from '../../design-system/primitives';
 import { colors, sizing, spacing } from '../../design-system/tokens';
-import { demoCurrentGamePlayer } from '../../features/demo/demoData';
 import { availableGameSpots, type Game } from '../../features/games/game';
 import {
   gameListCard,
   gamesInCollection,
 } from '../../features/games/gameCardViewModel';
-import { listGames } from '../../features/games/gameRepository';
+import { useAppServices } from '../../features/services/AppServicesContext';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { currentPlayer, games: gameRepository } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const [games, setGames] = useState<readonly Game[] | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       let active = true;
-      void listGames().then((availableGames) => {
+      void gameRepository.list().then((availableGames) => {
         if (active) setGames(availableGames);
       });
       return () => {
         active = false;
       };
-    }, []),
+    }, [gameRepository]),
   );
 
   const myGames = useMemo(
-    () => gamesInCollection(games ?? [], 'mine', demoCurrentGamePlayer.id),
-    [games],
+    () => gamesInCollection(games ?? [], 'mine', currentPlayer.id),
+    [currentPlayer.id, games],
   );
   const nextGame = myGames.find((game) => availableGameSpots(game) === 0);
   const openGames = myGames.filter((game) => availableGameSpots(game) > 0);
   const visibleOpenGames = openGames.slice(0, 2);
   const recommendedGames = useMemo(
     () =>
-      gamesInCollection(
-        games ?? [],
-        'discover',
-        demoCurrentGamePlayer.id,
-      ).slice(0, 2),
-    [games],
+      gamesInCollection(games ?? [], 'discover', currentPlayer.id).slice(0, 2),
+    [currentPlayer.id, games],
   );
   const nextGameCard = nextGame
-    ? gameListCard(nextGame, demoCurrentGamePlayer.id)
+    ? gameListCard(nextGame, currentPlayer.id)
     : null;
   const openGameDetails = (gameId: string) =>
     router.push({ pathname: '/games/[gameId]', params: { gameId } });
@@ -112,7 +108,7 @@ export default function HomeScreen() {
             <Stack gap="space16">
               {visibleOpenGames.map((game) => (
                 <GameCard
-                  {...gameListCard(game, demoCurrentGamePlayer.id)}
+                  {...gameListCard(game, currentPlayer.id)}
                   key={game.id}
                   onViewGame={() => openGameDetails(game.id)}
                 />
@@ -130,7 +126,7 @@ export default function HomeScreen() {
             <Stack gap="space16">
               {recommendedGames.map((game) => (
                 <GameCard
-                  {...gameListCard(game, demoCurrentGamePlayer.id)}
+                  {...gameListCard(game, currentPlayer.id)}
                   key={game.id}
                   onViewGame={() => openGameDetails(game.id)}
                 />

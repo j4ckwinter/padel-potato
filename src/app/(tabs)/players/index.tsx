@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
@@ -15,7 +15,8 @@ import {
 } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
-import { demoPlayers, type DemoPlayer } from '../../../features/demo/demoData';
+import type { PlayerDirectoryEntry } from '../../../features/players/player';
+import { useAppServices } from '../../../features/services/AppServicesContext';
 
 const collectionOptions = ['My players', 'Discover'] as const;
 type CollectionOption = (typeof collectionOptions)[number];
@@ -31,7 +32,7 @@ function PlayerList({
   players,
 }: Readonly<{
   onViewPlayer: (playerId: string) => void;
-  players: readonly DemoPlayer[];
+  players: readonly PlayerDirectoryEntry[];
 }>) {
   return (
     <Stack gap="space8">
@@ -62,21 +63,35 @@ function NoPlayersFound() {
 
 export default function PlayersScreen() {
   const router = useRouter();
+  const { players: playerRepository } = useAppServices();
   const params = useLocalSearchParams();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const [collection, setCollection] = useState<CollectionOption>(() =>
     initialCollection(params.view),
   );
   const [playerQuery, setPlayerQuery] = useState('');
+  const [players, setPlayers] = useState<
+    readonly PlayerDirectoryEntry[] | null
+  >(null);
+
+  useEffect(() => {
+    let active = true;
+    void playerRepository.list().then((availablePlayers) => {
+      if (active) setPlayers(availablePlayers);
+    });
+    return () => {
+      active = false;
+    };
+  }, [playerRepository]);
 
   const matchingPlayers = useMemo(() => {
     const normalizedQuery = playerQuery.trim().toLocaleLowerCase();
-    return demoPlayers.filter(
+    return (players ?? []).filter(
       (player) =>
         normalizedQuery.length === 0 ||
         player.identity.name.toLocaleLowerCase().includes(normalizedQuery),
     );
-  }, [playerQuery]);
+  }, [playerQuery, players]);
   const favouritePlayers = matchingPlayers.filter((player) => player.favourite);
   const recentPlayers = matchingPlayers.filter(
     (player) => player.recentlyPlayedWith && !player.favourite,
@@ -118,7 +133,13 @@ export default function PlayersScreen() {
           type="search"
           value={playerQuery}
         />
-        {collection === 'My players' ? (
+        {players === null ? (
+          <Surface padding="space20" radius="radius20">
+            <Text color="textSecondary" variant="body">
+              Loading players...
+            </Text>
+          </Surface>
+        ) : collection === 'My players' ? (
           favouritePlayers.length + recentPlayers.length > 0 ? (
             <Stack gap="space20">
               {favouritePlayers.length > 0 ? (

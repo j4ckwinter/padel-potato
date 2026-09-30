@@ -24,11 +24,11 @@ import {
   upcomingScheduleDays,
   upcomingScheduleTimes,
 } from '../../features/game-creation/scheduleOptions';
-import { demoParticipantsForCount } from '../../features/demo/demoData';
-import { createGame } from '../../features/games/gameRepository';
+import { useAppServices } from '../../features/services/AppServicesContext';
 
 function CreateGameForm() {
   const router = useRouter();
+  const { games } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const {
     decrementCurrentPlayers,
@@ -65,10 +65,7 @@ function CreateGameForm() {
     setSubmitting(true);
     setSubmissionFailed(false);
     try {
-      const game = await createGame({
-        draft,
-        participants: demoParticipantsForCount(draft.setup.currentPlayerCount),
-      });
+      const game = await games.create(draft);
       resetDraft();
       router.replace({
         params: { created: 'true', gameId: game.id },

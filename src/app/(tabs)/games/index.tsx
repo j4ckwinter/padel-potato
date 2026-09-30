@@ -15,7 +15,6 @@ import {
 } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
-import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
 import type {
   CompletedGame,
   Game,
@@ -28,7 +27,7 @@ import {
   gamesInCollection,
   type GameCollection,
 } from '../../../features/games/gameCardViewModel';
-import { listGames } from '../../../features/games/gameRepository';
+import { useAppServices } from '../../../features/services/AppServicesContext';
 
 const collectionOptions = ['Discover', 'My games'] as const;
 type CollectionOption = (typeof collectionOptions)[number];
@@ -42,13 +41,15 @@ function requestedCollection(value: string | string[] | undefined) {
 }
 
 function ActiveGameCard({
+  currentPlayerId,
   game,
   onViewGame,
 }: Readonly<{
+  currentPlayerId: string;
   game: ScheduledGame;
   onViewGame: (gameId: string) => void;
 }>) {
-  const card = gameListCard(game, demoCurrentGamePlayer.id);
+  const card = gameListCard(game, currentPlayerId);
   const openGame = () => onViewGame(game.id);
 
   switch (card.variant) {
@@ -60,15 +61,17 @@ function ActiveGameCard({
 }
 
 function PreviousGameCard({
+  currentPlayerId,
   game,
   onViewGame,
 }: Readonly<{
+  currentPlayerId: string;
   game: CompletedGame;
   onViewGame: (gameId: string) => void;
 }>) {
   return (
     <GameCard
-      {...completedGameListCard(game, demoCurrentGamePlayer.id)}
+      {...completedGameListCard(game, currentPlayerId)}
       onViewResults={() => onViewGame(game.id)}
     />
   );
@@ -76,6 +79,7 @@ function PreviousGameCard({
 
 export default function GamesScreen() {
   const router = useRouter();
+  const { currentPlayer, games: gameRepository } = useAppServices();
   const params = useLocalSearchParams();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const collection = requestedCollection(params.collection);
@@ -85,13 +89,13 @@ export default function GamesScreen() {
   useFocusEffect(
     useCallback(() => {
       let active = true;
-      void listGames().then((availableGames) => {
+      void gameRepository.list().then((availableGames) => {
         if (active) setGames(availableGames);
       });
       return () => {
         active = false;
       };
-    }, []),
+    }, [gameRepository]),
   );
 
   const visibleGames = useMemo(() => {
@@ -99,25 +103,22 @@ export default function GamesScreen() {
     return gamesInCollection(
       games ?? [],
       collectionKey(collection),
-      demoCurrentGamePlayer.id,
+      currentPlayer.id,
     ).filter(
       (game) =>
         normalizedQuery.length === 0 ||
         game.venue.toLocaleLowerCase().includes(normalizedQuery),
     );
-  }, [collection, games, venueQuery]);
+  }, [collection, currentPlayer.id, games, venueQuery]);
   const previousGames = useMemo(() => {
     if (collection !== 'My games') return [];
     const normalizedQuery = venueQuery.trim().toLocaleLowerCase();
-    return completedGamesForPlayer(
-      games ?? [],
-      demoCurrentGamePlayer.id,
-    ).filter(
+    return completedGamesForPlayer(games ?? [], currentPlayer.id).filter(
       (game) =>
         normalizedQuery.length === 0 ||
         game.venue.toLocaleLowerCase().includes(normalizedQuery),
     );
-  }, [collection, games, venueQuery]);
+  }, [collection, currentPlayer.id, games, venueQuery]);
 
   const openGame = (gameId: string) =>
     router.push({ pathname: '/games/[gameId]', params: { gameId } });
@@ -170,6 +171,7 @@ export default function GamesScreen() {
             <Stack gap="space16">
               {visibleGames.map((game) => (
                 <ActiveGameCard
+                  currentPlayerId={currentPlayer.id}
                   game={game}
                   key={game.id}
                   onViewGame={openGame}
@@ -200,6 +202,7 @@ export default function GamesScreen() {
               <Stack gap="space16">
                 {previousGames.map((game) => (
                   <PreviousGameCard
+                    currentPlayerId={currentPlayer.id}
                     game={game}
                     key={game.id}
                     onViewGame={openGame}

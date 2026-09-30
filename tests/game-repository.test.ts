@@ -7,18 +7,11 @@ import {
   selectGameTime,
   updateGameVenue,
 } from '../src/features/game-creation/gameDraft';
-import {
-  demoCurrentGamePlayer,
-  demoParticipantsForCount,
-} from '../src/features/demo/demoData';
+import { demoCurrentGamePlayer } from '../src/features/demo/demoData';
+import { createDemoGameRepository } from '../src/features/demo/demoGameRepository';
 import { createGameResult, gameTeams } from '../src/features/games/game';
-import {
-  createGame,
-  findGameById,
-  joinGame,
-  listGames,
-  transitionGameLifecycle,
-} from '../src/features/games/gameRepository';
+
+const games = createDemoGameRepository(demoCurrentGamePlayer);
 
 describe('game repository', () => {
   it('creates and retrieves a game from a complete draft', async () => {
@@ -27,10 +20,7 @@ describe('game repository', () => {
       'Potato Padel Club',
     );
 
-    const created = await createGame({
-      draft,
-      participants: demoParticipantsForCount(draft.setup.currentPlayerCount),
-    });
+    const created = await games.create(draft);
 
     expect(created).toMatchObject({
       lifecycle: { status: 'scheduled' },
@@ -46,19 +36,16 @@ describe('game repository', () => {
       venue: 'Potato Padel Club',
     });
     expect(created.participants).toHaveLength(1);
-    await expect(findGameById(created.id)).resolves.toEqual(created);
+    await expect(games.findById(created.id)).resolves.toEqual(created);
   });
 
   it('rejects an incomplete draft', async () => {
-    await expect(
-      createGame({
-        draft: initialGameDraft,
-        participants: demoParticipantsForCount(1),
-      }),
-    ).rejects.toThrow('A game requires a venue, day, and start time.');
+    await expect(games.create(initialGameDraft)).rejects.toThrow(
+      'A game requires a venue, day, and start time.',
+    );
   });
 
-  it('rejects participant records that disagree with the setup', async () => {
+  it('creates the selected number of current players', async () => {
     const twoPlayerDraft = incrementCurrentPlayers(
       updateGameVenue(
         selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
@@ -66,16 +53,37 @@ describe('game repository', () => {
       ),
     );
 
-    await expect(
-      createGame({
-        draft: twoPlayerDraft,
-        participants: demoParticipantsForCount(1),
-      }),
-    ).rejects.toThrow('The selected players must match the game setup.');
+    await expect(games.create(twoPlayerDraft)).resolves.toMatchObject({
+      participants: [
+        {
+          player: { id: demoCurrentGamePlayer.id },
+          role: 'organiser',
+        },
+        { role: 'player' },
+      ],
+    });
+  });
+
+  it('creates games for the player bound to the repository', async () => {
+    const anotherPlayer = {
+      id: 'another-player',
+      initials: 'AP',
+      name: 'Another Player',
+      rating: '4.0',
+    } as const;
+    const anotherPlayersGames = createDemoGameRepository(anotherPlayer);
+    const draft = updateGameVenue(
+      selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
+      'Potato Padel Club',
+    );
+
+    await expect(anotherPlayersGames.create(draft)).resolves.toMatchObject({
+      participants: [{ player: anotherPlayer, role: 'organiser' }],
+    });
   });
 
   it('resolves demo games opened from the Games tab', async () => {
-    await expect(findGameById('demo-canary-social')).resolves.toMatchObject({
+    await expect(games.findById('demo-canary-social')).resolves.toMatchObject({
       id: 'demo-canary-social',
       name: 'Sunday Social Padel',
       venue: 'Canary Wharf Padel',
@@ -83,10 +91,7 @@ describe('game repository', () => {
   });
 
   it('joins an open game once and exposes the updated record', async () => {
-    const result = await joinGame(
-      'demo-shoreditch-evening',
-      demoCurrentGamePlayer,
-    );
+    const result = await games.join('demo-shoreditch-evening');
 
     expect(result).toMatchObject({
       game: {
@@ -98,15 +103,15 @@ describe('game repository', () => {
       },
       status: 'joined',
     });
+    await expect(games.join('demo-shoreditch-evening')).resolves.toMatchObject({
+      status: 'alreadyJoined',
+    });
     await expect(
-      joinGame('demo-shoreditch-evening', demoCurrentGamePlayer),
-    ).resolves.toMatchObject({ status: 'alreadyJoined' });
-    await expect(
-      findGameById('demo-shoreditch-evening'),
+      games.findById('demo-shoreditch-evening'),
     ).resolves.toMatchObject({
       participants: [{ role: 'organiser' }, { role: 'player' }],
     });
-    await expect(listGames()).resolves.toEqual(
+    await expect(games.list()).resolves.toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: 'demo-shoreditch-evening' }),
       ]),
@@ -114,23 +119,25 @@ describe('game repository', () => {
   });
 
   it('reports full and missing games without changing them', async () => {
-    const anotherPlayer = {
+    const otherPlayerGames = createDemoGameRepository({
       id: 'another-player',
       initials: 'AP',
       name: 'Another Player',
       rating: '4.0',
-    };
+    });
 
     await expect(
-      joinGame('demo-my-next-game', anotherPlayer),
-    ).resolves.toMatchObject({ status: 'full' });
-    await expect(joinGame('missing-game', anotherPlayer)).resolves.toEqual({
+      otherPlayerGames.join('demo-my-next-game'),
+    ).resolves.toMatchObject({
+      status: 'full',
+    });
+    await expect(otherPlayerGames.join('missing-game')).resolves.toEqual({
       status: 'notFound',
     });
   });
 
   it('persists lifecycle transitions and closes inactive games to players', async () => {
-    const transition = await transitionGameLifecycle('demo-my-next-game', {
+    const transition = await games.transitionLifecycle('demo-my-next-game', {
       at: '2026-10-08T19:30:00.000Z',
       type: 'finish',
     });
@@ -141,14 +148,9 @@ describe('game repository', () => {
     if (transition.status !== 'transitioned') {
       throw new Error('Expected the game to await its result.');
     }
-    await expect(
-      joinGame(transition.game.id, {
-        id: 'late-player',
-        initials: 'LP',
-        name: 'Late Player',
-        rating: '4.2',
-      }),
-    ).resolves.toMatchObject({ status: 'unavailable' });
+    await expect(games.join(transition.game.id)).resolves.toMatchObject({
+      status: 'unavailable',
+    });
     const teams = gameTeams(transition.game);
     if (teams === null) throw new Error('Expected four-player teams.');
     const result = createGameResult({
@@ -161,7 +163,7 @@ describe('game repository', () => {
     });
     if (result === null) throw new Error('Expected a valid result.');
     await expect(
-      transitionGameLifecycle(transition.game.id, {
+      games.transitionLifecycle(transition.game.id, {
         at: '2026-10-08T20:00:00.000Z',
         result,
         type: 'recordResult',
@@ -171,13 +173,13 @@ describe('game repository', () => {
       status: 'transitioned',
     });
     await expect(
-      transitionGameLifecycle(transition.game.id, {
+      games.transitionLifecycle(transition.game.id, {
         at: '2026-10-08T20:30:00.000Z',
         type: 'cancel',
       }),
     ).resolves.toMatchObject({ status: 'invalidTransition' });
     await expect(
-      transitionGameLifecycle('missing-game', {
+      games.transitionLifecycle('missing-game', {
         at: '2026-10-08T20:30:00.000Z',
         type: 'cancel',
       }),

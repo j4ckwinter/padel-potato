@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import PlayerDetailsScreen from '../src/app/(tabs)/players/[playerId]';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
@@ -33,7 +35,9 @@ async function renderPlayerDetails(playerId: string, canGoBackValue = true) {
           insets: { bottom: 34, left: 0, right: 0, top: 47 },
         }}
       >
-        <PlayerDetailsScreen />
+        <AppServicesProvider services={demoAppServices}>
+          <PlayerDetailsScreen />
+        </AppServicesProvider>
       </SafeAreaProvider>,
     ),
   };

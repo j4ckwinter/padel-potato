@@ -16,11 +16,12 @@ import {
 } from '../../design-system/components/navigation';
 import { Inline, Stack, Surface, Text } from '../../design-system/primitives';
 import { colors, sizing, spacing } from '../../design-system/tokens';
-import { demoCurrentUser } from '../../features/demo/demoData';
 import { PlayerStats } from '../../features/players/PlayerStats';
+import { useAppServices } from '../../features/services/AppServicesContext';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { currentUser } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
@@ -35,29 +36,39 @@ export default function ProfileScreen() {
         <AppHeader page="profile" />
         <Surface padding="space20" radius="radius20">
           <Inline align="center" gap="space16">
-            <Avatar
-              accessibilityLabel={`${demoCurrentUser.identity.name} profile photo`}
-              initials={demoCurrentUser.identity.initials}
-              presence={demoCurrentUser.identity.presence}
-              size={48}
-            />
+            {'source' in currentUser.identity &&
+            currentUser.identity.source !== undefined ? (
+              <Avatar
+                accessibilityLabel={`${currentUser.identity.name} profile photo`}
+                presence={currentUser.identity.presence}
+                size={48}
+                source={currentUser.identity.source}
+              />
+            ) : (
+              <Avatar
+                accessibilityLabel={`${currentUser.identity.name} profile photo`}
+                initials={currentUser.identity.initials}
+                presence={currentUser.identity.presence}
+                size={48}
+              />
+            )}
             <Stack gap="space4">
               <Text accessibilityRole="header" variant="title">
-                {demoCurrentUser.identity.name}
+                {currentUser.identity.name}
               </Text>
               <Text color="textSecondary" variant="body">
-                {demoCurrentUser.level} · Rating {demoCurrentUser.stats.rating}
+                {currentUser.level} · Rating {currentUser.stats.rating}
               </Text>
             </Stack>
           </Inline>
         </Surface>
-        <PlayerStats {...demoCurrentUser.stats} />
+        <PlayerStats {...currentUser.stats} />
         <PlayerPreferencesCard
           content="full"
-          days={demoCurrentUser.preferences.days}
-          level={demoCurrentUser.level}
-          side={demoCurrentUser.preferences.side}
-          timeOfDay={demoCurrentUser.preferences.timeOfDay}
+          days={currentUser.preferences.days}
+          level={currentUser.level}
+          side={currentUser.preferences.side}
+          timeOfDay={currentUser.preferences.timeOfDay}
         />
         <Stack gap="space12">
           <SectionHeader title="Account" />

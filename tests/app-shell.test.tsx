@@ -4,10 +4,12 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
 import RootLayout from '../src/app/_layout';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
 import {
   type SessionMutationResult,
   useSession,
 } from '../src/features/authentication/SessionContext';
+import { useAppServicesLoadState } from '../src/features/services/AppServicesContext';
 
 jest.mock('expo-font', () => ({
   useFonts: jest.fn(),
@@ -46,6 +48,12 @@ jest.mock('../src/features/authentication/SessionContext', () => ({
   useSession: jest.fn(),
 }));
 
+jest.mock('../src/features/services/AppServicesContext', () => ({
+  SessionAppServicesProvider: ({ children }: { children?: React.ReactNode }) =>
+    children,
+  useAppServicesLoadState: jest.fn(),
+}));
+
 jest.mock('expo-splash-screen', () => ({
   hideAsync: jest.fn(() => Promise.resolve(true)),
   preventAutoHideAsync: jest.fn(() => Promise.resolve(true)),
@@ -59,11 +67,15 @@ jest.mock('react-native-safe-area-context', () => {
     SafeAreaProvider: ({ children }: { children?: React.ReactNode }) => (
       <View testID="safe-area-provider">{children}</View>
     ),
+    SafeAreaView: ({ children }: { children?: React.ReactNode }) => (
+      <View>{children}</View>
+    ),
   };
 });
 
 const mockUseFonts = jest.mocked(useFonts);
 const mockUseSession = jest.mocked(useSession);
+const mockUseAppServicesLoadState = jest.mocked(useAppServicesLoadState);
 const mockPreventAutoHideAsync = jest.mocked(SplashScreen.preventAutoHideAsync);
 const mockHideAsync = jest.mocked(SplashScreen.hideAsync);
 
@@ -81,6 +93,10 @@ describe('application shell startup', () => {
       signInDemo: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: { status: 'signedOut' },
+    });
+    mockUseAppServicesLoadState.mockReturnValue({
+      retry: jest.fn(),
+      state: { status: 'inactive' },
     });
   });
 
@@ -135,11 +151,43 @@ describe('application shell startup', () => {
         status: 'signedIn',
       },
     });
+    mockUseAppServicesLoadState.mockReturnValue({
+      retry: jest.fn(),
+      state: { services: demoAppServices, status: 'ready' },
+    });
 
     const screen = await render(<RootLayout />);
 
     expect(screen.getByTestId('route-(tabs)')).toBeOnTheScreen();
     expect(screen.getByTestId('route-settings')).toBeOnTheScreen();
     expect(screen.queryByTestId('route-sign-in')).toBeNull();
+  });
+
+  it('does not expose app routes until the current profile is ready', async () => {
+    mockUseFonts.mockReturnValue([true, null]);
+    mockUseSession.mockReturnValue({
+      signInDemo: successfulSessionAction(),
+      signOut: successfulSessionAction(),
+      state: {
+        session: {
+          kind: 'demo',
+          startedAt: '2026-09-30T12:00:00.000Z',
+          userId: 'alex-morgan',
+          version: 1,
+        },
+        status: 'signedIn',
+      },
+    });
+    mockUseAppServicesLoadState.mockReturnValue({
+      retry: jest.fn(),
+      state: { status: 'profileMissing' },
+    });
+
+    const screen = await render(<RootLayout />);
+
+    expect(
+      screen.getByRole('header', { name: 'Profile not found' }),
+    ).toBeOnTheScreen();
+    expect(screen.queryByTestId('app-router')).toBeNull();
   });
 });

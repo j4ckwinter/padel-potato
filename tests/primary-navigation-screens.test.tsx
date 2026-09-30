@@ -5,11 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import HomeScreen from '../src/app/(tabs)';
 import NotificationsScreen from '../src/app/notifications';
-import { demoCurrentGamePlayer } from '../src/features/demo/demoData';
-import {
-  joinGame,
-  transitionGameLifecycle,
-} from '../src/features/games/gameRepository';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => {
@@ -27,6 +24,21 @@ jest.mock('expo-router', () => {
 
 const mockUseRouter = jest.mocked(useRouter);
 
+function appScreen(children: React.ReactNode) {
+  return (
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { height: 844, width: 390, x: 0, y: 0 },
+        insets: { bottom: 34, left: 0, right: 0, top: 47 },
+      }}
+    >
+      <AppServicesProvider services={demoAppServices}>
+        {children}
+      </AppServicesProvider>
+    </SafeAreaProvider>
+  );
+}
+
 function router({ canGoBack = false }: { canGoBack?: boolean } = {}) {
   const value = {
     back: jest.fn(),
@@ -43,16 +55,7 @@ describe('primary navigation screens', () => {
   it('connects Home to games and notifications', async () => {
     const navigation = router();
     const user = userEvent.setup();
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <HomeScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<HomeScreen />));
 
     expect(screen.getByRole('header', { name: 'Padel Potato' })).toBeVisible();
     expect(screen.queryByText('Hi, Alex')).not.toBeOnTheScreen();
@@ -108,19 +111,10 @@ describe('primary navigation screens', () => {
   });
 
   it('shows two open games with a plural heading', async () => {
-    await joinGame('demo-shoreditch-evening', demoCurrentGamePlayer);
+    await demoAppServices.games.join('demo-shoreditch-evening');
     router();
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <HomeScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<HomeScreen />));
 
     expect(await screen.findByText('Wednesday Evening Padel')).toBeVisible();
     expect(screen.getAllByText('Wednesday Evening Padel')).toHaveLength(1);
@@ -130,19 +124,10 @@ describe('primary navigation screens', () => {
   });
 
   it('limits open games on Home and links to the complete collection', async () => {
-    await joinGame('demo-canary-social', demoCurrentGamePlayer);
+    await demoAppServices.games.join('demo-canary-social');
     const navigation = router();
     const user = userEvent.setup();
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <HomeScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<HomeScreen />));
 
     expect(await screen.findByText('Wednesday Evening Padel')).toBeVisible();
     expect(screen.getByText('Sunday Social Padel')).toBeVisible();
@@ -160,22 +145,13 @@ describe('primary navigation screens', () => {
   });
 
   it('hides Coming up when the player has no next game', async () => {
-    await transitionGameLifecycle('demo-my-next-game', {
+    await demoAppServices.games.transitionLifecycle('demo-my-next-game', {
       at: '2026-10-01T20:30:00.000Z',
       type: 'finish',
     });
     router();
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <HomeScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<HomeScreen />));
 
     expect(await screen.findByText('Recommended for you')).toBeVisible();
     expect(

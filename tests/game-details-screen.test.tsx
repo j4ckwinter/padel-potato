@@ -4,10 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
-import {
-  demoCurrentGamePlayer,
-  demoParticipantsForCount,
-} from '../src/features/demo/demoData';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
 import {
   incrementCurrentPlayers,
   initialGameDraft,
@@ -15,11 +12,7 @@ import {
   selectGameTime,
   updateGameVenue,
 } from '../src/features/game-creation/gameDraft';
-import {
-  createGame,
-  findGameById,
-  transitionGameLifecycle,
-} from '../src/features/games/gameRepository';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 
 jest.mock('expo-router', () => {
   const focusedCallbacks = new WeakSet<() => void>();
@@ -38,16 +31,28 @@ jest.mock('expo-router', () => {
 const mockUseLocalSearchParams = jest.mocked(useLocalSearchParams);
 const mockUseRouter = jest.mocked(useRouter);
 
+function appScreen(children: React.ReactNode) {
+  return (
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { height: 844, width: 390, x: 0, y: 0 },
+        insets: { bottom: 34, left: 0, right: 0, top: 47 },
+      }}
+    >
+      <AppServicesProvider services={demoAppServices}>
+        {children}
+      </AppServicesProvider>
+    </SafeAreaProvider>
+  );
+}
+
 describe('game details screen', () => {
   it('displays the game created by the submission flow', async () => {
     const draft = updateGameVenue(
       selectGameTime(selectGameDay(initialGameDraft, '2026-10-02'), '18:30'),
       'Potato Padel Club',
     );
-    const game = await createGame({
-      draft,
-      participants: demoParticipantsForCount(draft.setup.currentPlayerCount),
-    });
+    const game = await demoAppServices.games.create(draft);
     mockUseLocalSearchParams.mockReturnValue({
       created: 'true',
       gameId: game.id,
@@ -64,16 +69,7 @@ describe('game details screen', () => {
     } as unknown as ReturnType<typeof useRouter>);
     const user = userEvent.setup();
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <GameDetailsScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<GameDetailsScreen />));
 
     expect(await screen.findByText('Friday Evening Padel')).toBeVisible();
     expect(
@@ -128,10 +124,7 @@ describe('game details screen', () => {
       selectGameTime(selectGameDay(fullDraft, '2026-10-02'), '18:30'),
       'Potato Padel Club',
     );
-    const game = await createGame({
-      draft,
-      participants: demoParticipantsForCount(draft.setup.currentPlayerCount),
-    });
+    const game = await demoAppServices.games.create(draft);
     mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
     mockUseRouter.mockReturnValue({
       back: jest.fn(),
@@ -140,16 +133,7 @@ describe('game details screen', () => {
       replace: jest.fn(),
     } as unknown as ReturnType<typeof useRouter>);
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <GameDetailsScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<GameDetailsScreen />));
 
     expect(await screen.findByText('Game full')).toBeVisible();
     expect(
@@ -174,16 +158,7 @@ describe('game details screen', () => {
     } as unknown as ReturnType<typeof useRouter>);
     const user = userEvent.setup();
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <GameDetailsScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<GameDetailsScreen />));
 
     await user.press(screen.getByRole('button', { name: 'Back' }));
 
@@ -203,16 +178,7 @@ describe('game details screen', () => {
     } as unknown as ReturnType<typeof useRouter>);
     const user = userEvent.setup();
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <GameDetailsScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<GameDetailsScreen />));
 
     expect(await screen.findByText('Open game · 1 spot left')).toBeVisible();
     expect(
@@ -235,20 +201,22 @@ describe('game details screen', () => {
     expect(
       screen.queryByRole('button', { name: 'Join game' }),
     ).not.toBeOnTheScreen();
-    await expect(findGameById('demo-stratford-morning')).resolves.toMatchObject(
-      {
-        participants: expect.arrayContaining([
-          expect.objectContaining({
-            player: expect.objectContaining({ id: demoCurrentGamePlayer.id }),
-            role: 'player',
+    await expect(
+      demoAppServices.games.findById('demo-stratford-morning'),
+    ).resolves.toMatchObject({
+      participants: expect.arrayContaining([
+        expect.objectContaining({
+          player: expect.objectContaining({
+            id: demoAppServices.currentPlayer.id,
           }),
-        ]),
-      },
-    );
+          role: 'player',
+        }),
+      ]),
+    });
   });
 
   it('shows inactive game details without join or invitation actions', async () => {
-    await transitionGameLifecycle('demo-canary-social', {
+    await demoAppServices.games.transitionLifecycle('demo-canary-social', {
       at: '2026-10-04T12:30:00.000Z',
       type: 'finish',
     });
@@ -262,16 +230,7 @@ describe('game details screen', () => {
       replace: jest.fn(),
     } as unknown as ReturnType<typeof useRouter>);
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <GameDetailsScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<GameDetailsScreen />));
 
     expect(await screen.findByText('Awaiting result')).toBeVisible();
     expect(
@@ -295,16 +254,7 @@ describe('game details screen', () => {
     } as unknown as ReturnType<typeof useRouter>);
     const user = userEvent.setup();
 
-    const screen = await render(
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { height: 844, width: 390, x: 0, y: 0 },
-          insets: { bottom: 34, left: 0, right: 0, top: 47 },
-        }}
-      >
-        <GameDetailsScreen />
-      </SafeAreaProvider>,
-    );
+    const screen = await render(appScreen(<GameDetailsScreen />));
 
     await user.press(
       await screen.findByRole('button', { name: 'Enter result' }),
@@ -314,7 +264,9 @@ describe('game details screen', () => {
       params: { gameId: 'demo-my-next-game' },
       pathname: '/games/result',
     });
-    await expect(findGameById('demo-my-next-game')).resolves.toMatchObject({
+    await expect(
+      demoAppServices.games.findById('demo-my-next-game'),
+    ).resolves.toMatchObject({
       lifecycle: { status: 'scheduled' },
     });
   });

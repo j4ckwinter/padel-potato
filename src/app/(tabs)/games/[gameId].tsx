@@ -16,7 +16,6 @@ import { BannerToast } from '../../../design-system/components/feedback';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
-import { demoCurrentGamePlayer } from '../../../features/demo/demoData';
 import {
   availableGameSpots,
   gameResultWinner,
@@ -27,7 +26,7 @@ import {
   playerOrganisesGame,
   type Game,
 } from '../../../features/games/game';
-import { findGameById, joinGame } from '../../../features/games/gameRepository';
+import { useAppServices } from '../../../features/services/AppServicesContext';
 
 type GameLoadState =
   | Readonly<{ status: 'loading' }>
@@ -69,13 +68,16 @@ function gameAvailability(game: Game) {
   }
 }
 
-function CompletedResult({ game }: Readonly<{ game: Game }>) {
+function CompletedResult({
+  currentPlayerId,
+  game,
+}: Readonly<{ currentPlayerId: string; game: Game }>) {
   if (game.lifecycle.status !== 'completed') return null;
   const teams = gameResultTeams(game, game.lifecycle.result);
   if (teams === null) return null;
 
   const currentTeam = teams.findIndex((team) =>
-    team.some((player) => player.id === demoCurrentGamePlayer.id),
+    team.some((player) => player.id === currentPlayerId),
   );
   if (currentTeam === -1) return null;
 
@@ -126,6 +128,7 @@ function CompletedResult({ game }: Readonly<{ game: Game }>) {
 
 export default function GameDetailsScreen() {
   const router = useRouter();
+  const { currentPlayer, games } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const params = useLocalSearchParams();
   const gameId = typeof params.gameId === 'string' ? params.gameId : null;
@@ -141,7 +144,7 @@ export default function GameDetailsScreen() {
       if (gameId === null) return undefined;
 
       let active = true;
-      void findGameById(gameId).then((game) => {
+      void games.findById(gameId).then((game) => {
         if (!active) return;
         setLoadState(game ? { game, status: 'ready' } : { status: 'notFound' });
       });
@@ -149,7 +152,7 @@ export default function GameDetailsScreen() {
       return () => {
         active = false;
       };
-    }, [gameId]),
+    }, [gameId, games]),
   );
   const displayedState: GameLoadState =
     gameId === null ? { status: 'notFound' } : loadState;
@@ -175,7 +178,7 @@ export default function GameDetailsScreen() {
     setJoining(true);
     setJoinFeedback(null);
     try {
-      const result = await joinGame(game.id, demoCurrentGamePlayer);
+      const result = await games.join(game.id);
       switch (result.status) {
         case 'joined':
           setLoadState({ game: result.game, status: 'ready' });
@@ -322,7 +325,10 @@ export default function GameDetailsScreen() {
                 </Stack>
               </Stack>
             </Surface>
-            <CompletedResult game={displayedState.game} />
+            <CompletedResult
+              currentPlayerId={currentPlayer.id}
+              game={displayedState.game}
+            />
             <Stack gap="space12">
               <Text accessibilityRole="header" variant="heading">
                 Players
@@ -334,14 +340,14 @@ export default function GameDetailsScreen() {
                       initials: participant.player.initials,
                       name: participant.player.name,
                       presence:
-                        participant.player.id === demoCurrentGamePlayer.id
+                        participant.player.id === currentPlayer.id
                           ? 'away'
                           : 'offline',
                       supportingText: `${participant.role === 'organiser' ? 'Organiser' : 'Player'} · Rating ${participant.player.rating}`,
                     }}
                     key={participant.player.id}
                     onViewPlayer={() =>
-                      participant.player.id === demoCurrentGamePlayer.id
+                      participant.player.id === currentPlayer.id
                         ? router.push('/profile')
                         : openPlayer(participant.player.id)
                     }
@@ -349,10 +355,7 @@ export default function GameDetailsScreen() {
                   />
                 ))}
                 {isScheduledGame(displayedState.game) &&
-                playerOrganisesGame(
-                  displayedState.game,
-                  demoCurrentGamePlayer.id,
-                )
+                playerOrganisesGame(displayedState.game, currentPlayer.id)
                   ? Array.from(
                       { length: availableGameSpots(displayedState.game) },
                       (_, index) => (
@@ -368,10 +371,7 @@ export default function GameDetailsScreen() {
             </Stack>
             {(displayedState.game.lifecycle.status === 'scheduled' ||
               displayedState.game.lifecycle.status === 'awaitingResult') &&
-            playerOrganisesGame(
-              displayedState.game,
-              demoCurrentGamePlayer.id,
-            ) &&
+            playerOrganisesGame(displayedState.game, currentPlayer.id) &&
             gameTeams(displayedState.game) !== null ? (
               <Button
                 label="Enter result"
@@ -380,7 +380,7 @@ export default function GameDetailsScreen() {
               />
             ) : null}
             {isScheduledGame(displayedState.game) &&
-            !gameHasPlayer(displayedState.game, demoCurrentGamePlayer.id) &&
+            !gameHasPlayer(displayedState.game, currentPlayer.id) &&
             availableGameSpots(displayedState.game) > 0 ? (
               joining ? (
                 <Button label="Join game" loading style="primary" />

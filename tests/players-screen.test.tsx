@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import PlayersScreen from '../src/app/(tabs)/players';
+import { demoAppServices } from '../src/features/demo/demoAppServices';
+import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => ({
@@ -30,7 +32,9 @@ async function renderPlayersScreen(view?: string) {
           insets: { bottom: 34, left: 0, right: 0, top: 47 },
         }}
       >
-        <PlayersScreen />
+        <AppServicesProvider services={demoAppServices}>
+          <PlayersScreen />
+        </AppServicesProvider>
       </SafeAreaProvider>,
     ),
   };

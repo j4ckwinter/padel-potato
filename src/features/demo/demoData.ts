@@ -1,28 +1,9 @@
-import type { PlayerItemIdentity } from '../../design-system/components/content';
-import type { Game, GameParticipants, GamePlayer } from '../games/game';
-
-export type DemoPlayerProfile = Readonly<{
-  bio: string;
-  id: string;
-  identity: PlayerItemIdentity;
-  level: string;
-  preferences: Readonly<{
-    days: string;
-    side: string;
-    timeOfDay: string;
-  }>;
-  stats: Readonly<{
-    gamesPlayed: string;
-    rating: string;
-    winRate: string;
-  }>;
-}>;
-
-export type DemoPlayer = DemoPlayerProfile &
-  Readonly<{
-    favourite: boolean;
-    recentlyPlayedWith: boolean;
-  }>;
+import type { Game } from '../games/game';
+import {
+  gamePlayerFromProfile,
+  type PlayerDirectoryEntry,
+  type PlayerProfile,
+} from '../players/player';
 
 export const demoCurrentUser = {
   bio: 'Friendly right-side player who enjoys organised evening games.',
@@ -40,7 +21,7 @@ export const demoCurrentUser = {
     timeOfDay: 'Evenings',
   },
   stats: { gamesPlayed: '48', rating: '4.7', winRate: '68%' },
-} as const satisfies DemoPlayerProfile;
+} as const satisfies PlayerProfile;
 
 export const demoPlayers = [
   {
@@ -138,60 +119,14 @@ export const demoPlayers = [
     stats: { gamesPlayed: '63', rating: '4.9', winRate: '74%' },
     recentlyPlayedWith: false,
   },
-] as const satisfies readonly DemoPlayer[];
+] as const satisfies readonly PlayerDirectoryEntry[];
 
-export function findDemoPlayerById(id: string) {
-  return demoPlayers.find((player) => player.id === id) ?? null;
-}
-
-function gamePlayer(profile: DemoPlayerProfile): GamePlayer {
-  if (typeof profile.identity.initials !== 'string') {
-    throw new Error('Demo game players require initials.');
-  }
-
-  return {
-    id: profile.id,
-    initials: profile.identity.initials,
-    name: profile.identity.name,
-    rating: profile.stats.rating,
-  };
-}
-
-export const demoCurrentGamePlayer = gamePlayer(demoCurrentUser);
-const jamie = gamePlayer(demoPlayers[0]);
-const sam = gamePlayer(demoPlayers[1]);
-const riley = gamePlayer(demoPlayers[2]);
-const taylor = gamePlayer(demoPlayers[3]);
-const morgan = gamePlayer(demoPlayers[4]);
-
-export function demoParticipantsForCount(
-  count: 1 | 2 | 3 | 4,
-): GameParticipants {
-  const organiser = {
-    player: demoCurrentGamePlayer,
-    role: 'organiser',
-  } as const;
-
-  switch (count) {
-    case 1:
-      return [organiser];
-    case 2:
-      return [organiser, { player: jamie, role: 'player' }];
-    case 3:
-      return [
-        organiser,
-        { player: jamie, role: 'player' },
-        { player: sam, role: 'player' },
-      ];
-    case 4:
-      return [
-        organiser,
-        { player: jamie, role: 'player' },
-        { player: sam, role: 'player' },
-        { player: riley, role: 'player' },
-      ];
-  }
-}
+export const demoCurrentGamePlayer = gamePlayerFromProfile(demoCurrentUser);
+const jamie = gamePlayerFromProfile(demoPlayers[0]);
+const sam = gamePlayerFromProfile(demoPlayers[1]);
+const riley = gamePlayerFromProfile(demoPlayers[2]);
+const taylor = gamePlayerFromProfile(demoPlayers[3]);
+const morgan = gamePlayerFromProfile(demoPlayers[4]);
 
 export const demoGames = [
   {
