@@ -1,0 +1,1 @@
+-- Add local-only product fixtures here when repository integration starts.
