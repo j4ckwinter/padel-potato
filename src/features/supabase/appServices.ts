@@ -1,10 +1,10 @@
-import { createDemoGameRepository } from '../demo/demoGameRepository';
 import { demoPlayers } from '../demo/demoData';
 import { gamePlayerFromProfile, type PlayerProfile } from '../players/player';
 import type { PlayerRepository } from '../players/playerRepository';
 import type { AppServices } from '../services/AppServicesContext';
 import { getSupabaseClient, type PadelSupabaseClient } from './client';
 import type { Database } from './database.types';
+import { createSupabaseGameRepository } from './gameRepository';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
@@ -75,7 +75,7 @@ export async function loadSupabaseAppServices(
   return {
     currentPlayer,
     currentUser,
-    games: createDemoGameRepository(currentPlayer),
+    games: createSupabaseGameRepository(client),
     players: playerRepositoryFor(currentUser),
   };
 }

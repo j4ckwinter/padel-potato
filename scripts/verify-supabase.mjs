@@ -35,15 +35,16 @@ async function signedInClient(name) {
     auth: { persistSession: false },
   });
   const email = `${crypto.randomUUID()}@example.com`;
+  const password = `${crypto.randomUUID()}Aa1!`;
   const { data, error } = await client.auth.signUp({
     email,
-    password: `${crypto.randomUUID()}Aa1!`,
+    password,
     options: { data: { full_name: name } },
   });
   if (error || !data.session || !data.user) {
     throw error ?? new Error(`Could not sign in ${name}.`);
   }
-  return { client, userId: data.user.id };
+  return { client, email, password, userId: data.user.id };
 }
 
 const organiser = await signedInClient('Alex Morgan');
@@ -102,14 +103,176 @@ if (secondJoin.error || secondJoin.data !== 'already_joined') {
   );
 }
 
+const thirdPlayer = await signedInClient('Sam Kim');
+const fourthPlayer = await signedInClient('Riley Brown');
+for (const joiningPlayer of [thirdPlayer, fourthPlayer]) {
+  const join = await joiningPlayer.client.rpc('join_game', { game_id: gameId });
+  if (join.error || join.data !== 'joined') {
+    throw join.error ?? new Error(`Expected joined, received ${join.data}.`);
+  }
+}
+
+const forbiddenTransition = await player.client.rpc(
+  'transition_game_lifecycle',
+  {
+    game_id: gameId,
+    lifecycle_command: 'finish',
+    occurred_at: '2026-10-07T20:00:00.000Z',
+  },
+);
+if (forbiddenTransition.error || forbiddenTransition.data !== 'forbidden') {
+  throw (
+    forbiddenTransition.error ??
+    new Error(`Expected forbidden, received ${forbiddenTransition.data}.`)
+  );
+}
+
+const finish = await organiser.client.rpc('transition_game_lifecycle', {
+  game_id: gameId,
+  lifecycle_command: 'finish',
+  occurred_at: '2026-10-07T20:00:00.000Z',
+});
+if (finish.error || finish.data !== 'transitioned') {
+  throw (
+    finish.error ?? new Error(`Expected transitioned, received ${finish.data}.`)
+  );
+}
+
+const invalidResult = await organiser.client.rpc('transition_game_lifecycle', {
+  game_id: gameId,
+  lifecycle_command: 'record_result',
+  occurred_at: '2026-10-07T20:04:00.000Z',
+  result_data: {
+    sets: [
+      [6, 6],
+      [6, 4],
+    ],
+    teams: [
+      [organiser.userId, player.userId],
+      [thirdPlayer.userId, fourthPlayer.userId],
+    ],
+  },
+});
+if (invalidResult.error || invalidResult.data !== 'invalid_transition') {
+  throw (
+    invalidResult.error ??
+    new Error(`Expected invalid_transition, received ${invalidResult.data}.`)
+  );
+}
+
+const recordResult = await organiser.client.rpc('transition_game_lifecycle', {
+  game_id: gameId,
+  lifecycle_command: 'record_result',
+  occurred_at: '2026-10-07T20:05:00.000Z',
+  result_data: {
+    sets: [
+      [6, 4],
+      [7, 5],
+    ],
+    teams: [
+      [organiser.userId, player.userId],
+      [thirdPlayer.userId, fourthPlayer.userId],
+    ],
+  },
+});
+if (recordResult.error || recordResult.data !== 'transitioned') {
+  throw (
+    recordResult.error ??
+    new Error(`Expected transitioned, received ${recordResult.data}.`)
+  );
+}
+
 const { count, error: participantError } = await organiser.client
   .from('game_participants')
   .select('*', { count: 'exact', head: true })
   .eq('game_id', gameId);
-if (participantError || count !== 2) {
+if (participantError || count !== 4) {
   throw (
-    participantError ?? new Error(`Expected 2 participants, received ${count}.`)
+    participantError ?? new Error(`Expected 4 participants, received ${count}.`)
   );
+}
+
+const { data: completedGame, error: completedGameError } =
+  await organiser.client
+    .from('games')
+    .select('status, ended_at, completed_at')
+    .eq('id', gameId)
+    .single();
+if (
+  completedGameError ||
+  completedGame.status !== 'completed' ||
+  !completedGame.ended_at ||
+  !completedGame.completed_at
+) {
+  throw (
+    completedGameError ?? new Error('The completed game was not persisted.')
+  );
+}
+
+const { count: setCount, error: setError } = await organiser.client
+  .from('game_result_sets')
+  .select('*', { count: 'exact', head: true })
+  .eq('game_id', gameId);
+if (setError || setCount !== 2) {
+  throw setError ?? new Error(`Expected 2 result sets, received ${setCount}.`);
+}
+
+const restoredClient = createClient(url, publishableKey, {
+  auth: { persistSession: false },
+});
+const restoredSession = await restoredClient.auth.signInWithPassword({
+  email: organiser.email,
+  password: organiser.password,
+});
+if (restoredSession.error) throw restoredSession.error;
+const restoredGame = await restoredClient
+  .from('games')
+  .select('id, status')
+  .eq('id', gameId)
+  .single();
+if (restoredGame.error || restoredGame.data.status !== 'completed') {
+  throw (
+    restoredGame.error ??
+    new Error('A restored session could not load its game.')
+  );
+}
+
+const { data: cancelledGameId, error: cancelledGameCreateError } =
+  await organiser.client.rpc('create_game', {
+    duration_minutes: 60,
+    format: 'Social game',
+    game_name: 'Cancelled game',
+    starts_at: '2026-10-08T18:30:00.000Z',
+    venue_name: 'Potato Padel Club',
+  });
+if (cancelledGameCreateError || !cancelledGameId) {
+  throw (
+    cancelledGameCreateError ??
+    new Error('Could not create cancellation fixture.')
+  );
+}
+const cancellation = await organiser.client.rpc('transition_game_lifecycle', {
+  game_id: cancelledGameId,
+  lifecycle_command: 'cancel',
+  occurred_at: '2026-10-01T12:00:00.000Z',
+});
+if (cancellation.error || cancellation.data !== 'transitioned') {
+  throw (
+    cancellation.error ??
+    new Error(`Expected transitioned, received ${cancellation.data}.`)
+  );
+}
+const cancelledGame = await organiser.client
+  .from('games')
+  .select('status, cancelled_at')
+  .eq('id', cancelledGameId)
+  .single();
+if (
+  cancelledGame.error ||
+  cancelledGame.data.status !== 'cancelled' ||
+  !cancelledGame.data.cancelled_at
+) {
+  throw cancelledGame.error ?? new Error('The cancellation was not persisted.');
 }
 
 const attemptedUpdate = await organiser.client
@@ -124,5 +287,5 @@ if (attemptedUpdate.error || attemptedUpdate.data.length !== 0) {
 }
 
 process.stdout.write(
-  'Supabase verification passed: profile trigger, RLS, game creation, and atomic joining.\n',
+  'Supabase verification passed: profile trigger, RLS, game creation, joining, lifecycle, results, and session restoration.\n',
 );

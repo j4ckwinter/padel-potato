@@ -306,6 +306,15 @@ export type Database = {
       };
       join_game: { Args: { game_id: string }; Returns: string };
       profile_initials: { Args: { display_name: string }; Returns: string };
+      transition_game_lifecycle: {
+        Args: {
+          game_id: string;
+          lifecycle_command: string;
+          occurred_at: string;
+          result_data?: Json;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       game_format: 'Social game' | 'Competitive game';
