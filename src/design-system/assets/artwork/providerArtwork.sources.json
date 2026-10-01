@@ -1,0 +1,15 @@
+{
+  "google": {
+    "source": "https://accounts.google.com/gsi/client",
+    "guidelines": "https://developers.google.com/identity/branding-guidelines",
+    "sourceSha256": "8c224590e974e9281333347945df10a8ee22f2c7c1217e3f12258fb07bc95fc5",
+    "adaptation": "Exact four-colour logo paths and 48 x 48 viewBox from the Google Identity Services client. No path changes. The current downloadable button assets use conic gradients and foreignObject, which are unsuitable for native SVG rendering."
+  },
+  "apple": {
+    "source": "https://devimages-cdn.apple.com/design/resources/download/Logo-Sign-in-with-Apple.dmg",
+    "guidelines": "https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple/",
+    "archivePath": "Sign in with Apple - Logo Only/SVG/Logo - SIWA - Logo-only - Black.svg",
+    "assetSha256": "7ee1bc1706bc228f37a937de914e2ebe1605aebba3c35f11c3963087573fc11f",
+    "adaptation": "Exact black glyph path. The supplied square white background is provided by the button instead. Translation by (-18, -15.5) centres the 15 x 19 glyph in a 20 x 20 canvas without changing its proportions."
+  }
+}

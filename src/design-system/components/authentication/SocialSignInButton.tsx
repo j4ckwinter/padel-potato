@@ -104,10 +104,19 @@ export function SocialSignInButton(props: SocialSignInButtonProps) {
             },
           ]}
         >
-          <Artwork />
-          <Text color={textColor} variant="bodyStrong">
+          <View style={styles.artworkSlot}>
+            {provider === 'apple' ? (
+              <View style={styles.appleMark}>
+                <Artwork />
+              </View>
+            ) : (
+              <Artwork />
+            )}
+          </View>
+          <Text color={textColor} style={styles.label} variant="bodyStrong">
             {label}
           </Text>
+          <View style={styles.artworkSlot} />
         </View>
       )}
     </Pressable>
@@ -115,6 +124,20 @@ export function SocialSignInButton(props: SocialSignInButtonProps) {
 }
 
 const styles = StyleSheet.create({
+  appleMark: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radii.radiusFull,
+    height: sizing.size32,
+    justifyContent: 'center',
+    width: sizing.size32,
+  },
+  artworkSlot: {
+    alignItems: 'center',
+    flexShrink: 0,
+    justifyContent: 'center',
+    width: sizing.size32,
+  },
   content: {
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -126,6 +149,12 @@ const styles = StyleSheet.create({
     minHeight: sizing.size48,
     justifyContent: 'center',
     paddingHorizontal: spacing.space16,
+    paddingVertical: spacing.space4,
     width: '100%',
+  },
+  label: {
+    flex: 1,
+    minWidth: 0 as const,
+    textAlign: 'center',
   },
 });
