@@ -9,6 +9,9 @@ void WebBrowser.maybeCompleteAuthSession();
 
 export type AuthProvider = 'apple' | 'google';
 
+export type AuthSignInRequest =
+  AuthProvider | Readonly<{ method: 'email'; email: string; password: string }>;
+
 export type AuthMutationResult =
   | Readonly<{ status: 'success' }>
   | Readonly<{ status: 'cancelled' }>
@@ -16,7 +19,7 @@ export type AuthMutationResult =
 
 export type AuthGateway = Readonly<{
   restoreSession: () => Promise<Session | null>;
-  signIn: (provider: AuthProvider) => Promise<AuthMutationResult>;
+  signIn: (request: AuthSignInRequest) => Promise<AuthMutationResult>;
   signOut: () => Promise<AuthMutationResult>;
   subscribe: (listener: (session: Session | null) => void) => () => void;
 }>;
@@ -60,7 +63,27 @@ export function createSupabaseAuthGateway(
       if (error) throw error;
       return data.session ? appSession(data.session.user.id) : null;
     },
-    signIn: async (provider) => {
+    signIn: async (request) => {
+      if (typeof request !== 'string') {
+        try {
+          const { error } = await client.auth.signInWithPassword({
+            email: request.email,
+            password: request.password,
+          });
+          return error
+            ? {
+                message: 'Check your email and password and try again.',
+                status: 'error',
+              }
+            : { status: 'success' };
+        } catch {
+          return {
+            message: 'Check your email and password and try again.',
+            status: 'error',
+          };
+        }
+      }
+      const provider = request;
       const redirectTo = makeRedirectUri({ scheme: 'padel-potato' });
       const { data, error } = await client.auth.signInWithOAuth({
         options: { redirectTo, skipBrowserRedirect: true },

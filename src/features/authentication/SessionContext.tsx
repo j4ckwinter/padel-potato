@@ -11,7 +11,7 @@ import {
 import {
   type AuthGateway,
   type AuthMutationResult,
-  type AuthProvider,
+  type AuthSignInRequest,
   getDeviceAuthGateway,
 } from './authGateway';
 import type { Session } from './session';
@@ -24,7 +24,7 @@ export type SessionState =
 export type SessionMutationResult = AuthMutationResult;
 
 type SessionContextValue = Readonly<{
-  signIn: (provider: AuthProvider) => Promise<SessionMutationResult>;
+  signIn: (request: AuthSignInRequest) => Promise<SessionMutationResult>;
   signOut: () => Promise<SessionMutationResult>;
   state: SessionState;
 }>;
@@ -73,7 +73,7 @@ export function SessionProvider({
   }, [gateway]);
 
   const signIn = useCallback(
-    (provider: AuthProvider) => gateway.signIn(provider),
+    (request: AuthSignInRequest) => gateway.signIn(request),
     [gateway],
   );
 

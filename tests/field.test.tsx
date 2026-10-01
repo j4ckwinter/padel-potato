@@ -31,6 +31,60 @@ import { colors } from '../src/design-system/tokens';
 describe('Field public contract', () => {});
 
 describe('Field editable branches', () => {
+  it('forwards email keyboard configuration and preserves ordinary text defaults', async () => {
+    const screen = await render(
+      <Field
+        autoCapitalize="none"
+        keyboardType="email-address"
+        label="Email"
+        onChangeText={jest.fn()}
+        type="text"
+        value=""
+      />,
+    );
+    const email = screen.getByLabelText('Email');
+    expect(email.props.keyboardType).toBe('email-address');
+    expect(email.props.autoCorrect).toBe(false);
+    expect(email.props.autoCapitalize).toBe('none');
+
+    await screen.rerender(
+      <Field label="Name" onChangeText={jest.fn()} type="text" value="" />,
+    );
+    const name = screen.getByLabelText('Name');
+    expect(name.props.keyboardType).toBeUndefined();
+    expect(name.props.autoCapitalize).toBeUndefined();
+    expect(name.props.autoCorrect).toBeUndefined();
+
+    await screen.rerender(
+      <Field
+        label="Password"
+        onChangeText={jest.fn()}
+        type="password"
+        value=""
+      />,
+    );
+    const password = screen.getByLabelText('Password');
+    expect(password.props.autoCapitalize).toBe('none');
+    expect(password.props.autoCorrect).toBe(false);
+    expect(password.props.secureTextEntry).toBe(true);
+  });
+
+  it('forwards explicitly chosen default keyboard and sentence capitalization', async () => {
+    const screen = await render(
+      <Field
+        autoCapitalize="sentences"
+        keyboardType="default"
+        label="Notes"
+        onChangeText={jest.fn()}
+        type="text"
+        value=""
+      />,
+    );
+    const input = screen.getByLabelText('Notes');
+    expect(input.props.keyboardType).toBe('default');
+    expect(input.props.autoCapitalize).toBe('sentences');
+  });
+
   it('uses a native controlled TextInput and retains empty required copy until rerender', async () => {
     const onChangeText = jest.fn();
     const user = userEvent.setup();
@@ -443,6 +497,37 @@ describe('Field focus, geometry, and content boundaries', () => {
 });
 
 describe('Field runtime closure', () => {
+  it.each([
+    ['keyboardType', 'numeric'],
+    ['autoCapitalize', 'words'],
+    ['autoCorrect', false],
+  ])('rejects unsupported editable configuration %s=%s', (key, value) => {
+    expect(() =>
+      Field({
+        label: 'Email',
+        onChangeText: jest.fn(),
+        type: 'text',
+        value: '',
+        [key]: value,
+      } as unknown as FieldProps),
+    ).toThrow(/Unsupported design-system value/u);
+  });
+
+  it.each(['keyboardType', 'autoCapitalize'])(
+    'rejects editable-only %s on trigger fields',
+    (key) => {
+      expect(() =>
+        Field({
+          label: 'Date',
+          onPress: jest.fn(),
+          type: 'date',
+          value: 'Today',
+          [key]: key === 'keyboardType' ? 'default' : 'none',
+        } as unknown as FieldProps),
+      ).toThrow(/Unsupported design-system value/u);
+    },
+  );
+
   it('rejects malformed and impossible cast combinations', () => {
     expect(() =>
       Field({

@@ -29,6 +29,8 @@ const commonRuntimeProps = [
 ] as const;
 const editableRuntimeProps = [
   ...commonRuntimeProps,
+  'autoCapitalize',
+  'keyboardType',
   'onChangeText',
   'placeholder',
   'readOnly',
@@ -111,6 +113,21 @@ export function validateFieldProps(props: FieldProps) {
 
   if (editable) {
     const editableProps = props as EditableFieldProps;
+    if (
+      typeof editableProps.keyboardType !== 'undefined' &&
+      !['default', 'email-address'].includes(editableProps.keyboardType)
+    ) {
+      unsupportedValue(editableProps.keyboardType, [
+        'default',
+        'email-address',
+      ]);
+    }
+    if (
+      typeof editableProps.autoCapitalize !== 'undefined' &&
+      !['none', 'sentences'].includes(editableProps.autoCapitalize)
+    ) {
+      unsupportedValue(editableProps.autoCapitalize, ['none', 'sentences']);
+    }
     if (!isCallback(editableProps.onChangeText)) {
       unsupportedValue(editableProps.onChangeText, ['onChangeText callback']);
     }

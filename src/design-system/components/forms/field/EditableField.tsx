@@ -40,6 +40,18 @@ export function EditableField(props: EditableFieldProps) {
         testID="field-control"
       >
         <TextInput
+          {...(props.type === 'password'
+            ? { autoCapitalize: 'none' as const, autoCorrect: false }
+            : {})}
+          {...(props.keyboardType === 'email-address'
+            ? { autoCorrect: false }
+            : {})}
+          {...(props.autoCapitalize === undefined
+            ? {}
+            : { autoCapitalize: props.autoCapitalize })}
+          {...(props.keyboardType === undefined
+            ? {}
+            : { keyboardType: props.keyboardType })}
           accessibilityHint={fieldAccessibilityHint(props)}
           accessibilityLabel={fieldAccessibleName(
             props.label,

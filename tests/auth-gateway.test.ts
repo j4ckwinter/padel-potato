@@ -80,4 +80,45 @@ describe('Supabase auth callback', () => {
       refresh_token: 'refresh-token',
     });
   });
+  it('signs in with email credentials without opening OAuth', async () => {
+    jest.mocked(WebBrowser.openAuthSessionAsync).mockClear();
+    const signInWithPassword = jest.fn(() => Promise.resolve({ error: null }));
+    const client = {
+      auth: { signInWithPassword },
+    } as unknown as PadelSupabaseClient;
+    const result = await createSupabaseAuthGateway(client).signIn({
+      method: 'email',
+      email: 'player@example.com',
+      password: ' password ',
+    });
+    expect(result).toEqual({ status: 'success' });
+    expect(signInWithPassword).toHaveBeenCalledWith({
+      email: 'player@example.com',
+      password: ' password ',
+    });
+    expect(WebBrowser.openAuthSessionAsync).not.toHaveBeenCalled();
+  });
+
+  it.each(['returned', 'thrown'] as const)(
+    'hides %s credential errors',
+    async (failure) => {
+      const signInWithPassword = jest.fn(async () => {
+        if (failure === 'thrown') throw new Error('private backend detail');
+        return { error: { message: 'private backend detail' } };
+      });
+      const client = {
+        auth: { signInWithPassword },
+      } as unknown as PadelSupabaseClient;
+      expect(
+        await createSupabaseAuthGateway(client).signIn({
+          method: 'email',
+          email: 'player@example.com',
+          password: 'password',
+        }),
+      ).toEqual({
+        message: 'Check your email and password and try again.',
+        status: 'error',
+      });
+    },
+  );
 });

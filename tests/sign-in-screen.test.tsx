@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 import { act, render, userEvent } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -43,7 +43,9 @@ describe('sign-in screen', () => {
     ).toBeVisible();
     expect(screen.getByText('Ready for your next match?')).toBeVisible();
     expect(
-      screen.getByText(/Sign in or create your profile with Apple or Google/u),
+      screen.getByText(
+        /Use your existing account to sign in with email, or continue with Apple or Google/u,
+      ),
     ).toBeVisible();
   });
 
@@ -144,5 +146,108 @@ describe('sign-in screen', () => {
     expect(
       await screen.findByRole('alert', { name: /Could not sign in/u }),
     ).toBeVisible();
+  });
+  it('submits trimmed email and preserves password whitespace', async () => {
+    const gateway = createAuthGateway(null);
+    const user = userEvent.setup();
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={gateway}>
+          <SignInScreen />
+        </SessionProvider>,
+      ),
+    );
+    const submit = screen.getByRole('button', { name: 'Sign in with email' });
+    expect(submit).toBeDisabled();
+    await user.type(screen.getByLabelText('Email'), ' player@example.com ');
+    await user.type(screen.getByLabelText('Password'), ' password ');
+    expect(submit).toBeEnabled();
+    await user.press(submit);
+    expect(gateway.signIn).toHaveBeenCalledWith({
+      method: 'email',
+      email: 'player@example.com',
+      password: ' password ',
+    });
+  });
+
+  it('keeps all sign-in actions and credentials disabled while email is pending', async () => {
+    let complete: (result: AuthMutationResult) => void = () => undefined;
+    const gateway = {
+      ...createAuthGateway(null),
+      signIn: () =>
+        new Promise<AuthMutationResult>((resolve) => {
+          complete = resolve;
+        }),
+    };
+    const user = userEvent.setup();
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={gateway}>
+          <SignInScreen />
+        </SessionProvider>,
+      ),
+    );
+    await user.type(screen.getByLabelText('Email'), 'player@example.com');
+    await user.type(screen.getByLabelText('Password'), 'password');
+    await user.press(
+      screen.getByRole('button', { name: 'Sign in with email' }),
+    );
+    for (const name of [
+      'Continue with Google',
+      'Continue with Apple',
+      'Sign in with email',
+    ]) {
+      expect(screen.getByRole('button', { name })).toBeDisabled();
+    }
+    expect(
+      screen.getByRole('button', { name: 'Sign in with email', busy: true }),
+    ).toBeDisabled();
+    expect(screen.getByLabelText('Email')).toBeDisabled();
+    expect(screen.getByLabelText('Password')).toBeDisabled();
+    await act(async () =>
+      complete({ status: 'error', message: 'private backend detail' }),
+    );
+    expect(
+      screen.getByRole('alert', {
+        name: 'Could not sign in. Check your email and password and try again.',
+      }),
+    ).toBeVisible();
+    expect(screen.queryByText('private backend detail')).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Sign in with email' }),
+    ).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: 'Continue with Apple' }),
+    ).toBeEnabled();
+  });
+
+  it('clears pending and allows retry after a thrown credential failure', async () => {
+    const signIn = jest
+      .fn<() => Promise<AuthMutationResult>>()
+      .mockRejectedValueOnce(new Error('private backend detail'))
+      .mockResolvedValueOnce({ status: 'success' });
+    const gateway = { ...createAuthGateway(null), signIn };
+    const user = userEvent.setup();
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={gateway}>
+          <SignInScreen />
+        </SessionProvider>,
+      ),
+    );
+    await user.type(screen.getByLabelText('Email'), 'player@example.com');
+    await user.type(screen.getByLabelText('Password'), 'password');
+    await user.press(
+      screen.getByRole('button', { name: 'Sign in with email' }),
+    );
+    expect(
+      await screen.findByRole('alert', { name: /Could not sign in/u }),
+    ).toBeVisible();
+    expect(screen.queryByText('private backend detail')).toBeNull();
+    await user.press(
+      screen.getByRole('button', { name: 'Sign in with email' }),
+    );
+    expect(signIn).toHaveBeenCalledTimes(2);
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });

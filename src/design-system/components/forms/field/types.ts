@@ -50,6 +50,8 @@ type FieldPlaceholderProps = Readonly<{ placeholder?: string }>;
 export type EditableFieldProps = FieldBaseProps &
   FieldPlaceholderProps &
   Readonly<{
+    autoCapitalize?: 'none' | 'sentences';
+    keyboardType?: 'default' | 'email-address';
     onChangeText: (value: string) => void;
     readOnly?: boolean;
     type: EditableFieldType;
