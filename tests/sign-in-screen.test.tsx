@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { render, userEvent } from '@testing-library/react-native';
+import { act, render, userEvent } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import SignInScreen from '../src/app/sign-in';
@@ -8,6 +8,7 @@ import {
   useSession,
 } from '../src/features/authentication/SessionContext';
 import { createAuthGateway } from './helpers/authGateway';
+import type { AuthMutationResult } from '../src/features/authentication/authGateway';
 
 function SessionStatus() {
   const { state } = useSession();
@@ -28,6 +29,61 @@ function appScreen(children: React.ReactNode) {
 }
 
 describe('sign-in screen', () => {
+  it('welcomes players and explains account access', async () => {
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={createAuthGateway(null)}>
+          <SignInScreen />
+        </SessionProvider>,
+      ),
+    );
+
+    expect(
+      screen.getByRole('header', { name: 'Find your next padel game' }),
+    ).toBeVisible();
+    expect(screen.getByText('Ready for your next match?')).toBeVisible();
+    expect(
+      screen.getByText(/Sign in or create your profile with Apple or Google/u),
+    ).toBeVisible();
+  });
+
+  it('disables both providers while pending and restores them after cancellation', async () => {
+    let complete: (result: AuthMutationResult) => void = () => undefined;
+    const gateway = {
+      ...createAuthGateway(null),
+      signIn: () =>
+        new Promise<AuthMutationResult>((resolve) => {
+          complete = resolve;
+        }),
+    };
+    const user = userEvent.setup();
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={gateway}>
+          <SignInScreen />
+        </SessionProvider>,
+      ),
+    );
+
+    await user.press(
+      screen.getByRole('button', { name: 'Continue with Google' }),
+    );
+    expect(
+      screen.getByRole('button', { name: 'Continue with Google' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Continue with Apple' }),
+    ).toBeDisabled();
+
+    await act(async () => complete({ status: 'cancelled' }));
+    expect(
+      screen.getByRole('button', { name: 'Continue with Google' }),
+    ).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: 'Continue with Apple' }),
+    ).toBeEnabled();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
   it('starts Apple sign-in', async () => {
     const gateway = createAuthGateway(null);
     const user = userEvent.setup();
@@ -44,7 +100,9 @@ describe('sign-in screen', () => {
     );
 
     expect(gateway.signIn).toHaveBeenCalledWith('apple');
-    expect(screen.queryByText('Welcome to Padel Potato')).toBeNull();
+    expect(
+      screen.queryByRole('header', { name: 'Find your next padel game' }),
+    ).toBeNull();
   });
 
   it('starts Google sign-in', async () => {

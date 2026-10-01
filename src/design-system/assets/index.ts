@@ -4,3 +4,4 @@ export {
   type BrandLockupStackedProps,
 } from './BrandLockupStacked';
 export { Icon, type IconName, type IconProps } from './Icon';
+export { WelcomeMascot } from './WelcomeMascot';
