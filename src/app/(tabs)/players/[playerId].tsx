@@ -1,27 +1,23 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
+import { Button } from '../../../design-system/components/actions';
+import {
+  useSocialRefresh,
+  useSocialResource,
+  useSocialMutationState,
+} from '../../../features/players/useSocialRefresh';
 import { PlayerPreferencesCard } from '../../../design-system/components/content';
 import { AppHeader } from '../../../design-system/components/navigation';
 import { Stack, Surface, Text } from '../../../design-system/primitives';
 import { colors, sizing, spacing } from '../../../design-system/tokens';
 import { PlayerStats } from '../../../features/players/PlayerStats';
-import type { PlayerDirectoryEntry } from '../../../features/players/player';
 import { useAppServices } from '../../../features/services/AppServicesContext';
-
-type PlayerLoadState =
-  | Readonly<{ status: 'loading' }>
-  | Readonly<{ playerId: string; status: 'notFound' }>
-  | Readonly<{
-      player: PlayerDirectoryEntry;
-      playerId: string;
-      status: 'ready';
-    }>;
 
 export default function PlayerDetailsScreen() {
   const router = useRouter();
@@ -29,40 +25,33 @@ export default function PlayerDetailsScreen() {
   const params = useLocalSearchParams();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const playerId = typeof params.playerId === 'string' ? params.playerId : null;
-  const [loadState, setLoadState] = useState<PlayerLoadState>({
-    status: 'loading',
-  });
-  const [favouriteOverrides, setFavouriteOverrides] = useState<
-    Readonly<Record<string, boolean>>
-  >({});
-  const displayedState: PlayerLoadState =
-    playerId === null
-      ? { playerId: '', status: 'notFound' }
-      : 'playerId' in loadState && loadState.playerId === playerId
-        ? loadState
-        : { status: 'loading' };
-  const player =
-    displayedState.status === 'ready' ? displayedState.player : null;
-  const favourite = player
-    ? (favouriteOverrides[player.id] ?? player.favourite)
-    : false;
-
+  const { version, refresh } = useSocialRefresh();
+  const requestScope = useRef({ version: 0 });
   useEffect(() => {
-    if (playerId === null) return undefined;
-
-    let active = true;
-    void players.findById(playerId).then((foundPlayer) => {
-      if (!active) return;
-      setLoadState(
-        foundPlayer === null
-          ? { playerId, status: 'notFound' }
-          : { player: foundPlayer, playerId, status: 'ready' },
-      );
-    });
+    const scope = requestScope.current;
+    scope.version++;
     return () => {
-      active = false;
+      scope.version++;
     };
-  }, [playerId, players]);
+  }, [players, playerId]);
+  const [saving, setSaving] = useSocialMutationState(
+    players,
+    playerId ?? '',
+    false,
+  );
+  const [error, setError] = useSocialMutationState<string | null>(
+    players,
+    playerId ?? '',
+    null,
+  );
+  const load = useCallback(
+    () => (playerId ? players.findById(playerId) : Promise.resolve(null)),
+    [playerId, players],
+  );
+  const resource = useSocialResource(load, version);
+  const displayedState = resource;
+  const player = resource.status === 'ready' ? resource.value : null;
+  const favourite = player?.favourite ?? false;
 
   const returnToPlayers = () => {
     if (router.canGoBack()) {
@@ -85,12 +74,19 @@ export default function PlayerDetailsScreen() {
         <AppHeader
           favouriteChecked={favourite}
           onBackPress={returnToPlayers}
-          onFavouriteChange={(checked) => {
-            if (player) {
-              setFavouriteOverrides((overrides) => ({
-                ...overrides,
-                [player.id]: checked,
-              }));
+          onFavouriteChange={async (checked) => {
+            if (!player || saving) return;
+            const scope = requestScope.current.version;
+            setSaving(true);
+            setError(null);
+            try {
+              await players.setFavourite(player.id, checked);
+              if (scope === requestScope.current.version) refresh();
+            } catch {
+              if (scope === requestScope.current.version)
+                setError('Could not save favourite. Please try again.');
+            } finally {
+              if (scope === requestScope.current.version) setSaving(false);
             }
           }}
           page="playerDetails"
@@ -101,7 +97,20 @@ export default function PlayerDetailsScreen() {
           }
           title={player?.identity.name}
         />
-        {displayedState.status === 'loading' ? (
+        {error ? (
+          <Text accessibilityRole="alert" variant="body">
+            {error}
+          </Text>
+        ) : null}
+        {saving ? <Text variant="body">Saving favourite...</Text> : null}
+        {displayedState.status === 'error' ? (
+          <Stack gap="space8">
+            <Text accessibilityRole="alert" variant="body">
+              Could not load this player.
+            </Text>
+            <Button label="Retry" style="primary" onPress={refresh} />
+          </Stack>
+        ) : displayedState.status === 'loading' ? (
           <Surface padding="space20" radius="radius20">
             <Text color="textSecondary" variant="body">
               Loading player...

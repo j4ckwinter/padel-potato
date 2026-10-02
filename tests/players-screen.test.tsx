@@ -9,6 +9,10 @@ import { AppServicesProvider } from '../src/features/services/AppServicesContext
 import { flattenedStyle } from './helpers/componentTest';
 
 jest.mock('expo-router', () => ({
+  useFocusEffect: (callback: () => void) => {
+    const React = jest.requireActual<typeof import('react')>('react');
+    React.useEffect(callback, [callback]);
+  },
   useLocalSearchParams: jest.fn(),
   useRouter: jest.fn(),
 }));

@@ -233,7 +233,10 @@ export default function GameDetailsScreen() {
   const openPlayer = (playerId: string) =>
     router.push({ pathname: '/players/[playerId]', params: { playerId } });
   const discoverPlayers = () =>
-    router.push({ pathname: '/players', params: { view: 'discover' } });
+    router.push({
+      pathname: '/players',
+      params: { view: 'discover', gameId: gameId ?? '' },
+    });
   const submitJoin = async (game: Game) => {
     setJoining(true);
     setJoinFeedback(null);

@@ -17,7 +17,10 @@ function mockClient() {
   const select = jest.fn(() => ({ single }));
   const eq = jest.fn(() => ({ select }));
   const update = jest.fn(() => ({ eq }));
-  const from = jest.fn(() => ({ update }));
+  const from = jest.fn(() => ({
+    update,
+    select: () => ({ eq: () => ({ maybeSingle: single }) }),
+  }));
   const getUser = jest.fn(async () => ({
     data: { user: { id: onboardingProfileRow.id } },
     error: null,

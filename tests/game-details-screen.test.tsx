@@ -99,7 +99,7 @@ describe('game details screen', () => {
 
     await user.press(openPlayerSlots[0]);
     expect(push).toHaveBeenCalledWith({
-      params: { view: 'discover' },
+      params: { view: 'discover', gameId: game.id },
       pathname: '/players',
     });
 

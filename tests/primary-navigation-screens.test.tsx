@@ -102,7 +102,7 @@ describe('primary navigation screens', () => {
   it('returns a directly opened Notifications screen to Home', async () => {
     const navigation = router();
     const user = userEvent.setup();
-    const screen = await render(<NotificationsScreen />);
+    const screen = await render(appScreen(<NotificationsScreen />));
 
     await user.press(screen.getByRole('button', { name: 'Back' }));
 

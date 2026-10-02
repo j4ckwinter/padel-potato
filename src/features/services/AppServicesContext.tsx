@@ -1,3 +1,4 @@
+import type { InvitationRepository } from '../invitations/invitation';
 import type { OnboardingDraft } from '../../design-system/configuration/onboarding';
 import { saveSupabaseOnboarding } from '../supabase/onboarding';
 import {
@@ -24,6 +25,7 @@ export type AppServices = Readonly<{
   currentUser: PlayerProfile;
   games: GameRepository;
   players: PlayerRepository;
+  invitations: InvitationRepository;
 }>;
 
 export type AppServicesState =
