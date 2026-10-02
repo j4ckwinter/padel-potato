@@ -9,6 +9,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import {
+  isAuthEmail,
+  isNewPassword,
+} from '../design-system/configuration/authentication';
 import { WelcomeMascot } from '../design-system/assets';
 import {
   AuthDivider,
@@ -26,7 +30,14 @@ import type {
 } from '../features/authentication/authGateway';
 
 export default function SignInScreen() {
-  const { signIn } = useSession();
+  const { signIn, signUp, requestPasswordReset, callbackError } = useSession();
+  const [mode, setMode] = useState<'signIn' | 'register' | 'reset'>('signIn');
+  const [dismissedCallbackError, setDismissedCallbackError] = useState<
+    string | null
+  >(null);
+  const visibleCallbackError =
+    callbackError !== dismissedCallbackError ? callbackError : null;
+  const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<AuthProvider | 'email' | null>(
     null,
   );
@@ -45,8 +56,26 @@ export default function SignInScreen() {
         ? 'Check your email and password and try again.'
         : 'Check your connection and try again.';
     try {
-      const result = await signIn(request);
-      if (result.status === 'error') setSubmissionError(message);
+      const result =
+        typeof request === 'string' || mode === 'signIn'
+          ? await signIn(request)
+          : mode === 'register'
+            ? await signUp({ email: request.email, password: request.password })
+            : await requestPasswordReset(request.email);
+      if (result.status === 'error')
+        setSubmissionError(
+          mode === 'signIn' || typeof request === 'string'
+            ? message
+            : result.message,
+        );
+      if (result.status === 'confirmationRequired')
+        setNotice(
+          'If this address can receive an account email, check your inbox to confirm it. You can then sign in.',
+        );
+      if (mode === 'reset' && result.status === 'success')
+        setNotice(
+          'If an account exists for this email, you will receive a password reset link.',
+        );
     } catch {
       setSubmissionError(message);
     } finally {
@@ -99,10 +128,18 @@ export default function SignInScreen() {
                 </Text>
               </Stack>
               <Stack gap="space12">
-                {submissionError ? (
+                {notice ? (
+                  <Text accessibilityRole="alert" variant="body">
+                    {notice}
+                  </Text>
+                ) : null}
+                {submissionError || visibleCallbackError ? (
                   <BannerToast
-                    message={submissionError}
-                    onClose={() => setSubmissionError(null)}
+                    message={submissionError ?? visibleCallbackError ?? ''}
+                    onClose={() => {
+                      setSubmissionError(null);
+                      setDismissedCallbackError(callbackError);
+                    }}
                     style="error"
                     title="Could not sign in"
                     type="toast"
@@ -128,24 +165,35 @@ export default function SignInScreen() {
                   type="text"
                   value={email}
                 />
-                <Field
-                  disabled={submitting !== null}
-                  label="Password"
-                  onChangeText={setPassword}
-                  type="password"
-                  value={password}
-                />
+                {mode !== 'reset' ? (
+                  <Field
+                    disabled={submitting !== null}
+                    label="Password"
+                    onChangeText={setPassword}
+                    type="password"
+                    value={password}
+                  />
+                ) : null}
                 <Button
                   {...(submitting === 'email'
                     ? { loading: true as const }
                     : {
                         disabled:
                           submitting !== null ||
-                          email.trim().length === 0 ||
-                          password.length === 0,
+                          !isAuthEmail(email) ||
+                          (mode !== 'reset' &&
+                            (mode === 'register'
+                              ? !isNewPassword(password)
+                              : password.length === 0)),
                         loading: false as const,
                       })}
-                  label="Sign in with email"
+                  label={
+                    mode === 'register'
+                      ? 'Create account'
+                      : mode === 'reset'
+                        ? 'Send password reset link'
+                        : 'Sign in with email'
+                  }
                   onPress={() =>
                     void continueWith({
                       method: 'email',
@@ -155,12 +203,46 @@ export default function SignInScreen() {
                   }
                   style="primary"
                 />
+                {mode === 'register' ? (
+                  <Text color="textSecondary" variant="caption">
+                    Use at least 8 characters for your password.
+                  </Text>
+                ) : null}
+                {submitting === null ? (
+                  <>
+                    <Button
+                      label={
+                        mode === 'signIn'
+                          ? 'Create an account'
+                          : 'Back to sign in'
+                      }
+                      style="ghost"
+                      onPress={() => {
+                        setMode(mode === 'signIn' ? 'register' : 'signIn');
+                        setNotice(null);
+                        setSubmissionError(null);
+                        setPassword('');
+                      }}
+                    />
+                    {mode === 'signIn' ? (
+                      <Button
+                        label="Forgot password?"
+                        style="ghost"
+                        onPress={() => {
+                          setMode('reset');
+                          setNotice(null);
+                          setSubmissionError(null);
+                          setPassword('');
+                        }}
+                      />
+                    ) : null}
+                  </>
+                ) : null}
               </Stack>
             </Stack>
             <View style={styles.footer}>
               <Text color="muted" style={styles.centeredText} variant="caption">
-                Use your existing account to sign in with email, or continue
-                with Apple or Google.
+                Sign in or create an account with email, Apple or Google.
               </Text>
             </View>
           </View>

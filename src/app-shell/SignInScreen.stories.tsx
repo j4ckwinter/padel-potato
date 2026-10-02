@@ -8,6 +8,10 @@ import { SessionProvider } from '../features/authentication/SessionContext';
 import type { AuthGateway } from '../features/authentication/authGateway';
 
 const gateway: AuthGateway = {
+  signUp: async () => ({ status: 'confirmationRequired' }),
+  requestPasswordReset: async () => ({ status: 'success' }),
+  updatePassword: async () => ({ status: 'success' }),
+  handleEmailCallback: async () => ({ status: 'success' }),
   restoreSession: async () => null,
   signIn: async () => ({ status: 'cancelled' }),
   signOut: async () => ({ status: 'success' }),

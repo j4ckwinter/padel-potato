@@ -44,7 +44,7 @@ describe('sign-in screen', () => {
     expect(screen.getByText('Ready for your next match?')).toBeVisible();
     expect(
       screen.getByText(
-        /Use your existing account to sign in with email, or continue with Apple or Google/u,
+        /Sign in or create an account with email, Apple or Google/u,
       ),
     ).toBeVisible();
   });
@@ -249,5 +249,54 @@ describe('sign-in screen', () => {
     );
     expect(signIn).toHaveBeenCalledTimes(2);
     expect(screen.queryByRole('alert')).toBeNull();
+  });
+  it('registers an email account and explains confirmation without signing in', async () => {
+    const gateway = createAuthGateway(null);
+    const user = userEvent.setup();
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={gateway}>
+          <SignInScreen />
+        </SessionProvider>,
+      ),
+    );
+    await user.press(screen.getByRole('button', { name: 'Create an account' }));
+    await user.type(screen.getByLabelText('Email'), 'new@example.com');
+    await user.type(screen.getByLabelText('Password'), 'new-password');
+    await user.press(screen.getByRole('button', { name: 'Create account' }));
+    expect(gateway.signUp).toHaveBeenCalledWith({
+      email: 'new@example.com',
+      password: 'new-password',
+    });
+    expect(
+      await screen.findByText(/check your inbox to confirm it/u),
+    ).toBeVisible();
+    expect(gateway.signIn).not.toHaveBeenCalled();
+  });
+
+  it('requests a reset and gives the same inbox guidance without exposing account existence', async () => {
+    const gateway = createAuthGateway(null);
+    const user = userEvent.setup();
+    const screen = await render(
+      appScreen(
+        <SessionProvider gateway={gateway}>
+          <SignInScreen />
+        </SessionProvider>,
+      ),
+    );
+    await user.press(screen.getByRole('button', { name: 'Forgot password?' }));
+    expect(screen.queryByLabelText('Password')).toBeNull();
+    await user.type(screen.getByLabelText('Email'), 'player@example.com');
+    await user.press(
+      screen.getByRole('button', { name: 'Send password reset link' }),
+    );
+    expect(gateway.requestPasswordReset).toHaveBeenCalledWith(
+      'player@example.com',
+    );
+    expect(
+      await screen.findByText(
+        'If an account exists for this email, you will receive a password reset link.',
+      ),
+    ).toBeVisible();
   });
 });

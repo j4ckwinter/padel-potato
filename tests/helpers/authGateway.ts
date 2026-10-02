@@ -16,7 +16,13 @@ export function createAuthGateway(
   signInResult: AuthMutationResult = { status: 'success' },
 ) {
   let listener: ((session: Session | null) => void) | undefined;
-  const gateway: AuthGateway = {
+  const gateway = {
+    signUp: jest.fn(async () => ({ status: 'confirmationRequired' as const })),
+    requestPasswordReset: jest.fn(async () => ({ status: 'success' as const })),
+    updatePassword: jest.fn(async (): Promise<AuthMutationResult> => ({
+      status: 'success',
+    })),
+    handleEmailCallback: jest.fn(async () => ({ status: 'success' as const })),
     restoreSession: jest.fn(() => Promise.resolve(restoredSession)),
     signIn: jest.fn(async () => {
       if (signInResult.status === 'success') listener?.(testSession);
@@ -30,6 +36,6 @@ export function createAuthGateway(
       listener = nextListener;
       return jest.fn();
     },
-  };
+  } satisfies AuthGateway;
   return gateway;
 }
