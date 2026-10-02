@@ -1,0 +1,7 @@
+{
+  "email_enabled": true,
+  "google_enabled": false,
+  "apple_enabled": false,
+  "signup_disabled": false,
+  "email_autoconfirm_enabled": true
+}

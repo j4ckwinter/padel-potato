@@ -2,7 +2,7 @@
 
 Padel Potato is a native-first Expo and React Native mobile app for organizing padel games among friends and keeping a trustworthy match record.
 
-The current codebase contains a standalone design system under `src/design-system`, surfaced through React Native Storybook. Product navigation, backend services, authentication, persistence, notifications, and complete game workflows are not yet implemented.
+The codebase contains a local design system under `src/design-system`, surfaced through React Native Storybook, and a product app backed by Supabase. Authentication, onboarding persistence, player discovery, favourites, invitations, game management, results, and local reminders are implemented. Native verification and release constraints are documented in `docs/friends-beta.md`.
 
 ## Project constraints
 

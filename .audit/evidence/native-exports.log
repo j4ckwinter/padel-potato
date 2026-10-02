@@ -1,0 +1,59 @@
+env: load .env.local
+env: export EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY EXPO_PUBLIC_SUPABASE_URL
+Using src/app as the root directory for Expo Router.
+Starting Metro Bundler
+
+| (node:80349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:80349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:80349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:80349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 14086ms node_modules/expo-router/entry.js (1498 modules)
+Android Bundled 21238ms node_modules/expo-router/entry.js (1639 modules)
+
+› Assets (47):
+assets/fonts/Inter-Bold.ttf (420KB)
+assets/fonts/Inter-Regular.ttf (412KB)
+assets/fonts/Inter-SemiBold.ttf (420KB)
+node_modules/@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.ttf (967KB)
+node_modules/expo-router/assets/arrow_down.png (9.5KB)
+node_modules/expo-router/assets/arrow_right.xml (307B)
+node_modules/expo-router/assets/checkmark.xml (312B)
+node_modules/expo-router/assets/error.png (469B)
+node_modules/expo-router/assets/file.png (138B)
+node_modules/expo-router/assets/forward.png (188B)
+node_modules/expo-router/assets/pkg.png (364B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon-mask.png (653B)
+node_modules/expo-router/assets/react-navigation/elements/back-icon.png (8 variations | 359B)
+node_modules/expo-router/assets/react-navigation/elements/clear-icon.png (4 variations | 425B)
+node_modules/expo-router/assets/react-navigation/elements/close-icon.png (4 variations | 235B)
+node_modules/expo-router/assets/react-navigation/elements/search-icon.png (7 variations | 592B)
+node_modules/expo-router/assets/sitemap.png (465B)
+node_modules/expo-router/assets/unmatched.png (4.8KB)
+src/design-system/assets/media/brand-lockup-stacked.png (5.2KB)
+src/design-system/assets/media/brand-lockup.png (10KB)
+src/design-system/assets/media/mascot-create.webp (77KB)
+src/design-system/assets/media/mascot-game-created.webp (94KB)
+src/design-system/assets/media/mascot-match-result.webp (118KB)
+src/design-system/assets/media/mascot-no-games.webp (98KB)
+src/design-system/assets/media/mascot-players.webp (78KB)
+src/design-system/assets/media/mascot-profile.webp (109KB)
+src/design-system/assets/media/mascot-search.webp (85KB)
+src/design-system/assets/media/mascot-wave.webp (93KB)
+
+› ios bundles (2):
+_expo/static/js/ios/entry-4f4771c7b6d2852eb0ca7a83b3ba6559.hbc (3.1MB)
+_expo/static/js/ios/entry-4f4771c7b6d2852eb0ca7a83b3ba6559.hbc.map (8.4MB)
+
+› android bundles (2):
+_expo/static/js/android/entry-6b878cc49e4e6e76e7bbfd2e2aaf83c2.hbc (3.4MB)
+_expo/static/js/android/entry-6b878cc49e4e6e76e7bbfd2e2aaf83c2.hbc.map (8.9MB)
+
+› Files (1):
+metadata.json (5KB)
+
+Exported: /var/folders/bk/bh4dh7m97wxbgm0ks511cdgc0000gn/T/padel-native-export-g3g3yu
+Native exports verified. Android and iOS contain product routes and local notifications, with no Storybook or remote push registration. Artifacts: /var/folders/bk/bh4dh7m97wxbgm0ks511cdgc0000gn/T/padel-native-export-g3g3yu
