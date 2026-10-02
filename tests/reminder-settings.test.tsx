@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { act, render, userEvent, waitFor } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from '../src/features/notifications/localNotifications';
 import { router, useRootNavigationState } from 'expo-router';
 
 import SettingsScreen from '../src/app/settings';
@@ -24,7 +24,7 @@ jest.mock('expo-router', () => ({
   }),
   router: { push: jest.fn() },
 }));
-jest.mock('expo-notifications', () => ({
+jest.mock('../src/features/notifications/localNotifications', () => ({
   setNotificationHandler: jest.fn(),
   getLastNotificationResponseAsync: jest.fn(async () => null),
   addNotificationResponseReceivedListener: jest.fn(() => ({

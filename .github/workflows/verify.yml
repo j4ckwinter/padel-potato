@@ -18,7 +18,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify
-      - run: npx expo export --platform android --platform ios --output-dir /tmp/padel-native-export
+      - run: node scripts/verify-native-export.mjs
         env:
           EXPO_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
           EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-public-placeholder
