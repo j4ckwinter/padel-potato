@@ -58,7 +58,7 @@ export function appServicesFromProfileRow(
       completed,
       draft: isCompleteOnboardingDraft(candidate) ? candidate : null,
     },
-    games: createSupabaseGameRepository(client),
+    games: createSupabaseGameRepository(client, data.id),
     players: createSupabasePlayerRepository(client, data.id),
     invitations: createSupabaseInvitationRepository(client, data.id),
   };

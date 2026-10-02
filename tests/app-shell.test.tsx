@@ -38,6 +38,7 @@ jest.mock('expo-router', () => {
   Stack.Screen = Screen;
 
   return {
+    useRootNavigationState: () => undefined,
     ErrorBoundary: () => null,
     Stack,
   };
@@ -90,6 +91,12 @@ describe('application shell startup', () => {
     mockUseFonts.mockReset();
     mockHideAsync.mockClear();
     mockUseSession.mockReturnValue({
+      signUp: jest.fn(async () => ({
+        status: 'confirmationRequired' as const,
+      })),
+      requestPasswordReset: successfulSessionAction(),
+      updatePassword: successfulSessionAction(),
+      callbackError: null,
       signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: { status: 'signedOut' },
@@ -104,6 +111,12 @@ describe('application shell startup', () => {
   it('keeps the native splash visible while the session restores', async () => {
     mockUseFonts.mockReturnValue([true, null]);
     mockUseSession.mockReturnValue({
+      signUp: jest.fn(async () => ({
+        status: 'confirmationRequired' as const,
+      })),
+      requestPasswordReset: successfulSessionAction(),
+      updatePassword: successfulSessionAction(),
+      callbackError: null,
       signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: { status: 'loading' },
@@ -125,6 +138,22 @@ describe('application shell startup', () => {
     expect(mockHideAsync).not.toHaveBeenCalled();
   });
 
+  it('keeps password recovery sessions outside product and onboarding routes', async () => {
+    mockUseFonts.mockReturnValue([true, null]);
+    mockUseSession.mockReturnValue({
+      ...mockUseSession(),
+      state: {
+        status: 'passwordRecovery',
+        session: { kind: 'supabase', userId: 'recovering', recovery: true },
+      },
+    });
+    const screen = await render(<RootLayout />);
+    expect(screen.getByTestId('route-password-recovery')).toBeOnTheScreen();
+    expect(screen.queryByTestId('route-(tabs)')).toBeNull();
+    expect(screen.queryByTestId('route-onboarding')).toBeNull();
+    expect(screen.queryByTestId('route-settings')).toBeNull();
+  });
+
   it('renders the router inside the safe-area provider after fonts load', async () => {
     mockUseFonts.mockReturnValue([true, null]);
 
@@ -140,6 +169,12 @@ describe('application shell startup', () => {
   it('exposes protected app routes to a restored session', async () => {
     mockUseFonts.mockReturnValue([true, null]);
     mockUseSession.mockReturnValue({
+      signUp: jest.fn(async () => ({
+        status: 'confirmationRequired' as const,
+      })),
+      requestPasswordReset: successfulSessionAction(),
+      updatePassword: successfulSessionAction(),
+      callbackError: null,
       signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: {
@@ -167,6 +202,12 @@ describe('application shell startup', () => {
   it('limits incomplete accounts to onboarding and exposes tabs after completion', async () => {
     mockUseFonts.mockReturnValue([true, null]);
     mockUseSession.mockReturnValue({
+      signUp: jest.fn(async () => ({
+        status: 'confirmationRequired' as const,
+      })),
+      requestPasswordReset: successfulSessionAction(),
+      updatePassword: successfulSessionAction(),
+      callbackError: null,
       signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: {
@@ -201,6 +242,12 @@ describe('application shell startup', () => {
   it('does not expose app routes until the current profile is ready', async () => {
     mockUseFonts.mockReturnValue([true, null]);
     mockUseSession.mockReturnValue({
+      signUp: jest.fn(async () => ({
+        status: 'confirmationRequired' as const,
+      })),
+      requestPasswordReset: successfulSessionAction(),
+      updatePassword: successfulSessionAction(),
+      callbackError: null,
       signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: {

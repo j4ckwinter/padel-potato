@@ -22,6 +22,7 @@ import {
   SessionAppServicesProvider,
   useAppServicesLoadState,
 } from '../features/services/AppServicesContext';
+import { ReminderProvider } from '../features/notifications/ReminderProvider';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -33,7 +34,9 @@ export default function RootLayout() {
   return (
     <SessionProvider>
       <SessionAppServicesProvider>
-        <RootNavigator fontError={fontError} fontsLoaded={fontsLoaded} />
+        <ReminderProvider>
+          <RootNavigator fontError={fontError} fontsLoaded={fontsLoaded} />
+        </ReminderProvider>
       </SessionAppServicesProvider>
     </SessionProvider>
   );
@@ -89,6 +92,9 @@ function RootNavigator({
             headerShown: false,
           }}
         >
+          <Stack.Protected guard={state.status === 'passwordRecovery'}>
+            <Stack.Screen name="password-recovery" />
+          </Stack.Protected>
           <Stack.Protected
             guard={
               state.status === 'signedIn' &&
@@ -111,6 +117,7 @@ function RootNavigator({
           <Stack.Protected guard={state.status === 'signedOut'}>
             <Stack.Screen name="sign-in" />
           </Stack.Protected>
+          <Stack.Screen name="auth-callback" />
         </Stack>
       )}
     </SafeAreaProvider>

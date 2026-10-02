@@ -13,11 +13,12 @@ import {
 import { Stack } from '../design-system/primitives';
 import { colors, spacing } from '../design-system/tokens';
 import { useSession } from '../features/authentication/SessionContext';
+import { useReminders } from '../features/notifications/ReminderProvider';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const { signOut } = useSession();
-  const [gameReminders, setGameReminders] = useState(true);
+  const reminders = useReminders();
   const [signingOut, setSigningOut] = useState(false);
   const [signOutFailed, setSignOutFailed] = useState(false);
 
@@ -46,12 +47,21 @@ export default function SettingsScreen() {
         <AppHeader onBackPress={returnToProfile} page="settings" />
         <Stack gap="space12">
           <SectionHeader title="Notifications" />
+          {reminders.error ? (
+            <BannerToast
+              message={reminders.error}
+              onClose={reminders.dismissError}
+              style="error"
+              title="Could not update reminders"
+              type="toast"
+            />
+          ) : null}
           <SettingsRow
-            checked={gameReminders}
-            disabled={false}
+            checked={reminders.enabled}
+            disabled={reminders.pending}
             icon="notification"
             label="Game reminders"
-            onCheckedChange={setGameReminders}
+            onCheckedChange={(enabled) => void reminders.setEnabled(enabled)}
             variant="toggle"
           />
         </Stack>

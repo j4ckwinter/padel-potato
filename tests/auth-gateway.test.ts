@@ -397,12 +397,10 @@ describe('auth operation overlap', () => {
       })),
       setSession,
     };
-    jest
-      .mocked(WebBrowser.openAuthSessionAsync)
-      .mockResolvedValue({
-        type: 'success',
-        url: 'padel-potato://#access_token=a&refresh_token=r',
-      });
+    jest.mocked(WebBrowser.openAuthSessionAsync).mockResolvedValue({
+      type: 'success',
+      url: 'padel-potato://#access_token=a&refresh_token=r',
+    });
     const gateway = createSupabaseAuthGateway({
       auth,
     } as unknown as PadelSupabaseClient);

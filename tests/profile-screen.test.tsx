@@ -16,6 +16,16 @@ import { demoAppServices } from '../src/features/demo/demoAppServices';
 import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 import { flattenedStyle } from './helpers/componentTest';
 
+jest.mock('../src/features/notifications/ReminderProvider', () => ({
+  useReminders: () => ({
+    enabled: false,
+    pending: false,
+    error: null,
+    setEnabled: jest.fn(async () => undefined),
+    dismissError: jest.fn(),
+  }),
+}));
+
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
 }));
@@ -88,6 +98,12 @@ it('shows saved onboarding fields and an HTTPS photo on Profile', async () => {
 describe('profile screen', () => {
   beforeEach(() => {
     mockUseSession.mockReturnValue({
+      signUp: jest.fn(async () => ({
+        status: 'confirmationRequired' as const,
+      })),
+      requestPasswordReset: successfulSessionAction(),
+      updatePassword: successfulSessionAction(),
+      callbackError: null,
       signIn: successfulSessionAction(),
       signOut: successfulSessionAction(),
       state: {
@@ -133,18 +149,12 @@ describe('profile screen', () => {
     ).toBe(146);
   });
 
-  it('changes the game reminder preference and returns to Profile', async () => {
+  it('returns Settings to Profile', async () => {
     const navigation = router();
     const user = userEvent.setup();
     const screen = await renderWithSafeArea(<SettingsScreen />);
 
     expect(screen.getByRole('header', { name: 'Settings' })).toBeVisible();
-    const reminders = screen.getByRole('switch', { name: 'Game reminders' });
-    expect(reminders).toBeChecked();
-
-    await user.press(reminders);
-    expect(reminders).not.toBeChecked();
-
     await user.press(screen.getByRole('button', { name: 'Back' }));
     expect(navigation.back).toHaveBeenCalledTimes(1);
     expect(navigation.replace).not.toHaveBeenCalled();
@@ -165,6 +175,12 @@ describe('profile screen', () => {
     router();
     const signOut = successfulSessionAction();
     mockUseSession.mockReturnValue({
+      signUp: jest.fn(async () => ({
+        status: 'confirmationRequired' as const,
+      })),
+      requestPasswordReset: successfulSessionAction(),
+      updatePassword: successfulSessionAction(),
+      callbackError: null,
       signIn: successfulSessionAction(),
       signOut,
       state: {
