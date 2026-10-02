@@ -5,7 +5,7 @@ import { Icon } from '../../assets/Icon';
 import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { borders, colors, radii, sizing, spacing } from '../../tokens';
-import { isLocalImageSource } from '../../internal/validation';
+import { isAvatarImageSource } from '../../internal/validation';
 import { Avatar } from './Avatar';
 
 type InitialsIdentity = Readonly<{
@@ -112,7 +112,7 @@ function validateIdentity(
     unsupported(
       `identity ${index + 1} initials must contain one to three characters`,
     );
-  if (hasSource && !isLocalImageSource(identity.source)) {
+  if (hasSource && !isAvatarImageSource(identity.source)) {
     unsupported(`identity ${index + 1} source must be bundled or local`);
   }
 }

@@ -12,7 +12,7 @@ import {
   NextGameIllustratedCardArtwork,
 } from '../../assets/artwork/feedbackArtwork';
 import { AvatarGroup, type AvatarGroupIdentity } from '../identity/AvatarGroup';
-import { isLocalImageSource } from '../../internal/validation';
+import { isAvatarImageSource } from '../../internal/validation';
 
 type ParticipantBase = Readonly<{
   name: string;
@@ -221,7 +221,7 @@ function validateParticipant(
     unsupported(
       `participant ${index + 1} initials must contain one to three characters`,
     );
-  if (hasSource && !isLocalImageSource(participant.source)) {
+  if (hasSource && !isAvatarImageSource(participant.source)) {
     unsupported(`participant ${index + 1} source must be bundled or local`);
   }
 }

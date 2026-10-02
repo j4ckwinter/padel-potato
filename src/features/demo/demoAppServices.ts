@@ -4,6 +4,7 @@ import { demoCurrentGamePlayer, demoCurrentUser } from './demoData';
 import { demoPlayerRepository } from './demoPlayerRepository';
 
 export const demoAppServices: AppServices = {
+  onboarding: { completed: true, draft: null },
   currentPlayer: demoCurrentGamePlayer,
   currentUser: demoCurrentUser,
   games: createDemoGameRepository(demoCurrentGamePlayer),

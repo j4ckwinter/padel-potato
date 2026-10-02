@@ -1,3 +1,5 @@
+import type { OnboardingDraft } from '../../design-system/configuration/onboarding';
+import { saveSupabaseOnboarding } from '../supabase/onboarding';
 import {
   createContext,
   type PropsWithChildren,
@@ -6,6 +8,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useRef,
 } from 'react';
 
 import { useSession } from '../authentication/SessionContext';
@@ -16,6 +19,7 @@ import type { PlayerRepository } from '../players/playerRepository';
 import { loadSupabaseAppServices } from '../supabase/appServices';
 
 export type AppServices = Readonly<{
+  onboarding: Readonly<{ completed: boolean; draft: OnboardingDraft | null }>;
   currentPlayer: GamePlayer;
   currentUser: PlayerProfile;
   games: GameRepository;
@@ -33,6 +37,7 @@ type AppServicesLoader = (userId: string) => Promise<AppServices | null>;
 
 type AppServicesLoadContextValue = Readonly<{
   retry: () => void;
+  completeOnboarding: (draft: OnboardingDraft) => Promise<void>;
   state: AppServicesState;
 }>;
 
@@ -65,21 +70,40 @@ export function AppServicesProvider({
 export function SessionAppServicesProvider({
   children,
   loadServices = loadSupabaseAppServices,
-}: PropsWithChildren<Readonly<{ loadServices?: AppServicesLoader }>>) {
+  saveOnboarding = saveSupabaseOnboarding,
+}: PropsWithChildren<
+  Readonly<{
+    loadServices?: AppServicesLoader;
+    saveOnboarding?: (
+      userId: string,
+      draft: OnboardingDraft,
+    ) => Promise<AppServices>;
+  }>
+>) {
   const { state: sessionState } = useSession();
   const [retryCount, setRetryCount] = useState(0);
   const [loadedState, setLoadedState] = useState<LoadedAppServicesState | null>(
     null,
   );
 
+  const sessionUserId =
+    sessionState.status === 'signedIn' ? sessionState.session.userId : null;
+  const pendingRequest = useRef<{ userId: string | null; version: number }>({
+    userId: null,
+    version: 0,
+  });
+
   useEffect(() => {
-    if (sessionState.status !== 'signedIn') return undefined;
+    const request = pendingRequest.current;
+    request.userId = sessionUserId;
+    if (sessionUserId === null) return undefined;
 
     let active = true;
-    const userId = sessionState.session.userId;
+    const version = ++request.version;
+    const userId = sessionUserId;
     void loadServices(userId)
       .then((services) => {
-        if (!active) return;
+        if (!active || request.version !== version) return;
         setLoadedState({
           retryCount,
           state:
@@ -90,7 +114,7 @@ export function SessionAppServicesProvider({
         });
       })
       .catch(() => {
-        if (active) {
+        if (active && request.version === version) {
           setLoadedState({
             retryCount,
             state: { status: 'error' },
@@ -101,21 +125,45 @@ export function SessionAppServicesProvider({
 
     return () => {
       active = false;
+      request.version++;
     };
-  }, [loadServices, retryCount, sessionState]);
+  }, [loadServices, retryCount, sessionUserId]);
 
   const retry = useCallback(() => setRetryCount((count) => count + 1), []);
-  const loadContextValue = useMemo<AppServicesLoadContextValue>(() => {
-    const state: AppServicesState =
+  const completeOnboarding = useCallback(
+    async (draft: OnboardingDraft) => {
+      const request = pendingRequest.current;
+      const userId = request.userId;
+      if (!userId) throw new Error('Sign in before completing onboarding.');
+      const version = ++request.version;
+      const services = await saveOnboarding(userId, draft);
+      if (request.userId !== userId || request.version !== version)
+        throw new Error('Your signed-in account changed.');
+      if (services.currentUser.id !== userId || !services.onboarding.completed)
+        throw new Error('The profile could not be saved.');
+      setLoadedState({
+        userId,
+        retryCount,
+        state: { status: 'ready', services },
+      });
+    },
+    [retryCount, saveOnboarding],
+  );
+
+  const state = useMemo<AppServicesState>(
+    () =>
       sessionState.status !== 'signedIn'
         ? { status: 'inactive' }
         : loadedState?.userId === sessionState.session.userId &&
             loadedState.retryCount === retryCount
           ? loadedState.state
-          : { status: 'loading' };
-    return { retry, state };
-  }, [loadedState, retry, retryCount, sessionState]);
-  const { state } = loadContextValue;
+          : { status: 'loading' },
+    [sessionState, loadedState, retryCount],
+  );
+  const loadContextValue = useMemo<AppServicesLoadContextValue>(
+    () => ({ retry, completeOnboarding, state }),
+    [retry, completeOnboarding, state],
+  );
 
   return (
     <AppServicesLoadContext.Provider value={loadContextValue}>

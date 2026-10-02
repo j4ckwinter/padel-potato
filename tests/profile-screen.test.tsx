@@ -1,3 +1,6 @@
+import { appServicesFromProfileRow } from '../src/features/supabase/appServices';
+import type { PadelSupabaseClient } from '../src/features/supabase/client';
+import { onboardingProfileRow } from './helpers/onboarding';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { render, userEvent, waitFor } from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
@@ -56,6 +59,31 @@ async function renderWithSafeArea(node: React.ReactNode) {
     </SafeAreaProvider>,
   );
 }
+
+it('shows saved onboarding fields and an HTTPS photo on Profile', async () => {
+  router();
+  const services = appServicesFromProfileRow(
+    { ...onboardingProfileRow, avatar_url: 'https://example.com/avatar.jpg' },
+    {} as PadelSupabaseClient,
+  );
+  const screen = await renderWithSafeArea(
+    <AppServicesProvider services={services}>
+      <ProfileScreen />
+    </AppServicesProvider>,
+  );
+  expect(screen.getByRole('header', { name: 'Jack Potato' })).toBeVisible();
+  expect(screen.getByText('London')).toBeVisible();
+  expect(
+    screen.getByRole('summary', {
+      name: 'Your preferences, Improver, Either, Weekdays, Saturday, Afternoon, Evening',
+    }),
+  ).toBeVisible();
+  expect(screen.getByText('Game vibe: Social')).toBeVisible();
+  expect(screen.getByText('Each week: 3+ games')).toBeVisible();
+  expect(
+    screen.getByRole('image', { name: 'Jack Potato profile photo' }),
+  ).toBeVisible();
+});
 
 describe('profile screen', () => {
   beforeEach(() => {

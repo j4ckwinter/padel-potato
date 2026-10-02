@@ -6,6 +6,12 @@ import type { Database } from '../src/features/supabase/database.types';
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 const profileRow: ProfileRow = {
+  availability_days: [],
+  availability_times: [],
+  home_location: '',
+  onboarding_completed_at: null,
+  play_vibe: null,
+  weekly_frequency: null,
   avatar_url: null,
   bio: 'Social player',
   created_at: '2026-09-30T12:00:00.000Z',

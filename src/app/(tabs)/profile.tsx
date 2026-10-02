@@ -1,3 +1,5 @@
+import { availabilityFrequencyOptions } from '../../design-system/configuration/availability';
+import { playVibeOptions } from '../../design-system/configuration/playPreferences';
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
@@ -21,7 +23,7 @@ import { useAppServices } from '../../features/services/AppServicesContext';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { currentUser } = useAppServices();
+  const { currentUser, onboarding } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
@@ -59,6 +61,11 @@ export default function ProfileScreen() {
               <Text color="textSecondary" variant="body">
                 {currentUser.level} · Rating {currentUser.stats.rating}
               </Text>
+              {onboarding.draft ? (
+                <Text color="textSecondary" variant="body">
+                  {onboarding.draft.profile.homeLocation}
+                </Text>
+              ) : null}
             </Stack>
           </Inline>
         </Surface>
@@ -70,6 +77,29 @@ export default function ProfileScreen() {
           side={currentUser.preferences.side}
           timeOfDay={currentUser.preferences.timeOfDay}
         />
+        {onboarding.draft ? (
+          <Surface padding="space20" radius="radius20">
+            <Stack gap="space8">
+              <Text variant="body">
+                Game vibe:{' '}
+                {
+                  playVibeOptions.find(
+                    (option) => option.value === onboarding.draft?.play.vibe,
+                  )?.label
+                }
+              </Text>
+              <Text variant="body">
+                Each week:{' '}
+                {
+                  availabilityFrequencyOptions.find(
+                    (option) =>
+                      option.value === onboarding.draft?.availability.frequency,
+                  )?.label
+                }
+              </Text>
+            </Stack>
+          </Surface>
+        ) : null}
         <Stack gap="space12">
           <SectionHeader title="Account" />
           <SettingsRow

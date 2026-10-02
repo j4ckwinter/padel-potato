@@ -9,6 +9,58 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      game_invitations: {
+        Row: {
+          created_at: string;
+          game_id: string;
+          id: string;
+          invitee_id: string;
+          inviter_id: string;
+          responded_at: string | null;
+          status: Database['public']['Enums']['game_invitation_status'];
+        };
+        Insert: {
+          created_at?: string;
+          game_id: string;
+          id?: string;
+          invitee_id: string;
+          inviter_id: string;
+          responded_at?: string | null;
+          status?: Database['public']['Enums']['game_invitation_status'];
+        };
+        Update: {
+          created_at?: string;
+          game_id?: string;
+          id?: string;
+          invitee_id?: string;
+          inviter_id?: string;
+          responded_at?: string | null;
+          status?: Database['public']['Enums']['game_invitation_status'];
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'game_invitations_game_id_fkey';
+            columns: ['game_id'];
+            isOneToOne: false;
+            referencedRelation: 'games';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'game_invitations_invitee_id_fkey';
+            columns: ['invitee_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'game_invitations_inviter_id_fkey';
+            columns: ['inviter_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       game_participants: {
         Row: {
           game_id: string;
@@ -237,55 +289,73 @@ export type Database = {
       };
       profiles: {
         Row: {
+          availability_days: string[];
+          availability_times: string[];
           avatar_url: string | null;
           bio: string;
           created_at: string;
           display_name: string;
           games_played: number;
           games_won: number;
+          home_location: string;
           id: string;
           initials: string;
           level: Database['public']['Enums']['player_level'];
+          onboarding_completed_at: string | null;
+          play_vibe: string | null;
           preferred_days: string;
           preferred_side: Database['public']['Enums']['player_side'];
           preferred_time_of_day: string;
           presence: Database['public']['Enums']['player_presence'];
           rating: number;
           updated_at: string;
+          weekly_frequency: string | null;
         };
         Insert: {
+          availability_days?: string[];
+          availability_times?: string[];
           avatar_url?: string | null;
           bio?: string;
           created_at?: string;
           display_name: string;
           games_played?: number;
           games_won?: number;
+          home_location?: string;
           id: string;
           initials: string;
           level?: Database['public']['Enums']['player_level'];
+          onboarding_completed_at?: string | null;
+          play_vibe?: string | null;
           preferred_days?: string;
           preferred_side?: Database['public']['Enums']['player_side'];
           preferred_time_of_day?: string;
           presence?: Database['public']['Enums']['player_presence'];
           rating?: number;
           updated_at?: string;
+          weekly_frequency?: string | null;
         };
         Update: {
+          availability_days?: string[];
+          availability_times?: string[];
           avatar_url?: string | null;
           bio?: string;
           created_at?: string;
           display_name?: string;
           games_played?: number;
           games_won?: number;
+          home_location?: string;
           id?: string;
           initials?: string;
           level?: Database['public']['Enums']['player_level'];
+          onboarding_completed_at?: string | null;
+          play_vibe?: string | null;
           preferred_days?: string;
           preferred_side?: Database['public']['Enums']['player_side'];
           preferred_time_of_day?: string;
           presence?: Database['public']['Enums']['player_presence'];
           rating?: number;
           updated_at?: string;
+          weekly_frequency?: string | null;
         };
         Relationships: [];
       };
@@ -306,6 +376,18 @@ export type Database = {
       };
       join_game: { Args: { game_id: string }; Returns: string };
       profile_initials: { Args: { display_name: string }; Returns: string };
+      respond_to_game_invitation: {
+        Args: { invitation_id: string; response: string };
+        Returns: string;
+      };
+      send_game_invitation: {
+        Args: { game_id: string; player_id: string };
+        Returns: string;
+      };
+      set_player_favourite: {
+        Args: { player_id: string; should_favourite: boolean };
+        Returns: string;
+      };
       transition_game_lifecycle: {
         Args: {
           game_id: string;
@@ -318,9 +400,10 @@ export type Database = {
     };
     Enums: {
       game_format: 'Social game' | 'Competitive game';
+      game_invitation_status: 'pending' | 'accepted' | 'declined' | 'closed';
       game_participant_role: 'organiser' | 'player';
       game_status: 'scheduled' | 'awaiting_result' | 'completed' | 'cancelled';
-      player_level: 'Beginner' | 'Intermediate' | 'Advanced';
+      player_level: 'Beginner' | 'Improver' | 'Intermediate' | 'Advanced';
       player_presence: 'online' | 'away' | 'offline';
       player_side: 'Left' | 'Right' | 'Either';
     };
@@ -451,9 +534,10 @@ export const Constants = {
   public: {
     Enums: {
       game_format: ['Social game', 'Competitive game'],
+      game_invitation_status: ['pending', 'accepted', 'declined', 'closed'],
       game_participant_role: ['organiser', 'player'],
       game_status: ['scheduled', 'awaiting_result', 'completed', 'cancelled'],
-      player_level: ['Beginner', 'Intermediate', 'Advanced'],
+      player_level: ['Beginner', 'Improver', 'Intermediate', 'Advanced'],
       player_presence: ['online', 'away', 'offline'],
       player_side: ['Left', 'Right', 'Either'],
     },

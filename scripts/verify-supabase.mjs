@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import { execFileSync } from 'node:child_process';
 
 import { createClient } from '@supabase/supabase-js';
@@ -286,6 +287,108 @@ if (attemptedUpdate.error || attemptedUpdate.data.length !== 0) {
   );
 }
 
+const onboardingUser = await signedInClient('New Player');
+const beforeOnboarding = await onboardingUser.client
+  .from('profiles')
+  .select('onboarding_completed_at')
+  .eq('id', onboardingUser.userId)
+  .single();
+if (
+  beforeOnboarding.error ||
+  beforeOnboarding.data.onboarding_completed_at !== null
+)
+  throw (
+    beforeOnboarding.error ?? new Error('New accounts must require onboarding.')
+  );
+
+const incompleteOnboarding = await onboardingUser.client
+  .from('profiles')
+  .update({ onboarding_completed_at: new Date().toISOString() })
+  .eq('id', onboardingUser.userId);
+if (!incompleteOnboarding.error)
+  throw new Error('Incomplete preferences can be marked complete.');
+
+const profilePhoto = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=',
+  'base64',
+);
+const photoBucket = onboardingUser.client.storage.from('profile-photos');
+const photoPath = `${onboardingUser.userId}/avatar.png`;
+const photoUpload = await photoBucket.upload(photoPath, profilePhoto, {
+  contentType: 'image/png',
+  upsert: true,
+});
+if (photoUpload.error) throw photoUpload.error;
+const repeatedPhotoUpload = await photoBucket.upload(photoPath, profilePhoto, {
+  contentType: 'image/png',
+  upsert: true,
+});
+if (repeatedPhotoUpload.error) throw repeatedPhotoUpload.error;
+const forbiddenPhoto = await player.client.storage
+  .from('profile-photos')
+  .upload(photoPath, profilePhoto, { contentType: 'image/png', upsert: true });
+if (!forbiddenPhoto.error)
+  throw new Error('Another account can overwrite a profile photo.');
+const publicPhotoUrl = photoBucket.getPublicUrl(photoPath).data.publicUrl;
+if (!(await fetch(publicPhotoUrl)).ok)
+  throw new Error('The saved profile photo is unavailable.');
+
+const profileSetup = {
+  display_name: 'New Potato',
+  initials: 'NP',
+  home_location: 'London',
+  level: 'Improver',
+  preferred_side: 'Right',
+  play_vibe: 'social',
+  weekly_frequency: 'three-or-more',
+  availability_days: ['weekdays', 'saturday'],
+  availability_times: ['afternoon', 'evening'],
+  preferred_days: 'Weekdays, Saturday',
+  preferred_time_of_day: 'Afternoon, Evening',
+  avatar_url: publicPhotoUrl,
+  onboarding_completed_at: new Date().toISOString(),
+};
+const savedSetup = await onboardingUser.client
+  .from('profiles')
+  .update(profileSetup)
+  .eq('id', onboardingUser.userId)
+  .select('*')
+  .single();
+if (savedSetup.error) throw savedSetup.error;
+for (const [field, expected] of Object.entries(profileSetup)) {
+  if (field === 'onboarding_completed_at') {
+    if (!savedSetup.data[field])
+      throw new Error('Onboarding completion was not persisted.');
+  } else if (
+    JSON.stringify(savedSetup.data[field]) !== JSON.stringify(expected)
+  )
+    throw new Error(`Onboarding field ${field} was not persisted.`);
+}
+const crossAccountSetup = await player.client
+  .from('profiles')
+  .update(profileSetup)
+  .eq('id', onboardingUser.userId)
+  .select('id');
+if (crossAccountSetup.error || crossAccountSetup.data.length !== 0)
+  throw (
+    crossAccountSetup.error ??
+    new Error('Another account can replace onboarding preferences.')
+  );
+const invalidAvailability = await onboardingUser.client
+  .from('profiles')
+  .update({ availability_days: ['unknown'] })
+  .eq('id', onboardingUser.userId);
+if (!invalidAvailability.error)
+  throw new Error('Unknown availability values are accepted.');
+const protectedStats = await onboardingUser.client
+  .from('profiles')
+  .update({ games_played: 999 })
+  .eq('id', onboardingUser.userId);
+if (!protectedStats.error)
+  throw new Error('Profile setup can replace match statistics.');
+const photoCleanup = await photoBucket.remove([photoPath]);
+if (photoCleanup.error) throw photoCleanup.error;
+
 process.stdout.write(
-  'Supabase verification passed: profile trigger, RLS, game creation, joining, lifecycle, results, and session restoration.\n',
+  'Supabase verification passed: profile trigger, RLS, game creation, joining, lifecycle, results, session restoration, onboarding, and photo storage.\n',
 );

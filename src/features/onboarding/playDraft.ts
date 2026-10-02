@@ -1,28 +1,10 @@
-import {
-  playLevelOptions,
-  playSideOptions,
-  playVibeOptions,
-} from '../../design-system/configuration/playPreferences';
+import { isPlayDraft } from '../../design-system/configuration/playPreferences';
 import type { PlayStepDraft } from './PlayStepScreen';
 
 function draftKey(userId: string) {
   if (!userId.trim())
     throw new Error('A user is required to save preferences.');
   return `padel-potato.play-draft.v1.${encodeURIComponent(userId)}`;
-}
-
-function isPlayDraft(value: unknown): value is PlayStepDraft {
-  if (typeof value !== 'object' || value === null) return false;
-  const draft = value as Record<string, unknown>;
-  return (
-    Object.keys(draft).length === 3 &&
-    (draft.level === null ||
-      playLevelOptions.some((option) => option.value === draft.level)) &&
-    (draft.side === null ||
-      playSideOptions.some((option) => option.value === draft.side)) &&
-    (draft.vibe === null ||
-      playVibeOptions.some((option) => option.value === draft.vibe))
-  );
 }
 
 export function loadPlayDraft(userId: string): PlayStepDraft | null {

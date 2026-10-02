@@ -96,6 +96,7 @@ describe('application shell startup', () => {
     });
     mockUseAppServicesLoadState.mockReturnValue({
       retry: jest.fn(),
+      completeOnboarding: jest.fn(async () => undefined),
       state: { status: 'inactive' },
     });
   });
@@ -151,6 +152,7 @@ describe('application shell startup', () => {
     });
     mockUseAppServicesLoadState.mockReturnValue({
       retry: jest.fn(),
+      completeOnboarding: jest.fn(async () => undefined),
       state: { services: demoAppServices, status: 'ready' },
     });
 
@@ -160,6 +162,40 @@ describe('application shell startup', () => {
     expect(screen.getByTestId('route-settings')).toBeOnTheScreen();
     expect(screen.getByTestId('route-onboarding')).toBeOnTheScreen();
     expect(screen.queryByTestId('route-sign-in')).toBeNull();
+  });
+
+  it('limits incomplete accounts to onboarding and exposes tabs after completion', async () => {
+    mockUseFonts.mockReturnValue([true, null]);
+    mockUseSession.mockReturnValue({
+      signIn: successfulSessionAction(),
+      signOut: successfulSessionAction(),
+      state: {
+        status: 'signedIn',
+        session: { kind: 'supabase', userId: 'jack' },
+      },
+    });
+    mockUseAppServicesLoadState.mockReturnValue({
+      retry: jest.fn(),
+      completeOnboarding: jest.fn(async () => undefined),
+      state: {
+        status: 'ready',
+        services: {
+          ...demoAppServices,
+          onboarding: { completed: false, draft: null },
+        },
+      },
+    });
+    const screen = await render(<RootLayout />);
+    expect(screen.getByTestId('route-onboarding')).toBeOnTheScreen();
+    expect(screen.queryByTestId('route-(tabs)')).toBeNull();
+    expect(screen.queryByTestId('route-settings')).toBeNull();
+    mockUseAppServicesLoadState.mockReturnValue({
+      retry: jest.fn(),
+      completeOnboarding: jest.fn(async () => undefined),
+      state: { status: 'ready', services: demoAppServices },
+    });
+    await screen.rerender(<RootLayout />);
+    expect(screen.getByTestId('route-(tabs)')).toBeOnTheScreen();
   });
 
   it('does not expose app routes until the current profile is ready', async () => {
@@ -177,6 +213,7 @@ describe('application shell startup', () => {
     });
     mockUseAppServicesLoadState.mockReturnValue({
       retry: jest.fn(),
+      completeOnboarding: jest.fn(async () => undefined),
       state: { status: 'profileMissing' },
     });
 

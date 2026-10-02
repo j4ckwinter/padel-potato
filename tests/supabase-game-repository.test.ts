@@ -20,6 +20,12 @@ const playerIds = [
 
 function profile(id: string, name: string, initials: string): ProfileRow {
   return {
+    availability_days: [],
+    availability_times: [],
+    home_location: '',
+    onboarding_completed_at: null,
+    play_vibe: null,
+    weekly_frequency: null,
     avatar_url: null,
     bio: '',
     created_at: '2026-09-30T12:00:00.000Z',

@@ -92,12 +92,20 @@ function RootNavigator({
           <Stack.Protected
             guard={
               state.status === 'signedIn' &&
-              appServices.state.status === 'ready'
+              appServices.state.status === 'ready' &&
+              appServices.state.services.onboarding.completed
             }
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="notifications" />
             <Stack.Screen name="settings" />
+          </Stack.Protected>
+          <Stack.Protected
+            guard={
+              state.status === 'signedIn' &&
+              appServices.state.status === 'ready'
+            }
+          >
             <Stack.Screen name="onboarding" />
           </Stack.Protected>
           <Stack.Protected guard={state.status === 'signedOut'}>

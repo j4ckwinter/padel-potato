@@ -10,6 +10,7 @@ import { BackHandler } from 'react-native';
 let mockUserId = 'jack';
 const mockBack = jest.fn();
 const mockReplace = jest.fn();
+const mockCompleteOnboarding = jest.fn(async () => undefined);
 const mockScreen = jest.fn(() => null);
 jest.mock('expo-router', () => ({
   Stack: { Screen: (...args: unknown[]) => mockScreen(...(args as [])) },
@@ -25,7 +26,13 @@ jest.mock('../src/features/authentication/SessionContext', () => ({
   }),
 }));
 jest.mock('../src/features/services/AppServicesContext', () => ({
-  useAppServices: () => ({ currentUser: { identity: { name: 'Jack' } } }),
+  useAppServices: () => ({
+    currentUser: { identity: { name: 'Jack' } },
+    onboarding: { completed: false, draft: null },
+  }),
+  useAppServicesLoadState: () => ({
+    completeOnboarding: mockCompleteOnboarding,
+  }),
 }));
 jest.mock('expo-file-system', () => ({}));
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
@@ -40,6 +47,8 @@ beforeEach(() => {
   values.clear();
   mockReplace.mockClear();
   mockScreen.mockClear();
+  mockCompleteOnboarding.mockReset();
+  mockCompleteOnboarding.mockResolvedValue(undefined);
   Object.defineProperty(globalThis, 'localStorage', {
     configurable: true,
     value: {
@@ -169,6 +178,19 @@ describe('onboarding route flow', () => {
       frequency: 'one-or-two',
     });
     expect(loadAvailabilityDraft('other')).toBeNull();
+    expect(mockCompleteOnboarding).toHaveBeenCalledWith({
+      profile: {
+        displayName: 'Jack Potato',
+        homeLocation: 'London',
+        photoUri: null,
+      },
+      play: { level: 'improver', side: 'either', vibe: 'social' },
+      availability: {
+        days: ['sunday'],
+        times: ['morning'],
+        frequency: 'one-or-two',
+      },
+    });
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)/profile');
     await screen.unmount();
     const reopened = await render(<OnboardingScreen />);
@@ -180,6 +202,39 @@ describe('onboarding route flow', () => {
         checked: true,
       }),
     ).toBeVisible();
+  });
+
+  it('keeps availability choices and navigation in place when the server save fails', async () => {
+    mockCompleteOnboarding.mockRejectedValueOnce(new Error('offline'));
+    const screen = await render(<OnboardingScreen />);
+    await advance(screen);
+    const user = userEvent.setup();
+    for (const name of ['Improver', 'Either side', 'Social'])
+      await user.press(screen.getByRole('radio', { name }));
+    await user.press(screen.getByRole('button', { name: 'Continue' }));
+    await user.press(
+      screen.getByRole('checkbox', { name: 'Saturday, Weekend' }),
+    );
+    await user.press(
+      screen.getByRole('checkbox', { name: 'Evening, After 5' }),
+    );
+    await user.press(screen.getByRole('radio', { name: '3+ games' }));
+    await user.press(screen.getByRole('button', { name: 'Finish' }));
+    expect(
+      screen.getByRole('alert', {
+        name: /Your availability could not be saved/u,
+      }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'Saturday, Weekend',
+        checked: true,
+      }),
+    ).toBeVisible();
+    expect(mockReplace).not.toHaveBeenCalled();
+    await user.press(screen.getByRole('button', { name: 'Finish' }));
+    expect(mockCompleteOnboarding).toHaveBeenCalledTimes(2);
+    expect(mockReplace).toHaveBeenCalledWith('/(tabs)/profile');
   });
 
   it('routes Android back within the flow and disables iOS swipe dismissal', async () => {

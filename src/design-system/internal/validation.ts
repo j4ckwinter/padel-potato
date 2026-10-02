@@ -43,3 +43,27 @@ export function isLocalImageSource(
   const uri = (value as { uri?: unknown }).uri;
   return typeof uri === 'string' && localImageUriPattern.test(uri.trim());
 }
+
+export function isAvatarImageSource(
+  value: unknown,
+): value is ImageSourcePropType {
+  if (isLocalImageSource(value)) return true;
+  if (Array.isArray(value))
+    return value.length > 0 && value.every(isAvatarImageSource);
+  if (!value || typeof value !== 'object') return false;
+  const uri = (value as { uri?: unknown }).uri;
+  if (typeof uri !== 'string') return false;
+  try {
+    const url = new URL(uri);
+    return (
+      (url.protocol === 'https:' ||
+        (url.protocol === 'http:' &&
+          ['localhost', '127.0.0.1'].includes(url.hostname))) &&
+      url.hostname.length > 0 &&
+      !url.username &&
+      !url.password
+    );
+  } catch {
+    return false;
+  }
+}

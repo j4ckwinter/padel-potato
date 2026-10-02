@@ -1,3 +1,4 @@
+import type { OnboardingDraft } from '../design-system/configuration/onboarding';
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
@@ -12,7 +13,10 @@ import {
   saveProfileDraft,
   type ProfileDraft,
 } from '../features/onboarding/profileDraft';
-import { useAppServices } from '../features/services/AppServicesContext';
+import {
+  useAppServices,
+  useAppServicesLoadState,
+} from '../features/services/AppServicesContext';
 
 import { AvailabilityStepScreen } from '../features/onboarding/AvailabilityStepScreen';
 import {
@@ -23,12 +27,20 @@ import {
 function OnboardingFlow({
   userId,
   initialName,
-}: Readonly<{ userId: string; initialName: string }>) {
+  savedDraft,
+  onComplete,
+}: Readonly<{
+  userId: string;
+  initialName: string;
+  savedDraft: OnboardingDraft | null;
+  onComplete: (draft: OnboardingDraft) => Promise<void>;
+}>) {
   const [step, setStep] = useState<'profile' | 'play' | 'availability'>(
     'profile',
   );
   const [profile, setProfile] = useState(
     () =>
+      savedDraft?.profile ??
       loadProfileDraft(userId) ?? {
         displayName: initialName,
         homeLocation: '',
@@ -37,6 +49,7 @@ function OnboardingFlow({
   );
   const [play, setPlay] = useState(
     () =>
+      savedDraft?.play ??
       loadPlayDraft(userId) ?? {
         level: null,
         side: null,
@@ -46,6 +59,7 @@ function OnboardingFlow({
   const router = useRouter();
   const [availability, setAvailability] = useState(
     () =>
+      savedDraft?.availability ??
       loadAvailabilityDraft(userId) ?? { days: [], times: [], frequency: null },
   );
   const saving = useRef(false);
@@ -94,6 +108,13 @@ function OnboardingFlow({
           saving.current = true;
           try {
             await saveAvailabilityDraft(userId, draft);
+            if (play.level === null || play.side === null || play.vibe === null)
+              throw new Error('Complete your play preferences.');
+            await onComplete({
+              profile,
+              play: { level: play.level, side: play.side, vibe: play.vibe },
+              availability: draft,
+            });
             setAvailability(draft);
             router.replace('/(tabs)/profile');
           } finally {
@@ -138,7 +159,8 @@ function OnboardingFlow({
 
 export default function OnboardingScreen() {
   const { state } = useSession();
-  const { currentUser } = useAppServices();
+  const { currentUser, onboarding } = useAppServices();
+  const { completeOnboarding } = useAppServicesLoadState();
   if (state.status !== 'signedIn') return null;
   return (
     <>
@@ -147,6 +169,8 @@ export default function OnboardingScreen() {
         key={state.session.userId}
         userId={state.session.userId}
         initialName={currentUser.identity.name}
+        savedDraft={onboarding.draft}
+        onComplete={completeOnboarding}
       />
     </>
   );

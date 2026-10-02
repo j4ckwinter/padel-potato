@@ -7,7 +7,7 @@ import {
 
 import { Text } from '../../primitives/Text';
 import { borders, colors, sizing } from '../../tokens';
-import { isLocalImageSource } from '../../internal/validation';
+import { isAvatarImageSource } from '../../internal/validation';
 
 export const avatarSizes = Object.freeze([
   sizing.size32,
@@ -139,9 +139,9 @@ function validateAvatarProps(props: AvatarProps) {
         'initials must contain one to three visible characters',
       );
     }
-  } else if (!isLocalImageSource(runtimeProps.source)) {
+  } else if (!isAvatarImageSource(runtimeProps.source)) {
     unsupportedIdentity(
-      'source must be a bundled or local React Native image source',
+      'source must be a bundled or local React Native image source, or an HTTPS image URL',
     );
   }
 

@@ -23,6 +23,8 @@ import {} from '../src/design-system/stories/fixtures';
 
 const rejectedImageSources = [
   { uri: 'ftp://example.com/player.webp' },
+  { uri: 'http://example.com/avatar.jpg' },
+  { uri: 'https://user:password@example.com/avatar.jpg' },
   { uri: 'blob:https://example.com/player-id' },
   { uri: 'ws://example.com/player.webp' },
   { uri: '//example.com/player.webp' },
@@ -115,6 +117,37 @@ describe('Avatar runtime and semantic contract', () => {
       ).toThrow(/bundled or local React Native image source/u);
     },
   );
+
+  it.each([
+    'http://127.0.0.1:54321/storage/avatar.jpg',
+    'http://localhost:54321/storage/avatar.jpg',
+  ])('supports a local Supabase photo at %s', async (uri) => {
+    const screen = await render(
+      <Avatar
+        accessibilityLabel="Local profile photo"
+        size={48}
+        presence="offline"
+        source={{ uri }}
+      />,
+    );
+    expect(
+      screen.getByRole('image', { name: 'Local profile photo' }),
+    ).toBeVisible();
+  });
+
+  it('renders a saved HTTPS profile photo with its accessible name', async () => {
+    const screen = await render(
+      <Avatar
+        accessibilityLabel="Saved profile photo"
+        size={48}
+        presence="offline"
+        source={{ uri: 'https://example.com/avatar.jpg' }}
+      />,
+    );
+    expect(
+      screen.getByRole('image', { name: 'Saved profile photo' }),
+    ).toBeVisible();
+  });
 
   it('exposes one image semantic when labelled and none when decorative', async () => {
     const labelled = await render(

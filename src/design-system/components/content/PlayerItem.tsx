@@ -6,7 +6,7 @@ import { Pressable } from '../../primitives/Pressable';
 import { Text } from '../../primitives/Text';
 import { borders, colors, radii, sizing, spacing } from '../../tokens';
 import { Avatar } from '../identity/Avatar';
-import { isLocalImageSource } from '../../internal/validation';
+import { isAvatarImageSource } from '../../internal/validation';
 
 type InitialsIdentity = Readonly<{
   initials: string;
@@ -130,7 +130,7 @@ function validateIdentity(value: unknown): asserts value is PlayerItemIdentity {
       identity.initials.trim().length > 3)
   )
     unsupported('identity initials must contain one to three characters');
-  if (hasSource && !isLocalImageSource(identity.source)) {
+  if (hasSource && !isAvatarImageSource(identity.source)) {
     unsupported('identity source must be bundled or local');
   }
 }
