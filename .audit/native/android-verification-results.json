@@ -1,0 +1,38 @@
+[
+  {
+    "step": 1,
+    "action": "tap",
+    "label": "Reschedule game",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "tap",
+    "label": "Mon, 5 Oct",
+    "status": "PASS"
+  },
+  {
+    "step": 3,
+    "action": "tap",
+    "label": "06:30, Available",
+    "status": "PASS"
+  },
+  {
+    "step": 4,
+    "action": "tap",
+    "label": "Save new time",
+    "status": "PASS"
+  },
+  {
+    "step": 5,
+    "action": "assert",
+    "label": "Monday, 5 October 2026 at 06:30",
+    "status": "PASS"
+  },
+  {
+    "step": 6,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  }
+]

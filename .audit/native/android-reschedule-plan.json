@@ -1,0 +1,8 @@
+[
+  { "action": "tap", "label": "Reschedule game" },
+  { "action": "tap", "label": "Mon, 5 Oct" },
+  { "action": "tap", "label": "06:30, Available" },
+  { "action": "tap", "label": "Save new time" },
+  { "action": "assert", "label": "Monday, 5 October 2026 at 06:30" },
+  { "action": "screenshot", "name": "android-reschedule-passed.png" }
+]

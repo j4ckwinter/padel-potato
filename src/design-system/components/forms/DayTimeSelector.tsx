@@ -126,6 +126,7 @@ export function DayTimeSelector(props: DayTimeSelectorProps) {
 
   return (
     <View
+      collapsable={false}
       style={{ opacity: disabled ? opacity.opacityDisabled : 1 }}
       testID="day-time-selector-root"
     >
