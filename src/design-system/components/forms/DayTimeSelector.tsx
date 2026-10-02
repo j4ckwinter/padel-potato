@@ -27,6 +27,7 @@ type TimeSelectorProps = Readonly<{
 
 type CommonSelectorProps = Readonly<{
   onSelect: () => void;
+  selectionMode?: 'single' | 'multiple';
 }> &
   SelectorStateProps;
 
@@ -37,6 +38,7 @@ const commonRuntimeProps = Object.freeze([
   'disabled',
   'onSelect',
   'selected',
+  'selectionMode',
   'type',
 ] as const);
 const dayRuntimeProps = Object.freeze([
@@ -64,6 +66,13 @@ function validateDayTimeSelectorProps(props: DayTimeSelectorProps) {
     runtimeProps.type === 'day' ? dayRuntimeProps : timeRuntimeProps;
   for (const key of Object.keys(runtimeProps)) {
     if (!supportedKeys.includes(key as never)) unsupported(key, supportedKeys);
+  }
+  if (
+    runtimeProps.selectionMode !== undefined &&
+    runtimeProps.selectionMode !== 'single' &&
+    runtimeProps.selectionMode !== 'multiple'
+  ) {
+    unsupported(runtimeProps.selectionMode, ['single', 'multiple']);
   }
   if (typeof runtimeProps.selected !== 'boolean') {
     unsupported(runtimeProps.selected, [true, false]);
@@ -122,7 +131,9 @@ export function DayTimeSelector(props: DayTimeSelectorProps) {
     >
       <NativePressable
         accessibilityLabel={accessibleName}
-        accessibilityRole="radio"
+        accessibilityRole={
+          props.selectionMode === 'multiple' ? 'checkbox' : 'radio'
+        }
         accessibilityState={{ checked: selected, disabled }}
         disabled={disabled}
         focusable={!disabled}

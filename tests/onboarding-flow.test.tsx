@@ -31,6 +31,7 @@ jest.mock('expo-file-system', () => ({}));
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 
 import OnboardingScreen from '../src/app/onboarding';
+import { loadAvailabilityDraft } from '../src/features/onboarding/availabilityDraft';
 import { loadPlayDraft } from '../src/features/onboarding/playDraft';
 import { loadProfileDraft } from '../src/features/onboarding/profileDraft';
 const values = new Map<string, string>();
@@ -126,6 +127,59 @@ describe('onboarding route flow', () => {
     expect(reopened.getByLabelText('Home location, required').props.value).toBe(
       '',
     );
+  });
+
+  it('retains availability through back navigation and saves before finishing', async () => {
+    const screen = await render(<OnboardingScreen />);
+    await advance(screen);
+    const user = userEvent.setup();
+    for (const name of ['Improver', 'Either side', 'Social'])
+      await user.press(screen.getByRole('radio', { name }));
+    await user.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(screen.getByRole('header', { name: 'When you play' })).toBeVisible();
+    await user.press(screen.getByRole('checkbox', { name: 'Sunday, Weekend' }));
+    await user.press(screen.getByRole('button', { name: 'Back' }));
+    expect(
+      screen.getByRole('radio', { name: 'Improver', checked: true }),
+    ).toBeVisible();
+    await user.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(
+      screen.getByRole('checkbox', { name: 'Sunday, Weekend', checked: true }),
+    ).toBeVisible();
+    await user.press(
+      screen.getByRole('checkbox', { name: 'Morning, Before 12' }),
+    );
+    await user.press(screen.getByRole('radio', { name: '1–2 games' }));
+    const savedSetItem = localStorage.setItem;
+    localStorage.setItem = () => {
+      throw new Error('unavailable');
+    };
+    await user.press(screen.getByRole('button', { name: 'Finish' }));
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('alert', {
+        name: /Your availability could not be saved/u,
+      }),
+    ).toBeVisible();
+    localStorage.setItem = savedSetItem;
+    await user.press(screen.getByRole('button', { name: 'Finish' }));
+    expect(loadAvailabilityDraft('jack')).toEqual({
+      days: ['sunday'],
+      times: ['morning'],
+      frequency: 'one-or-two',
+    });
+    expect(loadAvailabilityDraft('other')).toBeNull();
+    expect(mockReplace).toHaveBeenCalledWith('/(tabs)/profile');
+    await screen.unmount();
+    const reopened = await render(<OnboardingScreen />);
+    await user.press(reopened.getByRole('button', { name: 'Continue' }));
+    await user.press(reopened.getByRole('button', { name: 'Continue' }));
+    expect(
+      reopened.getByRole('checkbox', {
+        name: 'Sunday, Weekend',
+        checked: true,
+      }),
+    ).toBeVisible();
   });
 
   it('routes Android back within the flow and disables iOS swipe dismissal', async () => {
