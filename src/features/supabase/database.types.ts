@@ -364,11 +364,6 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      leave_game: { Args: { game_id: string }; Returns: string };
-      reschedule_game: {
-        Args: { game_id: string; starts_at: string };
-        Returns: string;
-      };
       create_game: {
         Args: {
           duration_minutes: number;
@@ -380,7 +375,12 @@ export type Database = {
         Returns: string;
       };
       join_game: { Args: { game_id: string }; Returns: string };
+      leave_game: { Args: { game_id: string }; Returns: string };
       profile_initials: { Args: { display_name: string }; Returns: string };
+      reschedule_game: {
+        Args: { game_id: string; starts_at: string };
+        Returns: string;
+      };
       respond_to_game_invitation: {
         Args: { invitation_id: string; response: string };
         Returns: string;

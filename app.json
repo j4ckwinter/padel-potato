@@ -7,9 +7,11 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.padelpotato.app"
     },
     "android": {
+      "package": "com.padelpotato.app",
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -22,7 +24,8 @@
       "expo-router",
       "expo-splash-screen",
       "expo-sqlite",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-notifications"
     ]
   }
 }

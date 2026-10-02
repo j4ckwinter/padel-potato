@@ -1,0 +1,38 @@
+name: Verify
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - run: npx expo export --platform android --platform ios --output-dir /tmp/padel-native-export
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-public-placeholder
+          STORYBOOK_ENABLED: 'false'
+  database:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx supabase start --exclude studio,postgres-meta,realtime,edge-runtime,logflare,vector,supavisor,imgproxy
+      - run: npm run supabase:test
+      - if: always()
+        run: npx supabase stop
