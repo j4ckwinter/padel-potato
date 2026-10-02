@@ -1,3 +1,4 @@
+import { publishGameChange } from '../games/gameChanges';
 import { gameDraftName, type GameDraft } from '../game-creation/gameDraft';
 import {
   createGameResult,
@@ -357,6 +358,7 @@ export function createSupabaseGameRepository(
       if (!isScheduledGame(game)) {
         throw new Error(`New game ${gameId} was not scheduled.`);
       }
+      publishGameChange();
       return game;
     },
     findById: async (gameId) => (await readGames(client, gameId))[0] ?? null,
@@ -370,6 +372,7 @@ export function createSupabaseGameRepository(
       const game = await requiredGame(client, gameId);
       switch (status) {
         case 'joined':
+          publishGameChange();
           return { game, status: 'joined' };
         case 'already_joined':
           return { game, status: 'alreadyJoined' };
@@ -379,6 +382,49 @@ export function createSupabaseGameRepository(
           return { game, status: 'unavailable' };
         default:
           throw new Error(`Unexpected join_game result: ${status}.`);
+      }
+    },
+    leave: async (gameId) => {
+      const { data: status, error } = await client.rpc('leave_game', {
+        game_id: gameId,
+      });
+      if (error) throw error;
+      if (status === 'not_found') return { status: 'notFound' };
+      const game = await requiredGame(client, gameId);
+      switch (status) {
+        case 'left':
+          publishGameChange();
+          return { game, status: 'left' };
+        case 'already_left':
+          return { game, status: 'alreadyLeft' };
+        case 'organiser':
+          return { game, status: 'organiser' };
+        case 'unavailable':
+          return { game, status: 'unavailable' };
+        default:
+          throw new Error(`Unexpected leave_game result: ${status}.`);
+      }
+    },
+    reschedule: async (gameId, schedule) => {
+      const { data: status, error } = await client.rpc('reschedule_game', {
+        game_id: gameId,
+        starts_at: schedule.startsAt,
+      });
+      if (error) throw error;
+      if (status === 'not_found') return { status: 'notFound' };
+      const game = await requiredGame(client, gameId);
+      switch (status) {
+        case 'rescheduled':
+          publishGameChange();
+          return { game, status: 'rescheduled' };
+        case 'players_joined':
+          return { game, status: 'playersJoined' };
+        case 'forbidden':
+          return { game, status: 'forbidden' };
+        case 'unavailable':
+          return { game, status: 'unavailable' };
+        default:
+          throw new Error(`Unexpected reschedule_game result: ${status}.`);
       }
     },
     list: () => readGames(client),
@@ -406,6 +452,7 @@ export function createSupabaseGameRepository(
 
       const game = await requiredGame(client, gameId);
       if (status === 'transitioned') {
+        publishGameChange();
         return { game, status: 'transitioned' };
       }
       if (status === 'invalid_transition' || status === 'forbidden') {

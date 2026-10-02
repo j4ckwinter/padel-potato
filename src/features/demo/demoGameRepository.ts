@@ -1,9 +1,12 @@
+import { publishGameChange } from '../games/gameChanges';
 import { gameDraftName } from '../game-creation/gameDraft';
 import {
   addPlayerToGame,
   applyGameLifecycleCommand,
   gameHasPlayer,
   isScheduledGame,
+  playerOrganisesGame,
+  type GameParticipants,
   type Game,
   type GamePlayer,
   type ScheduledGame,
@@ -39,6 +42,7 @@ export function createDemoGameRepository(
         venue,
       };
       games.set(game.id, game);
+      publishGameChange();
       return Promise.resolve(game);
     },
     findById: (gameId) => Promise.resolve(games.get(gameId) ?? null),
@@ -57,7 +61,56 @@ export function createDemoGameRepository(
 
       const joinedGame = { ...game, participants };
       games.set(game.id, joinedGame);
+      publishGameChange();
       return Promise.resolve({ game: joinedGame, status: 'joined' });
+    },
+    leave: async (gameId) => {
+      const game = games.get(gameId);
+      if (!game) return { status: 'notFound' };
+      if (playerOrganisesGame(game, currentPlayer.id))
+        return { game, status: 'organiser' };
+      if (!gameHasPlayer(game, currentPlayer.id))
+        return { game, status: 'alreadyLeft' };
+      if (
+        !isScheduledGame(game) ||
+        Date.parse(game.schedule.startsAt) <= Date.now()
+      )
+        return { game, status: 'unavailable' };
+      const remaining = game.participants.filter(
+        ({ player }) => player.id !== currentPlayer.id,
+      );
+      const [organiser, first, second] = remaining;
+      if (!organiser || organiser.role !== 'organiser')
+        throw new Error('Invalid organiser');
+      const participants: GameParticipants =
+        second && second.role === 'player' && first && first.role === 'player'
+          ? [organiser, first, second]
+          : first && first.role === 'player'
+            ? [organiser, first]
+            : [organiser];
+      const updated = { ...game, participants };
+      games.set(gameId, updated);
+      publishGameChange();
+      return { game: updated, status: 'left' };
+    },
+    reschedule: async (gameId, schedule) => {
+      const game = games.get(gameId);
+      if (!game) return { status: 'notFound' };
+      if (!playerOrganisesGame(game, currentPlayer.id))
+        return { game, status: 'forbidden' };
+      if (
+        !isScheduledGame(game) ||
+        Date.parse(game.schedule.startsAt) <= Date.now() ||
+        !Number.isFinite(Date.parse(schedule.startsAt)) ||
+        Date.parse(schedule.startsAt) <= Date.now()
+      )
+        return { game, status: 'unavailable' };
+      if (game.participants.length !== 1)
+        return { game, status: 'playersJoined' };
+      const updated = { ...game, schedule };
+      games.set(gameId, updated);
+      publishGameChange();
+      return { game: updated, status: 'rescheduled' };
     },
     list: () => Promise.resolve([...games.values()]),
     transitionLifecycle: (gameId, command) => {
@@ -70,6 +123,7 @@ export function createDemoGameRepository(
       }
 
       games.set(game.id, transitionedGame);
+      publishGameChange();
       return Promise.resolve({
         game: transitionedGame,
         status: 'transitioned',

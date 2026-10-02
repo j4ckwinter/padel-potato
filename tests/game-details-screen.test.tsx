@@ -1,6 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { render, userEvent } from '@testing-library/react-native';
+import { act, render, userEvent } from '@testing-library/react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Alert } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import GameDetailsScreen from '../src/app/(tabs)/games/[gameId]';
@@ -261,4 +262,48 @@ describe('game details screen', () => {
       lifecycle: { status: 'scheduled' },
     });
   });
+});
+
+it('confirms cancellation and shows the cancelled game after saving', async () => {
+  const game = await demoAppServices.games.create(
+    updateGameVenue(
+      selectGameTime(selectGameDay(initialGameDraft, '2099-10-07'), '18:30'),
+      'Future Club',
+    ),
+  );
+  mockUseLocalSearchParams.mockReturnValue({ gameId: game.id });
+  const push = jest.fn();
+  mockUseRouter.mockReturnValue({ push } as unknown as ReturnType<
+    typeof useRouter
+  >);
+  const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+  const screen = await render(appScreen(<GameDetailsScreen />));
+  const user = userEvent.setup();
+  await user.press(
+    await screen.findByRole('button', { name: 'Reschedule game' }),
+  );
+  expect(push).toHaveBeenCalledWith({
+    pathname: '/games/reschedule',
+    params: { gameId: game.id },
+  });
+  await user.press(screen.getByRole('button', { name: 'Cancel game' }));
+  expect(
+    (await demoAppServices.games.findById(game.id))?.lifecycle.status,
+  ).toBe('scheduled');
+  expect(alert).toHaveBeenCalledWith(
+    'Cancel game?',
+    'The game and pending invitations will be cancelled for everyone.',
+    expect.any(Array),
+  );
+  const buttons = alert.mock.calls[0][2];
+  await act(async () => {
+    buttons?.find((button) => button.text === 'Cancel game')?.onPress?.();
+  });
+  expect(
+    await screen.findByLabelText('Game update. Game cancelled.'),
+  ).toBeVisible();
+  expect(
+    (await demoAppServices.games.findById(game.id))?.lifecycle.status,
+  ).toBe('cancelled');
+  alert.mockRestore();
 });

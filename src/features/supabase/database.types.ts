@@ -364,6 +364,11 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      leave_game: { Args: { game_id: string }; Returns: string };
+      reschedule_game: {
+        Args: { game_id: string; starts_at: string };
+        Returns: string;
+      };
       create_game: {
         Args: {
           duration_minutes: number;

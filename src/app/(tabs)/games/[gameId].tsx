@@ -1,6 +1,6 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { useCallback, useState, useRef, useLayoutEffect } from 'react';
+import { Alert, ScrollView, StyleSheet } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -127,6 +127,7 @@ function CompletedResult({
 }
 
 export default function GameDetailsScreen() {
+  const [now] = useState(() => Date.now());
   const router = useRouter();
   const { currentPlayer, games } = useAppServices();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -138,6 +139,65 @@ export default function GameDetailsScreen() {
   const [showCreated, setShowCreated] = useState(params.created === 'true');
   const [joinFeedback, setJoinFeedback] = useState<JoinFeedback>(null);
   const [joining, setJoining] = useState(false);
+  const [managementPending, setManagementPending] = useState(false);
+  const [managementFeedback, setManagementFeedback] = useState<string | null>(
+    null,
+  );
+  const account = useRef<string | null>(currentPlayer.id);
+  useLayoutEffect(() => {
+    account.current = currentPlayer.id;
+    return () => {
+      account.current = null;
+    };
+  }, [currentPlayer.id]);
+  const manageGame = async (game: Game, action: 'leave' | 'cancel') => {
+    const playerId = currentPlayer.id;
+    setManagementPending(true);
+    setManagementFeedback(null);
+    try {
+      const result =
+        action === 'leave'
+          ? await games.leave(game.id)
+          : await games.transitionLifecycle(game.id, {
+              type: 'cancel',
+              at: new Date().toISOString(),
+            });
+      if (account.current !== playerId) return;
+      if (result.status === 'notFound') {
+        setLoadState({ status: 'notFound' });
+        return;
+      }
+      setLoadState({ game: result.game, status: 'ready' });
+      setManagementFeedback(
+        result.status === 'left' || result.status === 'alreadyLeft'
+          ? 'You have left this game.'
+          : result.status === 'transitioned'
+            ? 'Game cancelled.'
+            : 'This game can no longer be changed.',
+      );
+    } catch {
+      if (account.current === playerId)
+        setManagementFeedback('Could not update the game. Please try again.');
+    } finally {
+      if (account.current === playerId) setManagementPending(false);
+    }
+  };
+  const confirmManagement = (game: Game, action: 'leave' | 'cancel') => {
+    Alert.alert(
+      action === 'leave' ? 'Leave game?' : 'Cancel game?',
+      action === 'leave'
+        ? 'Your spot will become available to another player.'
+        : 'The game and pending invitations will be cancelled for everyone.',
+      [
+        { text: 'Keep game', style: 'cancel' },
+        {
+          text: action === 'leave' ? 'Leave game' : 'Cancel game',
+          style: 'destructive',
+          onPress: () => void manageGame(game, action),
+        },
+      ],
+    );
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -199,6 +259,8 @@ export default function GameDetailsScreen() {
           setLoadState({ status: 'notFound' });
           return;
       }
+    } catch {
+      setManagementFeedback('Could not join the game. Please try again.');
     } finally {
       setJoining(false);
     }
@@ -226,6 +288,15 @@ export default function GameDetailsScreen() {
               : undefined
           }
         />
+        {managementFeedback ? (
+          <BannerToast
+            title="Game update"
+            message={managementFeedback}
+            onClose={() => setManagementFeedback(null)}
+            style="success"
+            type="toast"
+          />
+        ) : null}
         {showCreated && displayedState.status === 'ready' ? (
           <BannerToast
             message="Your game is ready to share."
@@ -325,6 +396,52 @@ export default function GameDetailsScreen() {
                 </Stack>
               </Stack>
             </Surface>
+            {isScheduledGame(displayedState.game) &&
+            Date.parse(displayedState.game.schedule.startsAt) > now &&
+            gameHasPlayer(displayedState.game, currentPlayer.id) ? (
+              <Stack gap="space8">
+                {playerOrganisesGame(displayedState.game, currentPlayer.id) ? (
+                  <>
+                    {displayedState.game.participants.length === 1 ? (
+                      <Button
+                        label="Reschedule game"
+                        onPress={() =>
+                          router.push({
+                            pathname: '/games/reschedule',
+                            params: { gameId: displayedState.game.id },
+                          })
+                        }
+                        style="secondary"
+                      />
+                    ) : (
+                      <Text variant="body" color="textSecondary">
+                        Rescheduling is available before another player joins.
+                        Cancel and create a new game to agree a different time.
+                      </Text>
+                    )}
+                    <Button
+                      label="Cancel game"
+                      {...(managementPending
+                        ? { style: 'primary' as const, disabled: true as const }
+                        : { style: 'secondary' as const })}
+                      onPress={() =>
+                        confirmManagement(displayedState.game, 'cancel')
+                      }
+                    />
+                  </>
+                ) : (
+                  <Button
+                    label="Leave game"
+                    {...(managementPending
+                      ? { style: 'primary' as const, disabled: true as const }
+                      : { style: 'secondary' as const })}
+                    onPress={() =>
+                      confirmManagement(displayedState.game, 'leave')
+                    }
+                  />
+                )}
+              </Stack>
+            ) : null}
             <CompletedResult
               currentPlayerId={currentPlayer.id}
               game={displayedState.game}
