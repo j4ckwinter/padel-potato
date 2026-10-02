@@ -4,9 +4,20 @@ import { createSupabaseInvitationRepository } from '../src/features/supabase/inv
 
 describe('Supabase invitation commands', () => {
   it('sends an invitation and accepts a duplicate pending invite as success', async () => {
-    const rpc = jest.fn(async () => ({ data: 'already_invited', error: null }));
+    const rpc = jest.fn(() => ({
+      setHeader: () =>
+        Promise.resolve({ data: 'already_invited', error: null }),
+    }));
     const repo = createSupabaseInvitationRepository(
-      { rpc } as unknown as PadelSupabaseClient,
+      {
+        rpc,
+        auth: {
+          getSession: async () => ({
+            data: { session: { user: { id: 'me' }, access_token: 'me-token' } },
+            error: null,
+          }),
+        },
+      } as unknown as PadelSupabaseClient,
       'me',
     );
     await repo.send('game', 'friend');
@@ -16,9 +27,20 @@ describe('Supabase invitation commands', () => {
     });
   });
   it('submits an explicit accept or decline and surfaces capacity failures', async () => {
-    const rpc = jest.fn(async () => ({ data: 'full', error: null }));
+    let outcome = 'full';
+    const rpc = jest.fn(() => ({
+      setHeader: () => Promise.resolve({ data: outcome, error: null }),
+    }));
     const repo = createSupabaseInvitationRepository(
-      { rpc } as unknown as PadelSupabaseClient,
+      {
+        rpc,
+        auth: {
+          getSession: async () => ({
+            data: { session: { user: { id: 'me' }, access_token: 'me-token' } },
+            error: null,
+          }),
+        },
+      } as unknown as PadelSupabaseClient,
       'me',
     );
     await expect(repo.respond('invite', 'accept')).rejects.toThrow(
@@ -28,7 +50,7 @@ describe('Supabase invitation commands', () => {
       invitation_id: 'invite',
       response: 'accept',
     });
-    rpc.mockResolvedValue({ data: 'declined', error: null });
+    outcome = 'declined';
     await expect(repo.respond('invite', 'decline')).resolves.toBeUndefined();
   });
 });

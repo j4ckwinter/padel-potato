@@ -4,6 +4,7 @@ import type {
   GameInvitation,
 } from '../invitations/invitation';
 import type { PadelSupabaseClient } from './client';
+import { accountAuthorization } from './accountAuthorization';
 import { createSupabaseGameRepository } from './gameRepository';
 
 const failureMessages: Readonly<Record<string, string>> = {
@@ -71,10 +72,13 @@ export function createSupabaseInvitationRepository(
     listIncoming: () => list('incoming'),
     listSent: (gameId) => list('sent', gameId),
     send: async (gameId, playerId) => {
-      const { data, error } = await client.rpc('send_game_invitation', {
-        game_id: gameId,
-        player_id: playerId,
-      });
+      const authorization = await accountAuthorization(client, userId);
+      const { data, error } = await client
+        .rpc('send_game_invitation', {
+          game_id: gameId,
+          player_id: playerId,
+        })
+        .setHeader('Authorization', authorization);
       if (error) throw error;
       if (data !== 'invited' && data !== 'already_invited')
         throw new Error(
@@ -82,10 +86,13 @@ export function createSupabaseInvitationRepository(
         );
     },
     respond: async (id, response) => {
-      const { data, error } = await client.rpc('respond_to_game_invitation', {
-        invitation_id: id,
-        response,
-      });
+      const authorization = await accountAuthorization(client, userId);
+      const { data, error } = await client
+        .rpc('respond_to_game_invitation', {
+          invitation_id: id,
+          response,
+        })
+        .setHeader('Authorization', authorization);
       if (error) throw error;
       if (data === 'accepted') publishGameChange();
       if (data !== 'accepted' && data !== 'declined')

@@ -19,13 +19,11 @@ jest.mock('expo-router', () => ({
 }));
 const push = jest.fn();
 beforeEach(() => {
-  jest
-    .mocked(useRouter)
-    .mockReturnValue({
-      push,
-      canGoBack: () => true,
-      back: jest.fn(),
-    } as unknown as ReturnType<typeof useRouter>);
+  jest.mocked(useRouter).mockReturnValue({
+    push,
+    canGoBack: () => true,
+    back: jest.fn(),
+  } as unknown as ReturnType<typeof useRouter>);
   jest.mocked(useLocalSearchParams).mockReturnValue({});
 });
 async function show(services: AppServices, screen: 'inbox' | 'players') {
@@ -43,6 +41,31 @@ async function show(services: AppServices, screen: 'inbox' | 'players') {
   );
 }
 describe('invitation screens', () => {
+  it('explains an inbox load failure and retries the request', async () => {
+    let failing = true;
+    const listIncoming = jest.fn(async () => {
+      if (failing) throw new Error('network');
+      return [];
+    });
+    const services = {
+      ...demoAppServices,
+      invitations: { ...demoAppServices.invitations, listIncoming },
+    };
+    const screen = await show(services, 'inbox');
+    expect(
+      await screen.findByText('Could not load invitations. Please try again.'),
+    ).toBeVisible();
+    failing = false;
+    await userEvent
+      .setup()
+      .press(screen.getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(listIncoming).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(
+        screen.queryByText('Could not load invitations. Please try again.'),
+      ).not.toBeOnTheScreen(),
+    );
+  });
   it('shows the game context, accepts an invitation, and refreshes its status', async () => {
     const game = (await demoAppServices.games.list())[0]!;
     let status: GameInvitation['status'] = 'pending';
@@ -152,13 +175,11 @@ describe('invitation screens', () => {
       .mocked(useLocalSearchParams)
       .mockReturnValue({ gameId: game.id, view: 'discover' });
     const screen = await show(services, 'players');
-    await userEvent
-      .setup()
-      .press(
-        await screen.findByRole('button', {
-          name: `Invite ${target.identity.name}`,
-        }),
-      );
+    await userEvent.setup().press(
+      await screen.findByRole('button', {
+        name: `Invite ${target.identity.name}`,
+      }),
+    );
     expect(send).toHaveBeenCalledWith(game.id, target.id);
     await waitFor(() =>
       expect(

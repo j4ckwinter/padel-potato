@@ -1,5 +1,6 @@
 import type { PlayerRepository } from '../players/playerRepository';
 import type { PadelSupabaseClient } from './client';
+import { accountAuthorization } from './accountAuthorization';
 import { playerProfileFromRow } from './playerProfile';
 
 export function createSupabasePlayerRepository(
@@ -58,10 +59,13 @@ export function createSupabasePlayerRepository(
         : null;
     },
     setFavourite: async (playerId, favourite) => {
-      const { data, error } = await client.rpc('set_player_favourite', {
-        player_id: playerId,
-        should_favourite: favourite,
-      });
+      const authorization = await accountAuthorization(client, userId);
+      const { data, error } = await client
+        .rpc('set_player_favourite', {
+          player_id: playerId,
+          should_favourite: favourite,
+        })
+        .setHeader('Authorization', authorization);
       if (error) throw error;
       if (data !== 'updated')
         throw new Error('This player is no longer available.');

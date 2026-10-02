@@ -72,7 +72,7 @@ export default function NotificationsScreen() {
             {error || resource.status === 'error' ? (
               <Stack gap="space8">
                 <Text accessibilityRole="alert" variant="body">
-                  {error}
+                  {error ?? 'Could not load invitations. Please try again.'}
                 </Text>
                 <Button
                   label="Retry"

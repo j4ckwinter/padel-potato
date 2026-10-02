@@ -6,7 +6,9 @@ function clientFor(
   tables: Record<string, { data: unknown; error: unknown }>,
   rpcResult = { data: 'updated', error: null as unknown },
 ) {
-  const rpc = jest.fn(async () => rpcResult);
+  const rpc = jest.fn(() => ({
+    setHeader: jest.fn(() => Promise.resolve(rpcResult)),
+  }));
   const filters: unknown[] = [];
   const from = (table: string) => {
     const result = tables[table];
@@ -30,7 +32,16 @@ function clientFor(
     return query;
   };
   return {
-    client: { from, rpc } as unknown as PadelSupabaseClient,
+    client: {
+      from,
+      rpc,
+      auth: {
+        getSession: async () => ({
+          data: { session: { user: { id: 'me' }, access_token: 'me-token' } },
+          error: null,
+        }),
+      },
+    } as unknown as PadelSupabaseClient,
     rpc,
     filters,
   };
