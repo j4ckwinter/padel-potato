@@ -26,6 +26,13 @@
       "expo-sqlite",
       "expo-web-browser",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ab4494c1-600d-41da-923b-9a256febac4d"
+      }
+    },
+    "owner": "j4ckwinter"
   }
 }

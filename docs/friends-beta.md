@@ -27,7 +27,7 @@ On this Mac, Docker uses `unix:///Users/jackwinter/.docker/run/docker.sock`. Set
 
 The app identifiers are `com.padelpotato.app` on both platforms. The EAS preview profile produces an Android APK and an internal iOS build. The development profile uses the iOS simulator. These are regular app builds. They do not require Expo Go.
 
-Run `npx eas-cli build:configure` to connect this repository to an EAS project. Set the two public Supabase environment variables in the selected EAS environment. Run `npx eas-cli build --profile preview --platform android` or the corresponding iOS command. iOS device distribution requires an Apple Developer account and registered devices.
+This repository is linked to the `j4ckwinter` EAS account. The preview environment has both public Supabase variables configured. For another environment, configure those variables before building. Run `npx eas-cli build --profile preview --platform android` or the corresponding iOS command. iOS device distribution requires an Apple Developer account and registered devices.
 
 For local Android builds, install an Android SDK and JDK 17 or newer. Set `ANDROID_HOME` and `JAVA_HOME`. Use `npx expo run:android`. Local iOS builds require full Xcode and a simulator runtime.
 
