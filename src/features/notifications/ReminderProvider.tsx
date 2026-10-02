@@ -109,16 +109,15 @@ export function ReminderProvider({ children }: PropsWithChildren) {
   }, []);
 
   useEffect(() => {
-    if (
-      !response ||
-      !services ||
-      !userId ||
-      !navigation?.key ||
-      handledResponse.current === response.notification.request.identifier
-    )
-      return;
-    handledResponse.current = response.notification.request.identifier;
+    if (!response || !services || !userId || !navigation?.key) return;
     const data = response.notification.request.content.data;
+    const responseKey = JSON.stringify([
+      response.notification.request.identifier,
+      response.notification.date,
+      data?.reminderAt,
+    ]);
+    if (handledResponse.current === responseKey) return;
+    handledResponse.current = responseKey;
     void Notifications.clearLastNotificationResponseAsync().catch(
       () => undefined,
     );

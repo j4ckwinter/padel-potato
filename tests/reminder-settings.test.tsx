@@ -274,4 +274,51 @@ describe('reminder settings', () => {
     });
     expect(router.push).toHaveBeenCalledTimes(1);
   });
+  it('opens a rescheduled reminder with the same identifier and ignores duplicate delivery taps', async () => {
+    jest
+      .mocked(Notifications.getLastNotificationResponseAsync)
+      .mockResolvedValue(null);
+    await render(screen());
+    const listener = jest.mocked(
+      Notifications.addNotificationResponseReceivedListener,
+    ).mock.calls[0][0];
+    const reminder = (at: number) =>
+      ({
+        actionIdentifier: 'default',
+        notification: {
+          date: at,
+          request: {
+            identifier: 'padel-potato.game-reminder.owner.same-game',
+            content: {
+              data: {
+                kind: 'gameReminder',
+                userId: demoAppServices.currentUser.id,
+                gameId: 'same-game',
+                reminderAt: at,
+              },
+            },
+          },
+        },
+      }) as unknown as Notifications.NotificationResponse;
+    await act(async () => {
+      listener(reminder(1000));
+    });
+    expect(router.push).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      listener(reminder(1000));
+    });
+    expect(router.push).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      listener(reminder(2000));
+    });
+    expect(router.push).toHaveBeenCalledTimes(2);
+    expect(router.push).toHaveBeenLastCalledWith({
+      pathname: '/games/[gameId]',
+      params: { gameId: 'same-game' },
+    });
+    await act(async () => {
+      listener(reminder(2000));
+    });
+    expect(router.push).toHaveBeenCalledTimes(2);
+  });
 });
