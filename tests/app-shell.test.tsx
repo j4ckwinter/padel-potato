@@ -158,6 +158,7 @@ describe('application shell startup', () => {
 
     expect(screen.getByTestId('route-(tabs)')).toBeOnTheScreen();
     expect(screen.getByTestId('route-settings')).toBeOnTheScreen();
+    expect(screen.getByTestId('route-onboarding')).toBeOnTheScreen();
     expect(screen.queryByTestId('route-sign-in')).toBeNull();
   });
 

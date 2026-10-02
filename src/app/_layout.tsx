@@ -98,6 +98,7 @@ function RootNavigator({
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="notifications" />
             <Stack.Screen name="settings" />
+            <Stack.Screen name="onboarding" />
           </Stack.Protected>
           <Stack.Protected guard={state.status === 'signedOut'}>
             <Stack.Screen name="sign-in" />

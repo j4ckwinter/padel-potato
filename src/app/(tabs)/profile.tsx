@@ -75,6 +75,13 @@ export default function ProfileScreen() {
           <SettingsRow
             disabled={false}
             icon="profile"
+            label="Set up your profile"
+            onPress={() => router.push('/onboarding')}
+            variant="navigation"
+          />
+          <SettingsRow
+            disabled={false}
+            icon="profile"
             label="Account settings"
             onPress={() => router.push('/settings')}
             variant="navigation"

@@ -94,6 +94,10 @@ describe('profile screen', () => {
 
     await user.press(screen.getByRole('button', { name: 'Account settings' }));
     expect(navigation.push).toHaveBeenCalledWith('/settings');
+    await user.press(
+      screen.getByRole('button', { name: 'Set up your profile' }),
+    );
+    expect(navigation.push).toHaveBeenCalledWith('/onboarding');
     expect(
       flattenedStyle(
         screen.getByTestId('profile-scroll').props.contentContainerStyle,
