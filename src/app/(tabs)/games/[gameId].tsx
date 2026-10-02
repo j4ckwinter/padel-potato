@@ -238,10 +238,13 @@ export default function GameDetailsScreen() {
       params: { view: 'discover', gameId: gameId ?? '' },
     });
   const submitJoin = async (game: Game) => {
+    if (joining) return;
+    const playerId = currentPlayer.id;
     setJoining(true);
     setJoinFeedback(null);
     try {
       const result = await games.join(game.id);
+      if (account.current !== playerId) return;
       switch (result.status) {
         case 'joined':
           setLoadState({ game: result.game, status: 'ready' });
@@ -263,9 +266,10 @@ export default function GameDetailsScreen() {
           return;
       }
     } catch {
-      setManagementFeedback('Could not join the game. Please try again.');
+      if (account.current === playerId)
+        setManagementFeedback('Could not join the game. Please try again.');
     } finally {
-      setJoining(false);
+      if (account.current === playerId) setJoining(false);
     }
   };
   const openResultEntry = (game: Game) =>

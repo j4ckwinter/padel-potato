@@ -37,7 +37,11 @@ export default function RescheduleGameScreen() {
     };
   }, [currentPlayer.id]);
   const save = async () => {
-    if (typeof gameId !== 'string' || draft.schedule.status !== 'complete')
+    if (
+      pending ||
+      typeof gameId !== 'string' ||
+      draft.schedule.status !== 'complete'
+    )
       return;
     const playerId = currentPlayer.id;
     setPending(true);
@@ -79,7 +83,9 @@ export default function RescheduleGameScreen() {
                   type="day"
                   date={day.dateLabel}
                   day={day.dayLabel}
-                  selected={date === day.date}
+                  {...(pending
+                    ? { disabled: true as const, selected: false as const }
+                    : { selected: date === day.date })}
                   onSelect={() => setDraft(selectGameDay(draft, day.date))}
                 />
               ))}
@@ -93,7 +99,7 @@ export default function RescheduleGameScreen() {
                   type="time"
                   time={value}
                   availability={time === value ? 'Selected' : 'Available'}
-                  {...(date === null
+                  {...(pending || date === null
                     ? { disabled: true as const, selected: false as const }
                     : { selected: time === value })}
                   onSelect={() => setDraft(selectGameTime(draft, value))}

@@ -16,6 +16,7 @@ import type {
   JoinGameResult,
   TransitionGameLifecycleResult,
 } from '../games/gameRepository';
+import { accountAuthorization } from './accountAuthorization';
 import type { PadelSupabaseClient } from './client';
 import type { Database, Json } from './database.types';
 
@@ -339,6 +340,7 @@ function resultData(
 
 export function createSupabaseGameRepository(
   client: PadelSupabaseClient,
+  userId?: string,
 ): GameRepository {
   return {
     create: async (draft: GameDraft) => {
@@ -346,13 +348,18 @@ export function createSupabaseGameRepository(
       if (draft.schedule.status !== 'complete' || venueName.length === 0) {
         throw new Error('A game requires a venue, day, and start time.');
       }
-      const { data: gameId, error } = await client.rpc('create_game', {
+      const authorization = userId
+        ? await accountAuthorization(client, userId)
+        : null;
+      const request = client.rpc('create_game', {
         duration_minutes: draft.setup.durationMinutes,
         format: draft.setup.format,
         game_name: gameDraftName(draft),
         starts_at: draft.schedule.startsAt,
         venue_name: venueName,
       });
+      if (authorization) request.setHeader('Authorization', authorization);
+      const { data: gameId, error } = await request;
       if (error) throw error;
       const game = await requiredGame(client, gameId);
       if (!isScheduledGame(game)) {
@@ -363,9 +370,14 @@ export function createSupabaseGameRepository(
     },
     findById: async (gameId) => (await readGames(client, gameId))[0] ?? null,
     join: async (gameId): Promise<JoinGameResult> => {
-      const { data: status, error } = await client.rpc('join_game', {
+      const authorization = userId
+        ? await accountAuthorization(client, userId)
+        : null;
+      const request = client.rpc('join_game', {
         game_id: gameId,
       });
+      if (authorization) request.setHeader('Authorization', authorization);
+      const { data: status, error } = await request;
       if (error) throw error;
       if (status === 'not_found') return { status: 'notFound' };
 
@@ -385,9 +397,14 @@ export function createSupabaseGameRepository(
       }
     },
     leave: async (gameId) => {
-      const { data: status, error } = await client.rpc('leave_game', {
+      const authorization = userId
+        ? await accountAuthorization(client, userId)
+        : null;
+      const request = client.rpc('leave_game', {
         game_id: gameId,
       });
+      if (authorization) request.setHeader('Authorization', authorization);
+      const { data: status, error } = await request;
       if (error) throw error;
       if (status === 'not_found') return { status: 'notFound' };
       const game = await requiredGame(client, gameId);
@@ -406,10 +423,15 @@ export function createSupabaseGameRepository(
       }
     },
     reschedule: async (gameId, schedule) => {
-      const { data: status, error } = await client.rpc('reschedule_game', {
+      const authorization = userId
+        ? await accountAuthorization(client, userId)
+        : null;
+      const request = client.rpc('reschedule_game', {
         game_id: gameId,
         starts_at: schedule.startsAt,
       });
+      if (authorization) request.setHeader('Authorization', authorization);
+      const { data: status, error } = await request;
       if (error) throw error;
       if (status === 'not_found') return { status: 'notFound' };
       const game = await requiredGame(client, gameId);
@@ -432,7 +454,10 @@ export function createSupabaseGameRepository(
       gameId,
       command,
     ): Promise<TransitionGameLifecycleResult> => {
-      const { data: status, error } = await client.rpc(
+      const authorization = userId
+        ? await accountAuthorization(client, userId)
+        : null;
+      const request = client.rpc(
         'transition_game_lifecycle',
         command.type === 'recordResult'
           ? {
@@ -447,6 +472,8 @@ export function createSupabaseGameRepository(
               occurred_at: command.at,
             },
       );
+      if (authorization) request.setHeader('Authorization', authorization);
+      const { data: status, error } = await request;
       if (error) throw error;
       if (status === 'not_found') return { status: 'notFound' };
 
