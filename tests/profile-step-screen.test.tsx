@@ -18,7 +18,6 @@ const validDraft = {
 function props(initialDraft = emptyDraft) {
   return {
     initialDraft,
-    onBack: jest.fn(),
     onContinue: jest.fn(async (): Promise<void> => undefined),
     onPickPhoto: jest.fn(async (): Promise<string | null> => null),
   };
@@ -78,6 +77,45 @@ describe('profile onboarding step', () => {
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
+  it('accepts a synchronous draft save and immediately confirms success', async () => {
+    const onContinue = jest.fn(() => undefined);
+    const screen = await render(
+      <ProfileStepScreen {...props(validDraft)} onContinue={onContinue} />,
+    );
+    await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(onContinue).toHaveBeenCalledWith(validDraft);
+    expect(
+      screen.getByRole('button', { name: 'Continue', busy: false }),
+    ).toBeEnabled();
+    expect(
+      screen.getByRole('alert', { name: /Ready for step 2/u }),
+    ).toBeVisible();
+  });
+
+  it('catches a synchronous save failure and allows retry', async () => {
+    const onContinue = jest
+      .fn<() => void>()
+      .mockImplementationOnce(() => {
+        throw new Error('Private storage error');
+      })
+      .mockImplementationOnce(() => undefined);
+    const screen = await render(
+      <ProfileStepScreen {...props(validDraft)} onContinue={onContinue} />,
+    );
+    await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(
+      screen.getByRole('alert', {
+        name: /Your profile details could not be saved/u,
+      }),
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(onContinue).toHaveBeenCalledTimes(2);
+    expect(
+      screen.getByRole('alert', { name: /Ready for step 2/u }),
+    ).toBeVisible();
+  });
+
   it('keeps an optional photo on cancellation and allows changing it', async () => {
     const callbacks = props(validDraft);
     callbacks.onPickPhoto
@@ -113,8 +151,10 @@ describe('profile onboarding step', () => {
     expect(
       screen.getByRole('button', { name: 'Continue', busy: true }),
     ).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Back' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
     expect(screen.getByLabelText('Display name, required')).toBeDisabled();
+    await user.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(callbacks.onContinue).toHaveBeenCalledTimes(1);
     expect(
       screen.queryByRole('button', { name: 'Add a profile photo' }),
     ).toBeNull();
@@ -133,7 +173,7 @@ describe('profile onboarding step', () => {
     ).toBeVisible();
   });
 
-  it('reports photo selection failure and invokes back', async () => {
+  it('reports photo selection failure', async () => {
     const callbacks = props();
     callbacks.onPickPhoto.mockRejectedValueOnce(
       new Error('Choose a JPG or PNG under 5 MB'),
@@ -146,7 +186,5 @@ describe('profile onboarding step', () => {
     expect(
       screen.getByRole('alert', { name: /Choose a JPG or PNG under 5 MB/u }),
     ).toBeVisible();
-    await user.press(screen.getByRole('button', { name: 'Back' }));
-    expect(callbacks.onBack).toHaveBeenCalledTimes(1);
   });
 });

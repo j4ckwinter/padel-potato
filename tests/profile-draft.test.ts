@@ -57,12 +57,14 @@ beforeEach(() => {
 });
 
 describe('profile draft persistence', () => {
-  it('trims valid names and locations before storage', async () => {
-    await saveProfileDraft('jack', {
-      ...draft,
-      displayName: ' Jack ',
-      homeLocation: ' London ',
-    });
+  it('trims valid names and locations before storage', () => {
+    expect(
+      saveProfileDraft('jack', {
+        ...draft,
+        displayName: ' Jack ',
+        homeLocation: ' London ',
+      }),
+    ).toBeUndefined();
     expect(loadProfileDraft('jack')).toEqual({
       displayName: 'Jack',
       homeLocation: 'London',
@@ -79,7 +81,7 @@ describe('profile draft persistence', () => {
     { displayName: 'x'.repeat(81), homeLocation: 'London', photoUri: null },
     { displayName: 'Jack', homeLocation: 'x'.repeat(121), photoUri: null },
   ])('rejects invalid profile fields on save and load %p', async (invalid) => {
-    await expect(saveProfileDraft('jack', invalid)).rejects.toThrow('invalid');
+    expect(() => saveProfileDraft('jack', invalid)).toThrow('invalid');
     expect(values.size).toBe(0);
     values.set(
       'padel-potato.profile-draft.v1.jack',
@@ -116,15 +118,13 @@ describe('profile draft persistence', () => {
   });
 
   it('rejects invalid drafts and empty user ids', async () => {
-    await expect(saveProfileDraft(' ', draft)).rejects.toThrow(
-      'A user is required',
-    );
-    await expect(
+    expect(() => saveProfileDraft(' ', draft)).toThrow('A user is required');
+    expect(() =>
       saveProfileDraft('jack', {
         ...draft,
         photoUri: 'https://example.com/a.png',
       }),
-    ).rejects.toThrow('invalid');
+    ).toThrow('invalid');
     expect(values.size).toBe(0);
   });
 });

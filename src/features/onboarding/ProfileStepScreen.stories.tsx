@@ -8,8 +8,7 @@ const meta = {
   parameters: { layout: 'fullscreen' },
   args: {
     initialDraft: { displayName: '', homeLocation: '', photoUri: null },
-    onBack: () => undefined,
-    onContinue: async () => undefined,
+    onContinue: (): void | Promise<void> => undefined,
     onPickPhoto: async () => null,
   },
 } satisfies Meta<typeof ProfileStepScreen>;

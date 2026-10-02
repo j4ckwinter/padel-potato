@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, IconButton } from '../../design-system/components/actions';
+import { Button } from '../../design-system/components/actions';
 import { BannerToast } from '../../design-system/components/feedback';
 import { Field } from '../../design-system/components/forms';
 import { AvatarPicker } from '../../design-system/components/identity';
@@ -26,8 +26,7 @@ export type ProfileStepDraft = Readonly<{
 
 type ProfileStepScreenProps = Readonly<{
   initialDraft: ProfileStepDraft;
-  onBack: () => void;
-  onContinue: (draft: ProfileStepDraft) => Promise<void>;
+  onContinue: (draft: ProfileStepDraft) => void | Promise<void>;
   onPickPhoto: () => Promise<string | null>;
 }>;
 
@@ -37,7 +36,6 @@ type SubmissionState =
 
 export function ProfileStepScreen({
   initialDraft,
-  onBack,
   onContinue,
   onPickPhoto,
 }: ProfileStepScreenProps) {
@@ -46,6 +44,7 @@ export function ProfileStepScreen({
     status: 'idle',
   });
   const [validated, setValidated] = useState(false);
+  const saving = useRef(false);
   const busy =
     submission.status === 'picking' || submission.status === 'saving';
   const displayName = draft.displayName.trim();
@@ -87,14 +86,18 @@ export function ProfileStepScreen({
   };
 
   const continueSetup = async () => {
-    if (busy) return;
+    if (busy || saving.current) return;
     Keyboard.dismiss();
     setValidated(true);
     if (nameError || locationError) return;
     const nextDraft = { ...draft, displayName, homeLocation };
-    setSubmission({ status: 'saving' });
+    saving.current = true;
     try {
-      await onContinue(nextDraft);
+      const result = onContinue(nextDraft);
+      if (result !== undefined) {
+        setSubmission({ status: 'saving' });
+        await result;
+      }
       setDraft(nextDraft);
       setSubmission({ status: 'saved' });
     } catch {
@@ -102,6 +105,8 @@ export function ProfileStepScreen({
         status: 'error',
         message: 'Your profile details could not be saved. Try again.',
       });
+    } finally {
+      saving.current = false;
     }
   };
 
@@ -117,15 +122,6 @@ export function ProfileStepScreen({
         >
           <View style={styles.content}>
             <Stack gap="space24">
-              <View style={styles.back}>
-                <IconButton
-                  accessibilityLabel="Back"
-                  disabled={busy}
-                  icon="back"
-                  onPress={onBack}
-                  size={44}
-                />
-              </View>
               <StepProgress value={1} />
               <Stack gap="space8">
                 <Text accessibilityRole="header" variant="title">
@@ -233,7 +229,6 @@ export function ProfileStepScreen({
 }
 
 const styles = StyleSheet.create({
-  back: { alignSelf: 'flex-start' },
   centeredText: { textAlign: 'center' },
   content: {
     alignSelf: 'center',

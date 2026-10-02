@@ -52,7 +52,7 @@ export function loadProfileDraft(userId: string): ProfileDraft | null {
   }
 }
 
-export async function saveProfileDraft(userId: string, draft: ProfileDraft) {
+export function saveProfileDraft(userId: string, draft: ProfileDraft) {
   const key = draftKey(userId);
   if (!isProfileDraft(draft)) throw new Error('The profile draft is invalid.');
   localStorage.setItem(
