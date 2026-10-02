@@ -58,7 +58,7 @@ export function isAvatarImageSource(
     return (
       (url.protocol === 'https:' ||
         (url.protocol === 'http:' &&
-          ['localhost', '127.0.0.1'].includes(url.hostname))) &&
+          ['localhost', '127.0.0.1', '10.0.2.2'].includes(url.hostname))) &&
       url.hostname.length > 0 &&
       !url.username &&
       !url.password
