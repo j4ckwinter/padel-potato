@@ -1,0 +1,62 @@
+[
+  {
+    "step": 1,
+    "action": "tap",
+    "label": "Close",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "tap",
+    "label": "Email",
+    "status": "PASS"
+  },
+  {
+    "step": 3,
+    "action": "text",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 4,
+    "action": "back",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 5,
+    "action": "tap",
+    "label": "Password",
+    "status": "PASS"
+  },
+  {
+    "step": 6,
+    "action": "text",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 7,
+    "action": "back",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 8,
+    "action": "tap",
+    "label": "Sign in with email",
+    "status": "PASS"
+  },
+  {
+    "step": 9,
+    "action": "assert",
+    "label": "Notifications",
+    "status": "PASS"
+  },
+  {
+    "step": 10,
+    "action": "tap",
+    "label": "Notifications",
+    "status": "PASS"
+  }
+]

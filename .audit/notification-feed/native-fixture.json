@@ -1,0 +1,85 @@
+{
+  "recipientId": "3aec8768-a9cc-4b63-8dd7-68e1beb5afb4",
+  "eventCount": 8,
+  "gameIds": {
+    "joined": "99865f50-310c-4a45-8790-5a483040a753",
+    "moved": "58f2dfee-ac63-4bf6-95e8-85b786d60d8b",
+    "cancelled": "a0f5ed24-c57d-4357-aafa-b893223d9b16",
+    "invited": "0bbffbd2-5aaf-4b4b-862d-d5a1fddc97cb"
+  },
+  "rows": [
+    {
+      "id": "c06bcd0d-30ce-4139-b740-f27b9cdf9ee8",
+      "title": "Game invitation",
+      "message": "Sam Feed invited you to Native feed invitation at London Club.",
+      "readAt": null,
+      "createdAt": "2026-10-03T11:20:16.219243+00:00",
+      "kind": "invitation",
+      "invitationId": "8baccd37-5253-4d59-aed3-f63a96460173"
+    },
+    {
+      "id": "9ae3fef7-b572-4dbb-9421-560355249908",
+      "title": "Game cancelled",
+      "message": "Native feed cancelled has been cancelled.",
+      "readAt": null,
+      "createdAt": "2026-10-03T11:20:16.215654+00:00",
+      "kind": "cancelled",
+      "invitationId": null
+    },
+    {
+      "id": "fa8a106f-27db-450e-8b3a-f39129240068",
+      "title": "Game invitation",
+      "message": "Sam Feed invited you to Native feed cancelled at London Club.",
+      "readAt": null,
+      "createdAt": "2026-10-03T11:20:16.214001+00:00",
+      "kind": "invitation",
+      "invitationId": "9cb6197f-49b7-43b6-99fb-6dc740e3b4f9"
+    },
+    {
+      "id": "627238fa-12de-40ea-bfa4-dba4e95880f2",
+      "title": "Game updated",
+      "message": "The schedule or venue for Native feed moved has changed. Check the game details.",
+      "readAt": null,
+      "createdAt": "2026-10-03T11:20:16.20977+00:00",
+      "kind": "game_updated",
+      "invitationId": null
+    },
+    {
+      "id": "7ff38f5f-5e7c-4020-8803-d8d311d8fa24",
+      "title": "Game invitation",
+      "message": "Sam Feed invited you to Native feed moved at London Club.",
+      "readAt": null,
+      "createdAt": "2026-10-03T11:20:16.20727+00:00",
+      "kind": "invitation",
+      "invitationId": "01d470d8-4436-4665-b89d-37c8cc1b89b7"
+    },
+    {
+      "id": "bd95083b-c8eb-4131-b9ff-5dcfed33d269",
+      "title": "Player joined",
+      "message": "Sam Feed joined Native feed players.",
+      "readAt": null,
+      "createdAt": "2026-10-02T11:20:16.203+00:00",
+      "kind": "player_joined",
+      "invitationId": null
+    },
+    {
+      "id": "9cab6f1e-f56a-4565-aafd-64dc87c0657c",
+      "title": "Player joined",
+      "message": "Alex Feed joined Native feed players.",
+      "readAt": null,
+      "createdAt": "2026-10-02T11:20:16.203+00:00",
+      "kind": "player_joined",
+      "invitationId": null
+    },
+    {
+      "id": "95592c1d-7bdc-4be4-8435-33b6e9caf339",
+      "title": "One spot remaining",
+      "message": "Native feed players needs one more player.",
+      "readAt": null,
+      "createdAt": "2026-10-02T11:20:16.203+00:00",
+      "kind": "spot_remaining",
+      "invitationId": null
+    }
+  ],
+  "earlierTimestampSetup": "Controlled yesterday timestamp for this test recipient only"
+}

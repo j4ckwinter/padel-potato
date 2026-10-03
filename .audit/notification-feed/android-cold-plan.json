@@ -1,0 +1,10 @@
+[
+  {
+    "action": "assert",
+    "label": "6 unread notifications"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-cold-feed.png"
+  }
+]

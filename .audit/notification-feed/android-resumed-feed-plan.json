@@ -1,0 +1,95 @@
+[
+  {
+    "action": "assert",
+    "label": "8 unread notifications"
+  },
+  {
+    "action": "assert",
+    "label": "Today"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-resumed-feed-all.png"
+  },
+  {
+    "action": "tap",
+    "label": "Unread"
+  },
+  {
+    "action": "assert",
+    "label": "Unread",
+    "attributes": {
+      "selected": "true"
+    }
+  },
+  {
+    "action": "tap",
+    "label": "Sam Feed invited you to Native feed invitation at London Club."
+  },
+  {
+    "action": "assert",
+    "label": "Invitation"
+  },
+  {
+    "action": "assert",
+    "label": "Awaiting your response"
+  },
+  {
+    "action": "tap",
+    "label": "Decline Native feed invitation"
+  },
+  {
+    "action": "assert",
+    "label": "Invitation declined"
+  },
+  {
+    "action": "back"
+  },
+  {
+    "action": "assert",
+    "label": "7 unread notifications"
+  },
+  {
+    "action": "assert",
+    "label": "Unread",
+    "attributes": {
+      "selected": "true"
+    }
+  },
+  {
+    "action": "tap",
+    "label": "All"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-resumed-feed-read.png"
+  },
+  {
+    "action": "swipe",
+    "coordinates": [540, 1900, 540, 650]
+  },
+  {
+    "action": "assert",
+    "label": "Earlier"
+  },
+  {
+    "action": "assert",
+    "label": "One spot remaining"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-resumed-feed-earlier.png"
+  },
+  {
+    "action": "tap",
+    "label": "One spot remaining"
+  },
+  {
+    "action": "assert",
+    "label": "Native feed players"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-resumed-feed-game.png"
+  }
+]

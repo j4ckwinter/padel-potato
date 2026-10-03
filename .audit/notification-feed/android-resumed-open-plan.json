@@ -1,0 +1,22 @@
+[
+  {
+    "action": "tap",
+    "label": "Close"
+  },
+  {
+    "action": "tap",
+    "label": "Notifications"
+  },
+  {
+    "action": "assert",
+    "label": "8 unread notifications"
+  },
+  {
+    "action": "assert",
+    "label": "Today"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-resumed-feed-all.png"
+  }
+]

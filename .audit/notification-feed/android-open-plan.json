@@ -1,0 +1,29 @@
+[
+  {
+    "action": "tap",
+    "label": "Notifications"
+  },
+  {
+    "action": "assert",
+    "label": "8 unread notifications"
+  },
+  {
+    "action": "assert",
+    "label": "All",
+    "attributes": {
+      "selected": "true"
+    }
+  },
+  {
+    "action": "assert",
+    "label": "Unread"
+  },
+  {
+    "action": "assert",
+    "label": "Today"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-feed-all.png"
+  }
+]

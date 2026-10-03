@@ -1,0 +1,14 @@
+[
+  {
+    "step": 1,
+    "action": "assert",
+    "label": "One spot remaining, Tuesday doubles needs one more player., 1h, read",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  }
+]

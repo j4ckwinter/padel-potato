@@ -1,0 +1,14 @@
+[
+  {
+    "step": 1,
+    "action": "tap",
+    "label": "Close",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "tap",
+    "label": "Notifications",
+    "status": "PASS"
+  }
+]

@@ -1,0 +1,154 @@
+
+> padel-potato@1.0.0 verify
+> npm run format:check && npm run typecheck && npm run lint && npm test -- --runInBand && npm run storybook:web:smoke
+
+
+> padel-potato@1.0.0 format:check
+> prettier --check app.json eslint.config.js metro.config.js package.json tsconfig.json .rnstorybook src tests scripts
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> padel-potato@1.0.0 typecheck
+> tsc --noEmit
+
+
+> padel-potato@1.0.0 lint
+> eslint .
+
+
+/Users/jackwinter/dev/padel-potato-notification-feed/tests/onboarding-flow.test.tsx
+  40:1  warning  Import in body of module; reorder to top  import/first
+  41:1  warning  Import in body of module; reorder to top  import/first
+  42:1  warning  Import in body of module; reorder to top  import/first
+  43:1  warning  Import in body of module; reorder to top  import/first
+
+/Users/jackwinter/dev/padel-potato-notification-feed/tests/profile-draft.test.ts
+  34:1  warning  Import in body of module; reorder to top  import/first
+
+✖ 5 problems (0 errors, 5 warnings)
+  0 errors and 5 warnings potentially fixable with the `--fix` option.
+
+
+> padel-potato@1.0.0 test
+> jest --runInBand
+
+PASS tests/onboarding-flow.test.tsx (5.909 s)
+PASS tests/sign-in-screen.test.tsx
+PASS tests/availability-step-screen.test.tsx
+PASS tests/invitation-screens.test.tsx
+PASS tests/play-step-screen.test.tsx
+PASS tests/identity-content-feedback-story-contracts.test.tsx
+PASS tests/field.test.tsx
+PASS tests/game-details-screen.test.tsx
+PASS tests/profile-step-screen.test.tsx
+PASS tests/notification-feed.test.tsx
+PASS tests/game-card.test.tsx
+PASS tests/app-header.test.tsx
+PASS tests/game-result-screen.test.tsx
+PASS tests/profile-screen.test.tsx
+PASS tests/onboarding-services.test.tsx
+PASS tests/primary-navigation-screens.test.tsx
+PASS tests/games-screen.test.tsx
+PASS tests/player-item.test.tsx
+PASS tests/reminder-settings.test.tsx
+PASS tests/password-recovery-screen.test.tsx
+PASS tests/choice-chip.test.tsx
+PASS tests/banner-toast.test.tsx
+PASS tests/players-screen.test.tsx
+PASS tests/player-details-screen.test.tsx
+PASS tests/reschedule-game-screen.test.tsx
+PASS tests/settings-row.test.tsx
+PASS tests/session-provider.test.tsx
+PASS tests/primary-tab-bar.test.tsx
+PASS tests/accessibility-contracts.test.tsx
+PASS tests/day-time-selector.test.tsx
+PASS tests/avatar-group.test.tsx
+PASS tests/favourite.test.tsx
+PASS tests/empty-state.test.tsx
+PASS tests/game-schedule-screen.test.tsx
+PASS tests/app-shell.test.tsx
+PASS tests/button.test.tsx
+PASS tests/checkbox.test.tsx
+PASS tests/social-sign-in-button.test.tsx
+PASS tests/pressable-contract.test.tsx
+PASS tests/notification-row.test.tsx
+PASS tests/segmented-control.test.tsx
+PASS tests/icon-button.test.tsx
+PASS tests/avatar-picker.test.tsx
+PASS tests/status-chip.test.tsx
+PASS tests/bottom-navigation.test.tsx
+PASS tests/section-header.test.tsx
+PASS tests/foundations-story.test.tsx
+PASS tests/primitive-contracts.test.tsx
+PASS tests/story-contracts.test.tsx
+PASS tests/asset-contracts.test.tsx
+PASS tests/avatar.test.tsx
+PASS tests/storybook-non-story-exports.test.ts
+PASS tests/auth-gateway.test.ts
+PASS tests/app-services.test.tsx
+PASS tests/player-preferences-card.test.tsx
+PASS tests/header-storybook-contract.test.tsx
+PASS tests/stat-tile.test.tsx
+PASS tests/navigation-storybook-contract.test.tsx
+PASS tests/score-result-block.test.tsx
+PASS tests/action-and-header-artwork.test.tsx
+PASS tests/typography.test.tsx
+PASS tests/action-form-navigation-story-contracts.test.tsx
+PASS tests/schedule-options.test.ts
+PASS tests/game-reminders.test.ts
+PASS tests/step-progress.test.tsx
+PASS tests/authentication-publication.test.tsx
+PASS tests/auth-divider.test.tsx
+PASS tests/foundation-style-boundary.test.ts
+PASS tests/profile-draft.test.ts
+PASS tests/supabase-onboarding.test.ts
+PASS tests/game-lifecycle.test.ts
+PASS tests/feedback-artwork.test.tsx
+PASS tests/game-repository.test.ts
+PASS tests/social-resource.test.tsx
+PASS tests/supabase-account-authorization.test.ts
+PASS tests/color-typography-tokens.test.ts
+PASS tests/scale-tokens.test.ts
+PASS tests/foundations-smoke.test.tsx
+PASS tests/avatar-group-picker-storybook.test.tsx
+PASS tests/supabase-invitation-repository.test.ts
+PASS tests/availability-draft.test.ts
+PASS tests/design-system-standalone.test.ts
+PASS tests/feedback-public-boundary.test.tsx
+PASS tests/content-public-boundary.test.tsx
+PASS tests/status-progress-storybook.test.tsx
+PASS tests/supabase-game-repository.test.ts
+PASS tests/supabase-player-repository.test.ts
+PASS tests/game-draft.test.ts
+PASS tests/game-management.test.ts
+PASS tests/supabase-notification-repository.test.ts
+PASS tests/play-draft.test.ts
+PASS tests/supabase-game-authorization.test.ts
+PASS tests/supabase-app-services.test.ts
+PASS tests/supabase-config.test.ts
+
+Test Suites: 94 passed, 94 total
+Tests:       984 passed, 984 total
+Snapshots:   0 total
+Time:        43.375 s, estimated 46 s
+Ran all test suites.
+
+> padel-potato@1.0.0 storybook:web:smoke
+> node scripts/smoke-storybook-web.mjs
+
+
+> padel-potato@1.0.0 storybook:web
+> cross-env STORYBOOK_ENABLED=true expo start --web --port 50455
+
+Starting project at /Users/jackwinter/dev/padel-potato-notification-feed
+Using src/app as the root directory for Expo Router.
+HTTP server listening on localhost:7007
+Metro is running in CI mode, reloads are disabled. Remove CI=true to enable watch mode.
+Starting Metro Bundler
+
+Waiting on http://localhost:50455
+
+Logs for your project will appear below.
+Web Bundled 542ms .rnstorybook/index.tsx (1812 modules)
+Storybook web smoke passed: http://127.0.0.1:50455 (1707 ms, Storybook entry confirmed)

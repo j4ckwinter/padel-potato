@@ -1,0 +1,10 @@
+[
+  {
+    "action": "assert",
+    "label": "One spot remaining, Tuesday doubles needs one more player., 1h, read"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-storybook-warning-read.png"
+  }
+]

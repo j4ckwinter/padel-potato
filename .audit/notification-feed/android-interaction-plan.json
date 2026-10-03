@@ -1,0 +1,66 @@
+[
+  {
+    "action": "assert",
+    "label": "Unread",
+    "attributes": {
+      "selected": "true"
+    }
+  },
+  {
+    "action": "tap",
+    "label": "Sam Feed invited you to Native feed invitation at London Club."
+  },
+  {
+    "action": "assert",
+    "label": "Invitation"
+  },
+  {
+    "action": "assert",
+    "label": "Awaiting your response"
+  },
+  {
+    "action": "assert",
+    "label": "Accept Native feed invitation"
+  },
+  {
+    "action": "screenshot",
+    "name": "android-feed-invitation.png"
+  },
+  {
+    "action": "tap",
+    "label": "Accept Native feed invitation"
+  },
+  {
+    "action": "assert",
+    "label": "Invitation accepted"
+  },
+  {
+    "action": "back"
+  },
+  {
+    "action": "assert",
+    "label": "7 unread notifications"
+  },
+  {
+    "action": "assert",
+    "label": "Unread",
+    "attributes": {
+      "selected": "true"
+    }
+  },
+  {
+    "action": "screenshot",
+    "name": "android-feed-unread.png"
+  },
+  {
+    "action": "tap",
+    "label": "All"
+  },
+  {
+    "action": "assert",
+    "label": "All",
+    "attributes": {
+      "selected": "true"
+    }
+  }
+]

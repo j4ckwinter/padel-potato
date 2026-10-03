@@ -1,0 +1,20 @@
+Stopped services: [supabase_imgproxy_padel supabase_edge_runtime_padel supabase_pooler_padel]
+A new version of Supabase CLI is available: v2.119.0 (currently installed v2.118.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Supabase verification passed: profile trigger, RLS, game creation, joining, lifecycle, results, session restoration, onboarding, and photo storage.
+Stopped services: [supabase_imgproxy_padel supabase_edge_runtime_padel supabase_pooler_padel]
+A new version of Supabase CLI is available: v2.119.0 (currently installed v2.118.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Game management verified. Ordered concurrent departures, idempotent leave, organiser authority, reschedule consent and invitation closure passed.
+Stopped services: [supabase_imgproxy_padel supabase_edge_runtime_padel supabase_pooler_padel]
+A new version of Supabase CLI is available: v2.119.0 (currently installed v2.118.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Social verified. Real profiles, private persistent favourites, invitation permissions, retries and concurrent final-place acceptance passed.
+Stopped services: [supabase_imgproxy_padel supabase_edge_runtime_padel supabase_pooler_padel]
+A new version of Supabase CLI is available: v2.119.0 (currently installed v2.118.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Auth recovery verified. Signup profile, real reset email, native redirect, recovery session and changed password passed.
+Stopped services: [supabase_imgproxy_padel supabase_edge_runtime_padel supabase_pooler_padel]
+A new version of Supabase CLI is available: v2.119.0 (currently installed v2.118.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+Notifications verified. Recipient security, atomic lifecycle events, backfill timestamps, unread semantics, read persistence and mutation retries passed.

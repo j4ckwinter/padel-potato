@@ -1,0 +1,38 @@
+[
+  {
+    "step": 1,
+    "action": "tap",
+    "label": "Notifications",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "assert",
+    "label": "8 unread notifications",
+    "status": "PASS"
+  },
+  {
+    "step": 3,
+    "action": "assert",
+    "label": "All",
+    "status": "PASS"
+  },
+  {
+    "step": 4,
+    "action": "assert",
+    "label": "Unread",
+    "status": "PASS"
+  },
+  {
+    "step": 5,
+    "action": "assert",
+    "label": "Today",
+    "status": "PASS"
+  },
+  {
+    "step": 6,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  }
+]

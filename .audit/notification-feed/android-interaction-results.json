@@ -1,0 +1,86 @@
+[
+  {
+    "step": 1,
+    "action": "assert",
+    "label": "Unread",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "tap",
+    "label": "Sam Feed invited you to Native feed invitation at London Club.",
+    "status": "PASS"
+  },
+  {
+    "step": 3,
+    "action": "assert",
+    "label": "Invitation",
+    "status": "PASS"
+  },
+  {
+    "step": 4,
+    "action": "assert",
+    "label": "Awaiting your response",
+    "status": "PASS"
+  },
+  {
+    "step": 5,
+    "action": "assert",
+    "label": "Accept Native feed invitation",
+    "status": "PASS"
+  },
+  {
+    "step": 6,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 7,
+    "action": "tap",
+    "label": "Accept Native feed invitation",
+    "status": "PASS"
+  },
+  {
+    "step": 8,
+    "action": "assert",
+    "label": "Invitation accepted",
+    "status": "PASS"
+  },
+  {
+    "step": 9,
+    "action": "back",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 10,
+    "action": "assert",
+    "label": "7 unread notifications",
+    "status": "PASS"
+  },
+  {
+    "step": 11,
+    "action": "assert",
+    "label": "Unread",
+    "status": "PASS"
+  },
+  {
+    "step": 12,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 13,
+    "action": "tap",
+    "label": "All",
+    "status": "PASS"
+  },
+  {
+    "step": 14,
+    "action": "assert",
+    "label": "All",
+    "status": "PASS"
+  }
+]

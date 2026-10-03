@@ -1,0 +1,134 @@
+[
+  {
+    "step": 1,
+    "action": "assert",
+    "label": "8 unread notifications",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "assert",
+    "label": "Today",
+    "status": "PASS"
+  },
+  {
+    "step": 3,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 4,
+    "action": "tap",
+    "label": "Unread",
+    "status": "PASS"
+  },
+  {
+    "step": 5,
+    "action": "assert",
+    "label": "Unread",
+    "status": "PASS"
+  },
+  {
+    "step": 6,
+    "action": "tap",
+    "label": "Sam Feed invited you to Native feed invitation at London Club.",
+    "status": "PASS"
+  },
+  {
+    "step": 7,
+    "action": "assert",
+    "label": "Invitation",
+    "status": "PASS"
+  },
+  {
+    "step": 8,
+    "action": "assert",
+    "label": "Awaiting your response",
+    "status": "PASS"
+  },
+  {
+    "step": 9,
+    "action": "tap",
+    "label": "Decline Native feed invitation",
+    "status": "PASS"
+  },
+  {
+    "step": 10,
+    "action": "assert",
+    "label": "Invitation declined",
+    "status": "PASS"
+  },
+  {
+    "step": 11,
+    "action": "back",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 12,
+    "action": "assert",
+    "label": "7 unread notifications",
+    "status": "PASS"
+  },
+  {
+    "step": 13,
+    "action": "assert",
+    "label": "Unread",
+    "status": "PASS"
+  },
+  {
+    "step": 14,
+    "action": "tap",
+    "label": "All",
+    "status": "PASS"
+  },
+  {
+    "step": 15,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 16,
+    "action": "swipe",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 17,
+    "action": "assert",
+    "label": "Earlier",
+    "status": "PASS"
+  },
+  {
+    "step": 18,
+    "action": "assert",
+    "label": "One spot remaining",
+    "status": "PASS"
+  },
+  {
+    "step": 19,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 20,
+    "action": "tap",
+    "label": "One spot remaining",
+    "status": "PASS"
+  },
+  {
+    "step": 21,
+    "action": "assert",
+    "label": "Native feed players",
+    "status": "PASS"
+  },
+  {
+    "step": 22,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  }
+]
