@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "jest",
-    "supabase:test": "npx supabase db reset && node scripts/verify-supabase.mjs && node scripts/verify-game-management.mjs && node scripts/verify-social.mjs && node scripts/verify-auth-recovery.mjs",
+    "supabase:test": "npx supabase db reset && node scripts/verify-supabase.mjs && node scripts/verify-game-management.mjs && node scripts/verify-social.mjs && node scripts/verify-auth-recovery.mjs && node scripts/verify-notifications.mjs",
     "supabase:types": "node scripts/generate-supabase-types.mjs",
     "verify": "npm run format:check && npm run typecheck && npm run lint && npm test -- --runInBand && npm run storybook:web:smoke",
     "storybook:native": "cross-env STORYBOOK_ENABLED=true expo start",

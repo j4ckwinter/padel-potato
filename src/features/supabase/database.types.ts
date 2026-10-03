@@ -9,6 +9,64 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activity_notifications: {
+        Row: {
+          created_at: string;
+          game_id: string;
+          id: string;
+          invitation_id: string | null;
+          kind: Database['public']['Enums']['activity_kind'];
+          message: string;
+          read_at: string | null;
+          recipient_id: string;
+          title: string;
+        };
+        Insert: {
+          created_at?: string;
+          game_id: string;
+          id?: string;
+          invitation_id?: string | null;
+          kind: Database['public']['Enums']['activity_kind'];
+          message: string;
+          read_at?: string | null;
+          recipient_id: string;
+          title: string;
+        };
+        Update: {
+          created_at?: string;
+          game_id?: string;
+          id?: string;
+          invitation_id?: string | null;
+          kind?: Database['public']['Enums']['activity_kind'];
+          message?: string;
+          read_at?: string | null;
+          recipient_id?: string;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'activity_notifications_game_id_fkey';
+            columns: ['game_id'];
+            isOneToOne: false;
+            referencedRelation: 'games';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'activity_notifications_invitation_id_fkey';
+            columns: ['invitation_id'];
+            isOneToOne: false;
+            referencedRelation: 'game_invitations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'activity_notifications_recipient_id_fkey';
+            columns: ['recipient_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       game_invitations: {
         Row: {
           created_at: string;
@@ -376,6 +434,10 @@ export type Database = {
       };
       join_game: { Args: { game_id: string }; Returns: string };
       leave_game: { Args: { game_id: string }; Returns: string };
+      mark_activity_notification_read: {
+        Args: { notification_id: string };
+        Returns: boolean;
+      };
       profile_initials: { Args: { display_name: string }; Returns: string };
       reschedule_game: {
         Args: { game_id: string; starts_at: string };
@@ -404,6 +466,14 @@ export type Database = {
       };
     };
     Enums: {
+      activity_kind:
+        | 'invitation'
+        | 'game_confirmed'
+        | 'player_joined'
+        | 'spot_remaining'
+        | 'game_updated'
+        | 'result_added'
+        | 'cancelled';
       game_format: 'Social game' | 'Competitive game';
       game_invitation_status: 'pending' | 'accepted' | 'declined' | 'closed';
       game_participant_role: 'organiser' | 'player';
@@ -538,6 +608,15 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      activity_kind: [
+        'invitation',
+        'game_confirmed',
+        'player_joined',
+        'spot_remaining',
+        'game_updated',
+        'result_added',
+        'cancelled',
+      ],
       game_format: ['Social game', 'Competitive game'],
       game_invitation_status: ['pending', 'accepted', 'declined', 'closed'],
       game_participant_role: ['organiser', 'player'],
