@@ -22,7 +22,8 @@ import {
   supportsDeviceReminders,
 } from './deviceNotifications';
 import {
-  gameReminders,
+  gameReminderPlan,
+  emptyReminderPlan,
   loadReminderPreference,
   saveReminderPreference,
 } from './reminders';
@@ -143,13 +144,14 @@ export function ReminderProvider({ children }: PropsWithChildren) {
       const request = ++version;
       try {
         if (!services || !enabled || !(await canShowReminders())) {
-          if (active && request === version) await reconcileDeviceReminders([]);
+          if (active && request === version)
+            await reconcileDeviceReminders(emptyReminderPlan);
           return;
         }
         const games = await services.games.list();
         if (active && request === version && currentUserId.current === userId) {
           await reconcileDeviceReminders(
-            gameReminders(services.currentUser.id, games),
+            gameReminderPlan(services.currentUser.id, games),
           );
         }
       } catch {
@@ -173,7 +175,7 @@ export function ReminderProvider({ children }: PropsWithChildren) {
       changes();
       foreground.remove();
       clearInterval(interval);
-      void reconcileDeviceReminders([]).catch(() => undefined);
+      void reconcileDeviceReminders(emptyReminderPlan).catch(() => undefined);
     };
   }, [enabled, services, userId, setError]);
 
@@ -197,7 +199,7 @@ export function ReminderProvider({ children }: PropsWithChildren) {
         }
         if (!stillCurrent()) return;
         if (!next && supportsDeviceReminders)
-          await reconcileDeviceReminders([]);
+          await reconcileDeviceReminders(emptyReminderPlan);
         if (!stillCurrent()) return;
         saveReminderPreference(userId, next);
         setPreference({ userId, enabled: next });

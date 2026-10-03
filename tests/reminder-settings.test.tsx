@@ -12,7 +12,10 @@ import {
   requestReminderPermission,
 } from '../src/features/notifications/deviceNotifications';
 import { ReminderProvider } from '../src/features/notifications/ReminderProvider';
-import { loadReminderPreference } from '../src/features/notifications/reminders';
+import {
+  emptyReminderPlan,
+  loadReminderPreference,
+} from '../src/features/notifications/reminders';
 import { useAppServicesLoadState } from '../src/features/services/AppServicesContext';
 
 jest.mock('expo-router', () => ({
@@ -178,7 +181,7 @@ describe('reminder settings', () => {
         false,
       ),
     );
-    expect(reconcileDeviceReminders).toHaveBeenCalledWith([]);
+    expect(reconcileDeviceReminders).toHaveBeenCalledWith(emptyReminderPlan);
   });
 
   it('keeps reminders off when permission is denied and explains how to enable them', async () => {
@@ -216,7 +219,7 @@ describe('reminder settings', () => {
     await view.rerender(screen());
     resolvePermission(true);
     await waitFor(() =>
-      expect(reconcileDeviceReminders).toHaveBeenCalledWith([]),
+      expect(reconcileDeviceReminders).toHaveBeenCalledWith(emptyReminderPlan),
     );
     expect(loadReminderPreference(demoAppServices.currentUser.id)).toBe(false);
     jest.mocked(useAppServicesLoadState).mockReturnValue({
