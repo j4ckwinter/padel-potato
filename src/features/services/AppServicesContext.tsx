@@ -1,3 +1,4 @@
+import type { NotificationRepository } from '../notifications/activity';
 import type { InvitationRepository } from '../invitations/invitation';
 import type { OnboardingDraft } from '../../design-system/configuration/onboarding';
 import { saveSupabaseOnboarding } from '../supabase/onboarding';
@@ -26,6 +27,7 @@ export type AppServices = Readonly<{
   games: GameRepository;
   players: PlayerRepository;
   invitations: InvitationRepository;
+  notifications: NotificationRepository;
 }>;
 
 export type AppServicesState =

@@ -71,6 +71,15 @@ describe('Notification Row runtime and semantic contract', () => {
         type: 'social',
       },
     ],
+    [
+      'warning/read',
+      {
+        ...notificationContent,
+        onPress: jest.fn(),
+        read: true,
+        type: 'warning',
+      },
+    ],
   ] as [string, NotificationRowProps][])(
     'renders the authored %s branch',
     async (_tuple, props) => {
@@ -120,7 +129,6 @@ describe('Notification Row runtime and semantic contract', () => {
 
   it.each([
     { ...notificationContent, onPress: jest.fn(), read: true, type: 'booking' },
-    { ...notificationContent, onPress: jest.fn(), read: true, type: 'warning' },
     { ...notificationContent, onPress: jest.fn(), read: null, type: 'game' },
     { ...notificationContent, onPress: null, read: false, type: 'game' },
     {

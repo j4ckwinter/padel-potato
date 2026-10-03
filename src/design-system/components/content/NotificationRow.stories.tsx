@@ -177,3 +177,17 @@ export const Interactive: Story = {
   args: Canonical.args,
   render: (args) => <InteractiveHarness onPress={args.onPress} />,
 };
+
+export const WarningRead: Story = {
+  args: Canonical.args,
+  render: () => (
+    <NotificationRow
+      message="Tuesday doubles needs one more player."
+      title="One spot remaining"
+      timestamp="1h"
+      type="warning"
+      read
+      onPress={() => undefined}
+    />
+  ),
+};

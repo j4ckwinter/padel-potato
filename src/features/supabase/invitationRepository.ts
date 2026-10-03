@@ -24,12 +24,14 @@ export function createSupabaseInvitationRepository(
   async function list(
     direction: 'incoming' | 'sent',
     gameId?: string,
+    invitationId?: string,
   ): Promise<readonly GameInvitation[]> {
     let query = client
       .from('game_invitations')
       .select('*')
       .eq(direction === 'incoming' ? 'invitee_id' : 'inviter_id', userId)
       .order('created_at', { ascending: false });
+    if (invitationId !== undefined) query = query.eq('id', invitationId);
     if (gameId) query = query.eq('game_id', gameId);
     const { data, error } = await query;
     if (error) throw error;
@@ -69,6 +71,8 @@ export function createSupabaseInvitationRepository(
     });
   }
   return {
+    findIncomingById: async (id) =>
+      (await list('incoming', undefined, id))[0] ?? null,
     listIncoming: () => list('incoming'),
     listSent: (gameId) => list('sent', gameId),
     send: async (gameId, playerId) => {

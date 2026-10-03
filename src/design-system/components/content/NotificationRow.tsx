@@ -14,8 +14,8 @@ type NotificationContent = Readonly<{
 
 export type NotificationRowProps = NotificationContent &
   (
-    | Readonly<{ read: boolean; type: 'game' | 'social' }>
-    | Readonly<{ read: false; type: 'booking' | 'warning' }>
+    | Readonly<{ read: boolean; type: 'game' | 'social' | 'warning' }>
+    | Readonly<{ read: false; type: 'booking' }>
   );
 
 const supportedRuntimeProps = Object.freeze([
@@ -33,6 +33,7 @@ const supportedTuples = Object.freeze([
   'warning/unread',
   'game/read',
   'social/read',
+  'warning/read',
 ] as const);
 const iconByType = Object.freeze({
   booking: 'court',

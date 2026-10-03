@@ -1,3 +1,4 @@
+import { createSupabaseNotificationRepository } from './notificationRepository';
 import { isCompleteOnboardingDraft } from '../../design-system/configuration/onboarding';
 import { gamePlayerFromProfile } from '../players/player';
 import type { AppServices } from '../services/AppServicesContext';
@@ -61,5 +62,6 @@ export function appServicesFromProfileRow(
     games: createSupabaseGameRepository(client, data.id),
     players: createSupabasePlayerRepository(client, data.id),
     invitations: createSupabaseInvitationRepository(client, data.id),
+    notifications: createSupabaseNotificationRepository(client, data.id),
   };
 }

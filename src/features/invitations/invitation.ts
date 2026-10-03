@@ -9,6 +9,7 @@ export type GameInvitation = Readonly<{
   status: 'pending' | 'accepted' | 'declined' | 'closed';
 }>;
 export type InvitationRepository = Readonly<{
+  findIncomingById: (id: string) => Promise<GameInvitation | null>;
   listIncoming: () => Promise<readonly GameInvitation[]>;
   listSent: (gameId: string) => Promise<readonly GameInvitation[]>;
   send: (gameId: string, playerId: string) => Promise<void>;

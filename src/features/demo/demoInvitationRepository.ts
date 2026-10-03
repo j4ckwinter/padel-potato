@@ -13,6 +13,10 @@ export function createDemoInvitationRepository(
 ): InvitationRepository {
   const invitations = new Map<string, GameInvitation>();
   return {
+    findIncomingById: async (id) => {
+      const invitation = invitations.get(id);
+      return invitation?.inviteeId === userId ? invitation : null;
+    },
     listIncoming: async () =>
       [...invitations.values()].filter((row) => row.inviteeId === userId),
     listSent: async (id) =>

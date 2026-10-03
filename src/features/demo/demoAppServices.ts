@@ -11,6 +11,7 @@ export const demoAppServices: AppServices = {
   currentPlayer: demoCurrentGamePlayer,
   currentUser: demoCurrentUser,
   games,
+  notifications: { list: async () => [], markRead: async () => {} },
   players: demoPlayerRepository,
   invitations: createDemoInvitationRepository(
     games,

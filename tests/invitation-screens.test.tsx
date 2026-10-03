@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { render, userEvent, waitFor } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import NotificationsScreen from '../src/app/notifications';
+import NotificationsScreen from '../src/app/invitations/[invitationId]';
 import PlayersScreen from '../src/app/(tabs)/players';
 import { demoAppServices } from '../src/features/demo/demoAppServices';
 import {
@@ -24,9 +24,24 @@ beforeEach(() => {
     canGoBack: () => true,
     back: jest.fn(),
   } as unknown as ReturnType<typeof useRouter>);
-  jest.mocked(useLocalSearchParams).mockReturnValue({});
+  jest.mocked(useLocalSearchParams).mockReturnValue({ invitationId: 'invite' });
 });
 async function show(services: AppServices, screen: 'inbox' | 'players') {
+  if (
+    services.invitations.findIncomingById ===
+    demoAppServices.invitations.findIncomingById
+  ) {
+    services = {
+      ...services,
+      invitations: {
+        ...services.invitations,
+        findIncomingById: async (id) =>
+          (await services.invitations.listIncoming()).find(
+            (item) => item.id === id,
+          ) ?? null,
+      },
+    };
+  }
   return render(
     <SafeAreaProvider
       initialMetrics={{
@@ -135,6 +150,154 @@ describe('invitation screens', () => {
     expect(
       screen.getByRole('button', { name: `Decline ${game.name}` }),
     ).toBeEnabled();
+  });
+  it('ignores a response error after the invitation route changes', async () => {
+    const game = (await demoAppServices.games.list())[0]!;
+    let reject!: (error: Error) => void;
+    const response = new Promise<void>((_resolve, fail) => {
+      reject = fail;
+    });
+    const services = {
+      ...demoAppServices,
+      invitations: {
+        ...demoAppServices.invitations,
+        respond: () => response,
+        findIncomingById: async (id: string) => ({
+          id,
+          game,
+          inviterId: 'friend',
+          inviteeId: demoCurrentUser.id,
+          inviterName: 'Sam',
+          inviteeName: 'Me',
+          status: 'pending' as const,
+        }),
+      },
+    };
+    const screen = await show(services, 'inbox');
+    await userEvent
+      .setup()
+      .press(
+        await screen.findByRole('button', { name: `Accept ${game.name}` }),
+      );
+    jest.mocked(useLocalSearchParams).mockReturnValue({ invitationId: 'next' });
+    await screen.rerender(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { height: 844, width: 390, x: 0, y: 0 },
+          insets: { bottom: 0, left: 0, right: 0, top: 0 },
+        }}
+      >
+        <AppServicesProvider services={services}>
+          <NotificationsScreen />
+        </AppServicesProvider>
+      </SafeAreaProvider>,
+    );
+    reject(new Error('Old response failed'));
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: `Accept ${game.name}` }),
+      ).toBeEnabled(),
+    );
+    expect(screen.queryByText('Old response failed')).not.toBeOnTheScreen();
+  });
+  it('shows a closed invitation without response controls and keeps the game reachable', async () => {
+    const game = (await demoAppServices.games.list())[0]!;
+    const screen = await show(
+      {
+        ...demoAppServices,
+        invitations: {
+          ...demoAppServices.invitations,
+          listIncoming: async () => [
+            {
+              id: 'invite',
+              game,
+              inviterId: 'friend',
+              inviteeId: demoCurrentUser.id,
+              inviterName: 'Sam',
+              inviteeName: 'Me',
+              status: 'closed',
+            },
+          ],
+        },
+      },
+      'inbox',
+    );
+    expect(await screen.findByText('Invitation closed')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: `Accept ${game.name}` }),
+    ).not.toBeOnTheScreen();
+    await userEvent
+      .setup()
+      .press(screen.getByRole('button', { name: `View ${game.name}` }));
+    expect(push).toHaveBeenCalledWith({
+      pathname: '/games/[gameId]',
+      params: { gameId: game.id },
+    });
+  });
+  it('explains a missing invitation without offering acceptance', async () => {
+    const screen = await show(
+      {
+        ...demoAppServices,
+        invitations: {
+          ...demoAppServices.invitations,
+          listIncoming: async () => [],
+        },
+      },
+      'inbox',
+    );
+    expect(
+      await screen.findByText('This invitation is no longer available.'),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: /^Accept / }),
+    ).not.toBeOnTheScreen();
+  });
+  it('opens an old invitation through exact lookup when it is absent from the inbox page', async () => {
+    const game = (await demoAppServices.games.list())[0]!;
+    const findIncomingById = jest.fn(async () => ({
+      id: 'invite',
+      game,
+      inviterId: 'friend',
+      inviteeId: demoCurrentUser.id,
+      inviterName: 'Sam',
+      inviteeName: 'Me',
+      status: 'pending' as const,
+    }));
+    const listIncoming = jest.fn(async () => []);
+    const screen = await show(
+      {
+        ...demoAppServices,
+        invitations: {
+          ...demoAppServices.invitations,
+          findIncomingById,
+          listIncoming,
+        },
+      },
+      'inbox',
+    );
+    expect(
+      await screen.findByRole('button', { name: `Accept ${game.name}` }),
+    ).toBeEnabled();
+    expect(findIncomingById).toHaveBeenCalledWith('invite');
+    expect(listIncoming).not.toHaveBeenCalled();
+  });
+  it('shows an unavailable invitation without querying when the route has no ID', async () => {
+    jest.mocked(useLocalSearchParams).mockReturnValue({});
+    const findIncomingById = jest.fn(async () => null);
+    const screen = await show(
+      {
+        ...demoAppServices,
+        invitations: { ...demoAppServices.invitations, findIncomingById },
+      },
+      'inbox',
+    );
+    expect(
+      await screen.findByText('This invitation is no longer available.'),
+    ).toBeVisible();
+    expect(findIncomingById).not.toHaveBeenCalled();
+    expect(
+      screen.queryByRole('button', { name: /^Accept / }),
+    ).not.toBeOnTheScreen();
   });
   it('sends a game-specific invitation from discovery and shows the persisted pending state', async () => {
     const source = (await demoAppServices.games.list())[0]!;

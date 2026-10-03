@@ -104,6 +104,7 @@ function RootNavigator({
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="notifications" />
+            <Stack.Screen name="invitations/[invitationId]" />
             <Stack.Screen name="settings" />
           </Stack.Protected>
           <Stack.Protected

@@ -48,4 +48,13 @@ export const notificationRowFixtures = [
     },
     copy: ['Game update', 'Your activity has a new update', '2m'],
   },
+  {
+    label: 'Warning / Read',
+    configuration: { type: 'warning', state: 'read' },
+    copy: [
+      'One spot remaining',
+      'Tuesday doubles needs one more player.',
+      '1h',
+    ],
+  },
 ] as const;
