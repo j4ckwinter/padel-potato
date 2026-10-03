@@ -1,0 +1,12 @@
+{
+  "buildId": "bf78d70f-2ddc-4b9e-aef5-52c63da71f75",
+  "sourceCommit": "0a14adc127d1dad0ceff2880760c5d9c7d049230",
+  "status": "FINISHED",
+  "signatureVerified": true,
+  "installedAndLaunched": true,
+  "welcomeVisible": true,
+  "noNativeErrorScreen": true,
+  "hostedBackendUrlBundled": true,
+  "metroStopped": true,
+  "coverage": "Signed standalone APK smoke with hosted preview configuration; complete product journey verified separately against local Supabase"
+}

@@ -42,3 +42,11 @@ The profile refresh uses the account-owned player repository on focus and foregr
 Later native evidence closes the earlier Android gaps. See `native/android-product-review.md` for the exact UI actions and backend fixtures. Android registration, onboarding with photo, recovery, invitations, game controls, results, refreshed statistics, reminder delivery and taps, delayed-alarm retention, native Storybook and fresh Expo Go passed. Only the latest six reschedule steps are retained in the JSON artifact.
 
 The first signed EAS build contains source commit `9121ae2` and is historical evidence only. That hash is not a runtime version. A candidate from `3ca56ee` was cancelled when native testing found stale profile statistics. Final native artifacts must be built from the corrected source and smoke tested before handoff. Local iOS review and hosted Google/Apple sign-in remain external gaps.
+
+## Final handoff audit
+
+The final read-only review requested with `gpt-5.6-sol` found no implementation or artifact-integrity blocker. This section supersedes the earlier build requirement and historical gaps above.
+
+Both final EAS jobs finished. The Android APK signature, package, bundled hosted URL and clean standalone welcome screen were verified. Its source includes every runtime fix. The iOS simulator archive contains the expected package, photo permission description, hosted URL and encryption metadata. See `beta-builds.json` and the final native artifact records.
+
+The full Android journey used local Supabase and a debug APK. The signed hosted-config APK received a separate startup smoke. Local iOS UI review, physical iOS signing and Google/Apple provider verification remain external gaps. Decision-log rows have six columns, evidence pointers resolve and the credential scan found no credential values.

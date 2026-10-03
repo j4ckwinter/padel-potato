@@ -1,0 +1,18 @@
+[
+  {
+    "platform": "android",
+    "id": "bf78d70f-2ddc-4b9e-aef5-52c63da71f75",
+    "status": "FINISHED",
+    "sourceCommit": "0a14adc127d1dad0ceff2880760c5d9c7d049230",
+    "runtimeVersion": null,
+    "buildPage": "https://expo.dev/accounts/j4ckwinter/projects/padel-potato/builds/bf78d70f-2ddc-4b9e-aef5-52c63da71f75"
+  },
+  {
+    "platform": "ios-simulator",
+    "id": "47efe7c1-59be-49b6-9d34-5639cfd6b031",
+    "status": "FINISHED",
+    "sourceCommit": "43a0d00c25b15a9491155e216081cc689c022157",
+    "runtimeVersion": null,
+    "buildPage": "https://expo.dev/accounts/j4ckwinter/projects/padel-potato/builds/47efe7c1-59be-49b6-9d34-5639cfd6b031"
+  }
+]

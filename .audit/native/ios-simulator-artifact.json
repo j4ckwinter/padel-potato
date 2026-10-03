@@ -1,0 +1,11 @@
+{
+  "buildId": "47efe7c1-59be-49b6-9d34-5639cfd6b031",
+  "sourceCommit": "43a0d00c25b15a9491155e216081cc689c022157",
+  "status": "FINISHED",
+  "bundleIdentifierVerified": true,
+  "osEncryptionMetadataVerified": true,
+  "photoPermissionDescriptionPresent": true,
+  "hostedBackendUrlBundled": true,
+  "nativeUiReviewed": false,
+  "nativeUiBlocker": "Full Xcode and simulator runtime unavailable on this host"
+}
