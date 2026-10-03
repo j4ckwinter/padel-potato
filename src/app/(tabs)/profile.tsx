@@ -1,5 +1,6 @@
 import { availabilityFrequencyOptions } from '../../design-system/configuration/availability';
 import { playVibeOptions } from '../../design-system/configuration/playPreferences';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
@@ -18,12 +19,53 @@ import {
 } from '../../design-system/components/navigation';
 import { Inline, Stack, Surface, Text } from '../../design-system/primitives';
 import { colors, sizing, spacing } from '../../design-system/tokens';
+import type { PlayerProfile } from '../../features/players/player';
+import type { PlayerRepository } from '../../features/players/playerRepository';
+import {
+  useSocialRefresh,
+  useSocialResource,
+} from '../../features/players/useSocialRefresh';
 import { PlayerStats } from '../../features/players/PlayerStats';
 import { useAppServices } from '../../features/services/AppServicesContext';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { currentUser, onboarding } = useAppServices();
+  const { currentUser: accountProfile, onboarding, players } = useAppServices();
+  const owner = useRef<{ players: PlayerRepository; userId: string } | null>(
+    null,
+  );
+  const profileRequest = useRef(0);
+  const [cached, setCached] = useState<{
+    players: PlayerRepository;
+    profile: PlayerProfile;
+  } | null>(null);
+  useLayoutEffect(() => {
+    owner.current = { players, userId: accountProfile.id };
+    return () => {
+      owner.current = null;
+    };
+  }, [players, accountProfile.id]);
+  const { version } = useSocialRefresh();
+  const loadProfile = useCallback(async () => {
+    const request = ++profileRequest.current;
+    const profile = await players.findProfileById(accountProfile.id);
+    if (
+      request === profileRequest.current &&
+      profile &&
+      profile.id === accountProfile.id &&
+      owner.current?.players === players &&
+      owner.current.userId === accountProfile.id
+    )
+      setCached({ players, profile });
+    return profile;
+  }, [players, accountProfile.id]);
+  const resource = useSocialResource(loadProfile, version);
+  const currentUser =
+    resource.status === 'ready' && resource.value?.id === accountProfile.id
+      ? resource.value
+      : cached?.players === players && cached.profile.id === accountProfile.id
+        ? cached.profile
+        : accountProfile;
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (

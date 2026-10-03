@@ -2,8 +2,8 @@ import { appServicesFromProfileRow } from '../src/features/supabase/appServices'
 import type { PadelSupabaseClient } from '../src/features/supabase/client';
 import { onboardingProfileRow } from './helpers/onboarding';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { render, userEvent, waitFor } from '@testing-library/react-native';
-import { useRouter } from 'expo-router';
+import { act, render, userEvent, waitFor } from '@testing-library/react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import ProfileScreen from '../src/app/(tabs)/profile';
@@ -13,6 +13,8 @@ import {
   useSession,
 } from '../src/features/authentication/SessionContext';
 import { demoAppServices } from '../src/features/demo/demoAppServices';
+import type { PlayerProfile } from '../src/features/players/player';
+import type { AppServices } from '../src/features/services/AppServicesContext';
 import { AppServicesProvider } from '../src/features/services/AppServicesContext';
 import { flattenedStyle } from './helpers/componentTest';
 
@@ -28,6 +30,7 @@ jest.mock('../src/features/notifications/ReminderProvider', () => ({
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
+  useFocusEffect: jest.fn(),
 }));
 
 jest.mock('../src/features/authentication/SessionContext', () => ({
@@ -198,4 +201,113 @@ describe('profile screen', () => {
 
     await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
   });
+});
+
+function profileWithServices(services: AppServices) {
+  return (
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { height: 844, width: 390, x: 0, y: 0 },
+        insets: { bottom: 34, left: 0, right: 0, top: 47 },
+      }}
+    >
+      <AppServicesProvider services={services}>
+        <ProfileScreen />
+      </AppServicesProvider>
+    </SafeAreaProvider>
+  );
+}
+it('refreshes persisted result stats on focus and keeps the last profile during a failed refresh', async () => {
+  router();
+  let latest: PlayerProfile = {
+    ...demoAppServices.currentUser,
+    stats: { rating: '4.7', gamesPlayed: '0', winRate: '0%' },
+  };
+  const findProfileById = jest.fn(async () => latest);
+  const services = {
+    ...demoAppServices,
+    currentUser: latest,
+    players: { ...demoAppServices.players, findProfileById },
+  };
+  const screen = await render(profileWithServices(services));
+  await waitFor(() => expect(findProfileById).toHaveBeenCalled());
+  latest = {
+    ...latest,
+    stats: { rating: '4.7', gamesPlayed: '1', winRate: '100%' },
+  };
+  const focus = jest.mocked(useFocusEffect).mock.calls.at(-1)?.[0];
+  await act(async () => {
+    focus?.();
+  });
+  expect(
+    await screen.findByRole('summary', { name: 'Games, 1, Games played' }),
+  ).toBeVisible();
+  expect(
+    screen.getByRole('summary', {
+      name: 'Win rate, 100%, All-time win rate, positive trend',
+    }),
+  ).toBeVisible();
+  findProfileById.mockRejectedValueOnce(new Error('offline'));
+  await act(async () => {
+    focus?.();
+  });
+  expect(
+    screen.getByRole('summary', { name: 'Games, 1, Games played' }),
+  ).toBeVisible();
+});
+it('ignores a delayed profile reply from the previous account', async () => {
+  router();
+  let finish: (profile: PlayerProfile) => void = () => undefined;
+  const firstProfile = {
+    ...demoAppServices.currentUser,
+    id: 'first-account',
+    identity: {
+      ...demoAppServices.currentUser.identity,
+      name: 'First Account',
+    },
+  };
+  const firstServices = {
+    ...demoAppServices,
+    currentUser: firstProfile,
+    players: {
+      ...demoAppServices.players,
+      findProfileById: jest.fn(
+        () =>
+          new Promise<PlayerProfile>((resolve) => {
+            finish = resolve;
+          }),
+      ),
+    },
+  };
+  const secondProfile = {
+    ...demoAppServices.currentUser,
+    id: 'second-account',
+    identity: {
+      ...demoAppServices.currentUser.identity,
+      name: 'Second Account',
+    },
+    stats: { rating: '3.0', gamesPlayed: '2', winRate: '50%' },
+  };
+  const secondServices = {
+    ...demoAppServices,
+    currentUser: secondProfile,
+    players: {
+      ...demoAppServices.players,
+      findProfileById: jest.fn(async () => secondProfile),
+    },
+  };
+  const screen = await render(profileWithServices(firstServices));
+  await screen.rerender(profileWithServices(secondServices));
+  await act(async () => {
+    finish({
+      ...firstProfile,
+      stats: { rating: '9.9', gamesPlayed: '99', winRate: '99%' },
+    });
+  });
+  expect(screen.getByRole('header', { name: 'Second Account' })).toBeVisible();
+  expect(screen.queryByText('First Account')).toBeNull();
+  expect(
+    screen.getByRole('summary', { name: 'Games, 2, Games played' }),
+  ).toBeVisible();
+  expect(screen.queryByText('99')).toBeNull();
 });
