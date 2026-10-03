@@ -1,0 +1,10 @@
+{
+  "addedCallbacks": [
+    "padel-potato://",
+    "padel-potato://auth-callback?flow=signup",
+    "padel-potato://auth-callback?flow=recovery"
+  ],
+  "declaredUpdatesBefore": 1,
+  "declaredUpdatesAfter": 0,
+  "unrelatedRemotePropertiesPreserved": true
+}

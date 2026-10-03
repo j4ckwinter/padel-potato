@@ -8,7 +8,7 @@ Copy `.env.example` to `.env.local`. Set the hosted Supabase URL and publishable
 
 Apply every committed migration before starting the app against that project. The game management migration adds leave and reschedule functions.
 
-For email confirmation and recovery, allow these redirect URLs in Supabase Authentication URL Configuration.
+The linked hosted project now allows the native OAuth root `padel-potato://` and the following email callbacks. Configure the same URLs when using another project.
 
 - `padel-potato://auth-callback?flow=signup`
 - `padel-potato://auth-callback?flow=recovery`
@@ -27,9 +27,9 @@ On this Mac, Docker uses `unix:///Users/jackwinter/.docker/run/docker.sock`. Set
 
 The app identifiers are `com.padelpotato.app` on both platforms. The EAS preview profile produces an Android APK and an internal iOS build. The development profile uses the iOS simulator. These are regular app builds. They do not require Expo Go.
 
-This repository is linked to the `j4ckwinter` EAS account. The preview environment has both public Supabase variables configured. For another environment, configure those variables before building. Run `npx eas-cli build --profile preview --platform android` or the corresponding iOS command. iOS device distribution requires an Apple Developer account and registered devices.
+This repository is linked to the `j4ckwinter` EAS account. The preview and development environments have both public Supabase variables configured. For another environment, configure those variables before building. Run `npx eas-cli build --profile preview --platform android` or the corresponding iOS command. iOS device distribution requires an Apple Developer account and registered devices.
 
-For local Android builds, install an Android SDK and JDK 17 or newer. Set `ANDROID_HOME` and `JAVA_HOME`. Use `npx expo run:android`. Local iOS builds require full Xcode and a simulator runtime.
+For local Android builds, install an Android SDK and JDK 17 or newer. Set `ANDROID_HOME` and `JAVA_HOME`. Use `npx expo run:android`. Local iOS builds require full Xcode and a simulator runtime. `npx eas-cli build --profile development --platform ios` builds a simulator app in the cloud. A signed iOS preview requires Apple signing credentials and registered devices.
 
 ## Review the complete journey
 
@@ -50,6 +50,6 @@ Use four test accounts.
 
 Only the organiser records results. Opponent confirmation, disputes, and a calculated rating algorithm are later product decisions.
 
-Reminders are device-local and default to off. The app reconciles them after local game changes, on foreground, and while active. Remote game changes while the app is closed cannot update an already scheduled local reminder. Server push delivery is separate work.
+Reminders are device-local and default to off. The operating system can delay a scheduled reminder; valid queued reminders survive foreground reconciliation until their game starts. The app reconciles them after local game changes, on foreground, and while active. Remote game changes while the app is closed cannot update an already scheduled local reminder. Server push delivery is separate work.
 
 The directory and inbox use focus and foreground refreshes. Directory pagination is needed before the account count exceeds the API row limit.
