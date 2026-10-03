@@ -30,3 +30,15 @@ Snapshot reviewed at 2026-10-02T22:16:49Z. This review covers the overnight run 
 ## Trail assessment
 
 The implementation, automated, local-database, hosted-migration, and bundle-export claims have resolving evidence. Earlier decision rows that cited source files for review conclusions or omitted hosted readback/provider proof are superseded by the appended audit rows in `.audit/decisions.tsv`. Native completion must not be recorded until the real UI journey has observable evidence.
+
+## Final corrections reviewed
+
+The independent agent requested with `gpt-5.6-sol` reviewed the reminder retention change in `3ca56ee` and the profile refresh change in `023b8e9`. No actionable findings remained. Fifteen focused reminder tests and seven profile tests passed, as did typecheck and scoped lint.
+
+The typed reminder plan retains only exact native records for joined future games. It never creates overdue notifications. Account changes, departure, cancellation, missing games, changed times and game start remove the retained identity. Actual retained records count toward the 50-notification limit.
+
+The profile refresh uses the account-owned player repository on focus and foreground. Its cache guards reject old account and request results. It does not reload global services or disturb reminder reconciliation.
+
+Later native evidence closes the earlier Android gaps. See `native/android-product-review.md` for the exact UI actions and backend fixtures. Android registration, onboarding with photo, recovery, invitations, game controls, results, refreshed statistics, reminder delivery and taps, delayed-alarm retention, native Storybook and fresh Expo Go passed. Only the latest six reschedule steps are retained in the JSON artifact.
+
+The first signed EAS build contains source commit `9121ae2` and is historical evidence only. That hash is not a runtime version. A candidate from `3ca56ee` was cancelled when native testing found stale profile statistics. Final native artifacts must be built from the corrected source and smoke tested before handoff. Local iOS review and hosted Google/Apple sign-in remain external gaps.

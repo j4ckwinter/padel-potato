@@ -1,0 +1,7 @@
+    RTC_WAKEUP #4: Alarm{7c9a664 type 0 origWhen 1790980683876 whenElapsed 2449416 com.padelpotato.app}
+      tag=*walarm*:expo.modules.notifications.NOTIFICATION_EVENT
+      type=RTC_WAKEUP origWhen=2026-10-02 23:38:03.876 window=+1m18s288ms repeatInterval=0 count=0 flags=0x20
+      policyWhenElapsed: requester=+1m0s998ms app_standby=-43s386ms device_idle=-- battery_saver=-43s386ms
+      whenElapsed=+1m0s998ms maxWhenElapsed=+2m19s286ms
+      operation=PendingIntent{6e680cd: PendingIntentRecord{6f17d82 com.padelpotato.app broadcastIntent}}
+      idle-options=Bundle[{android.pendingIntent.backgroundActivityAllowed=2, android:broadcast.temporaryAppAllowlistReasonCode=-1, android:broadcast.temporaryAppAllowlistDuration=10000, android:broadcast.temporaryAppAllowlistReason=, android:broadcast.temporaryAppAllowlistType=1, android:broadcast.flags=8}]

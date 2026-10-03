@@ -1,0 +1,20 @@
+{
+  "profile": {
+    "display_name": "Native Signup",
+    "home_location": "London",
+    "level": "Improver",
+    "preferred_side": "Either",
+    "play_vibe": "social",
+    "weekly_frequency": "one-or-two",
+    "availability_days": ["saturday"],
+    "availability_times": ["evening"],
+    "onboarding_completed_at": "2026-10-03T09:27:02.846+00:00"
+  },
+  "photo": {
+    "stored": true,
+    "status": 200,
+    "contentType": "image/png",
+    "bytes": 209896
+  },
+  "setup": "Readback after actual native registration/onboarding/photo and cold relaunch"
+}

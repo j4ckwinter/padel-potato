@@ -1,0 +1,6 @@
+{
+  "gameId": "39c6382e-d87f-47db-97ab-90e0099a0832",
+  "title": "Native result proof",
+  "startsAt": "2026-10-02T19:37:33.253Z",
+  "setup": "Four local accounts joined through authenticated RPC; only local service-role fixture moved start into past for native finish and result-entry proof"
+}

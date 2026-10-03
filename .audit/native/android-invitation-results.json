@@ -1,0 +1,50 @@
+[
+  {
+    "step": 1,
+    "action": "assert",
+    "label": "Awaiting your response",
+    "status": "PASS"
+  },
+  {
+    "step": 2,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 3,
+    "action": "tap",
+    "label": "Accept Native invitation proof",
+    "status": "PASS"
+  },
+  {
+    "step": 4,
+    "action": "assert",
+    "label": "Invitation accepted",
+    "status": "PASS"
+  },
+  {
+    "step": 5,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  },
+  {
+    "step": 6,
+    "action": "tap",
+    "label": "View Native invitation proof",
+    "status": "PASS"
+  },
+  {
+    "step": 7,
+    "action": "assert",
+    "label": "Leave game",
+    "status": "PASS"
+  },
+  {
+    "step": 8,
+    "action": "screenshot",
+    "label": null,
+    "status": "PASS"
+  }
+]

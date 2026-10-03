@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "sets": [
+    {
+      "set_number": 1,
+      "team_one_score": 7,
+      "team_two_score": 5
+    },
+    {
+      "set_number": 2,
+      "team_one_score": 6,
+      "team_two_score": 4
+    }
+  ],
+  "stats": {
+    "games_played": 1,
+    "games_won": 1
+  },
+  "setup": "Local readback after native result entry; no backend completion mutation"
+}

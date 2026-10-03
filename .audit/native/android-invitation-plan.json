@@ -1,0 +1,10 @@
+[
+  { "action": "assert", "label": "Awaiting your response" },
+  { "action": "screenshot", "name": "android-invitation-pending.png" },
+  { "action": "tap", "label": "Accept Native invitation proof" },
+  { "action": "assert", "label": "Invitation accepted" },
+  { "action": "screenshot", "name": "android-invitation-accepted.png" },
+  { "action": "tap", "label": "View Native invitation proof" },
+  { "action": "assert", "label": "Leave game" },
+  { "action": "screenshot", "name": "android-invitation-joined-game.png" }
+]

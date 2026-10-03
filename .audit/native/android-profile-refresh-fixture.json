@@ -1,0 +1,12 @@
+{
+  "gameId": "bc131751-8812-43e5-8937-ccaedf799fdd",
+  "before": {
+    "gamesPlayed": 1,
+    "gamesWon": 1
+  },
+  "after": {
+    "games_played": 2,
+    "games_won": 2
+  },
+  "setup": "Controlled local authenticated result transition after native Profile baseline1, then native focus must refresh to2 without restart"
+}

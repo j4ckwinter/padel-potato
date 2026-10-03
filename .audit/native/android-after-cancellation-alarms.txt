@@ -1,0 +1,1 @@
+After native Cancel game confirmation, dumpsys alarm has 0 active alarms for com.padelpotato.app.

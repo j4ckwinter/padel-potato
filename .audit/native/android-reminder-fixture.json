@@ -1,0 +1,6 @@
+{
+  "gameId": "8bbd6c57-550b-4514-a1d3-c92d9d9e828e",
+  "startsAt": "2026-10-02T23:38:03.876Z",
+  "reminderAt": "2026-10-02T22:38:03.876Z",
+  "setup": "Local authenticated backend fixture; native permission, scheduling, delivery and tap verified separately"
+}

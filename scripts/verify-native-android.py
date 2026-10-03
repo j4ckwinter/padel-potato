@@ -12,6 +12,7 @@ parser.add_argument('--serial', required=True)
 parser.add_argument('--package', default='com.padelpotato.app')
 parser.add_argument('--plan', required=True)
 parser.add_argument('--artifacts', default='.audit/native')
+parser.add_argument('--result-name', default='android-verification-results.json')
 args = parser.parse_args()
 artifacts = Path(args.artifacts)
 artifacts.mkdir(parents=True, exist_ok=True)
@@ -35,6 +36,7 @@ def find(label):
     while time.monotonic() < deadline:
         found = [node for node in nodes() if matches(node, label)]
         if found:
+            found.sort(key=lambda node: (node.get('class') != 'android.widget.EditText', node.get('clickable') != 'true'))
             return found[0]
         time.sleep(0.2)
     raise AssertionError(f'Native element missing: {label}')
@@ -72,5 +74,5 @@ for index, step in enumerate(json.loads(Path(args.plan).read_text())):
     else:
         raise ValueError(f'Unknown action: {action}')
     results.append({'step': index + 1, 'action': action, 'label': step.get('label'), 'status': 'PASS'})
-    (artifacts / 'android-verification-results.json').write_text(json.dumps(results, indent=2) + '\n')
+    (artifacts / args.result_name).write_text(json.dumps(results, indent=2) + '\n')
     print(f'PASS {index + 1} {action} {step.get("label", "")}', flush=True)
